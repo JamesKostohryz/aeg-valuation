@@ -1,0 +1,46 @@
+{
+  "ticker": "AAPL",
+  "config_hash": "80e5fcb7cc6a0fda",
+  "data_vintage": "2026-07-17T22:23Z",
+  "gates_ok": true,
+  "tie_check": {
+    "tie_check": "PASS",
+    "audit_ok": true,
+    "tie_ok": true,
+    "mode_ok": true,
+    "max_identity_tie": 1.81626091944054e-09,
+    "mode_tie": 0,
+    "tie_tol": 1e-08,
+    "reasons": []
+  },
+  "rd_wedge": {
+    "opex_wedge": 23787.5362905856,
+    "wedge_pct_ebit": 0.16902451775569585,
+    "rev_scaled_consistent": true,
+    "rd_reserve": 172750,
+    "rd_capitalization_wired": false,
+    "rd_reserve_nonzero_but_inert": true
+  },
+  "audit_status": "PASS \u2014 all identities tie",
+  "max_identity_tie": 1.81626091944054e-09,
+  "equity_value": 164.721840746117,
+  "enterprise_value": 164.721840746117,
+  "mode_tie": 0,
+  "anchor_year": 2025,
+  "disclosure": {
+    "base_equity_ps": 164.721840746117,
+    "adjusted_equity_ps": 167.59430878062648,
+    "debt_capital_gain_ps": 2.87246803450946,
+    "idiosyncratic_haircut_ps": 0.0
+  },
+  "outputs": [
+    "AAPL_anchors.csv",
+    "AAPL_valuation.csv",
+    "AAPL_summary.csv",
+    "AAPL_restated_real.csv",
+    "AAPL_reported_is.csv",
+    "AAPL_reported_bs.csv",
+    "AAPL_reported_cf.csv",
+    "AAPL_restated.csv"
+  ]
+}

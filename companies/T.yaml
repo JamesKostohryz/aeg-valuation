@@ -1,0 +1,28 @@
+# Per-company statement-adjustment config — AT&T Inc.
+company: "AT&T Inc."
+ticker: T
+fy_end_month: 12          # AT&T's fiscal year ends in December
+
+judgments:
+  minority_include: false      # exclude minority interest from common equity
+  finlease: 0.0                # finance/capital-lease obligations to add back (0 = none)
+  oi_adj_override: null        # override operating-income adjustment (null = derived)
+  rd_capitalize: false         # AT&T is not R&D-heavy (this is the clean-name case)
+  rd_life: 5.0                 # (unused when rd_capitalize is false)
+  dps_override: null           # override near-term dividend (null = from dividends file)
+
+spinoff:
+  factor: 1.324                # Warner Bros. Discovery (WBD) spin-off, Apr 2022
+  before_year: 2022            # apply the factor to fiscal years before 2022
+
+price:
+  source: market               # pull current price
+  override: null
+
+cost_of_debt:
+  source: bond_list            # consume the real-yields cod_T curve (bonds committed upstream)
+
+bonded: true                   # cod_T / company_T are published upstream
+
+# AT&T has no R&D wedge, so we assert it: the run ABORTS if the opex wedge (row 61) is not ~0.
+expect_zero_rd_wedge: true

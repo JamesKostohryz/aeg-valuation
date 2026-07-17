@@ -87,14 +87,25 @@ def check_provenance(wb, base_company="AT&T", price=None):
     cod = [md.cell(27, c).value for c in range(2, 7)]
     if cod == ATT_COD_LADDER:
         v.append(f"cost-of-debt ladder (Market Data row 27) is still the base company's: {cod}")
-    for tab in ("Inputs", "Presentation", "Cap Engine"):
-        if tab not in wb.sheetnames:
-            continue  # Presentation is a display tab; absent in the slimmed engine
-        ws = wb[tab]
-        for row in ws.iter_rows():
-            for c in row:
-                if isinstance(c.value, str) and base_company in c.value:
-                    v.append(f"base-company text at {tab}!{c.coordinate}: '{c.value[:50]}'")
+
+    # Is this model built FOR the base company itself (i.e. we're legitimately valuing AT&T)?
+    # set_company_labels always rewrites the "COMPANY BASE — <company>" header at Inputs!A4, so
+    # that header reflects the target company. The base-company TEXT scan below cannot tell a
+    # correctly-relabeled base company from un-relabeled residue (both read "AT&T"), so when the
+    # target genuinely IS the base company we skip that scan and rely on the cost-of-debt ladder
+    # and price checks (which still catch a model that was never repointed).
+    header = str(wb["Inputs"]["A4"].value or "") if "Inputs" in wb.sheetnames else ""
+    valuing_base_company = base_company in header
+
+    if not valuing_base_company:
+        for tab in ("Inputs", "Presentation", "Cap Engine"):
+            if tab not in wb.sheetnames:
+                continue  # Presentation is a display tab; absent in the slimmed engine
+            ws = wb[tab]
+            for row in ws.iter_rows():
+                for c in row:
+                    if isinstance(c.value, str) and base_company in c.value:
+                        v.append(f"base-company text at {tab}!{c.coordinate}: '{c.value[:50]}'")
     if price is not None and abs(float(price) - ATT_PRICE_DEFAULT) < 1e-9:
         v.append(f"current price is still the base default {ATT_PRICE_DEFAULT}")
     return v

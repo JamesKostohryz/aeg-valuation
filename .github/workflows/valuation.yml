@@ -1,0 +1,90 @@
+name: AEG valuation pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "companies/**"
+      - "pipeline/**"
+      - "*.py"
+      - ".github/workflows/valuation.yml"
+  pull_request:
+    paths:
+      - "companies/**"
+      - "pipeline/**"
+      - "*.py"
+  workflow_dispatch:
+    inputs:
+      ticker:
+        description: "Single ticker to run (blank = all changed configs)"
+        required: false
+        default: ""
+
+concurrency:
+  group: valuation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  valuation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with history for change detection)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install LibreOffice + Python deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libreoffice-calc
+          python -m pip install --upgrade pip
+          pip install openpyxl==3.1.5 pyyaml
+
+      - name: Determine companies to run
+        id: pick
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.ticker }}" ]; then
+            echo "list=companies/${{ github.event.inputs.ticker }}.yaml" >> "$GITHUB_OUTPUT"
+          else
+            CHANGED=$(git diff --name-only HEAD^ HEAD -- 'companies/*.yaml' || true)
+            if [ -z "$CHANGED" ]; then
+              CHANGED=$(ls companies/*.yaml)
+            fi
+            echo "list=$(echo $CHANGED | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Running: $(cat "$GITHUB_OUTPUT")"
+
+      - name: Run pipeline (gates are required checks)
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+        run: |
+          set -euo pipefail
+          VINTAGE=$(date -u +%Y-%m-%dT%H:%MZ)
+          for cfg in ${{ steps.pick.outputs.list }}; do
+            echo "::group::$cfg"
+            python pipeline/run_company.py "$cfg" \
+              --rate-feed-live \
+              --out-dir outputs \
+              --vintage "$VINTAGE"
+            echo "::endgroup::"
+          done
+
+      - name: Commit refreshed outputs (push to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          git config user.name  "aeg-pipeline[bot]"
+          git config user.email "aeg-pipeline@users.noreply.github.com"
+          git add outputs/
+          if git diff --cached --quiet; then
+            echo "no output changes"
+          else
+            git commit -m "pipeline: refresh valuation outputs [skip ci]"
+            git push
+          fi

@@ -18,7 +18,7 @@ Format rules are per INPUT_CONTRACT.md:
   * CF capped to last 37 yrs, IS/BS to last 41, all sharing the same FY0 year.
 """
 
-import csv, io, json, re
+import csv, io, json, os, re, urllib.parse, urllib.request
 
 # ------------------------------------------------------------------ mappings
 # model label -> EODHD Income_Statement field (or ('CALC', how))
@@ -372,6 +372,103 @@ def pension_from_edgar(companyfacts):
         if out:
             return out
     return {}
+
+
+# ------------------------------------------------------------------ live pull (EODHD + SEC EDGAR)
+EODHD_BASE      = "https://eodhd.com/api"
+SEC_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
+SEC_FACTS_URL   = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json"
+SEC_UA          = "AEG Model Data Puller james@jameskostohryz.com"
+
+
+def _http_json(url, headers=None, timeout=60):
+    req = urllib.request.Request(url, headers=headers or {})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode("utf-8", "replace"))
+
+
+def _eodhd_symbol(ticker):
+    """EODHD needs an exchange suffix; default to .US when none is given (AAPL -> AAPL.US)."""
+    return ticker if "." in ticker else f"{ticker}.US"
+
+
+def _edgar_pension(ticker, timeout=60):
+    """Best-effort SEC EDGAR non-current pension/OPEB by fiscal year. Returns {} on any
+    failure (non-fatal — the pension row is then left blank, as the model tolerates)."""
+    base = ticker.split(".")[0].upper()
+    try:
+        tmap = _http_json(SEC_TICKERS_URL, headers={"User-Agent": SEC_UA}, timeout=timeout)
+        cik = None
+        for _, row in (tmap or {}).items():
+            if str(row.get("ticker", "")).upper() == base:
+                cik = int(row["cik_str"]); break
+        if cik is None:
+            return {}
+        facts = _http_json(SEC_FACTS_URL.format(cik=cik),
+                           headers={"User-Agent": SEC_UA}, timeout=timeout)
+        return pension_from_edgar(facts)
+    except Exception:
+        return {}
+
+
+def pull_to_csvs(ticker, api_key, work_dir):
+    """Fetch EODHD fundamentals + prices + dividends (and the SEC EDGAR pension line) for
+    `ticker`, build the six loader CSVs with the builders above, write them into `work_dir`,
+    and return {is_csv, bs_csv, cf_csv, prices, dividends, splits} -> file paths. This is the
+    contract pipeline/run_company.py's stage_raw() consumes."""
+    sym = _eodhd_symbol(ticker)
+
+    def _eodhd(path, **params):
+        params.setdefault("api_token", api_key)
+        params.setdefault("fmt", "json")
+        return _http_json(f"{EODHD_BASE}/{path}?{urllib.parse.urlencode(params)}")
+
+    # --- fetch ---
+    try:
+        fund = _eodhd(f"fundamentals/{sym}")
+    except Exception as e:
+        raise RuntimeError(f"EODHD fundamentals pull failed for {sym}: {e}")
+    if not isinstance(fund, dict) or "Financials" not in fund:
+        got = list(fund)[:8] if isinstance(fund, dict) else type(fund).__name__
+        raise RuntimeError(f"EODHD fundamentals for {sym} has no 'Financials' node "
+                           f"(check the ticker symbol and that your plan includes fundamentals); got: {got}")
+    try:
+        eod = _eodhd(f"eod/{sym}", period="d")
+    except Exception as e:
+        raise RuntimeError(f"EODHD price pull failed for {sym}: {e}")
+    try:
+        divs = _eodhd(f"div/{sym}")
+    except Exception:
+        divs = []                       # non-fatal: a name with no dividends
+    if not isinstance(eod, list):
+        eod = []
+    if not isinstance(divs, list):
+        divs = []
+
+    pension = _edgar_pension(ticker)    # {} if unavailable (non-fatal)
+
+    # --- build the six CSVs from the fetched payloads ---
+    ih, ir, _ = build_income(fund)
+    bh, br, _ = build_balance(fund, pension)
+    ch, cr, _ = build_cashflow(fund)
+    files_text = {
+        "is_csv":    ("REAL_IS.csv",     csv_text(ih, ir)),
+        "bs_csv":    ("REAL_BS.csv",     csv_text(bh, br)),
+        "cf_csv":    ("REAL_CF.csv",     csv_text(ch, cr)),
+        "prices":    ("REAL_prices.csv", build_prices_csv(eod)),
+        "dividends": ("REAL_div.csv",    build_dividends_csv(divs)),
+        "splits":    ("REAL_splits.csv", build_empty_splits_csv()),
+    }
+
+    # --- write into work_dir and return the path contract ---
+    os.makedirs(work_dir, exist_ok=True)
+    written = {}
+    for key, (fname, text) in files_text.items():
+        path = os.path.join(work_dir, fname)
+        with open(path, "w", newline="", encoding="utf-8") as fh:
+            fh.write(text)
+        written[key] = path
+    return written
 
 
 # ------------------------------------------------------------------ self-test

@@ -1,0 +1,38 @@
+# Per-company statement-adjustment config — Apple Inc.
+# Every field here is a committed, version-controlled judgment. Change it in a PR and the
+# restated statements change deterministically, with a diff you can review.
+company: "Apple Inc."
+ticker: AAPL
+fy_end_month: 9          # 0 = auto-detect from statement dates; Apple's FY ends in September
+
+judgments:
+  minority_include: false      # exclude minority interest from common equity
+  finlease: 0.0                # finance/capital-lease obligations to add back (0 = none)
+  oi_adj_override: null        # override operating-income adjustment (null = derived)
+  rd_capitalize: true          # capitalize R&D (Apple is R&D-heavy)
+  rd_life: 5.0                 # amortization life for capitalized R&D, years
+  dps_override: null           # override near-term dividend (null = from dividends file)
+
+spinoff:
+  factor: 1.0                  # contemporaneous-price spinoff factor (1.0 = none)
+  before_year: 0               # apply the factor to fiscal years before this (0 = n/a)
+
+price:
+  source: market               # "market" = pull current price; "override" for repro test runs
+  override: null
+
+cost_of_debt:
+  source: bond_list            # consume the rate-infra cod_AAPL curve (bonds committed upstream)
+  # For names without a committed bond list, use instead:
+  #   source: single_ytw   +   single_ytw: 0.048
+  #   source: ytw_points   +   ytw_points: [[1, 0.039], [5, 0.045], [10, 0.048], [30, 0.056]]
+  #   source: interest_implied   (loader derives interest_expense/total_debt, flagged)
+
+bonded: true                   # issuer has a committed bonds/AAPL.csv upstream
+
+# Forecast row 61 is the reported-vs-economic operating-expense wedge (R&D + other opex).
+# Apple carries a real wedge (~17% of EBIT), so leave this false. For a no-R&D name with no
+# wedge (e.g. AT&T) set it true and the run will ABORT if row 61 is not ~0 — the "F61=0 for
+# no-R&D firms" guard. NOTE: R&D *capitalization* is not yet wired (see the R&D finding memo);
+# R&D-heavy names are currently valued on an expensed basis via this wedge.
+expect_zero_rd_wedge: false

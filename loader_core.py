@@ -254,6 +254,79 @@ def populate_raw_tabs(wb, parsed):
     return permitted, match_report, anchor_year
 
 
+def stabilize_cost_boundary(wb, tol_gpm_swing=0.15):
+    """Make the operating-cost decomposition BOUNDARY-INDEPENDENT.
+
+    Some issuers (AT&T and other function-cost filers) don't report a genuine
+    Cost-of-Revenue / Gross-Profit split; the feed (EODHD) fabricates one, and it
+    reshuffles the COGS<->OpEx boundary across years (e.g. AT&T's gross margin jumps
+    43%->80% in 2025). Revenue, Operating Income and Reconciled Depreciation are all
+    genuinely reported and stable, so the reliable non-D&A operating cost is
+    (Revenue - OI - D&A) regardless of where the feed draws the COGS/OpEx line.
+
+    When a filer's gross margin is UNSTABLE (fabricated split), rebuild Cost of Revenue
+    from that stable spine so the forecast decomposition, the row-61 opex wedge, and the
+    valuation stop depending on the fabricated boundary. Filers with a genuinely stable
+    gross margin (e.g. AAPL) are left EXACTLY as filed. Engine formulas are untouched, so
+    the four-method tie is preserved by construction.
+
+    Reconstruction (per year, for a flagged filer): COGS := (Rev - OI - D&A) - SG&A,
+    keeping the reported (stable) SG&A. Then GP = Rev - COGS = OI + D&A + SG&A, so
+    GP - SG&A - D&A = OI and the wedge collapses to the genuine R&D adjustment (~0 for a
+    no-R&D filer). Fail-loud/logged: the reconstruction is recorded in the returned report.
+
+    Rows in the Income Statement tab: 3=years, 4=Revenue, 6=Cost of Revenue, 9=SG&A,
+    13=Operating Income, 54=Reconciled Depreciation. Values are in engine units.
+    """
+    IS = wb["Income Statement"]
+    R_REV, R_COGS, R_SGA, R_OI, R_DA, R_YR = 4, 6, 9, 13, 54, 3
+    cols = [c for c in range(2, IS.max_column + 1) if IS.cell(R_YR, c).value not in (None, "")]
+
+    def num(c, r):
+        v = IS.cell(r, c).value
+        return float(v) if isinstance(v, (int, float)) else None
+
+    # gross-margin instability detector (fabricated-boundary symptom)
+    gpm = {}
+    for c in cols:
+        rev, cg = num(c, R_REV), num(c, R_COGS)
+        if rev:
+            gpm[c] = (rev - (cg or 0.0)) / rev
+    # detect over the RECENT window only: the forecast anchors on FY0 and the wedge
+    # rides recent margins, so a recent reclassification (AT&T 2021/23/25) is what matters;
+    # old-history margin volatility (e.g. 1990s Apple) is irrelevant to today's valuation.
+    ordered = sorted(cols, key=lambda c: str(IS.cell(R_YR, c).value))[-6:]
+    swings = [abs(gpm[ordered[i]] - gpm[ordered[i - 1]])
+              for i in range(1, len(ordered)) if ordered[i] in gpm and ordered[i - 1] in gpm]
+    max_swing = max(swings) if swings else 0.0
+    if max_swing <= tol_gpm_swing:
+        return {"reconstructed": False, "max_gpm_swing": round(max_swing, 4)}
+
+    # fabricated -> rebuild COGS from the stable spine, keep SG&A
+    permitted, changed = set(), []
+    blue = copy.copy(IS.cell(4, 2).font)
+    for c in cols:
+        rev, oi, da, sga = num(c, R_REV), num(c, R_OI), num(c, R_DA), num(c, R_SGA)
+        if None in (rev, oi, da):
+            continue
+        sga = sga or 0.0
+        non_da_opex = rev - oi - da
+        if non_da_opex < 0:            # degenerate; leave the year as-is
+            continue
+        sga_use = min(sga, non_da_opex)
+        cogs_new = round(non_da_opex - sga_use, 6)
+        for r, newv in ((R_COGS, cogs_new), (R_SGA, round(sga_use, 6))):
+            cell = IS.cell(r, c)
+            if cell.value != newv:
+                cell.value = newv
+                cell.font = copy.copy(blue)
+                permitted.add(("Income Statement", cell.coordinate))
+        changed.append(str(IS.cell(R_YR, c).value))
+    return {"reconstructed": True, "max_gpm_swing": round(max_swing, 4),
+            "years": changed, "permitted": permitted,
+            "note": "COGS rebuilt from Rev-OI-D&A-SG&A (fabricated gross-margin boundary)"}
+
+
 # --- Inputs auto-derivation --------------------------------------------------
 # Each derived scalar carries (row, name, meaning, value, source, kind).
 def _fy0(ws, label):

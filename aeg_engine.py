@@ -46,6 +46,12 @@ def build_model(config, template_path, out_path):
     parsed = {k: LC.parse_statement(files[k]) for k in ("is_csv", "bs_csv", "cf_csv")}
     permitted, match_report, anchor_year = LC.populate_raw_tabs(wb, parsed)
 
+    # 1b) boundary-independent operating-cost decomposition: rebuild a fabricated
+    #     Cost-of-Revenue/Gross-Profit split (e.g. AT&T) from the stable Rev-OI-D&A spine
+    #     so the row-61 opex wedge and the valuation don't ride the feed's COGS/OpEx line.
+    #     Stable-margin filers (AAPL) are left exactly as filed.
+    cost_boundary_report = LC.stabilize_cost_boundary(wb)
+
     # 2) derive Inputs scalars, fold in judgments, write
     derived = LC.derive_inputs(wb, anchor_year, parsed)
     LC.apply_judgments(derived, price=float(config["price"]),
@@ -85,7 +91,8 @@ def build_model(config, template_path, out_path):
     wb.save(out_path)
     return {"anchor_year": anchor_year, "match_report": match_report,
             "cost_of_debt": cod_report, "labels": lbl_report,
-            "cod_flagged": cod_report.get("flagged", False)}
+            "cod_flagged": cod_report.get("flagged", False),
+            "cost_boundary": {k: v for k, v in cost_boundary_report.items() if k != "permitted"}}
 
 
 def read_results(out_path, price=None):

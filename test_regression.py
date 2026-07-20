@@ -56,6 +56,7 @@ def main():
     run_unit("test_rate_feed.py")
     run_unit("test_config.py")
     run_unit("test_checks.py")
+    run_unit("test_cost_boundary.py")  # operating-cost boundary-invariance (AT&T wedge guard)
 
     print("== Stage 2: build golden AAPL + standing tie check ==")
     files = {"is_csv": f"{GOLDEN}/REAL_IS.csv", "bs_csv": f"{GOLDEN}/REAL_BS.csv",

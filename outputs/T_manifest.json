@@ -1,0 +1,41 @@
+{
+  "ticker": "T",
+  "config_hash": "c890f2fe69d3f7ad",
+  "data_vintage": "2026-07-20T18:50Z",
+  "gates_ok": true,
+  "tie_check": {
+    "tie_check": "PASS",
+    "audit_ok": true,
+    "tie_ok": true,
+    "mode_ok": true,
+    "max_identity_tie": 1.33422872750089e-09,
+    "mode_tie": 0,
+    "tie_tol": 1e-08,
+    "reasons": []
+  },
+  "rd_wedge": {
+    "opex_wedge": 0,
+    "wedge_pct_ebit": 0.0,
+    "rev_scaled_consistent": true,
+    "rd_reserve": 0,
+    "rd_capitalization_wired": false,
+    "rd_reserve_nonzero_but_inert": false
+  },
+  "audit_status": "PASS \u2014 all identities tie",
+  "max_identity_tie": 1.33422872750089e-09,
+  "equity_value": 35.9703837554789,
+  "enterprise_value": 35.9703837554789,
+  "mode_tie": 0,
+  "anchor_year": 2025,
+  "disclosure": null,
+  "outputs": [
+    "T_anchors.csv",
+    "T_valuation.csv",
+    "T_summary.csv",
+    "T_restated_real.csv",
+    "T_reported_is.csv",
+    "T_reported_bs.csv",
+    "T_reported_cf.csv",
+    "T_restated.csv"
+  ]
+}

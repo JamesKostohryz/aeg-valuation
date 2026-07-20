@@ -201,6 +201,50 @@ def populate_raw_tabs(wb, parsed):
             raise ValueError(
                 f"[{tab}] missing critical line(s) not found in the CSV: {missing}")
 
+    # --- derived fill: noncontrolling interest when the feed leaves it blank ---------
+    # EODHD intermittently ships a blank 'Minority Interest' row (AT&T: 2008-09, 2023-25).
+    # NCI then lands in neither CSE (excluded by the minority_include judgment) nor NFO
+    # (design: MI+pension in NFO), so the per-year partition NOA-NFO-CSE breaks by exactly
+    # the missing NCI. It is recoverable as the balance-sheet plug, and that plug
+    # reproduces the reported NCI to the dollar in every year the feed does populate it.
+    BSws = wb["Balance Sheet"]
+
+    def _row_of(ws, label):
+        for r in range(4, ws.max_row + 1):
+            v = ws.cell(r, 1).value
+            if v is not None and norm(v) == norm(label):
+                return r
+        return None
+
+    r_mi = _row_of(BSws, "Minority Interest")
+    r_ta = _row_of(BSws, "Total Assets")
+    r_tl = _row_of(BSws, "Total Liabilities Net Minority Interest")
+    r_te = _row_of(BSws, "Total Equity Gross Minority Interest")
+    if all(x is not None for x in (r_mi, r_ta, r_tl, r_te)):
+        filled = []
+        for j in range(41):
+            c_mi = BSws.cell(r_mi, 2 + j)
+            # Fill when the feed leaves it blank, or files a hard 0 that does NOT close the
+            # balance sheet (AT&T 2011: MI=0 filed, yet TA-(TL+TE)=263). A non-zero filed
+            # value is always respected — we never override real reported NCI.
+            if isinstance(c_mi.value, (int, float)) and c_mi.value != 0:
+                continue
+            ta = BSws.cell(r_ta, 2 + j).value
+            tl = BSws.cell(r_tl, 2 + j).value
+            te = BSws.cell(r_te, 2 + j).value
+            if not all(isinstance(x, (int, float)) for x in (ta, tl, te)):
+                continue                      # no full balance sheet that year -> leave blank
+            plug = round(ta - (tl + te), 6)
+            if abs(plug) < 1e-9:
+                continue                      # genuinely zero NCI; leave blank as filed
+            c_mi.value = plug
+            c_mi.font = copy.copy(blue_font)
+            permitted.add(("Balance Sheet", c_mi.coordinate))
+            filled.append((BSws.cell(3, 2 + j).value, plug))
+        if filled:
+            print("  [loader] 'Minority Interest' blank in feed; derived as balance plug "
+                  "TA-(TL+TE) for: " + ", ".join(f"{y}={v:,.0f}" for y, v in filled))
+
     # fiscal-year alignment gate: latest (FY0) year must agree across the three tabs
     yrs = set(latest_years.values())
     if len(yrs) != 1:

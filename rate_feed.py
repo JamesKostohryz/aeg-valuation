@@ -37,7 +37,14 @@ Per-company series (V2 feed), tenor grid 1..N (N may exceed 30; we slice 1..30):
 
 Per-company scalars (field,value long file):
   company_<TICKER>.csv     fields incl: market_value_of_debt, portfolio_ytm,
-                                        wavg_mod_duration, wavg_coupon, wavg_years
+                                        wavg_mod_duration, wavg_coupon, wavg_years,
+                                        mvd_basis
+      PROVENANCE — mvd_basis: the upstream feed publishes no per-bond amount
+      outstanding, so market_value_of_debt may be BOOK-SCALED: the issuer's reported
+      book total debt marked to the mean traded price of its own bond curve
+      (mvd_basis="book-scaled"). That is an approximation, not issue-level truth, and
+      it flows straight into the disclosed debt capital gain. Treat a book-scaled MVD
+      as an estimate; upgrade path upstream is a real 10-K/XBRL debt schedule.
 
 ------------------------------------------------------------------ routing (V1-Plus)
 COE:  base we feed engine = real_rf + market_erp  (per tenor, both from coe_annual).

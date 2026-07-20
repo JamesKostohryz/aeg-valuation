@@ -57,6 +57,9 @@ def main():
     run_unit("test_config.py")
     run_unit("test_checks.py")
     run_unit("test_cost_boundary.py")  # operating-cost boundary-invariance (AT&T wedge guard)
+    # SP500 earnings-normalization engine self-test (3 modes ~1e-15 + exact forecast
+    # round-trip). Standalone module; imports nothing from the sealed engine.
+    run_unit("valuation/normalization/normalization_engine.py")
 
     print("== Stage 2: build golden AAPL + standing tie check ==")
     files = {"is_csv": f"{GOLDEN}/REAL_IS.csv", "bs_csv": f"{GOLDEN}/REAL_BS.csv",

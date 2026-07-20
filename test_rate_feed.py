@@ -44,9 +44,9 @@ ok(feed["nfo_basis"] == "market", "nfo basis market")
 # market NFO = MVD - cash - sti = 98650 - 30000 - 25000 = 43650
 ok(abs(feed["market_nfo"] - 43650.0) < 1e-6, f"market_nfo = {feed['market_nfo']}")
 
-print("== COE exact-additive decomposition holds ==")
+print("== COE exact-additive decomposition holds (V2: rf+erp+idio) ==")
 coe = rf.load_coe("AAPL", local_dir=FIX)
-worst = max(abs(coe["real_rf"][i] + coe["market_erp"][i] + coe["credit_relative"][i]
+worst = max(abs(coe["real_rf"][i] + coe["market_erp"][i]
                + coe["idiosyncratic"][i] - coe["real_coe"][i]) for i in range(30))
 ok(worst < 1e-9, f"decomposition ties to {worst:.2e}")
 
@@ -64,7 +64,7 @@ ok(min(t["idiosyncratic"]) < 0, f"measured idiosyncratic goes negative ({min(t['
 ok(t["company"]["market_value_of_debt"] == 116047846974.0, "absolute-USD market_value_of_debt parsed")
 # decomposition still exact with a negative idiosyncratic component
 tc = rf.load_coe("T", local_dir=FIX)
-worst_t = max(abs(tc["real_rf"][i] + tc["market_erp"][i] + tc["credit_relative"][i]
+worst_t = max(abs(tc["real_rf"][i] + tc["market_erp"][i]
                   + tc["idiosyncratic"][i] - tc["real_coe"][i]) for i in range(30))
 ok(worst_t < 1e-9, f"AT&T decomposition ties with negative idio ({worst_t:.2e})")
 # absolute-USD debt maps to engine (trillions) units via self-calibrating scale
@@ -78,13 +78,16 @@ if os.path.isdir(REAL):
     live = rf.load_all("T", cash=0.0, sti=0.0, local_dir=REAL, bonded=True)
     ok(live["cod_rating"] == "BBB" and len(live["real_cod"]) == 30, "live AT&T loads (BBB, 30 tenors)")
     lc = rf.load_coe("T", local_dir=REAL)
-    worst_live = max(abs(lc["real_rf"][i] + lc["market_erp"][i] + lc["credit_relative"][i]
+    worst_live = max(abs(lc["real_rf"][i] + lc["market_erp"][i]
                         + lc["idiosyncratic"][i] - lc["real_coe"][i]) for i in range(30))
     ok(worst_live <= rf.DECOMP_TOL, f"live decomposition within tol (residual {worst_live:.1e}, 6-dec publish)")
     ok(live["company"]["market_value_of_debt"] == 116047846974.0, "live absolute-USD MVD")
     lcv = rf.load_curve(local_dir=REAL)
     dss = max(abs(lc["real_rf"][i] - lcv["real_fwd1y"][i]) for i in range(30))
-    ok(dss == 0.0, "live single-source: coe.real_rf == curve.real_fwd1y exactly")
+    # V2 single-sources real_rf from the same spot curve, but the coe_v2 file publishes it
+    # at 9 dp while curve publishes real_fwd1y at 6 dp, so they agree to ~1e-6 (rounding),
+    # not bit-exactly as the v1 matched sample did.
+    ok(dss <= 1e-6, f"live single-source: coe.real_rf ~= curve.real_fwd1y (v2 6-dp vs 9-dp; max {dss:.1e})")
 else:
     print("  (rate_real_T sample not present — skipping live check)")
 
@@ -106,9 +109,9 @@ try:
     expect_error(lambda: rf.load_curve(local_dir=tmp + "/pct"), "outside sane range",
                  "percent-scale value caught by bounds")
 
-    # broken additive decomposition
+    # broken additive decomposition (perturb the V2 coe file the loader now reads)
     shutil.copytree(FIX, tmp + "/dec", dirs_exist_ok=True)
-    p = tmp + "/dec/coe_AAPL_annual.csv"
+    p = tmp + "/dec/coe_v2_AAPL_latest_annual.csv"
     lines = open(p).read().splitlines()
     hdr = lines[0].split(","); ii = hdr.index("idiosyncratic")
     parts = lines[1].split(","); parts[ii] = str(float(parts[ii]) + 0.01)

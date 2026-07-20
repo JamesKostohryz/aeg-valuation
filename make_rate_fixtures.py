@@ -103,6 +103,28 @@ _w("coe_T_annual.csv",
    ["tenor", "real_rf", "market_erp", "credit_relative", "idiosyncratic",
     "company_erp", "real_coe"], coe_t_rows)
 
+# ---- V2 per-company COE fixtures (the schema the engine now consumes) ----------
+#   V2 drops the separate credit_relative term entirely:  real_coe = rf + erp + idio.
+#   (These share the same rf/erp/idio series as the v1 fixtures above, minus credit,
+#    so the decomposition ties to machine precision.)  Filename: coe_v2_<T>_latest_annual.csv
+coe_v2_aapl = []
+for t in TEN:
+    rf_ = real_fwd[t]; erp = mkt_erp[t]
+    real_coe = round(rf_ + erp + idio[t], 8)
+    coe_v2_aapl.append([t, rf_, erp, idio[t], round(real_coe - rf_, 8), real_coe])
+_w("coe_v2_AAPL_latest_annual.csv",
+   ["tenor", "real_rf", "market_erp", "idiosyncratic", "company_erp", "real_coe"],
+   coe_v2_aapl)
+
+coe_v2_t = []
+for t in TEN:
+    rf_ = real_fwd[t]; erp = mkt_erp[t]
+    real_coe = round(rf_ + erp + idio_t[t], 8)
+    coe_v2_t.append([t, rf_, erp, idio_t[t], round(real_coe - rf_, 8), real_coe])
+_w("coe_v2_T_latest_annual.csv",
+   ["tenor", "real_rf", "market_erp", "idiosyncratic", "company_erp", "real_coe"],
+   coe_v2_t)
+
 cod_t_rows = []
 for t in TEN:
     real_cod = round(real_fwd[t] + 0.0150 + 0.0006 * t / 30, 6)   # BBB spread, wider than AAPL

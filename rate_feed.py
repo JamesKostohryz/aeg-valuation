@@ -24,11 +24,14 @@ Global (market-wide) series, by tenor 1..30:
                                       exp_inflation_fwd1y, breakeven, breakeven_fwd1y
   erp_market_latest_annual.csv cols: tenor, market_erp
 
-Per-company series, by tenor 1..30:
-  coe_<TICKER>_annual.csv  cols: tenor, real_rf, market_erp, credit_relative,
-                                 idiosyncratic, company_erp, real_coe
-                           exact-additive: real_rf+market_erp+credit_relative
-                                           +idiosyncratic == real_coe  (annual-decimal)
+Per-company series (V2 feed), tenor grid 1..N (N may exceed 30; we slice 1..30):
+  coe_v2_<TICKER>_latest_annual.csv
+                           cols: tenor, real_rf, market_erp, idiosyncratic,
+                                 company_erp, real_coe
+                           exact-additive: real_rf+market_erp+idiosyncratic
+                                           == real_coe  (annual-decimal)
+                           (V2 drops the separate credit_relative term entirely;
+                            leverage/credit stay inside the engine via MM re-lever.)
   cod_<TICKER>_annual.csv  cols: tenor, real_cod, spread, rating, offset,
                                  real_cod_<rating>   (real_cod consumed DIRECTLY)
 
@@ -150,24 +153,29 @@ def _check_bounds(v, col, fname, tenor=None):
     return v
 
 
-def _tenor_series(rows, cols, fname):
-    """Turn tenor-indexed rows into {col: [v_tenor1..v_tenor30]}. Enforces the
-    full contiguous 1..30 grid and per-cell bounds. String cols (rating) skipped."""
+def _tenor_series(rows, cols, fname, keep=N_TENORS):
+    """Turn tenor-indexed rows into {col: [v_tenor1..v_tenor{keep}]}. Requires the
+    contiguous 1..{keep} grid to be PRESENT (tenors beyond {keep} are ignored, so a
+    longer V2 grid — e.g. 1..150 — is accepted and sliced) and per-cell bounds.
+    String cols (rating) skipped."""
     by_tenor = {}
     for row in rows:
         t = int(_fnum(row["tenor"], fname, "tenor"))
         by_tenor[t] = row
     have = sorted(by_tenor)
-    if have != list(range(1, N_TENORS + 1)):
+    need_grid = list(range(1, keep + 1))
+    missing = [t for t in need_grid if t not in by_tenor]
+    if missing:
         raise RateFeedError(
-            f"[{fname}] tenor grid must be 1..{N_TENORS} contiguous; got {have}")
+            f"[{fname}] tenor grid must contain 1..{keep} contiguous; missing {missing} "
+            f"(have {have[:3]}..{have[-2:] if len(have) > 3 else have})")
     out = {}
     for col in cols:
         if col == "tenor":
             continue
         series = []
         is_numeric = True
-        for t in range(1, N_TENORS + 1):
+        for t in range(1, keep + 1):
             raw = by_tenor[t].get(col, "")
             try:
                 v = _fnum(raw, fname, col, t)
@@ -205,21 +213,23 @@ def load_market_erp(*, base_url=BASE_URL, local_dir=None):
 
 
 def load_coe(ticker, *, base_url=BASE_URL, local_dir=None):
-    """Per-company COE components (annual decimals, by tenor). Verifies the
-    exact-additive decomposition rf+erp+credit+idio == real_coe."""
-    fname = f"coe_{ticker.upper()}_annual.csv"
-    need = ["tenor", "real_rf", "market_erp", "credit_relative",
+    """Per-company COE components, V2 feed (annual decimals, by tenor). Reads the
+    V2 file coe_v2_<TICKER>_latest_annual.csv, whose grid may run past tenor 30
+    (sliced to 1..30 here). Verifies the exact-additive V2 decomposition
+    rf + erp + idio == real_coe (no separate credit_relative term in V2)."""
+    fname = f"coe_v2_{ticker.upper()}_latest_annual.csv"
+    need = ["tenor", "real_rf", "market_erp",
             "idiosyncratic", "company_erp", "real_coe"]
     fields, rows = _read_rows(_fetch_text(fname, base_url=base_url, local_dir=local_dir), fname)
     _require_cols(fields, need, fname)
     ser = _tenor_series(rows, need, fname)
     for i in range(N_TENORS):
         parts = (ser["real_rf"][i] + ser["market_erp"][i]
-                 + ser["credit_relative"][i] + ser["idiosyncratic"][i])
+                 + ser["idiosyncratic"][i])
         if abs(parts - ser["real_coe"][i]) > DECOMP_TOL:
             raise RateFeedError(
                 f"[{fname}] tenor {i+1}: additive decomposition broken "
-                f"(rf+erp+credit+idio={parts:.8f} vs real_coe={ser['real_coe'][i]:.8f}, "
+                f"(rf+erp+idio={parts:.8f} vs real_coe={ser['real_coe'][i]:.8f}, "
                 f"diff={parts-ser['real_coe'][i]:.2e} > {DECOMP_TOL:.0e})")
     return ser
 
@@ -288,11 +298,10 @@ def load_all(ticker, cash, sti, *, base_url=BASE_URL, local_dir=None,
         "real_rf_fwd1y":      curve["real_fwd1y"],
         "exp_inflation_spot": curve["exp_inflation"],
         "exp_inflation_fwd1y": curve["exp_inflation_fwd1y"],
-        # per-company COE routing
+        # per-company COE routing (V2: no credit_relative term)
         "market_erp":         coe["market_erp"],       # feed engine ERP row
-        "idiosyncratic":      coe["idiosyncratic"],     # disclosed premium
-        "credit_relative":    coe["credit_relative"],   # DROPPED (diag only)
-        "real_coe_published":  coe["real_coe"],         # cross-check only
+        "idiosyncratic":      coe["idiosyncratic"],     # firm term (Martin-Wagner)
+        "real_coe_published":  coe["real_coe"],         # = rf+erp+idio (cross-check / headline option)
     }
     if bonded:
         cod = load_cod(ticker, base_url=base_url, local_dir=local_dir)

@@ -159,8 +159,15 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
 
     # --- research-note summary (headline value, implied expectations, reformulation)
     summary = [(field, _scalar(wb, name)) for name, field in SUMMARY_NAMES]
+    # Headline intrinsic value = firm-specific-risk-INCLUDED value. When the Option-A
+    # disclosure ran, report the adjusted equity (market-value debt + idiosyncratic
+    # haircut) as intrinsic_value_ps instead of the idio-free tied base. The tied base
+    # remains available as disclosure.base_equity_ps for cross-checks.
+    if disclosure and isinstance(disclosure.get("adjusted_equity_ps"), (int, float)):
+        summary = [(f, disclosure["adjusted_equity_ps"] if f == "intrinsic_value_ps" else v)
+                   for f, v in summary]
     if "val_active" in [n for n, _ in SUMMARY_NAMES] and results.get("equity_value") is not None:
-        va = _scalar(wb, "val_active"); rp = _scalar(wb, "val_realprice")
+        va = dict(summary).get("intrinsic_value_ps"); rp = _scalar(wb, "val_realprice")
         if isinstance(va, (int, float)) and isinstance(rp, (int, float)) and rp:
             summary.append(("upside_downside", va / rp - 1))
     _write_kv(os.path.join(out_dir, f"{ticker}_summary.csv"), summary)

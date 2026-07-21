@@ -94,7 +94,7 @@ Inputs monthly, real, aligned. `E` = real TTM EPS; `b = 1 - D/E` (may be `<0` or
 
 ## 5. Validation
 
-1. `python valuation/normalization/normalization_engine.py` -> prints max rel err ~1e-15 for all
+1. `python normalization/normalization_engine.py` -> prints max rel err ~1e-15 for all
    three modes and an exact forecast round-trip. **Wired into CI** (`test_regression.py` Stage 1).
 2. **Regression (pending fixture):** `normalize_series(E_real, retention_b, COE_r, X=4,
    mode="forward")["normalized"]` must reproduce the `normalized_X4` column of the golden fixture

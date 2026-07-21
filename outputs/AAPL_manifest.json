@@ -1,14 +1,14 @@
 {
   "ticker": "AAPL",
   "config_hash": "80e5fcb7cc6a0fda",
-  "data_vintage": "2026-07-20T20:25Z",
+  "data_vintage": "2026-07-21T18:02Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 1.51885615196079e-09,
+    "max_identity_tie": 2.40106601268053e-09,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,16 +22,16 @@
     "rd_reserve_nonzero_but_inert": true
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 1.51885615196079e-09,
-  "equity_value": 163.069270502068,
-  "enterprise_value": 163.069270502068,
+  "max_identity_tie": 2.40106601268053e-09,
+  "equity_value": 165.990562003494,
+  "enterprise_value": 165.990562003494,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 163.069270502068,
-    "adjusted_equity_ps": 136.16195294792948,
+    "base_equity_ps": 165.990562003494,
+    "adjusted_equity_ps": 138.19538194864546,
     "debt_capital_gain_ps": 2.87246803450946,
-    "idiosyncratic_haircut_ps": 29.779785588647997
+    "idiosyncratic_haircut_ps": 30.66764808935801
   },
   "outputs": [
     "AAPL_anchors.csv",

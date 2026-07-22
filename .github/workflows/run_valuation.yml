@@ -66,7 +66,9 @@ jobs:
               print(f"::error::{e}"); sys.exit(1)
           cfg = os.path.join("companies", f"{ticker}.yaml")
           if not os.path.exists(cfg):
-              print(f"::error::no config for {ticker} ({cfg}). Onboard the ticker first.")
+              print(f"::error::no config for {ticker} ({cfg}). Onboard it first: "
+                    f"python pipeline/onboard.py {ticker} --check-only  (then without --check-only). "
+                    f"If that reports NOT READY, the rate side must publish coe_v2_{ticker} first.")
               sys.exit(1)
           drivers = sorted((p.get("drivers") or {}))
           held = sorted(set(AP.DRIVER_ROWS) - set(drivers))

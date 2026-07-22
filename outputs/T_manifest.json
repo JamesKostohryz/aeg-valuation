@@ -1,7 +1,7 @@
 {
   "ticker": "T",
   "config_hash": "c890f2fe69d3f7ad",
-  "data_vintage": "2026-07-21T18:02Z",
+  "data_vintage": "2026-07-22T03:52Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -41,6 +41,10 @@
     "T_reported_is.csv",
     "T_reported_bs.csv",
     "T_reported_cf.csv",
-    "T_restated.csv"
+    "T_restated.csv",
+    "T_fact_sheet.csv",
+    "T_restated_bs.csv",
+    "T_restated_is.csv",
+    "T_aeg_schedule.csv"
   ]
 }

@@ -1,7 +1,7 @@
 {
   "ticker": "AAPL",
   "config_hash": "80e5fcb7cc6a0fda",
-  "data_vintage": "2026-07-21T18:02Z",
+  "data_vintage": "2026-07-22T03:52Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -41,6 +41,10 @@
     "AAPL_reported_is.csv",
     "AAPL_reported_bs.csv",
     "AAPL_reported_cf.csv",
-    "AAPL_restated.csv"
+    "AAPL_restated.csv",
+    "AAPL_fact_sheet.csv",
+    "AAPL_restated_bs.csv",
+    "AAPL_restated_is.csv",
+    "AAPL_aeg_schedule.csv"
   ]
 }

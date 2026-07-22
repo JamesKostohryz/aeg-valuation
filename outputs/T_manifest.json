@@ -1,7 +1,7 @@
 {
   "ticker": "T",
   "config_hash": "c890f2fe69d3f7ad",
-  "data_vintage": "2026-07-22T18:03Z",
+  "data_vintage": "2026-07-22T20:07Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",

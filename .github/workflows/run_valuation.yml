@@ -1,0 +1,114 @@
+name: run-valuation (cockpit RUN button)
+
+# Dispatch-ONLY. Driven by the Cost of Capital cockpit's RUN button via the Apps Script
+# (COCKPIT dispatch contract 20260722-0800). Deliberately separate from valuation.yml:
+# that one is the CI path (fires on push), and a malformed payload here must never be able
+# to redden CI.
+#
+# workflow_dispatch inputs are strings, so the WHOLE payload rides as ONE JSON string:
+#   { "ticker": "AAPL", "mode": "Equity"|"Enterprise", "N": 1..30,
+#     "drivers": { revenue_growth|gross_margin|sga_ratio|da_rate|tax_rate|
+#                  buyback_rate|capex_ratio|noa_growth : [ ..N values.. ] },
+#     "singles": { "payout": <num>, "target_flev": <num> } }
+#
+# A driver ABSENT from `drivers` is not written at all, so it keeps its existing formula
+# (hold flat at the FY0 anchor, or the legacy scenario overlay). That is what makes a
+# legacy run bit-identical — verified: empty payload reproduces the engine to the digit.
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: "AEG forecast payload (JSON)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: run-valuation
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install LibreOffice (headless recalc)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-calc
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Fail fast on a malformed payload BEFORE building anything, so a bad button press
+      # costs seconds and produces a readable error instead of a mid-pipeline traceback.
+      - name: Validate payload
+        env:
+          PAYLOAD: ${{ inputs.payload }}
+        run: |
+          python - <<'EOF'
+          import json, os, sys
+          sys.path.insert(0, "pipeline"); sys.path.insert(0, ".")
+          import apply_payload as AP
+          raw = os.environ["PAYLOAD"]
+          try:
+              p = AP.load_payload(raw)
+              ticker, mode, N = AP.validate_payload(p)
+          except AP.PayloadError as e:
+              print(f"::error::{e}"); sys.exit(1)
+          cfg = os.path.join("companies", f"{ticker}.yaml")
+          if not os.path.exists(cfg):
+              print(f"::error::no config for {ticker} ({cfg}). Onboard the ticker first.")
+              sys.exit(1)
+          drivers = sorted((p.get("drivers") or {}))
+          held = sorted(set(AP.DRIVER_ROWS) - set(drivers))
+          print(f"payload OK: {ticker} mode={mode} N={N}")
+          print(f"  drivers supplied : {drivers or '(none)'}")
+          print(f"  held at anchor   : {held or '(none)'}")
+          with open(os.environ["GITHUB_ENV"], "a") as fh:
+              fh.write(f"TICKER={ticker}\n")
+          with open("payload.json", "w") as fh:
+              json.dump(p, fh)
+          EOF
+
+      # Build -> re-point rates from the live feed -> apply payload -> recalc -> GATES.
+      # run_company fails non-zero if the completeness/provenance gates or the standing
+      # four-method tie check fail, so a payload that breaks the model cannot be committed.
+      - name: Run valuation
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+        run: |
+          python pipeline/run_company.py "companies/${TICKER}.yaml" \
+            --rate-feed-live \
+            --payload payload.json \
+            --vintage "run-$(date -u +%FT%TZ)"
+
+      - name: Commit outputs
+        run: |
+          git config user.name "aeg-bot"
+          git config user.email "aeg-bot@users.noreply.github.com"
+          git add outputs/
+          git commit -m "run: ${TICKER} forecast valuation $(date -u +%F)" || echo "no changes to commit"
+          git pull --rebase --autostash origin main || true
+          git push
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### RUN valuation — ${TICKER}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f "outputs/${TICKER}_summary.csv" ]; then
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat "outputs/${TICKER}_summary.csv" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "_no summary produced — the run failed a gate; see the log above._" >> $GITHUB_STEP_SUMMARY
+          fi

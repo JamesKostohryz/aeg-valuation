@@ -16,6 +16,7 @@ Pipeline (every stage deterministic, fail-loud):
 The engine + restatement stay in the sealed Excel; this job orchestrates and gates them.
 """
 import os, sys, argparse, shutil
+import openpyxl
 
 # make the build_v2 modules importable when run from the pipeline/ dir
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -118,6 +119,7 @@ def main():
                     help="fetch rate CSVs from the live rate-infra repo (production)")
     ap.add_argument("--price", type=float, help="explicit price (repro/test)")
     ap.add_argument("--vintage", default="unset", help="data vintage tag for the manifest")
+    ap.add_argument("--payload", help="RUN-button forecast payload: JSON string or path to .json")
     args = ap.parse_args()
 
     cfg = CFG.load_config(args.config)
@@ -162,6 +164,30 @@ def main():
         except RF.RateFeedError as e:
             print(f"[rates] feed unavailable/invalid ({e}); keeping build-time rates")
             feed = None
+
+    # --- optional RUN-button forecast payload (cockpit dispatch contract 20260722-0800).
+    # Applied AFTER the rate re-point so nominal growth drivers are deflated with the very
+    # inflation series the engine discounts against. Drivers absent from the payload are NOT
+    # written, so they keep their existing formula (anchor hold / legacy scenario overlay) and
+    # a payload-free run stays bit-identical. The gates below remain authoritative.
+    payload_report = None
+    if args.payload:
+        import apply_payload as AP
+        try:
+            payload = AP.load_payload(args.payload)
+            vals = openpyxl.load_workbook(out_xlsx, data_only=True)
+            infl = AP.engine_inflation(vals, int(payload.get("N") or 0) or 1)
+            wbp = openpyxl.load_workbook(out_xlsx, data_only=False)
+            payload_report = AP.apply_payload(wbp, payload, infl)
+            wbp.save(out_xlsx)
+            recalc(out_xlsx)
+        except AP.PayloadError as e:
+            _fail(f"PAYLOAD REJECTED: {e}")
+        if payload_report["ticker"] != tk:
+            _fail(f"payload ticker {payload_report['ticker']!r} != config ticker {tk!r}")
+        print(f"[payload] mode={payload_report['mode']} N={payload_report['N']} "
+              f"wrote={sorted(payload_report['written'])} "
+              f"held_at_anchor={payload_report['held_at_anchor']}")
 
     # --- GATES (required check): completeness/provenance, THEN the standing tie check
     results = AE.read_results(out_xlsx, price=price)

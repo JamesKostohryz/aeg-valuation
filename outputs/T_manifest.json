@@ -1,14 +1,14 @@
 {
   "ticker": "T",
   "config_hash": "c890f2fe69d3f7ad",
-  "data_vintage": "2026-07-22T03:52Z",
+  "data_vintage": "2026-07-22T18:03Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 1.61799107445404e-09,
+    "max_identity_tie": 9.56788426265121e-10,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,16 +22,16 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 1.61799107445404e-09,
-  "equity_value": 53.3135014054734,
-  "enterprise_value": 53.3135014054734,
+  "max_identity_tie": 9.56788426265121e-10,
+  "equity_value": 55.8307791935018,
+  "enterprise_value": 55.8307791935018,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 53.3135014054734,
-    "adjusted_equity_ps": 46.224704012854765,
+    "base_equity_ps": 55.8307791935018,
+    "adjusted_equity_ps": 48.02424594357466,
     "debt_capital_gain_ps": 1.6536761933583648,
-    "idiosyncratic_haircut_ps": 8.742473585977002
+    "idiosyncratic_haircut_ps": 9.4602094432855
   },
   "outputs": [
     "T_anchors.csv",

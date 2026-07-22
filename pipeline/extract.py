@@ -197,6 +197,20 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
             _dump_grid(wb[tab], os.path.join(out_dir, fn), start)
             stmt_files.append(fn)
 
+    # --- cockpit feeds (COCKPIT blueprint 20260721-2203 task 3). Each is fail-SOFT: a feed
+    #     that can't be produced logs and is skipped, never aborting the valuation run.
+    extra_files = []
+    for label, fn_call in (
+        ("fact-sheet", lambda: __import__("fact_sheet").write_fact_sheet(engine_path, ticker, out_dir)),
+        ("restated-split", lambda: __import__("restated_split").write_restated(engine_path, ticker, out_dir)),
+        ("aeg-schedule", lambda: __import__("aeg_schedule").write_aeg_schedule(engine_path, ticker, out_dir)),
+    ):
+        try:
+            produced = fn_call()
+            extra_files += ([produced] if isinstance(produced, str) else list(produced))
+        except Exception as e:
+            print(f"[{label}] skipped ({e})")
+
     # --- manifest
     manifest = {
         "ticker": ticker,
@@ -218,7 +232,7 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
             "idiosyncratic_haircut_ps": disclosure.get("idiosyncratic_haircut_ps"),
         }),
         "outputs": [f"{ticker}_anchors.csv", f"{ticker}_valuation.csv",
-                    f"{ticker}_summary.csv", f"{ticker}_restated_real.csv"] + stmt_files,
+                    f"{ticker}_summary.csv", f"{ticker}_restated_real.csv"] + stmt_files + extra_files,
     }
     with open(os.path.join(out_dir, f"{ticker}_manifest.json"), "w") as fh:
         json.dump(manifest, fh, indent=2, default=str)

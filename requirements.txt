@@ -1,0 +1,6 @@
+# AEG valuation — Python dependency source of truth (all workflows: run_valuation.yml,
+# valuation.yml, regression.yml). The run_company / apply_payload valuation path needs
+# openpyxl + PyYAML; the normalization engine (company setup / onboarding) needs numpy.
+openpyxl==3.1.5
+PyYAML
+numpy

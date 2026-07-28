@@ -146,6 +146,19 @@ def main():
     from recalc_lo import recalc
     recalc(out_xlsx)
 
+    # --- optional payload 'bonded' override (RUN-button toggle for one-off UNBONDED cod
+    #     tie-checks; does NOT edit the committed company config). Parsed early because
+    #     bonded gates the rate re-point below. Absent -> the committed config's bonded.
+    if args.payload:
+        try:
+            import apply_payload as _APB
+            _peek = _APB.load_payload(args.payload)
+            if isinstance(_peek, dict) and _peek.get("bonded") is not None:
+                cfg["bonded"] = bool(_peek["bonded"])
+                print(f"[payload] bonded override -> {cfg['bonded']}")
+        except Exception:
+            pass
+
     # --- optional rate re-point (only if a feed is provided/available)
     disclosure = None
     feed = None

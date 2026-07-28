@@ -157,6 +157,43 @@ def main():
         try:
             feed = RF.load_all(tk, cash=cash, sti=sti, local_dir=args.rate_feed_dir,
                                bonded=cfg["bonded"])  # local_dir=None -> live repo fetch
+            # Cost-of-debt provenance + generalized (unbonded) fallback (ERP ladder ratified
+            # 2026-07-25): issuer_bonds -> published -> synthetic coverage rating. Unbonded keeps
+            # the build-time BOOK NFO; only real_cod is supplied from the rating curve.
+            if "real_cod" in feed:                       # issuer bonds present (GREEN)
+                feed["cod_provenance"] = {"cod_source": "issuer_bonds", "rating": feed.get("cod_rating"),
+                                          "coverage": None, "audit": "GREEN", "as_of": args.vintage,
+                                          "flags": []}
+            else:                                        # unbonded -> rating-curve fallback (synthetic)
+                import cod_fallback as CF
+                vwb = openpyxl.load_workbook(out_xlsx, data_only=True)
+
+                def _dn(name):
+                    # scalar value of a defined name; if it points at a range, take the last
+                    # numeric (latest period); tolerate a missing name (-> None).
+                    try:
+                        sheet, coord = list(vwb.defined_names[name].destinations)[0]
+                        cells = vwb[sheet][coord]
+                        if isinstance(cells, tuple):
+                            nums = [c.value for r in cells for c in (r if isinstance(r, tuple) else (r,))
+                                    if isinstance(c.value, (int, float))]
+                            return nums[-1] if nums else None
+                        return cells.value
+                    except Exception:
+                        return None
+                fundamentals = dict(ebit=_dn("in_oiadj0"), interest_expense=_dn("in_intexp0"),
+                                    total_debt=_dn("in_debt"), assets=_dn("rep_total_assets"))
+                curve = CF.load_credit_curve(local_dir=args.rate_feed_dir)
+                real_cod, prov = CF.resolve_cod(fundamentals=fundamentals, curve=curve,
+                                                real_rf=feed["real_rf_fwd1y"])
+                if not prov.get("spread_nonneg", True):
+                    _fail(f"cod validation gate: negative spread vs real_rf on the rating curve ({prov['flags']})")
+                prov["as_of"] = args.vintage
+                feed["real_cod"] = real_cod
+                feed["cod_rating"] = prov["rating"]
+                feed["cod_provenance"] = prov
+                print(f"[cod] unbonded fallback: {prov['cod_source']} rating={prov['rating']} "
+                      f"coverage={prov['coverage']} audit={prov['audit']} flags={prov['flags']}")
             RP.repoint(wb, feed)
             wb.save(out_xlsx)
             recalc(out_xlsx)
@@ -239,6 +276,20 @@ def main():
                                   config_hash=cfg["config_hash"], vintage=args.vintage,
                                   disclosure=disclosure)
     print(f"[extract] wrote {', '.join(manifest['outputs'])} + {tk}_manifest.json to {args.out_dir}")
+    # cost-of-debt provenance -> manifest (audit tab: cod_source / rating / coverage / audit / as_of)
+    if feed is not None and feed.get("cod_provenance"):
+        import json as _json
+        _mp = os.path.join(args.out_dir, f"{tk}_manifest.json")
+        try:
+            with open(_mp) as _fh:
+                _mj = _json.load(_fh)
+            _mj["cost_of_debt"] = feed["cod_provenance"]
+            with open(_mp, "w") as _fh:
+                _json.dump(_mj, _fh, indent=2)
+            print(f"[cod] provenance -> manifest: {feed['cod_provenance']['cod_source']} "
+                  f"{feed['cod_provenance']['audit']} rating={feed['cod_provenance']['rating']}")
+        except Exception as _e:
+            print(f"[cod] manifest provenance skip ({_e})")
     print(f"[done] {tk}  equity={results.get('equity_value')}  tie={tie}")
 
 

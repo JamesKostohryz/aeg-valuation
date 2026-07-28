@@ -60,13 +60,22 @@ def resolve_cod(*, bonded_cod=None, bonded_rating=None, published_rating=None,
         if prov["rating"] not in curve:
             raise ValueError(f"resolve_cod: rating {prov['rating']!r} not in credit curve {list(curve)}")
         real_cod = [float(x) for x in curve[prov["rating"]]]
-    # validation gate: spread >= 0 (real_cod >= real_rf) per tenor
+    # validation gate: spread >= 0 (real_cod >= real_rf) per tenor.
     if real_rf is not None:
         neg = [i + 1 for i, (c, rf) in enumerate(zip(real_cod, real_rf)) if c < rf - 1e-9]
-        prov["spread_nonneg"] = (len(neg) == 0)
-        if neg:
-            prov["audit"] = "RED"
-            prov["flags"].append(f"negative_spread_tenors:{neg[:5]}")
+        de_minimis = "de_minimis_debt" in prov.get("flags", [])
+        if neg and de_minimis:
+            # Net-cash / de-minimis name: the design intent is cod ~= rf, spread pinned to >= 0.
+            # FLOOR at rf (not abort) where the AAA curve dips a hair below the coe_v2-side rf.
+            real_cod = [max(c, rf) for c, rf in zip(real_cod, real_rf)]
+            prov["flags"].append(f"de_minimis_floored_at_rf_tenors:{neg[:5]}")
+            prov["spread_nonneg"] = True  # floored -> spread == 0 there; AMBER (not RED)
+        else:
+            # A RATED (non-de-minimis) name below rf is a genuine error -> RED, caller aborts.
+            prov["spread_nonneg"] = (len(neg) == 0)
+            if neg:
+                prov["audit"] = "RED"
+                prov["flags"].append(f"negative_spread_tenors:{neg[:5]}")
     prov["n_tenors"] = len(real_cod)
     return real_cod, prov
 

@@ -27,10 +27,19 @@ def test_ladder_and_gate():
     rc, p = resolve_cod(fundamentals=dict(ebit=50e9, interest_expense=0.0, total_debt=0.0, assets=300e9),
                         curve=c, real_rf=rf)
     assert p["rating"] == "AAA" and "de_minimis_debt" in p["flags"]
-    # gate catches a negative spread (cod below rf)
+    # gate catches a negative spread on a RATED name (cod below rf) -> RED
     rc, p = resolve_cod(bonded_cod=[x - 0.01 for x in rf], bonded_rating="A", real_rf=rf)
     assert p["spread_nonneg"] is False and p["audit"] == "RED"
-    print("cod ladder + gate OK")
+    # de-minimis / net-cash: AAA curve dipping below rf must FLOOR at rf, NOT abort.
+    # Simulate the AAPL edge: rf sits a hair ABOVE the AAA cod at one tenor.
+    rf_hi = list(c["AAA"]); rf_hi[1] = c["AAA"][1] + 0.005   # push rf above AAA at tenor 2
+    rc, p = resolve_cod(fundamentals=dict(ebit=50e9, interest_expense=0.0, total_debt=0.0, assets=300e9),
+                        curve=c, real_rf=rf_hi)
+    assert "de_minimis_debt" in p["flags"]
+    assert p["spread_nonneg"] is True and p["audit"] != "RED"
+    assert any("de_minimis_floored_at_rf" in f for f in p["flags"])
+    assert rc[1] >= rf_hi[1] - 1e-12   # floored to rf at the crossing tenor
+    print("cod ladder + gate + de-minimis floor OK")
 
 
 if __name__ == "__main__":

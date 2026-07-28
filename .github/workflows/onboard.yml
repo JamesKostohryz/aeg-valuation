@@ -1,0 +1,56 @@
+name: onboard (ticker -> config)
+
+# One-click onboarding for the AEG RUN loop (zero-touch ticker entry). Generates
+# companies/<TICKER>.yaml from the ticker's fundamentals + the published rate feeds, and commits it.
+# PREREQUISITE: the ticker's rate side must be published first (real-yields "company-data" run ->
+# coe_v2_<T> + cod_<T> + company_<T>). onboard.py refuses loudly (NOT READY) if that isn't in place.
+# After this lands, dispatch "run-valuation" for the ticker to prove it TIES.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ticker:
+        description: "Ticker to onboard (its coe_v2 must be published upstream first)"
+        required: true
+        type: string
+      force:
+        description: "Overwrite an existing companies/<TICKER>.yaml"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: onboard-${{ github.event.inputs.ticker }}
+  cancel-in-progress: false
+
+jobs:
+  onboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Onboard ticker (fail-closed if the rate side isn't published)
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+          TICKER: ${{ inputs.ticker }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          FLAG=""; [ "$FORCE" = "true" ] && FLAG="--force"
+          python pipeline/onboard.py "$TICKER" $FLAG
+      - name: Commit config
+        env:
+          TICKER: ${{ inputs.ticker }}
+        run: |
+          T=$(echo "$TICKER" | tr '[:lower:]' '[:upper:]')
+          git config user.name "aeg-bot"
+          git config user.email "aeg-bot@users.noreply.github.com"
+          git add "companies/${T}.yaml"
+          git commit -m "onboard: ${T} config" || { echo "no change to commit"; exit 0; }
+          git pull --rebase --autostash origin main || true
+          git push

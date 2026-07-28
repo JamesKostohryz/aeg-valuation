@@ -1,11 +1,11 @@
 field,value
-equity_value,46.9022687656076
-enterprise_value,46.9022687656076
-active_value,46.9022687656076
+equity_value,46.8999531761224
+enterprise_value,46.8999531761224
+active_value,46.8999531761224
 mode_tie,0
-max_identity_tie,7.55790097173303e-10
+max_identity_tie,1.70530256582424e-09
 audit_status,PASS — all identities tie
 tie_check,PASS
-adjusted_equity_ps,41.681354502498564
+adjusted_equity_ps,41.67653632929127
 debt_capital_gain_ps,1.6536761933583648
-idiosyncratic_haircut_ps,6.874590456467402
+idiosyncratic_haircut_ps,6.8770930401895

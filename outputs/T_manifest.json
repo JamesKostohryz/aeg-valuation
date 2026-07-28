@@ -1,14 +1,14 @@
 {
   "ticker": "T",
   "config_hash": "c890f2fe69d3f7ad",
-  "data_vintage": "2026-07-26T06:24Z",
+  "data_vintage": "2026-07-28T19:14Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 7.55790097173303e-10,
+    "max_identity_tie": 1.70530256582424e-09,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,16 +22,16 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 7.55790097173303e-10,
-  "equity_value": 46.9022687656076,
-  "enterprise_value": 46.9022687656076,
+  "max_identity_tie": 1.70530256582424e-09,
+  "equity_value": 46.8999531761224,
+  "enterprise_value": 46.8999531761224,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 46.9022687656076,
-    "adjusted_equity_ps": 41.681354502498564,
+    "base_equity_ps": 46.8999531761224,
+    "adjusted_equity_ps": 41.67653632929127,
     "debt_capital_gain_ps": 1.6536761933583648,
-    "idiosyncratic_haircut_ps": 6.874590456467402
+    "idiosyncratic_haircut_ps": 6.8770930401895
   },
   "outputs": [
     "T_anchors.csv",
@@ -46,5 +46,13 @@
     "T_restated_bs.csv",
     "T_restated_is.csv",
     "T_aeg_schedule.csv"
-  ]
+  ],
+  "cost_of_debt": {
+    "cod_source": "issuer_bonds",
+    "rating": "BBB",
+    "coverage": null,
+    "audit": "GREEN",
+    "as_of": "2026-07-28T19:14Z",
+    "flags": []
+  }
 }

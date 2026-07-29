@@ -94,6 +94,28 @@ jobs:
             --out-dir outputs \
             --vintage "run-$(date -u +%FT%TZ)"
 
+      # On a tie/audit failure the recalced workbook holds the offending #N/A, but the
+      # Actions API can't inspect a recalced workbook. Surface it: dump the error cell(s),
+      # their formulas, precedent values, and the Minority-Interest row to the log and a
+      # <TICKER>_diag.json artifact. Runs ONLY on failure; a green run skips it. This is a
+      # permanent capability — every future ticker's tie/audit failure is now log-diagnosable.
+      - name: Diagnose tie/audit failure
+        if: failure()
+        run: |
+          mkdir -p outputs
+          python pipeline/diagnose_tie.py "pipeline/_work/${TICKER}_engine.xlsx" \
+            --ticker "${TICKER}" --json "outputs/${TICKER}_diag.json" || true
+
+      - name: Upload diagnostic artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.TICKER }}_diag
+          path: |
+            outputs/${{ env.TICKER }}_diag.json
+            pipeline/_work/${{ env.TICKER }}_engine.xlsx
+          if-no-files-found: warn
+
       - name: Commit outputs
         run: |
           git config user.name "aeg-bot"

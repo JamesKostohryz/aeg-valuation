@@ -1,14 +1,14 @@
 {
   "ticker": "HD",
   "config_hash": "a2d6e5a338abf245",
-  "data_vintage": "run-2026-07-29T16:47:43Z",
+  "data_vintage": "2026-07-29T17:50Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 7.14237557986053e-10,
+    "max_identity_tie": 5.58338797418401e-09,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,16 +22,16 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 7.14237557986053e-10,
-  "equity_value": 309.269050612972,
-  "enterprise_value": 309.269050612972,
+  "max_identity_tie": 5.58338797418401e-09,
+  "equity_value": 907.313001854294,
+  "enterprise_value": 907.313001854294,
   "mode_tie": 0,
   "anchor_year": 2026,
   "disclosure": {
-    "base_equity_ps": 309.269050612972,
-    "adjusted_equity_ps": 297.3721299618593,
+    "base_equity_ps": 907.313001854294,
+    "adjusted_equity_ps": 834.7805506001762,
     "debt_capital_gain_ps": 7.507302469945259,
-    "idiosyncratic_haircut_ps": 19.40422312105801
+    "idiosyncratic_haircut_ps": 80.03975372406308
   },
   "outputs": [
     "HD_anchors.csv",
@@ -52,7 +52,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "run-2026-07-29T16:47:43Z",
+    "as_of": "2026-07-29T17:50Z",
     "flags": []
   }
 }

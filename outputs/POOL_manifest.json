@@ -1,0 +1,58 @@
+{
+  "ticker": "POOL",
+  "config_hash": "561419bf80bbda9d",
+  "data_vintage": "2026-07-29T17:50Z",
+  "gates_ok": true,
+  "tie_check": {
+    "tie_check": "PASS",
+    "audit_ok": true,
+    "tie_ok": true,
+    "mode_ok": true,
+    "max_identity_tie": 1.06510356090439e-11,
+    "mode_tie": 0,
+    "tie_tol": 1e-08,
+    "reasons": []
+  },
+  "rd_wedge": {
+    "opex_wedge": -53.7176531715249,
+    "wedge_pct_ebit": 0.08609077892439802,
+    "rev_scaled_consistent": true,
+    "rd_reserve": 0,
+    "rd_capitalization_wired": false,
+    "rd_reserve_nonzero_but_inert": false
+  },
+  "audit_status": "PASS \u2014 all identities tie",
+  "max_identity_tie": 1.06510356090439e-11,
+  "equity_value": 194.85494459586,
+  "enterprise_value": 194.85494459586,
+  "mode_tie": 0,
+  "anchor_year": 2025,
+  "disclosure": {
+    "base_equity_ps": 194.85494459586,
+    "adjusted_equity_ps": 122.220392216761,
+    "debt_capital_gain_ps": 0.0,
+    "idiosyncratic_haircut_ps": 72.63455237909899
+  },
+  "outputs": [
+    "POOL_anchors.csv",
+    "POOL_valuation.csv",
+    "POOL_summary.csv",
+    "POOL_restated_real.csv",
+    "POOL_reported_is.csv",
+    "POOL_reported_bs.csv",
+    "POOL_reported_cf.csv",
+    "POOL_restated.csv",
+    "POOL_fact_sheet.csv",
+    "POOL_restated_bs.csv",
+    "POOL_restated_is.csv",
+    "POOL_aeg_schedule.csv"
+  ],
+  "cost_of_debt": {
+    "cod_source": "issuer_bonds",
+    "rating": "BBB",
+    "coverage": null,
+    "audit": "GREEN",
+    "as_of": "2026-07-29T17:50Z",
+    "flags": []
+  }
+}

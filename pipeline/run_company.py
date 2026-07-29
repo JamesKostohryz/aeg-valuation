@@ -159,6 +159,22 @@ def main():
         print(f"[deflator] anchor {_defl['anchor_year']} already covered "
               f"(cap-capex-guarded {_defl['cap_capex_wrapped']})")
 
+    # Point the reported-FY0 reconciliation anchors (Audit CHECK-4b) at the ACTUAL
+    # anchor-year column. The template hardcodes them to the last column (AP), which is
+    # only correct when the newest fiscal year fills AP (long histories: AAPL/HD/T). A
+    # shorter-history issuer (e.g. POOL, newest year in AK) leaves AP blank, reddening the
+    # audit on an otherwise-tying model. No-op for AP-anchored names. Runs before recalc.
+    import repoint_fy0 as F0
+    try:
+        _f0 = F0.repoint_anchor_columns(out_xlsx, anchor_year=rep["anchor_year"])
+    except F0.Fy0Error as e:
+        _fail(f"FY0 anchor repoint failed (reconciliation cannot target the anchor year): {e}")
+    if _f0["moved"]:
+        print(f"[fy0] repointed reconciliation anchors to the {_f0['anchor_year']} "
+              f"column: {_f0['moved']}")
+    else:
+        print(f"[fy0] reconciliation anchors already at the {_f0['anchor_year']} column")
+
     from recalc_lo import recalc
     recalc(out_xlsx)
 

@@ -205,9 +205,35 @@ def _yearly(fund, statement):
     return best  # {year:int -> (date_str, obj)}
 
 
+_FY0_INC_ANCHOR = "netIncomeApplicableToCommonShares"   # gate critical line: Net Income Common Stockholders
+_FY0_BAL_ANCHOR = "cashAndEquivalents"                   # gate critical line: Cash And Cash Equivalents
+
 def _fy0(*year_dicts):
-    maxes = [max(d) for d in year_dicts if d]
-    return min(maxes) if maxes else None
+    """Newest fiscal year to anchor on. EODHD routinely publishes a partial/stub LATEST year
+    (blank net-income-to-common / cash at FY0), which trips the completeness gate. Anchor on the
+    newest year that is COMPLETE across statements (income net-income-to-common AND balance cash
+    present) -- a no-op when the latest year is already complete (bit-identical for AAPL/T), and the
+    general fix for any lagged feed. Falls back to the newest shared year if none qualifies (the
+    fail-closed completeness gate still catches a genuinely broken feed)."""
+    present = [d for d in year_dicts if d]
+    if not present:
+        return None
+    top = min(max(d) for d in present)
+    inc = year_dicts[0] if len(year_dicts) > 0 else {}
+    bal = year_dicts[1] if len(year_dicts) > 1 else {}
+    shared = set(inc) & set(bal)
+    for d in year_dicts[2:]:
+        if d:
+            shared &= set(d)
+    def _complete(y):
+        io, bo = inc.get(y), bal.get(y)
+        return bool(io) and bool(bo) \
+            and _num(io[1].get(_FY0_INC_ANCHOR)) is not None \
+            and _num(bo[1].get(_FY0_BAL_ANCHOR)) is not None
+    for y in sorted((y for y in shared if y <= top), reverse=True)[:8]:
+        if _complete(y):
+            return y
+    return top
 
 
 def build_statement(year_dict, mapping, fy0, cap, positive=None, negative=None,

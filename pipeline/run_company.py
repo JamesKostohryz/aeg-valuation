@@ -143,6 +143,22 @@ def main():
     print(f"[build] anchor {rep['anchor_year']}  COD {rep['cost_of_debt']['source']}"
           f"{'  [FLAGGED fallback]' if rep.get('cod_flagged') else ''}")
 
+    # Keep the real-terms deflator tables (CPI-U + BEA PP&E) covering the anchor fiscal
+    # year using monthly FRED CPI-U, and IFERROR-guard the cap-engine capex window. Must
+    # run BEFORE recalc so the real-terms lookups resolve. Fail-closed on a missing CPI.
+    import deflator_extend as DE
+    try:
+        _defl = DE.ensure_deflator_covers_anchor(
+            out_xlsx, anchor_year=rep["anchor_year"], fy_end_month=cfg["fy_end_month"])
+    except DE.DeflatorError as e:
+        _fail(f"deflator extension failed (real-terms base cannot cover the anchor): {e}")
+    if _defl.get("extended"):
+        print(f"[deflator] extended to {_defl['anchor_year']} via monthly CPI "
+              f"(cap-capex-guarded {_defl['cap_capex_wrapped']}): {_defl['added']}")
+    else:
+        print(f"[deflator] anchor {_defl['anchor_year']} already covered "
+              f"(cap-capex-guarded {_defl['cap_capex_wrapped']})")
+
     from recalc_lo import recalc
     recalc(out_xlsx)
 

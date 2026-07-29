@@ -63,19 +63,21 @@ def resolve_cod(*, bonded_cod=None, bonded_rating=None, published_rating=None,
     # validation gate: spread >= 0 (real_cod >= real_rf) per tenor.
     if real_rf is not None:
         neg = [i + 1 for i, (c, rf) in enumerate(zip(real_cod, real_rf)) if c < rf - 1e-9]
-        de_minimis = "de_minimis_debt" in prov.get("flags", [])
-        if neg and de_minimis:
-            # Net-cash / de-minimis name: the design intent is cod ~= rf, spread pinned to >= 0.
-            # FLOOR at rf (not abort) where the AAA curve dips a hair below the coe_v2-side rf.
+        if neg and prov.get("cod_source") == "issuer_bonds":
+            # A TRADED issuer bond priced below the real risk-free is a genuine anomaly -> RED, abort.
+            prov["spread_nonneg"] = False
+            prov["audit"] = "RED"
+            prov["flags"].append(f"issuer_bond_below_rf_tenors:{neg[:5]}")
+        elif neg:
+            # Rating-curve path (synthetic/published): real_cod_<rating> is >= the credit curve's OWN
+            # real_fwd BY CONSTRUCTION (spread >= 0), so a dip below the coe_v2-side real_rf is basis
+            # noise between the two real-rf series -> FLOOR at rf (spread pinned to 0). Covers de-minimis
+            # (net-cash AAA) AND any high grade (a levered AAA/AA whose tiny credit spread < the basis gap).
             real_cod = [max(c, rf) for c, rf in zip(real_cod, real_rf)]
-            prov["flags"].append(f"de_minimis_floored_at_rf_tenors:{neg[:5]}")
-            prov["spread_nonneg"] = True  # floored -> spread == 0 there; AMBER (not RED)
+            prov["flags"].append(f"floored_at_rf_tenors:{neg[:5]}")
+            prov["spread_nonneg"] = True
         else:
-            # A RATED (non-de-minimis) name below rf is a genuine error -> RED, caller aborts.
-            prov["spread_nonneg"] = (len(neg) == 0)
-            if neg:
-                prov["audit"] = "RED"
-                prov["flags"].append(f"negative_spread_tenors:{neg[:5]}")
+            prov["spread_nonneg"] = True
     prov["n_tenors"] = len(real_cod)
     return real_cod, prov
 

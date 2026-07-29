@@ -37,8 +37,13 @@ def test_ladder_and_gate():
                         curve=c, real_rf=rf_hi)
     assert "de_minimis_debt" in p["flags"]
     assert p["spread_nonneg"] is True and p["audit"] != "RED"
-    assert any("de_minimis_floored_at_rf" in f for f in p["flags"])
+    assert any("floored_at_rf" in f for f in p["flags"])
     assert rc[1] >= rf_hi[1] - 1e-12   # floored to rf at the crossing tenor
+    # RATED high-grade (levered) with a small dip below rf (basis noise) must FLOOR, not abort.
+    rf_hi2 = list(c["AA"]); rf_hi2[0] = c["AA"][0] + 0.003   # rf just above AA cod at tenor 1
+    rc, p = resolve_cod(published_rating="AA", curve=c, real_rf=rf_hi2)
+    assert p["cod_source"] == "published" and p["spread_nonneg"] is True and p["audit"] != "RED"
+    assert any("floored_at_rf" in f for f in p["flags"])
     print("cod ladder + gate + de-minimis floor OK")
 
 

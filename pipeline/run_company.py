@@ -146,9 +146,10 @@ def main():
     from recalc_lo import recalc
     recalc(out_xlsx)
 
-    # --- optional payload 'bonded' override (RUN-button toggle for one-off UNBONDED cod
-    #     tie-checks; does NOT edit the committed company config). Parsed early because
-    #     bonded gates the rate re-point below. Absent -> the committed config's bonded.
+    # --- optional payload overrides parsed early: 'bonded' (gates the rate re-point) and
+    #     'erp_override' (cockpit ERP-method selector: COE = model real_rf + erp_override).
+    #     Neither edits the committed company config; absent -> committed behaviour (bit-identical).
+    _erp_override = None
     if args.payload:
         try:
             import apply_payload as _APB
@@ -156,6 +157,8 @@ def main():
             if isinstance(_peek, dict) and _peek.get("bonded") is not None:
                 cfg["bonded"] = bool(_peek["bonded"])
                 print(f"[payload] bonded override -> {cfg['bonded']}")
+            if isinstance(_peek, dict) and _peek.get("erp_override") is not None:
+                _erp_override = float(_peek["erp_override"])
         except Exception:
             pass
 
@@ -208,6 +211,10 @@ def main():
                 print(f"[cod] unbonded fallback: {prov['cod_source']} rating={prov['rating']} "
                       f"coverage={prov['coverage']} audit={prov['audit']} flags={prov['flags']}")
             RP.repoint(wb, feed)
+            if _erp_override is not None:
+                RP.apply_erp_override(wb, _erp_override)
+                feed["erp_override"] = _erp_override
+                print(f"[erp-override] COE = model real_rf + {_erp_override} (company ERP flat; idio zeroed)")
             wb.save(out_xlsx)
             recalc(out_xlsx)
             print(f"[rates] re-pointed from feed (nfo_basis={feed['nfo_basis']})")
@@ -297,6 +304,9 @@ def main():
             with open(_mp) as _fh:
                 _mj = _json.load(_fh)
             _mj["cost_of_debt"] = feed["cod_provenance"]
+            if feed.get("erp_override") is not None:
+                _mj["erp_override"] = {"value": feed["erp_override"], "method": "override",
+                                       "note": "COE = model real_rf + erp_override (idio zeroed)"}
             with open(_mp, "w") as _fh:
                 _json.dump(_mj, _fh, indent=2)
             print(f"[cod] provenance -> manifest: {feed['cod_provenance']['cod_source']} "

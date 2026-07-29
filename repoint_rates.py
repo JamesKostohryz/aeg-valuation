@@ -162,6 +162,16 @@ def set_idio(wb, series):
         MD.cell(r, c).value = float(series[i])
 
 
+def apply_erp_override(wb, erp_real):
+    """Cockpit ERP-method selector (CAPM / Custom): force the company ERP to a single flat value
+    over the MODEL real_rf. COE = real_rf + erp_override -- write the ERP row flat AND zero the
+    idiosyncratic hook so the override IS the whole premium (rf + the real-terms machinery are
+    untouched; identity flows through the same cells, so the four-method tie is preserved)."""
+    MD = wb[MD_SHEET]
+    _write_row(MD, ROW["erp"], [float(erp_real)] * (COLN - COL0 + 1), keep_font_from=COL0)
+    set_idio(wb, [0.0] * 30)
+
+
 def _redefine_name(wb, name, ref):
     """Redefine (or create) a workbook-scoped defined name to `ref`."""
     from openpyxl.workbook.defined_name import DefinedName

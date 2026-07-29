@@ -32,7 +32,7 @@ INCOME_MAP = [
     ("Interest Expense",                    "interestExpense"),
     ("Pretax Income",                       "incomeBeforeTax"),
     ("Tax Provision",                       "incomeTaxExpense"),
-    ("Net Income Common Stockholders",      "netIncomeApplicableToCommonShares"),
+    ("Net Income Common Stockholders",      ["netIncomeApplicableToCommonShares", "netIncome"]),
     ("Reconciled Depreciation",            "reconciledDepreciation"),
     ("EBITDA",                              "ebitda"),
     ("Tax Rate for Calcs",                 ("CALC", "taxrate")),   # incomeTaxExpense/incomeBeforeTax
@@ -44,7 +44,7 @@ INCOME_POSITIVE = {"Cost of Revenue", "Selling General and Administrative",
 # model label -> EODHD Balance_Sheet field
 BALANCE_MAP = [
     ("Total Assets",                        "totalAssets"),
-    ("Cash And Cash Equivalents",           "cashAndEquivalents"),
+    ("Cash And Cash Equivalents",           ["cashAndEquivalents", "cash"]),
     ("Other Short Term Investments",        "shortTermInvestments"),
     ("Net PPE",                             "propertyPlantAndEquipmentNet"),
     ("Gross PPE",                           "propertyPlantAndEquipmentGross"),
@@ -205,8 +205,8 @@ def _yearly(fund, statement):
     return best  # {year:int -> (date_str, obj)}
 
 
-_FY0_INC_ANCHOR = "netIncomeApplicableToCommonShares"   # gate critical line: Net Income Common Stockholders
-_FY0_BAL_ANCHOR = "cashAndEquivalents"                   # gate critical line: Cash And Cash Equivalents
+_FY0_INC_ANCHORS = ("netIncomeApplicableToCommonShares", "netIncome")  # gate line: Net Income Common Stockholders (+fallback)
+_FY0_BAL_ANCHORS = ("cashAndEquivalents", "cash")                      # gate line: Cash And Cash Equivalents (+fallback)
 
 def _fy0(*year_dicts):
     """Newest fiscal year to anchor on. EODHD routinely publishes a partial/stub LATEST year
@@ -228,8 +228,8 @@ def _fy0(*year_dicts):
     def _complete(y):
         io, bo = inc.get(y), bal.get(y)
         return bool(io) and bool(bo) \
-            and _num(io[1].get(_FY0_INC_ANCHOR)) is not None \
-            and _num(bo[1].get(_FY0_BAL_ANCHOR)) is not None
+            and any(_num(io[1].get(k)) is not None for k in _FY0_INC_ANCHORS) \
+            and any(_num(bo[1].get(k)) is not None for k in _FY0_BAL_ANCHORS)
     for y in sorted((y for y in shared if y <= top), reverse=True)[:8]:
         if _complete(y):
             return y

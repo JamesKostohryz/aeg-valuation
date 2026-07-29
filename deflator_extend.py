@@ -112,6 +112,34 @@ def _fetch_fred_csv(series_id, start, timeout, retries=3):
     return None, last
 
 
+def _fetch_bls(series_id="CUUR0000SA0", timeout=40, retries=2):
+    """Keyless BLS Public Data API v1. CUUR0000SA0 == CPI-U, US city avg, all items, NSA
+    (same index/base as FRED CPIAUCNS). Returns {date: value} or (None, err)."""
+    url = f"https://api.bls.gov/publicAPI/v1/timeseries/data/{series_id}"
+    last = None
+    for _ in range(retries + 1):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "aeg-valuation/1.0"})
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                data = json.load(r)
+            out = {}
+            for s in data.get("Results", {}).get("series", []):
+                for d in s.get("data", []):
+                    per = d.get("period", "")
+                    if not (per.startswith("M") and per != "M13"):
+                        continue
+                    try:
+                        out[datetime.date(int(d["year"]), int(per[1:]), 1)] = float(d["value"])
+                    except Exception:
+                        continue
+            if out:
+                return out
+            last = "BLS returned no monthly rows"
+        except Exception as e:
+            last = f"BLS failed: {e}"
+    return None, last
+
+
 def fetch_cpi_monthly(api_key=None, series_id=FRED_CPI_SERIES, start="2015-01-01", timeout=40):
     """Return {date: value} monthly CPI-U from FRED.
 
@@ -128,11 +156,15 @@ def fetch_cpi_monthly(api_key=None, series_id=FRED_CPI_SERIES, start="2015-01-01
         if isinstance(res, dict):
             return res
         errors.append(res[1])
-    res = _fetch_fred_csv(series_id, start, timeout)
+    res = _fetch_bls(timeout=timeout)          # keyless, CI-reliable
     if isinstance(res, dict):
         return res
     errors.append(res[1])
-    raise DeflatorError("could not fetch CPI-U from FRED (" + "; ".join(e for e in errors if e) + ")")
+    res = _fetch_fred_csv(series_id, start, timeout)   # keyless, may be throttled
+    if isinstance(res, dict):
+        return res
+    errors.append(res[1])
+    raise DeflatorError("could not fetch monthly CPI-U (" + "; ".join(e for e in errors if e) + ")")
 
 
 def _calendar_year_mean(monthly, year):

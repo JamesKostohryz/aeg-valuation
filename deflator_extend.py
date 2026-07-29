@@ -71,30 +71,11 @@ def _parse_fred_csv(text):
     return out
 
 
-def fetch_cpi_monthly(api_key=None, series_id=FRED_CPI_SERIES, start="2015-01-01", timeout=30):
-    """Return {date: value} monthly CPI-U from FRED.
-
-    Primary path is FRED's KEYLESS public CSV download (no secret needed). If that is
-    unreachable and a FRED_API_KEY is available, fall back to the authenticated JSON API.
-    Raises DeflatorError only if BOTH fail — the build must never proceed on a missing CPI.
-    """
-    errors = []
-    csv_url = (f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
-               f"&cosd={start}")
-    try:
-        req = urllib.request.Request(csv_url, headers={"User-Agent": "aeg-valuation/1.0"})
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            out = _parse_fred_csv(r.read().decode("utf-8"))
-        if out:
-            return out
-        errors.append("keyless CSV returned no rows")
-    except Exception as e:
-        errors.append(f"keyless CSV failed: {e}")
-
-    api_key = api_key if api_key is not None else os.environ.get("FRED_API_KEY")
-    if api_key:
-        url = (f"https://api.stlouisfed.org/fred/series/observations?series_id={series_id}"
-               f"&api_key={api_key}&file_type=json&observation_start={start}")
+def _fetch_fred_api(series_id, api_key, start, timeout, retries=2):
+    url = (f"https://api.stlouisfed.org/fred/series/observations?series_id={series_id}"
+           f"&api_key={api_key}&file_type=json&observation_start={start}")
+    last = None
+    for _ in range(retries + 1):
         try:
             with urllib.request.urlopen(url, timeout=timeout) as r:
                 data = json.load(r)
@@ -109,11 +90,49 @@ def fetch_cpi_monthly(api_key=None, series_id=FRED_CPI_SERIES, start="2015-01-01
                     continue
             if out:
                 return out
-            errors.append("keyed API returned no observations")
+            last = "keyed API returned no observations"
         except Exception as e:
-            errors.append(f"keyed API failed: {e}")
+            last = f"keyed API failed: {e}"
+    return None, last
 
-    raise DeflatorError("could not fetch CPI-U from FRED (" + "; ".join(errors) + ")")
+
+def _fetch_fred_csv(series_id, start, timeout, retries=3):
+    csv_url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}&cosd={start}"
+    last = None
+    for _ in range(retries + 1):
+        try:
+            req = urllib.request.Request(csv_url, headers={"User-Agent": "aeg-valuation/1.0"})
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                out = _parse_fred_csv(r.read().decode("utf-8"))
+            if out:
+                return out
+            last = "keyless CSV returned no rows"
+        except Exception as e:
+            last = f"keyless CSV failed: {e}"
+    return None, last
+
+
+def fetch_cpi_monthly(api_key=None, series_id=FRED_CPI_SERIES, start="2015-01-01", timeout=40):
+    """Return {date: value} monthly CPI-U from FRED.
+
+    The authenticated FRED API (api.stlouisfed.org) is the RELIABLE path from CI and is
+    tried first when a FRED_API_KEY is available; the keyless public CSV (fredgraph) is a
+    fallback but FRED throttles cloud IPs on it, so it may time out on GitHub runners.
+    Raises DeflatorError only if every source fails — the build must never proceed on a
+    missing CPI.
+    """
+    api_key = api_key if api_key is not None else os.environ.get("FRED_API_KEY")
+    errors = []
+    if api_key:
+        res = _fetch_fred_api(series_id, api_key, start, timeout)
+        if isinstance(res, dict):
+            return res
+        errors.append(res[1])
+    res = _fetch_fred_csv(series_id, start, timeout)
+    if isinstance(res, dict):
+        return res
+    errors.append(res[1])
+    raise DeflatorError("could not fetch CPI-U from FRED (" + "; ".join(e for e in errors if e) + ")")
 
 
 def _calendar_year_mean(monthly, year):

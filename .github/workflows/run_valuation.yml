@@ -91,6 +91,7 @@ jobs:
           python pipeline/run_company.py "companies/${TICKER}.yaml" \
             --rate-feed-live \
             --payload payload.json \
+            --out-dir outputs \
             --vintage "run-$(date -u +%FT%TZ)"
 
       - name: Commit outputs

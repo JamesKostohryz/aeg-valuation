@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+"""run_scenarios.py — Phase-2.1 multi-scenario ("Run scenarios") engine path.
+
+Gated behind payload.scenarios in run_company.py, so a normal single-scenario RUN /
+RUN-unbonded dispatch never enters here and stays bit-identical.
+
+The cockpit dispatches ONE payload carrying a `scenarios` array (base+bull+bear), each
+entry FULLY self-contained (name, probability, mode, N, singles, drivers, and an OPTIONAL
+erp_override). The cockpit already resolved every "blank = inherit base" rule before
+dispatch, so the engine does NO inheritance — it values and TIES each scenario
+independently, fail-closed per scenario, and publishes outputs/<TICKER>_scenarios.csv.
+
+COE convention (COCKPIT 2026-07-30 16:07 correction): base and bear both run the
+standard variance-v2 COE; ONLY a scenario that explicitly carries an erp_override gets a
+flat COE override (bull's CAPM-when-lower, or a manual Control-tab override). We simply
+APPLY whatever erp_override a scenario carries — no CAPM computation, no bear penalty.
+
+Mechanics per scenario: start from a FRESH copy of the rate-repointed formulas workbook
+(base_xlsx, produced by run_company after build -> deflator -> fy0 -> rate re-point), then
+  apply_payload(scenario_as_single_payload)   # writes drivers/singles/mode/N
+  if erp_override: repoint_rates.apply_erp_override(wb, erp)
+  save -> recalc -> read_results -> gates + tie_check (fail-closed for THIS scenario)
+and read intrinsic / real price / real COE / tie residual for the CSV row.
+"""
+import os
+import shutil
+import datetime as _dt
+
+import openpyxl
+
+import apply_payload as AP
+import repoint_rates as RP
+import aeg_engine as AE
+import checks as CK
+
+
+# CSV column order (COCKPIT scenarios contract). One row per scenario + a summary row.
+CSV_HEADER = [
+    "ticker", "run_timestamp_utc", "commit_sha", "scenario", "probability",
+    "coe_basis", "real_coe", "intrinsic_value_per_share_real",
+    "current_real_price_per_share", "upside_downside_pct", "tie_residual",
+]
+PROB_TOL = 0.001            # cockpit-enforced; we only warn if it drifts
+
+
+class ScenariosError(Exception):
+    """A scenario failed its gates/tie, or the payload's scenario array is malformed.
+    Raised so run_company aborts non-zero (fail-closed) without writing a green CSV."""
+
+
+def _named_scalar(wb_values, name):
+    """Value of a single-cell defined name from a data_only workbook (or None)."""
+    dn = wb_values.defined_names.get(name)
+    if not dn:
+        return None
+    ref = str(dn.value).replace("$", "").replace("'", "")
+    if "!" not in ref:
+        return None
+    sh, cell = ref.split("!")
+    try:
+        return wb_values[sh][cell].value
+    except Exception:
+        return None
+
+
+def _as_single_payload(ticker, sc):
+    """Reshape one scenario entry into the single-scenario payload apply_payload expects."""
+    return {
+        "ticker": ticker,
+        "mode": sc.get("mode"),
+        "N": sc.get("N"),
+        "drivers": sc.get("drivers") or {},
+        "singles": sc.get("singles") or {},
+    }
+
+
+def _value_one(base_xlsx, work_dir, ticker, sc, price, recalc):
+    """Value + tie ONE scenario on a fresh copy of base_xlsx. Returns a result dict with
+    ok/reasons and (when ok) the CSV fields. Never raises for a tie/gate failure — the
+    caller aggregates and fail-closes; only a hard PayloadError bubbles as a failure."""
+    name = sc.get("name")
+    work = os.path.join(work_dir, f"{ticker}_scn_{name}.xlsx")
+    shutil.copyfile(base_xlsx, work)
+    single = _as_single_payload(ticker, sc)
+
+    # inflation from the (already recalc'd) base copy, at THIS scenario's N
+    vals0 = openpyxl.load_workbook(work, data_only=True)
+    N = single["N"] if isinstance(single["N"], int) else 0
+    infl = AP.engine_inflation(vals0, N or 1)
+
+    # write drivers/singles/mode/N; apply_payload validates and raises PayloadError on
+    # a bad scenario (out-of-range driver, wrong length, unknown key) -> hard fail-closed.
+    wbp = openpyxl.load_workbook(work, data_only=False)
+    try:
+        AP.apply_payload(wbp, single, infl)
+    except AP.PayloadError as e:
+        return {"name": name, "ok": False, "reasons": [f"payload rejected: {e}"]}
+
+    erp = sc.get("erp_override")
+    if erp is not None:
+        RP.apply_erp_override(wbp, float(erp))
+    coe_basis = "override" if erp is not None else "variance_v2"
+
+    wbp.save(work)
+    recalc(work)
+
+    results = AE.read_results(work, price=price)
+    reasons = []
+    if not results.get("ok"):
+        reasons.append(f"gates failed: {results.get('gates')}")
+    tie_ok, tie_detail = CK.tie_check(results)
+    if not tie_ok:
+        reasons += tie_detail["reasons"]
+    if reasons:
+        return {"name": name, "ok": False, "reasons": reasons,
+                "audit_ok": tie_detail["audit_ok"], "tie_ok": tie_detail["tie_ok"],
+                "mode_ok": tie_detail["mode_ok"]}
+
+    v = openpyxl.load_workbook(work, data_only=True)
+    intrinsic = results.get("active_value")
+    real_price = _named_scalar(v, "val_realprice")
+    real_coe = _named_scalar(v, "val_rhoe_lr")
+    tie_res = results.get("max_identity_tie")
+    upside = (intrinsic / real_price - 1.0) if (isinstance(intrinsic, (int, float))
+              and isinstance(real_price, (int, float)) and real_price) else None
+    return {
+        "name": name, "ok": True, "coe_basis": coe_basis,
+        "probability": sc.get("probability"), "real_coe": real_coe,
+        "intrinsic": intrinsic, "real_price": real_price,
+        "upside": upside, "tie_residual": tie_res,
+        "audit_ok": True, "tie_ok": True, "mode_ok": True,
+    }
+
+
+def _validate_scenarios(scenarios):
+    if not isinstance(scenarios, list) or not scenarios:
+        raise ScenariosError("payload.scenarios must be a non-empty list")
+    names = []
+    for i, sc in enumerate(scenarios):
+        if not isinstance(sc, dict):
+            raise ScenariosError(f"scenario[{i}] must be an object")
+        nm = sc.get("name")
+        if not isinstance(nm, str) or not nm.strip():
+            raise ScenariosError(f"scenario[{i}] missing a non-empty 'name'")
+        p = sc.get("probability")
+        if not isinstance(p, (int, float)) or isinstance(p, bool):
+            raise ScenariosError(f"scenario '{nm}' has a non-numeric probability {p!r}")
+        names.append(nm)
+    total = sum(float(sc["probability"]) for sc in scenarios)
+    return names, total
+
+
+def _fmt(x):
+    if x is None:
+        return ""
+    if isinstance(x, float):
+        return repr(x)
+    return str(x)
+
+
+def run_scenarios(base_xlsx, scenarios, *, ticker, price, out_dir, recalc,
+                  commit_sha="", work_dir=None, run_timestamp=None):
+    """Value every scenario independently off base_xlsx and write
+    outputs/<TICKER>_scenarios.csv (one row per scenario + an expected-value summary row).
+    Fail-closed: raises ScenariosError if ANY scenario fails its gates/tie, so the CI job
+    goes red and no misleading green CSV is committed."""
+    names, total = _validate_scenarios(scenarios)
+    if abs(total - 1.0) > PROB_TOL:
+        print(f"[scenarios] WARNING: probabilities sum to {total:.6f}, not 1.0 "
+              f"(cockpit enforces this; proceeding on the valuation gates)")
+    work_dir = work_dir or os.path.dirname(os.path.abspath(base_xlsx))
+    ts = run_timestamp or _dt.datetime.now(_dt.timezone.utc).isoformat()
+    print(f"[scenarios] {ticker}: valuing {len(scenarios)} scenarios {names}")
+
+    rows, failures = [], []
+    for sc in scenarios:
+        r = _value_one(base_xlsx, work_dir, ticker, sc, price, recalc)
+        if r["ok"]:
+            print(f"[scenarios]   {r['name']}: TIE ok  iv={r['intrinsic']}  "
+                  f"real_coe={r['real_coe']}  tie={r['tie_residual']:.2e}  basis={r['coe_basis']}")
+            rows.append(r)
+        else:
+            print(f"[scenarios]   {r['name']}: FAIL — {'; '.join(r['reasons'])}")
+            failures.append(r)
+
+    if failures:
+        raise ScenariosError(
+            "fail-closed: " + ", ".join(f"{f['name']} ({'; '.join(f['reasons'])})"
+                                        for f in failures))
+
+    _write_csv(out_dir, ticker, ts, commit_sha, rows)
+    return {"ticker": ticker, "scenarios": names, "rows": len(rows)}
+
+
+def _write_csv(out_dir, ticker, ts, commit_sha, rows):
+    os.makedirs(out_dir, exist_ok=True)
+    path = os.path.join(out_dir, f"{ticker}_scenarios.csv")
+
+    # expected value = Σ prob·iv ; real price is anchor-based (identical across scenarios)
+    prices = [r["real_price"] for r in rows if isinstance(r["real_price"], (int, float))]
+    real_price = prices[0] if prices else None
+    ev_ps = None
+    if all(isinstance(r["probability"], (int, float)) and isinstance(r["intrinsic"], (int, float))
+           for r in rows):
+        ev_ps = sum(float(r["probability"]) * float(r["intrinsic"]) for r in rows)
+    ev_upside = (ev_ps / real_price - 1.0) if (isinstance(ev_ps, (int, float))
+                 and isinstance(real_price, (int, float)) and real_price) else None
+    prob_sum = sum(float(r["probability"]) for r in rows
+                   if isinstance(r["probability"], (int, float)))
+
+    with open(path, "w", newline="") as fh:
+        fh.write(",".join(CSV_HEADER) + "\n")
+        for r in rows:
+            fh.write(",".join(_fmt(x) for x in [
+                ticker, ts, commit_sha, r["name"], r["probability"], r["coe_basis"],
+                r["real_coe"], r["intrinsic"], r["real_price"], r["upside"],
+                r["tie_residual"],
+            ]) + "\n")
+        # summary row: expected value across scenarios
+        fh.write(",".join(_fmt(x) for x in [
+            ticker, ts, commit_sha, "expected_value", prob_sum, "", "",
+            ev_ps, real_price, ev_upside, "",
+        ]) + "\n")
+    print(f"[scenarios] wrote {ticker}_scenarios.csv  "
+          f"expected_value_ps={ev_ps}  (real_price={real_price}, exp_upside={ev_upside})")
+    return path

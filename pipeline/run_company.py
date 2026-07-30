@@ -182,6 +182,7 @@ def main():
     #     'erp_override' (cockpit ERP-method selector: COE = model real_rf + erp_override).
     #     Neither edits the committed company config; absent -> committed behaviour (bit-identical).
     _erp_override = None
+    _scenarios = None
     if args.payload:
         try:
             import apply_payload as _APB
@@ -191,6 +192,8 @@ def main():
                 print(f"[payload] bonded override -> {cfg['bonded']}")
             if isinstance(_peek, dict) and _peek.get("erp_override") is not None:
                 _erp_override = float(_peek["erp_override"])
+            if isinstance(_peek, dict) and _peek.get("scenarios") is not None:
+                _scenarios = _peek["scenarios"]
         except Exception:
             pass
 
@@ -253,6 +256,22 @@ def main():
         except RF.RateFeedError as e:
             print(f"[rates] feed unavailable/invalid ({e}); keeping build-time rates")
             feed = None
+
+    # --- Phase-2.1 MULTI-SCENARIO path (gated behind payload.scenarios). Values + ties
+    #     base+bull+bear INDEPENDENTLY off the rate-repointed workbook and writes
+    #     outputs/<TICKER>_scenarios.csv (one row per scenario + an expected-value row).
+    #     Absent -> the single-scenario path below runs unchanged (bit-identical by
+    #     construction). Fail-closed PER scenario: any non-tie aborts the whole dispatch.
+    if _scenarios is not None:
+        import run_scenarios as RS
+        try:
+            srep = RS.run_scenarios(out_xlsx, _scenarios, ticker=tk, price=price,
+                                    out_dir=args.out_dir, recalc=recalc,
+                                    commit_sha=os.environ.get("GITHUB_SHA", ""))
+        except RS.ScenariosError as e:
+            _fail(f"SCENARIOS FAILED: {e}")
+        print(f"[done] {tk}  scenarios={srep['scenarios']} -> {tk}_scenarios.csv")
+        return
 
     # --- optional RUN-button forecast payload (cockpit dispatch contract 20260722-0800).
     # Applied AFTER the rate re-point so nominal growth drivers are deflated with the very

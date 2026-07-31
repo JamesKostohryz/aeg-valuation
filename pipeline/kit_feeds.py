@@ -305,3 +305,7 @@ if __name__ == "__main__":
         print("analyst_estimates:", write_analyst_estimates(tk, od, stamp))
     except Exception as e:
         print("analyst_estimates SKIPPED:", e)
+
+
+# 2026-07-31 (EXEC#6): coe_history_{POOL,HD}_annual.csv published to outputs/ (from real-yields
+# runs #4/#5) -> unlocks the §11 AEG-momentum feed for POOL and HD (previously AAPL-only gate).

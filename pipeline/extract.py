@@ -197,13 +197,25 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
             _dump_grid(wb[tab], os.path.join(out_dir, fn), start)
             stmt_files.append(fn)
 
-    # --- cockpit feeds (COCKPIT blueprint 20260721-2203 task 3). Each is fail-SOFT: a feed
-    #     that can't be produced logs and is skipped, never aborting the valuation run.
+    # --- cockpit feeds (COCKPIT blueprint 20260721-2203 task 3; Forecaster-Kit feeds added
+    #     20260731). Each is fail-SOFT: a feed that can't be produced logs and is skipped,
+    #     never aborting the valuation run. `_as_of` is one coherent freshness stamp shared by
+    #     all Kit feeds (the run vintage, or a generated UTC stamp for local/unset runs).
+    from datetime import datetime, timezone
+    _as_of = vintage if (vintage and vintage != "unset") else \
+        datetime.now(timezone.utc).strftime("run-%Y-%m-%dT%H:%M:%SZ")
     extra_files = []
     for label, fn_call in (
         ("fact-sheet", lambda: __import__("fact_sheet").write_fact_sheet(engine_path, ticker, out_dir)),
         ("restated-split", lambda: __import__("restated_split").write_restated(engine_path, ticker, out_dir)),
         ("aeg-schedule", lambda: __import__("aeg_schedule").write_aeg_schedule(engine_path, ticker, out_dir)),
+        # Forecaster-Kit feeds (§6 DuPont, §9 analyst, §11 AEG momentum [gated on coe_history],
+        # §7+§12 growth/trend). Each carries a data_as_of column = _as_of.
+        ("dupont", lambda: __import__("dupont_extract").write_outputs(
+            __import__("dupont_extract").compute_dupont(engine_path, ticker), out_dir, data_as_of=_as_of)),
+        ("analyst-estimates", lambda: __import__("kit_feeds").write_analyst_estimates(ticker, out_dir, _as_of)),
+        ("aeg-momentum", lambda: __import__("kit_feeds").write_aeg_momentum(engine_path, ticker, out_dir, _as_of)),
+        ("growth-trend", lambda: __import__("kit_feeds").write_growth_trend(engine_path, ticker, out_dir, _as_of)),
     ):
         try:
             produced = fn_call()

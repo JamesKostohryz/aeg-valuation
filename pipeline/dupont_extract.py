@@ -106,26 +106,37 @@ def compute_dupont(engine_path, ticker):
                        "roce_reformulated": reform.get("roce", [None])[-1] if ryears else None}}
 
 
-def write_outputs(dupont, out_dir):
+def write_outputs(dupont, out_dir, data_as_of=None):
+    """Emit <TICKER>_dupont.csv (Sheet IMPORTDATA) + <TICKER>_dupont.json (web app).
+    Filenames follow the Forecaster-Kit output contract (<TICKER>_dupont.*). A `data_as_of`
+    freshness stamp is added as the last CSV column (repeated per row) and a top-level JSON
+    key, matching the convention the cockpit Audit tab gates on. If data_as_of is None a UTC
+    run-timestamp is generated (keeps standalone/__main__ use working)."""
     os.makedirs(out_dir, exist_ok=True)
     t = dupont["ticker"]
+    if data_as_of is None:
+        from datetime import datetime, timezone
+        data_as_of = datetime.now(timezone.utc).strftime("run-%Y-%m-%dT%H:%M:%SZ")
+    dupont = dict(dupont); dupont["data_as_of"] = data_as_of
     # JSON (web-app friendly)
-    with open(os.path.join(out_dir, f"dupont_{t}.json"), "w") as fh:
+    with open(os.path.join(out_dir, f"{t}_dupont.json"), "w") as fh:
         json.dump(dupont, fh, indent=2)
     # CSV (Google Sheets IMPORTDATA): year-major, both blocks side by side
     c, r = dupont["classic"], dupont["reformulated"]
     ckeys = [k for k in c if k != "years"]
     rkeys = [k for k in r if k != "years"]
-    with open(os.path.join(out_dir, f"dupont_{t}.csv"), "w", newline="") as fh:
+    with open(os.path.join(out_dir, f"{t}_dupont.csv"), "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["year"] + [f"classic_{k}" for k in ckeys] + [f"reform_{k}" for k in rkeys])
+        w.writerow(["year"] + [f"classic_{k}" for k in ckeys]
+                   + [f"reform_{k}" for k in rkeys] + ["data_as_of"])
         rmap = {y: i for i, y in enumerate(r["years"])}
         for i, y in enumerate(c["years"]):
             row = [y] + [c[k][i] for k in ckeys]
             j = rmap.get(y)
             row += [(r[k][j] if j is not None else "") for k in rkeys]
+            row += [data_as_of]
             w.writerow(["" if v is None else v for v in row])
-    return [f"dupont_{t}.json", f"dupont_{t}.csv"]
+    return [f"{t}_dupont.json", f"{t}_dupont.csv"]
 
 
 if __name__ == "__main__":

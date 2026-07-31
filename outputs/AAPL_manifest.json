@@ -1,7 +1,7 @@
 {
   "ticker": "AAPL",
   "config_hash": "80e5fcb7cc6a0fda",
-  "data_vintage": "2026-07-30T17:15Z",
+  "data_vintage": "2026-07-31T01:46Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -45,14 +45,19 @@
     "AAPL_fact_sheet.csv",
     "AAPL_restated_bs.csv",
     "AAPL_restated_is.csv",
-    "AAPL_aeg_schedule.csv"
+    "AAPL_aeg_schedule.csv",
+    "AAPL_dupont.json",
+    "AAPL_dupont.csv",
+    "AAPL_analyst_estimates.csv",
+    "AAPL_aeg_momentum.csv",
+    "AAPL_growth_trend.csv"
   ],
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "AA",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-07-30T17:15Z",
+    "as_of": "2026-07-31T01:46Z",
     "flags": []
   }
 }

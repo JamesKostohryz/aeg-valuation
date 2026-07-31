@@ -1,7 +1,7 @@
 {
   "ticker": "T",
   "config_hash": "c890f2fe69d3f7ad",
-  "data_vintage": "2026-07-30T17:15Z",
+  "data_vintage": "2026-07-31T01:46Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -45,14 +45,18 @@
     "T_fact_sheet.csv",
     "T_restated_bs.csv",
     "T_restated_is.csv",
-    "T_aeg_schedule.csv"
+    "T_aeg_schedule.csv",
+    "T_dupont.json",
+    "T_dupont.csv",
+    "T_analyst_estimates.csv",
+    "T_growth_trend.csv"
   ],
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-07-30T17:15Z",
+    "as_of": "2026-07-31T01:46Z",
     "flags": []
   }
 }

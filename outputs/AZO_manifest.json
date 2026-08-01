@@ -1,0 +1,62 @@
+{
+  "ticker": "AZO",
+  "config_hash": "e584948db539deb2",
+  "data_vintage": "req-2026-08-01T22:00:54Z",
+  "gates_ok": true,
+  "tie_check": {
+    "tie_check": "PASS",
+    "audit_ok": true,
+    "tie_ok": true,
+    "mode_ok": true,
+    "max_identity_tie": 2.46025422256935e-13,
+    "mode_tie": 0,
+    "tie_tol": 1e-08,
+    "reasons": []
+  },
+  "rd_wedge": {
+    "opex_wedge": -638.302707240101,
+    "wedge_pct_ebit": 0.16831206560475603,
+    "rev_scaled_consistent": true,
+    "rd_reserve": 0,
+    "rd_capitalization_wired": false,
+    "rd_reserve_nonzero_but_inert": false
+  },
+  "audit_status": "PASS \u2014 all identities tie",
+  "max_identity_tie": 2.46025422256935e-13,
+  "equity_value": 2875.79702662881,
+  "enterprise_value": 2875.79702662881,
+  "mode_tie": 0,
+  "anchor_year": 2025,
+  "disclosure": {
+    "base_equity_ps": 2875.79702662881,
+    "adjusted_equity_ps": 2097.17678810771,
+    "debt_capital_gain_ps": 0.0,
+    "idiosyncratic_haircut_ps": 778.6202385211
+  },
+  "outputs": [
+    "AZO_anchors.csv",
+    "AZO_valuation.csv",
+    "AZO_summary.csv",
+    "AZO_restated_real.csv",
+    "AZO_reported_is.csv",
+    "AZO_reported_bs.csv",
+    "AZO_reported_cf.csv",
+    "AZO_restated.csv",
+    "AZO_fact_sheet.csv",
+    "AZO_restated_bs.csv",
+    "AZO_restated_is.csv",
+    "AZO_aeg_schedule.csv",
+    "AZO_dupont.json",
+    "AZO_dupont.csv",
+    "AZO_analyst_estimates.csv",
+    "AZO_growth_trend.csv"
+  ],
+  "cost_of_debt": {
+    "cod_source": "issuer_bonds",
+    "rating": "BBB",
+    "coverage": null,
+    "audit": "GREEN",
+    "as_of": "req-2026-08-01T22:00:54Z",
+    "flags": []
+  }
+}

@@ -1,0 +1,23 @@
+field,value,data_as_of
+ticker,AZO,req-2026-08-01T22:00:54Z
+company,AutoZone Inc,req-2026-08-01T22:00:54Z
+source,eodhd:Highlights+AnalystRatings,req-2026-08-01T22:00:54Z
+eodhd_updated_at,2026-08-01,req-2026-08-01T22:00:54Z
+rating,4.3448,req-2026-08-01T22:00:54Z
+target_price,3961.9565,req-2026-08-01T22:00:54Z
+wall_street_target_price,3961.9565,req-2026-08-01T22:00:54Z
+strong_buy,17,req-2026-08-01T22:00:54Z
+buy,6,req-2026-08-01T22:00:54Z
+hold,5,req-2026-08-01T22:00:54Z
+sell,1,req-2026-08-01T22:00:54Z
+strong_sell,0,req-2026-08-01T22:00:54Z
+analyst_count,29,req-2026-08-01T22:00:54Z
+eps_est_current_year,151.0411,req-2026-08-01T22:00:54Z
+eps_est_next_year,175.4127,req-2026-08-01T22:00:54Z
+eps_est_current_quarter,36.1687,req-2026-08-01T22:00:54Z
+eps_est_next_quarter,0,req-2026-08-01T22:00:54Z
+most_recent_quarter,2026-05-31,req-2026-08-01T22:00:54Z
+eps_ttm,145.99,req-2026-08-01T22:00:54Z
+pe_ratio,20.6607,req-2026-08-01T22:00:54Z
+consensus_revenue_current_year,,req-2026-08-01T22:00:54Z
+consensus_revenue_next_year,,req-2026-08-01T22:00:54Z

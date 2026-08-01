@@ -1,0 +1,84 @@
+name: run-valuation (git-request)
+
+# Git-triggered single-ticker pipeline run, so a workspace that can push over git but cannot
+# reach the GitHub REST API can run a specific ticker without the dispatch button. Fires ONLY
+# when requests/valuation.json changes on main. Mirrors valuation.yml's job for one ticker.
+# Additive — valuation.yml and run_valuation.yml are untouched.
+#
+# Request file shape:  { "ticker": "T", "nonce": "<unique string to force a re-run>" }
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/valuation.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: valuation-request
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install LibreOffice + Python deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libreoffice-calc
+          python -m pip install --upgrade pip
+          pip install openpyxl==3.1.5 pyyaml
+
+      - name: Read requested ticker
+        id: req
+        run: |
+          T=$(python -c "import json,sys; d=json.load(open('requests/valuation.json')); sys.stdout.write(str(d.get('ticker','')).strip().upper())")
+          if [ -z "$T" ]; then echo "::error::requests/valuation.json has no ticker"; exit 1; fi
+          if [ ! -f "companies/${T}.yaml" ]; then echo "::error::no config companies/${T}.yaml — onboard it first"; exit 1; fi
+          echo "ticker=$T" >> "$GITHUB_OUTPUT"
+          echo "Requested ticker: $T"
+
+      - name: Run pipeline (gates are required checks)
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          TICKER: ${{ steps.req.outputs.ticker }}
+        run: |
+          set -euo pipefail
+          python pipeline/run_company.py "companies/${TICKER}.yaml" \
+            --rate-feed-live \
+            --out-dir outputs \
+            --vintage "req-$(date -u +%FT%TZ)"
+
+      - name: Commit refreshed outputs
+        run: |
+          set -euo pipefail
+          git config user.name  "aeg-pipeline[bot]"
+          git config user.email "aeg-pipeline@users.noreply.github.com"
+          git add outputs/
+          if git diff --cached --quiet; then
+            echo "no output changes"
+          else
+            git commit -m "run (git-request): ${{ steps.req.outputs.ticker }} valuation $(date -u +%F)"
+            git pull --rebase --autostash origin main || true
+            git push
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          T="${{ steps.req.outputs.ticker }}"
+          echo "### run-valuation (git-request) — $T" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f "outputs/${T}_summary.csv" ]; then
+            echo '```' >> "$GITHUB_STEP_SUMMARY"; cat "outputs/${T}_summary.csv" >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "_no summary — a gate failed; see the log._" >> "$GITHUB_STEP_SUMMARY"
+          fi

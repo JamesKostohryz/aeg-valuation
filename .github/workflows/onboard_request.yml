@@ -1,0 +1,61 @@
+name: onboard (git-request)
+
+# Git-triggered twin of onboard.yml. Auto-generates companies/<TICKER>.yaml from fundamentals +
+# the published rate feeds, for a workspace that can push over git but cannot reach the REST API.
+# Fires ONLY when requests/onboard.json changes. Additive — onboard.yml is untouched.
+# PREREQUISITE: the ticker's rate side must be published first (real-yields company-data -> coe_v2
+# + cod + company). onboard.py refuses loudly (NOT READY) otherwise.
+#
+# Request file shape: { "ticker": "AZO", "force": false }
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/onboard.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: onboard-request
+  cancel-in-progress: false
+
+jobs:
+  onboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Read request
+        id: req
+        run: |
+          T=$(python -c "import json,sys;d=json.load(open('requests/onboard.json'));sys.stdout.write(str(d.get('ticker','')).strip().upper())")
+          F=$(python -c "import json,sys;d=json.load(open('requests/onboard.json'));sys.stdout.write('true' if d.get('force') else 'false')")
+          if [ -z "$T" ]; then echo "::error::requests/onboard.json has no ticker"; exit 1; fi
+          echo "ticker=$T" >> "$GITHUB_OUTPUT"
+          echo "force=$F" >> "$GITHUB_OUTPUT"
+          echo "ticker=$T force=$F"
+      - name: Onboard ticker (fail-closed if the rate side isn't published)
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+          TICKER: ${{ steps.req.outputs.ticker }}
+          FORCE: ${{ steps.req.outputs.force }}
+        run: |
+          FLAG=""; [ "$FORCE" = "true" ] && FLAG="--force"
+          python pipeline/onboard.py "$TICKER" $FLAG
+      - name: Commit config
+        env:
+          TICKER: ${{ steps.req.outputs.ticker }}
+        run: |
+          git config user.name "aeg-bot"
+          git config user.email "aeg-bot@users.noreply.github.com"
+          T=$(echo "$TICKER" | tr '[:lower:]' '[:upper:]')
+          git add "companies/${T}.yaml"
+          git commit -m "onboard (git-request): ${T} config" || { echo "no change to commit"; exit 0; }
+          git pull --rebase --autostash origin main || true
+          git push

@@ -401,6 +401,7 @@ def main():
             import scorecard as SCD
             _sc = SCD.compute_scorecard(out_xlsx, feed)
             SCD.write_scorecard_csv(os.path.join(args.out_dir, f"{tk}_inflation_scorecard.csv"), _sc)
+            results["inflation_verdict"] = _sc.get("verdict")
             _np = _sc.get("net_inflation_position_annual")
             print(f"[scorecard] {tk}: {_sc.get('verdict')}"
                   + (f"  (net {_np:.4g}/yr = benefit {_sc['interest_benefit_annual']:.4g}"
@@ -413,6 +414,39 @@ def main():
                                   config_hash=cfg["config_hash"], vintage=args.vintage,
                                   disclosure=disclosure)
     print(f"[extract] wrote {', '.join(manifest['outputs'])} + {tk}_manifest.json to {args.out_dir}")
+
+    # --- run-status / anchor-health CSV (cockpit feed). The guard verdicts are otherwise
+    #     console-only, so the Sheet cannot show "anchor representative / run passed / by how
+    #     much". Additive and tie-safe. Written only on the SUCCESS path (a failed gate aborts
+    #     before here), which is exactly the "last good run" the cockpit IMPORTDATA tracks — so
+    #     a rejected config leaves the prior status standing, and this file's vintage/config_hash
+    #     lets the Audit tab detect that the sheet is showing an older run.
+    import csv as _csv
+    _ae = results.get("anchor_earnings_check") or {}
+    _re = results.get("anchor_representativeness_check") or {}
+    _status = [
+        ("ticker", tk),
+        ("run_status", "OK"),
+        ("anchor_year", results.get("anchor_year")),
+        ("tie_check", (results.get("tie_check") or {}).get("tie_check")),
+        ("max_identity_tie", results.get("max_identity_tie")),
+        ("anchor_earnings_check", _ae.get("anchor_earnings_check")),
+        ("anchor_oi_at0", _ae.get("anchor_oi_at0")),
+        ("anchor_representativeness", _re.get("anchor_representativeness_check")),
+        ("anchor_margin", _re.get("anchor_margin")),
+        ("anchor_normal_margin", _re.get("median_prior_margin")),
+        ("anchor_margin_vs_normal", _re.get("margin_vs_normal")),
+        ("inflation_verdict", results.get("inflation_verdict")),
+        ("rd_capitalization_wired", False),
+        ("config_hash", cfg["config_hash"]),
+        ("vintage", args.vintage),
+    ]
+    with open(os.path.join(args.out_dir, f"{tk}_status.csv"), "w", newline="") as _fh:
+        _w = _csv.writer(_fh)
+        _w.writerow(["field", "value"])
+        for _k, _v in _status:
+            _w.writerow([_k, _v])
+    print(f"[status] wrote {tk}_status.csv (anchor-health + run verdicts)")
     # cost-of-debt provenance -> manifest (audit tab: cod_source / rating / coverage / audit / as_of)
     if feed is not None and feed.get("cod_provenance"):
         import json as _json

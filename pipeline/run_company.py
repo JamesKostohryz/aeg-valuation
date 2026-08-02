@@ -342,6 +342,22 @@ def main():
         except Exception as e:
             print(f"[disclose] skipped ({e})")
 
+    # --- disclosed inflation scorecard (Increment 2; tie-safe — never enters the four-method
+    #     tie). Interest-tax-shield PVs under both debt policies (Miller-excluded) + the
+    #     capital-intensity-vs-leverage verdict. Computed in engine units from the recalced
+    #     workbook + the rate feed; additive, no engine edit.
+    if feed is not None:
+        try:
+            import scorecard as SCD
+            _sc = SCD.compute_scorecard(out_xlsx, feed)
+            SCD.write_scorecard_csv(os.path.join(args.out_dir, f"{tk}_inflation_scorecard.csv"), _sc)
+            _np = _sc.get("net_inflation_position_annual")
+            print(f"[scorecard] {tk}: {_sc.get('verdict')}"
+                  + (f"  (net {_np:.4g}/yr = benefit {_sc['interest_benefit_annual']:.4g}"
+                     f" - penalty {_sc['depreciation_penalty_annual']:.4g})" if isinstance(_np, (int, float)) else ""))
+        except Exception as e:
+            print(f"[scorecard] skipped ({e})")
+
     # --- extract committed outputs + manifest
     manifest = EX.extract_outputs(out_xlsx, tk, args.out_dir, results=results,
                                   config_hash=cfg["config_hash"], vintage=args.vintage,

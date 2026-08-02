@@ -1,0 +1,149 @@
+#!/usr/bin/env python3
+"""scorecard.py — disclosed inflation scorecard + interest-tax-shield PVs.
+
+ADDITIVE and TIE-SAFE. Computed from the recalced engine (in engine monetary units)
+plus the rate feed (pi, real cost of debt). It never enters the four-method tie — it
+is a disclosed output alongside disclose.py's valuation bridge.
+
+Implements the tie-safe content of the new engine's sheets 10 (interest tax shield
+under debt policy) and 15 (capital-intensity vs leverage scorecard):
+
+  Inflation is a TAX on capital intensity — historical-cost depreciation understates
+  the real cost of maintaining capacity, so the firm overpays tax by t x shortfall
+  (the same shortfall Increment 1 put into the valuation).
+
+  Inflation is a SUBSIDY to leverage — the real value of fixed nominal debt erodes,
+  worth t x pi x net_debt per year in tax terms (interest deductible; principal repaid
+  in cheaper dollars).
+
+  A firm is a net beneficiary iff the leverage subsidy outweighs the capital-intensity
+  tax; equivalently iff debt / annual D&A exceeds the breakeven [(1+pi)^age - 1] / pi.
+
+The interest tax shield is reported under both debt policies (fixed-nominal vs
+constant-real) and EXCLUDED from the headline by default (Miller 1977) — disclosure
+only, exactly as the new engine treats it.
+"""
+import openpyxl
+
+
+def _nm(wb, name):
+    dn = wb.defined_names.get(name)
+    if not dn:
+        return None
+    ref = str(dn.value).replace("$", "").replace("'", "")
+    try:
+        sh, cell = ref.split("!")
+        return wb[sh][cell].value
+    except Exception:
+        return None
+
+
+def _last(x):
+    """Feed rate series -> long-run (last) value; scalar -> itself."""
+    if isinstance(x, (list, tuple)):
+        nums = [v for v in x if isinstance(v, (int, float))]
+        return nums[-1] if nums else None
+    if isinstance(x, dict):
+        nums = [v for v in x.values() if isinstance(v, (int, float))]
+        return nums[-1] if nums else None
+    return x
+
+
+def compute_scorecard(engine_path, feed, *, debt_policy="constant_real"):
+    """Return the disclosed inflation scorecard for one recalced engine + its feed.
+    All money quantities are in the engine's own monetary units (so the penalty and
+    the leverage benefit are directly comparable); rates are unitless from the feed."""
+    wb = openpyxl.load_workbook(engine_path, data_only=True)
+    t = _nm(wb, "in_tax0")
+    interest = _nm(wb, "in_intexp0")                      # nominal interest expense
+    debt = _nm(wb, "in_debt") or 0.0
+    net_debt = debt - (_nm(wb, "in_cash") or 0.0) - (_nm(wb, "in_sti") or 0.0)
+    L = _nm(wb, "in_ppe_life")
+
+    # --- depreciation penalty: t x (current-cost - historical-cost) PP&E depreciation
+    #     of the SAME live vintages (identical construction to Increment 1's engine fix).
+    CE = wb["Cap Engine"]
+    real_gross = CE["B46"].value or 0.0
+    nom_live_gross = sum((CE.cell(row=r, column=2).value or 0.0) * (CE.cell(row=r, column=6).value or 0.0)
+                         for r in range(7, 44))
+    econ_dep = (real_gross / L) if L else 0.0
+    reported_ppe_dep = (nom_live_gross / L) if L else 0.0
+    shortfall = econ_dep - reported_ppe_dep
+    dep_penalty = t * shortfall                          # annual; >0 = penalty
+
+    # --- rates from the feed
+    pi = _last(feed.get("exp_inflation_fwd1y"))
+    if pi is None:
+        pi = _last(feed.get("exp_inflation_spot"))
+    rd_real = _last(feed.get("real_cod"))
+    rd_nom = ((1 + rd_real) * (1 + pi) - 1) if (rd_real is not None and pi is not None) else None
+
+    # --- interest tax shield PV under both policies (disclosure only; Miller-excluded)
+    shield_annual = (t * interest) if (t is not None and interest is not None) else None
+    pv_fixednom = (shield_annual / rd_nom) if (shield_annual is not None and rd_nom) else None
+    pv_constreal = (shield_annual / (rd_nom - pi)) if (shield_annual is not None and rd_nom is not None
+                                                       and pi is not None and (rd_nom - pi) > 0) else None
+    pv_adopted = {"fixed_nominal": pv_fixednom, "constant_real": pv_constreal,
+                  "mixed": (None if (pv_fixednom is None or pv_constreal is None)
+                            else 0.5 * (pv_fixednom + pv_constreal))}.get(debt_policy)
+
+    # --- leverage subsidy + net verdict
+    interest_benefit = (t * pi * net_debt) if (t is not None and pi is not None) else None
+    net_position = (interest_benefit - dep_penalty) if (interest_benefit is not None) else None
+    verdict = None if net_position is None else (
+        "NET BENEFICIARY of inflation" if net_position > 0 else "NET LOSER from inflation")
+
+    # --- breakeven leverage: debt / annual D&A vs [(1+pi)^age - 1]/pi
+    #     reported (historical-cost) annual PP&E depreciation ~ nom_live_gross / L;
+    #     average live-vintage age from the vintage table (real-gross weighted).
+    num = sum((CE.cell(row=r, column=8).value or 0.0) * (CE.cell(row=r, column=5).value or 0.0)
+              for r in range(7, 44))                     # H (real gross contrib) x E (age)
+    den = real_gross
+    avg_age = (num / den) if den else None
+    debt_to_da = (net_debt / reported_ppe_dep) if reported_ppe_dep else None
+    breakeven = (((1 + pi) ** avg_age - 1) / pi) if (avg_age is not None and pi) else None
+
+    return {
+        "debt_policy": debt_policy,
+        "tax_rate": t, "expected_inflation": pi, "rd_nominal": rd_nom,
+        "net_debt": net_debt, "nominal_interest": interest,
+        "econ_depreciation": econ_dep, "reported_ppe_depreciation": reported_ppe_dep,
+        "depreciation_shortfall": shortfall,
+        "depreciation_penalty_annual": dep_penalty,
+        "interest_benefit_annual": interest_benefit,
+        "net_inflation_position_annual": net_position,
+        "verdict": verdict,
+        "avg_asset_age_yrs": avg_age,
+        "debt_to_annual_da": debt_to_da,
+        "breakeven_leverage": breakeven,
+        "interest_tax_shield_pv_fixed_nominal": pv_fixednom,
+        "interest_tax_shield_pv_constant_real": pv_constreal,
+        "interest_tax_shield_pv_adopted": pv_adopted,
+        "shield_treatment": "excluded from headline (Miller 1977); disclosure only",
+        "verdict_basis": ("net_inflation_position (t*pi*net_debt vs t*shortfall), using the "
+                          "engine's BEA capital-goods deflator for PP&E; the breakeven_leverage "
+                          "column is v1.4's general-CPI rule of thumb and can differ when "
+                          "capital-goods prices diverge from general inflation"),
+    }
+
+
+# ---- ordered field list for the disclosed CSV ---------------------------------------
+_CSV_FIELDS = [
+    "verdict", "net_inflation_position_annual", "depreciation_penalty_annual",
+    "interest_benefit_annual", "tax_rate", "expected_inflation", "rd_nominal", "net_debt",
+    "nominal_interest", "econ_depreciation", "reported_ppe_depreciation",
+    "depreciation_shortfall", "avg_asset_age_yrs", "debt_to_annual_da", "breakeven_leverage",
+    "interest_tax_shield_pv_fixed_nominal", "interest_tax_shield_pv_constant_real",
+    "interest_tax_shield_pv_adopted", "debt_policy", "shield_treatment", "verdict_basis",
+]
+
+
+def write_scorecard_csv(path, d):
+    """Write the disclosed scorecard as a two-column field,value CSV."""
+    import csv
+    with open(path, "w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["field", "value"])
+        for k in _CSV_FIELDS:
+            w.writerow([k, d.get(k)])
+    return path

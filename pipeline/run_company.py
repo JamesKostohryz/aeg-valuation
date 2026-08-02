@@ -224,7 +224,7 @@ def main():
     disclosure = None
     feed = None
     if args.rate_feed_dir or args.rate_feed_live:
-        import rate_feed as RF, repoint_rates as RP, openpyxl
+        import rate_feed as RF, repoint_rates as RP   # openpyxl is module-level (line 19)
         wb = openpyxl.load_workbook(out_xlsx, data_only=False)
         cash = wb["Inputs"]["B6"].value or 0.0
         sti = wb["Inputs"]["B7"].value or 0.0

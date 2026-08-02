@@ -1,7 +1,7 @@
 {
   "ticker": "AZO",
   "config_hash": "e584948db539deb2",
-  "data_vintage": "2026-08-02T16:55Z",
+  "data_vintage": "2026-08-02T17:18Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -56,7 +56,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-02T16:55Z",
+    "as_of": "2026-08-02T17:18Z",
     "flags": []
   }
 }

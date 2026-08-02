@@ -90,6 +90,40 @@ def missing_feeds(ticker, *, local_dir=None):
     return out
 
 
+# ------------------------------------------------------------------ scope (Rule 5)
+FINANCIAL_GICS = "Financials"
+
+
+def check_scope(ticker, *, api_key=None):
+    """Engine A Rule 5: financial companies (banks/insurers) are OUT OF SCOPE. For them debt
+    is an operating input, so the enterprise-level NOA = CSE + NFO partition and the
+    operating/financing split the engine rests on are meaningless. Best-effort classification
+    from EODHD 'General' (GICS sector). Returns (in_scope: bool, detail: str). With no EODHD key
+    (e.g. --cached), scope cannot be classified and we let it through (a bank would then fail the
+    tie downstream rather than here)."""
+    key = api_key or os.environ.get("EODHD_API_KEY")
+    if not key:
+        return True, "scope unchecked (no EODHD key / cached mode)"
+    try:
+        import eodhd_puller as EP
+        g = EP._http_json(
+            f"https://eodhd.com/api/fundamentals/{EP._eodhd_symbol(ticker)}"
+            f"?api_token={key}&fmt=json&filter=General") or {}
+    except Exception as e:
+        return True, f"scope unchecked (EODHD General lookup failed: {type(e).__name__})"
+    gic = str(g.get("GicSector") or "").strip()
+    sector = str(g.get("Sector") or "").strip()
+    industry = str(g.get("Industry") or "").strip()
+    if gic == FINANCIAL_GICS or sector == "Financial Services":
+        return False, (
+            f"{ticker} is a FINANCIAL company (sector={sector!r}, industry={industry!r}, "
+            f"GICS={gic!r}) \u2014 OUT OF SCOPE per Engine A Rule 5. Banks and insurers cannot be "
+            f"valued at enterprise level: debt is an operating input, so the NOA = CSE + NFO "
+            f"partition and the operating/financing split this engine is built on do not apply. "
+            f"Use the separate financials approach; do not force this one.")
+    return True, f"in scope (sector={sector!r}, GICS={gic!r})"
+
+
 # ------------------------------------------------------------------ statements
 def detect_company_facts(ticker, *, cached_dir=None, api_key=None):
     """Company display name + fiscal-year-end month. fy_end_month=0 means 'auto-detect
@@ -175,6 +209,10 @@ def onboard(ticker, *, cached_dir=None, api_key=None, local_dir=None,
     if os.path.exists(path) and not force:
         raise OnboardError(f"{path} already exists (use --force to overwrite)")
 
+    in_scope, scope_detail = check_scope(t, api_key=api_key)
+    if not in_scope:
+        raise OnboardError(scope_detail)
+
     ready, detail = check_rate_readiness(t, local_dir=local_dir)
     if not ready:
         feeds = missing_feeds(t, local_dir=local_dir)
@@ -230,6 +268,10 @@ def main():
 
     t = args.ticker.strip().upper()
     if args.check_only:
+        in_scope, scope_detail = check_scope(t)
+        print(f"[onboard] {t} scope: {'IN SCOPE' if in_scope else 'OUT OF SCOPE'} — {scope_detail}")
+        if not in_scope:
+            return 1
         ready, detail = check_rate_readiness(t, local_dir=args.rate_feed_dir)
         print(f"[onboard] {t} rate readiness: {'READY' if ready else 'NOT READY'}")
         print(f"  {detail}")

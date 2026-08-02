@@ -1,7 +1,7 @@
 {
   "ticker": "AAPL",
   "config_hash": "80e5fcb7cc6a0fda",
-  "data_vintage": "2026-08-02T07:04Z",
+  "data_vintage": "2026-08-02T07:54Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -57,7 +57,7 @@
     "rating": "AA",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-02T07:04Z",
+    "as_of": "2026-08-02T07:54Z",
     "flags": []
   }
 }

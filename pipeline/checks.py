@@ -115,6 +115,99 @@ def anchor_earnings_check(engine_path):
     }
 
 
+def _assess_anchor_representativeness(years, ois, revs, anchor_year, *,
+                                     min_history=4, hist_window=8, floor_frac=0.5):
+    """Pure decision: is FY0's operating margin representative of the company's own history?
+    Returns (ok, detail). Inputs are aligned lists (year, operating income, revenue) in any
+    consistent monetary unit — margins are unit-free.
+
+    Motivation: an impairment / restructuring / write-down embedded in reported operating
+    income cannot be stripped automatically — the data provider's unusual-item tags are
+    unreliable (blank even for a $15B charge), and the reported-vs-recurring OI gap is
+    contaminated by recurring 'other operating' lines (it flags healthy names like HD every
+    year). The one reliable signal is representativeness: does FY0 earn materially less than
+    this firm's normal on the same revenue? Compare FY0 margin to the MEDIAN of the prior
+    `hist_window` years; flag when FY0 margin < floor_frac x that median (median positive).
+    This catches impairment years, restructuring years, and cyclical troughs with one rule,
+    while a steady structural gap (HD) does not trip it. SKIPS (passes) when there isn't
+    enough clean history to judge, or when the firm is chronically unprofitable (the
+    loss-anchor guard owns that case). The remedy is HUMAN (D1): repoint FY0 to a
+    representative year, or supply a normalized operating income."""
+    import statistics
+    pairs = {}
+    for y, oi, rv in zip(years, ois, revs):
+        try:
+            yy = int(y)
+        except (TypeError, ValueError):
+            continue
+        if isinstance(oi, (int, float)) and isinstance(rv, (int, float)) and rv:
+            pairs[yy] = oi / rv
+    if anchor_year not in pairs:
+        return True, {"anchor_representativeness_check": "SKIP",
+                      "reason": f"no operating margin for anchor year {anchor_year}"}
+    m0 = pairs[anchor_year]
+    hist = [pairs[y] for y in sorted(pairs) if y < anchor_year][-hist_window:]
+    detail = {"anchor_representativeness_check": None, "anchor_year": anchor_year,
+              "anchor_margin": m0, "history_years": len(hist), "floor_frac": floor_frac}
+    if len(hist) < min_history:
+        detail["anchor_representativeness_check"] = "SKIP"
+        detail["reason"] = (f"only {len(hist)} prior years of operating margin "
+                            f"(<{min_history}); cannot assess representativeness")
+        return True, detail
+    med = statistics.median(hist)
+    detail["median_prior_margin"] = med
+    if med <= 0:
+        detail["anchor_representativeness_check"] = "SKIP"
+        detail["reason"] = ("median prior operating margin is non-positive (chronic "
+                            "loss-maker); the loss-anchor guard owns this case")
+        return True, detail
+    detail["margin_vs_normal"] = m0 / med
+    ok = m0 >= floor_frac * med
+    detail["anchor_representativeness_check"] = "PASS" if ok else "FAIL"
+    if not ok:
+        detail["reason"] = (
+            f"FY0 operating margin {m0:.1%} is far below this company's own normal (median of "
+            f"the prior {len(hist)} years = {med:.1%}): FY0 earned only {m0/med:.0%} of what its "
+            f"normal margin would produce on FY0 revenue. That is the signature of a "
+            f"non-recurring charge embedded in operating income (impairment / restructuring / "
+            f"write-down) or a cyclical trough — anchoring the valuation here would grow a "
+            f"distorted base, and it would still TIE. The data provider does not reliably tag "
+            f"such charges, so this cannot be stripped automatically. REMEDY (human): repoint "
+            f"FY0 to a representative fiscal year, or supply a normalized operating income.")
+    return ok, detail
+
+
+def anchor_representativeness_check(engine_path, **kw):
+    """Engine wrapper: read the reported OI / revenue / year series and the anchor year from
+    the recalced engine, then assess FY0 representativeness. Additive and tie-safe — reads
+    values, touches no engine math."""
+    import openpyxl
+    wb = openpyxl.load_workbook(engine_path, data_only=True)
+
+    def _series(name):
+        dn = wb.defined_names.get(name)
+        if not dn:
+            return []
+        ref = str(dn.value).replace("$", "").replace("'", "")
+        sh, rng = ref.split("!")
+        return [c.value for row in wb[sh][rng] for c in row]
+
+    def _scalar(name):
+        dn = wb.defined_names.get(name)
+        if not dn:
+            return None
+        ref = str(dn.value).replace("$", "").replace("'", "")
+        sh, cell = ref.split("!")
+        return wb[sh][cell].value
+
+    try:
+        anchor_year = int(_scalar("in_anchor_year"))
+    except (TypeError, ValueError):
+        return True, {"anchor_representativeness_check": "SKIP", "reason": "anchor year unreadable"}
+    return _assess_anchor_representativeness(
+        _series("rep_years_is"), _series("rep_oi"), _series("rep_revenue"), anchor_year, **kw)
+
+
 def rd_wedge_report(engine_path):
     """Diagnose Forecast row 61 — the reported-vs-economic OPERATING-EXPENSE WEDGE
     (R&D plus any opex not itemized as SG&A or economic depreciation), which the engine

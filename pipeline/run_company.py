@@ -349,6 +349,21 @@ def main():
     if not anchor_ok:
         _fail("ANCHOR EARNINGS CHECK FAILED: " + anchor_detail["reason"])
 
+    # --- anchor representativeness: the loss guard catches OI <= 0; this catches a POSITIVE
+    #     but distorted anchor — FY0 margin far below the firm's own history (impairment /
+    #     restructuring / one-off embedded in OI, or a cyclical trough). The provider does not
+    #     reliably tag such charges, so we detect via representativeness and defer the fix to a
+    #     human (repoint / normalized anchor), rather than strip an amount we cannot trust.
+    rep_ok, rep_detail = CK.anchor_representativeness_check(out_xlsx)
+    results["anchor_representativeness_check"] = rep_detail
+    _rv = rep_detail.get("anchor_representativeness_check")
+    _am, _mn = rep_detail.get("anchor_margin"), rep_detail.get("median_prior_margin")
+    print(f"[anchor-repr] {_rv}"
+          + (f"  FY0 margin={_am:.1%} vs normal {_mn:.1%}" if isinstance(_am, float) and isinstance(_mn, float)
+             else f"  ({rep_detail.get('reason','')[:64]})"))
+    if not rep_ok:
+        _fail("ANCHOR REPRESENTATIVENESS CHECK FAILED: " + rep_detail["reason"])
+
     # --- R&D / opex-wedge diagnostic (Forecast row 61). Visible, non-fatal — EXCEPT a
     #     firm that declares no wedge (expect_zero_rd_wedge) must actually have ~0.
     wedge = CK.rd_wedge_report(out_xlsx)

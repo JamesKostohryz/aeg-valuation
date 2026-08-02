@@ -52,6 +52,66 @@ def tie_check(results, tie_tol=DEFAULT_TIE_TOL, mode_tol=DEFAULT_MODE_TOL):
     }
 
 
+def anchor_earnings_check(engine_path):
+    """Fail-loud earnings-base guard on the FY0 operating anchor.
+
+    The four-method tie is an ALGEBRAIC IDENTITY on the shared forecast: AEG = RIV = FCFE =
+    FCFF reconcile for ANY anchor, a loss included, because all four transform the same
+    restated stream. So the tie proves internal consistency, NOT that the anchor is a valid
+    base — it cannot catch a cyclical trough. This guard closes that gap for the one
+    bright-line, non-judgment case: a NON-POSITIVE FY0 operating-income anchor.
+
+    An AEG going-concern valuation capitalizes the FY0 operating income and grows it. If that
+    anchor is a loss (a cyclical trough, a one-off impairment year), the intrinsic value is a
+    confident number on an unrepresentative base — worse than a refusal, because it looks valid
+    and ties. We guard the OPERATING anchor (anchor_oi_at0), never net income: a firm with
+    positive operating income but a net loss (leverage or one-offs BELOW operating income) is
+    still legitimately valued at enterprise level, so net income is the wrong signal.
+
+    Returns (ok: bool, detail: dict). Never raises — the caller decides to abort. The remedy is
+    deliberately HUMAN (D1: forecasting stays human-in-the-loop): pick a representative /
+    mid-cycle anchor year, or supply a normalized operating income. The tool must not average a
+    cycle on its own — that is a judgment, not plumbing.
+    """
+    import openpyxl
+    wb = openpyxl.load_workbook(engine_path, data_only=True)
+
+    def _dn(name):
+        dn = wb.defined_names.get(name)
+        if not dn:
+            return None
+        ref = str(dn.value).replace("$", "").replace("'", "")
+        try:
+            sh, cell = ref.split("!")
+            return wb[sh][cell].value
+        except Exception:
+            return None
+
+    oi = _dn("anchor_oi_at0")
+    yr = _dn("in_anchor_year")
+    ok = isinstance(oi, (int, float)) and oi > 0
+    reason = None
+    if not isinstance(oi, (int, float)):
+        ok = False
+        reason = ("anchor operating income (anchor_oi_at0) could not be read from the recalced "
+                  "engine — cannot confirm the valuation anchor is a going concern")
+    elif oi <= 0:
+        reason = (
+            f"FY0 anchor operating income is NON-POSITIVE (anchor_oi_at0 = {oi:.6g} for anchor "
+            f"year {yr}). An AEG going-concern valuation capitalizes and grows the FY0 operating "
+            f"income, so a loss year is not a valid anchor: the intrinsic value would be a confident "
+            f"number on an unrepresentative base, and it would still TIE. This is the normal state of "
+            f"a cyclical at a trough. REMEDY (human judgment, not automatic): choose a representative "
+            f"/ mid-cycle anchor year, or supply a normalized operating income; do not let the tool "
+            f"average the cycle for you.")
+    return ok, {
+        "anchor_earnings_check": "PASS" if ok else "FAIL",
+        "anchor_oi_at0": oi,
+        "anchor_year": yr,
+        "reason": reason,
+    }
+
+
 def rd_wedge_report(engine_path):
     """Diagnose Forecast row 61 — the reported-vs-economic OPERATING-EXPENSE WEDGE
     (R&D plus any opex not itemized as SG&A or economic depreciation), which the engine

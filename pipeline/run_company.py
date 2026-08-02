@@ -314,6 +314,18 @@ def main():
     if not tie_ok:
         _fail("TIE CHECK FAILED: " + "; ".join(tie_detail["reasons"]))
 
+    # --- earnings-base guard: the tie is an identity on the shared forecast, so it holds for
+    #     ANY anchor including a loss. This catches the one bright-line invalid anchor the tie
+    #     cannot: a non-positive FY0 OPERATING income (a cyclical trough). Placed AFTER the tie
+    #     so a refusal here means the anchor itself is invalid, not a data artifact. Remedy is
+    #     human (pick a representative anchor year / supply a normalized OI) — D1.
+    anchor_ok, anchor_detail = CK.anchor_earnings_check(out_xlsx)
+    results["anchor_earnings_check"] = anchor_detail
+    print(f"[anchor-earnings] {anchor_detail['anchor_earnings_check']}  "
+          f"anchor_oi_at0={anchor_detail['anchor_oi_at0']} (FY{anchor_detail['anchor_year']})")
+    if not anchor_ok:
+        _fail("ANCHOR EARNINGS CHECK FAILED: " + anchor_detail["reason"])
+
     # --- R&D / opex-wedge diagnostic (Forecast row 61). Visible, non-fatal — EXCEPT a
     #     firm that declares no wedge (expect_zero_rd_wedge) must actually have ~0.
     wedge = CK.rd_wedge_report(out_xlsx)

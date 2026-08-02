@@ -169,11 +169,18 @@ fy_end_month: {fy_end_month}          # 0 = auto-detect from statement dates
 judgments:
   minority_include: false      # exclude minority interest from common equity
   finlease: 0.0                # finance/capital-lease obligations to add back (0 = none)
-  oi_adj_override: null        # override operating-income adjustment (null = derived)
-  rd_capitalize: false         # DEFAULT false: R&D capitalization is documented INERT in the
-                               # engine, so false is the honest default. Set true (with
-                               # rd_life) only as a deliberate judgment for an R&D-heavy name.
-  rd_life: 5.0                 # (unused while rd_capitalize is false)
+  oi_adj_override: null        # KEEP null. NOT a working normalization knob: the economic
+                               # restatement anchors on reported operating income, and this value
+                               # feeds only an audit identity requiring it to EQUAL reported OI, so
+                               # a real override breaks the tie (the run refuses it). To value a
+                               # cyclical on a representative base, repoint FY0 to a representative
+                               # fiscal year instead. (Normalized-anchor override = engine backlog.)
+  rd_capitalize: false         # KEEP false. R&D capitalization is currently INERT: the Cap Engine
+                               # reserve is computed but referenced nowhere downstream, so true
+                               # changes neither NOA nor operating income (it does NOT capitalize
+                               # R&D). Do not set true expecting a capitalized-R&D restatement until
+                               # the capitalization increment is wired (engine backlog).
+  rd_life: 5.0                 # (unused while rd_capitalize is inert)
   dps_override: null           # override near-term dividend (null = from dividends file)
 
 # !! NOT AUTO-DETECTED — a spin-off cannot be inferred from statements. If {t} has had one,

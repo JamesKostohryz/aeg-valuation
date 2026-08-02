@@ -127,6 +127,21 @@ def main():
     os.makedirs(args.work_dir, exist_ok=True)
     print(f"[run_company] {tk}  config_hash={cfg['config_hash']}  bonded={cfg['bonded']}")
 
+    # --- unsupported-knob guard: fail fast rather than emit a number that ignores a stated
+    #     judgment. oi_adj_override sets in_oiadj0, which feeds ONLY an Audit identity requiring
+    #     it to equal reported OI (Econ Statements anchors on reported OI directly) — so a real
+    #     override silently breaks the tie instead of normalizing the anchor. Refuse with the
+    #     reason rather than dying mid-tie. (rd_capitalize=true is inert too, but committed
+    #     configs set it; that one is a tracked engine backlog item, not a hard refusal here.)
+    if cfg["judgments"].get("oi_adj_override") is not None:
+        _fail(
+            "oi_adj_override is set, but it is NOT a working normalization knob yet: the economic "
+            "restatement anchors on REPORTED operating income (Econ Statements S20 <- rep_oi), and "
+            "in_oiadj0 feeds only an Audit identity that requires it to equal reported OI — so any "
+            "real override breaks the four-method tie rather than repricing the anchor. To value on "
+            "a representative base, repoint FY0 to a representative fiscal year instead. Leave "
+            "oi_adj_override null until the normalized-anchor increment lands.")
+
     files = stage_raw(cfg, args.cached, args.work_dir)
     price = resolve_price(cfg, files, args.price)
 

@@ -69,9 +69,11 @@ def anchor_earnings_check(engine_path):
     still legitimately valued at enterprise level, so net income is the wrong signal.
 
     Returns (ok: bool, detail: dict). Never raises — the caller decides to abort. The remedy is
-    deliberately HUMAN (D1: forecasting stays human-in-the-loop): pick a representative /
-    mid-cycle anchor year, or supply a normalized operating income. The tool must not average a
-    cycle on its own — that is a judgment, not plumbing.
+    deliberately HUMAN (D1: forecasting stays human-in-the-loop): repoint FY0 to a representative
+    fiscal year for the anchor (the mechanism that exists today). NOTE: a one-field normalized
+    operating-income override is NOT yet wired — the `oi_adj_override` config knob sets in_oiadj0,
+    which feeds only an Audit identity that REQUIRES it to equal reported OI, so setting it to a
+    real normalized value breaks the tie. Averaging a cycle is a judgment, not plumbing.
     """
     import openpyxl
     wb = openpyxl.load_workbook(engine_path, data_only=True)
@@ -101,9 +103,10 @@ def anchor_earnings_check(engine_path):
             f"year {yr}). An AEG going-concern valuation capitalizes and grows the FY0 operating "
             f"income, so a loss year is not a valid anchor: the intrinsic value would be a confident "
             f"number on an unrepresentative base, and it would still TIE. This is the normal state of "
-            f"a cyclical at a trough. REMEDY (human judgment, not automatic): choose a representative "
-            f"/ mid-cycle anchor year, or supply a normalized operating income; do not let the tool "
-            f"average the cycle for you.")
+            f"a cyclical at a trough. REMEDY (human judgment, not automatic): repoint FY0 to a "
+            f"representative fiscal year for the anchor. (A one-field normalized-OI override is not "
+            f"yet wired — oi_adj_override currently only feeds an audit identity; see the engine "
+            f"backlog.) Do not let the tool average the cycle for you.")
     return ok, {
         "anchor_earnings_check": "PASS" if ok else "FAIL",
         "anchor_oi_at0": oi,

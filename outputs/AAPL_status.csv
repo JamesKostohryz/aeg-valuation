@@ -3,7 +3,7 @@ ticker,AAPL
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,1.84081727638841e-09
+max_identity_tie,0
 anchor_earnings_check,PASS
 anchor_oi_at0,118575.537924172
 anchor_representativeness,PASS
@@ -13,4 +13,4 @@ anchor_margin_vs_normal,1.1308529651570398
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 config_hash,80e5fcb7cc6a0fda
-vintage,2026-08-02T17:18Z
+vintage,run-2026-08-02T20:19:45Z

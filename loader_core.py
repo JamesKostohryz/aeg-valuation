@@ -221,29 +221,58 @@ def populate_raw_tabs(wb, parsed):
     r_tl = _row_of(BSws, "Total Liabilities Net Minority Interest")
     r_te = _row_of(BSws, "Total Equity Gross Minority Interest")
     if all(x is not None for x in (r_mi, r_ta, r_tl, r_te)):
-        filled = []
+        filled = []          # blank / hard-zero MI filled from the balance plug (as before)
+        reconciled = []      # filed MI nudged by a SUB-materiality residual so the BS articulates
+        material = []        # imbalance >= materiality: flagged loudly, left for the tie to catch
+        MATL_FRAC = 0.001    # materiality threshold = 0.1% of total assets
         for j in range(41):
             c_mi = BSws.cell(r_mi, 2 + j)
-            # Fill when the feed leaves it blank, or files a hard 0 that does NOT close the
-            # balance sheet (AT&T 2011: MI=0 filed, yet TA-(TL+TE)=263). A non-zero filed
-            # value is always respected — we never override real reported NCI.
-            if isinstance(c_mi.value, (int, float)) and c_mi.value != 0:
-                continue
             ta = BSws.cell(r_ta, 2 + j).value
             tl = BSws.cell(r_tl, 2 + j).value
             te = BSws.cell(r_te, 2 + j).value
             if not all(isinstance(x, (int, float)) for x in (ta, tl, te)):
-                continue                      # no full balance sheet that year -> leave blank
-            plug = round(ta - (tl + te), 6)
-            if abs(plug) < 1e-9:
-                continue                      # genuinely zero NCI; leave blank as filed
-            c_mi.value = plug
-            c_mi.font = copy.copy(blue_font)
-            permitted.add(("Balance Sheet", c_mi.coordinate))
-            filled.append((BSws.cell(3, 2 + j).value, plug))
+                continue                      # no full balance sheet that year -> leave as filed
+            close = round(ta - (tl + te), 6)  # the MI that makes the reported BS articulate
+            filed = c_mi.value if isinstance(c_mi.value, (int, float)) else None
+            yr = BSws.cell(3, 2 + j).value
+            if filed is None or filed == 0:
+                # Feed left it blank, or filed a hard 0 that does NOT close (AT&T 2011: MI=0
+                # yet TA-(TL+TE)=263). Recover it as the balance plug; genuinely-zero NCI stays.
+                if abs(close) < 1e-9:
+                    continue
+                c_mi.value = close
+                c_mi.font = copy.copy(blue_font)
+                permitted.add(("Balance Sheet", c_mi.coordinate))
+                filled.append((yr, close))
+            else:
+                # Non-zero filed NCI is respected UNLESS the reported balance sheet fails to
+                # articulate (TA != TL + TE + MI). Such gaps are source-data noise — rounding
+                # and merger/spinoff-year reclassifications (e.g. MRK 2009, Schering-Plough).
+                resid = round(close - filed, 6)
+                if abs(resid) < 1e-9:
+                    continue                  # already closes -> filed NCI untouched
+                if abs(resid) <= MATL_FRAC * abs(ta):
+                    # sub-materiality: absorb into the NCI balancing line so every ECONOMIC tie
+                    # stays machine-precise. Logged below; never silent.
+                    c_mi.value = close
+                    c_mi.font = copy.copy(blue_font)
+                    permitted.add(("Balance Sheet", c_mi.coordinate))
+                    reconciled.append((yr, resid, (resid / ta) if ta else 0.0))
+                else:
+                    # MATERIAL: do NOT swallow. Flag loudly and leave it; the standing partition
+                    # tie fails loud, forcing investigation of the source data.
+                    material.append((yr, resid, (resid / ta) if ta else 0.0))
         if filled:
             print("  [loader] 'Minority Interest' blank in feed; derived as balance plug "
                   "TA-(TL+TE) for: " + ", ".join(f"{y}={v:,.0f}" for y, v in filled))
+        if reconciled:
+            print("  [loader] reported BS did not articulate; absorbed sub-materiality residual "
+                  "(<0.1% assets) into Minority Interest for: "
+                  + ", ".join(f"{y}={r:+,.1f} ({p*100:+.4f}% TA)" for y, r, p in reconciled))
+        for y, r, p in material:
+            print(f"  [loader] *** MATERIAL reported-BS imbalance {y}: {r:+,.1f} "
+                  f"({p*100:+.3f}% of assets) exceeds 0.1% — NOT absorbed; the standing tie will "
+                  f"fail. Investigate the source data for {y}.")
 
     # fiscal-year alignment gate: latest (FY0) year must agree across the three tabs
     yrs = set(latest_years.values())

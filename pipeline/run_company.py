@@ -141,6 +141,14 @@ def main():
             "real override breaks the four-method tie rather than repricing the anchor. To value on "
             "a representative base, repoint FY0 to a representative fiscal year instead. Leave "
             "oi_adj_override null until the normalized-anchor increment lands.")
+    if cfg["judgments"].get("finlease"):
+        _fail(
+            f"finlease={cfg['judgments']['finlease']} is set, but the finance-lease add-back is NOT "
+            "wired: in_finlease (Inputs B8) feeds no engine formula, and NFO is built as "
+            "in_debt - in_cash - in_sti — so a non-zero finlease would silently NOT change NFO or "
+            "equity. EODHD 'Total Debt' already includes capitalized finance leases for most names "
+            "(so 0.0 is correct there); an extra add-back is an engine-backlog item. Refusing rather "
+            "than emitting a valuation that ignores the lease obligation you entered.")
 
     files = stage_raw(cfg, args.cached, args.work_dir)
     price = resolve_price(cfg, files, args.price)

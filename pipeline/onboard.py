@@ -168,7 +168,11 @@ fy_end_month: {fy_end_month}          # 0 = auto-detect from statement dates
 
 judgments:
   minority_include: false      # exclude minority interest from common equity
-  finlease: 0.0                # finance/capital-lease obligations to add back (0 = none)
+  finlease: 0.0                # KEEP 0.0. The add-back is NOT wired: in_finlease feeds no engine
+                               # formula and NFO = in_debt - in_cash - in_sti, so a non-zero value
+                               # silently does nothing (the run refuses it). EODHD 'Total Debt'
+                               # already includes capitalized finance leases for most names, so 0.0
+                               # is correct; an extra add-back is an engine-backlog item.
   oi_adj_override: null        # KEEP null. NOT a working normalization knob: the economic
                                # restatement anchors on reported operating income, and this value
                                # feeds only an audit identity requiring it to EQUAL reported OI, so

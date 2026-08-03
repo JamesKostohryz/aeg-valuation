@@ -223,8 +223,15 @@ def populate_raw_tabs(wb, parsed):
     if all(x is not None for x in (r_mi, r_ta, r_tl, r_te)):
         filled = []          # blank / hard-zero MI filled from the balance plug (as before)
         reconciled = []      # filed MI nudged by a SUB-materiality residual so the BS articulates
-        material = []        # imbalance >= materiality: flagged loudly, left for the tie to catch
-        MATL_FRAC = 0.001    # materiality threshold = 0.1% of total assets
+        warned = []          # small-but-notable imbalance: ABSORBED so the tie holds, WARNED loudly
+        material = []        # imbalance > the warn margin: flagged loudly, left for the tie to catch
+        MATL_FRAC = 0.001    # sub-materiality threshold = 0.1% of total assets (absorbed quietly)
+        # "warn but allow within a relatively small margin" (James, 2026-08-03): a source-data
+        # balance-sheet articulation error between MATL_FRAC and WARN_FRAC is absorbed into the
+        # excluded Minority-Interest line (so the four-method tie stays exact and the error is
+        # quarantined OUT of common equity) but is WARNED loudly and recorded for disclosure.
+        # Above WARN_FRAC we still refuse — that size of gap is a real data problem, not noise.
+        WARN_FRAC = 0.005    # 0.5% of total assets — the "relatively small margin" ceiling
         for j in range(41):
             c_mi = BSws.cell(r_mi, 2 + j)
             ta = BSws.cell(r_ta, 2 + j).value
@@ -258,9 +265,17 @@ def populate_raw_tabs(wb, parsed):
                     c_mi.font = copy.copy(blue_font)
                     permitted.add(("Balance Sheet", c_mi.coordinate))
                     reconciled.append((yr, resid, (resid / ta) if ta else 0.0))
+                elif abs(resid) <= WARN_FRAC * abs(ta):
+                    # small-but-notable (0.1%-0.5% of assets): ABSORB so the tie holds, but WARN
+                    # loudly and record for disclosure. Same plug as sub-materiality — the gap goes
+                    # into the excluded NCI line, so it never touches common-equity value.
+                    c_mi.value = close
+                    c_mi.font = copy.copy(blue_font)
+                    permitted.add(("Balance Sheet", c_mi.coordinate))
+                    warned.append((yr, resid, (resid / ta) if ta else 0.0))
                 else:
-                    # MATERIAL: do NOT swallow. Flag loudly and leave it; the standing partition
-                    # tie fails loud, forcing investigation of the source data.
+                    # Beyond the warn margin: do NOT swallow. Flag loudly and leave it; the standing
+                    # partition tie fails loud, forcing investigation of the source data.
                     material.append((yr, resid, (resid / ta) if ta else 0.0))
         if filled:
             print("  [loader] 'Minority Interest' blank in feed; derived as balance plug "
@@ -269,10 +284,19 @@ def populate_raw_tabs(wb, parsed):
             print("  [loader] reported BS did not articulate; absorbed sub-materiality residual "
                   "(<0.1% assets) into Minority Interest for: "
                   + ", ".join(f"{y}={r:+,.1f} ({p*100:+.4f}% TA)" for y, r, p in reconciled))
+        for y, r, p in warned:
+            print(f"  [loader] *** WARNING reported-BS imbalance {y}: {r:+,.1f} "
+                  f"({p*100:+.3f}% of assets) exceeds 0.1% but is within the {WARN_FRAC*100:.1f}% "
+                  f"margin — ABSORBED into the excluded Minority-Interest line so the tie holds "
+                  f"(does not touch common-equity value). Disclosed data-quality adjustment; "
+                  f"verify the source data for {y} if this name is high-stakes.")
         for y, r, p in material:
             print(f"  [loader] *** MATERIAL reported-BS imbalance {y}: {r:+,.1f} "
-                  f"({p*100:+.3f}% of assets) exceeds 0.1% — NOT absorbed; the standing tie will "
-                  f"fail. Investigate the source data for {y}.")
+                  f"({p*100:+.3f}% of assets) exceeds the {WARN_FRAC*100:.1f}% margin — NOT "
+                  f"absorbed; the standing tie will fail. Investigate the source data for {y}.")
+        # expose the disclosed adjustments so downstream (status.csv / audit) can surface them
+        globals()["_LAST_BS_WARNINGS"] = [
+            {"year": y, "residual": r, "pct_assets": p} for y, r, p in warned]
 
     # fiscal-year alignment gate: latest (FY0) year must agree across the three tabs
     yrs = set(latest_years.values())

@@ -207,14 +207,25 @@ def _yearly(fund, statement):
 
 _FY0_INC_ANCHORS = ("netIncomeApplicableToCommonShares", "netIncome")  # gate line: Net Income Common Stockholders (+fallback)
 _FY0_BAL_ANCHORS = ("cashAndEquivalents", "cash")                      # gate line: Cash And Cash Equivalents (+fallback)
+# Extra FY0 lines that validate_load.CRITICAL_FY0 also HARD-requires. EODHD's partial/stub latest
+# year frequently carries net-income + cash but leaves these blank (e.g. PG's June-FYE FY2026 and
+# NKE's May-FYE FY2026, whose annuals land mid-populated). Requiring them here keeps the anchor
+# picker consistent with the downstream abort gate, so it falls back to the newest FULLY-reported
+# year instead of anchoring on a stub. This can only ever reject a year the gate would also reject,
+# so it never changes a name whose latest year is complete (goldens bit-identical).
+_FY0_INC_REQUIRED = ("reconciledDepreciation",)          # -> "Reconciled Depreciation" (income)
+_FY0_BAL_REQUIRED = ("propertyPlantAndEquipmentGross",)  # -> "Gross PPE" (balance sheet)
 
 def _fy0(*year_dicts):
     """Newest fiscal year to anchor on. EODHD routinely publishes a partial/stub LATEST year
-    (blank net-income-to-common / cash at FY0), which trips the completeness gate. Anchor on the
-    newest year that is COMPLETE across statements (income net-income-to-common AND balance cash
-    present) -- a no-op when the latest year is already complete (bit-identical for AAPL/T), and the
-    general fix for any lagged feed. Falls back to the newest shared year if none qualifies (the
-    fail-closed completeness gate still catches a genuinely broken feed)."""
+    (net-income/cash present but other critical lines blank), which trips the completeness gate.
+    Anchor on the newest year that is COMPLETE across statements -- income net-income-to-common AND
+    balance cash AND the extra gate-critical lines (Reconciled Depreciation, Gross PPE) all present.
+    A no-op when the latest year is already complete (bit-identical for AAPL/T and every name whose
+    latest FY is fully reported), and the general fix for any lagged/partial feed (rescues recent
+    fiscal-year-end names like PG/NKE whose newest annual is only half-populated at the vendor).
+    Falls back to the newest shared year if none qualifies (the fail-closed completeness gate still
+    catches a genuinely broken feed)."""
     present = [d for d in year_dicts if d]
     if not present:
         return None
@@ -229,7 +240,9 @@ def _fy0(*year_dicts):
         io, bo = inc.get(y), bal.get(y)
         return bool(io) and bool(bo) \
             and any(_num(io[1].get(k)) is not None for k in _FY0_INC_ANCHORS) \
-            and any(_num(bo[1].get(k)) is not None for k in _FY0_BAL_ANCHORS)
+            and any(_num(bo[1].get(k)) is not None for k in _FY0_BAL_ANCHORS) \
+            and all(_num(io[1].get(k)) is not None for k in _FY0_INC_REQUIRED) \
+            and all(_num(bo[1].get(k)) is not None for k in _FY0_BAL_REQUIRED)
     for y in sorted((y for y in shared if y <= top), reverse=True)[:8]:
         if _complete(y):
             return y

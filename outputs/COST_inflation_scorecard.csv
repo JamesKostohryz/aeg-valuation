@@ -1,0 +1,22 @@
+field,value
+verdict,NET LOSER from inflation
+net_inflation_position_annual,-134.01768591038584
+depreciation_penalty_annual,86.42960217914583
+interest_benefit_annual,-47.58808373124
+tax_rate,0.25134
+expected_inflation,0.026626
+rd_nominal,0.07203712873624601
+net_debt,-7111
+nominal_interest,154
+econ_depreciation,3070.5736263327726
+reported_ppe_depreciation,2726.6983888888885
+depreciation_shortfall,343.8752374438841
+avg_asset_age_yrs,6.524269614184144
+debt_to_annual_da,-2.607915869601436
+breakeven_leverage,7.023819609060889
+interest_tax_shield_pv_fixed_nominal,537.3112543354968
+interest_tax_shield_pv_constant_real,852.3540611556207
+interest_tax_shield_pv_adopted,852.3540611556207
+debt_policy,constant_real
+shield_treatment,excluded from headline (Miller 1977); disclosure only
+verdict_basis,"net_inflation_position (t*pi*net_debt vs t*shortfall), using the engine's BEA capital-goods deflator for PP&E; the breakeven_leverage column is v1.4's general-CPI rule of thumb and can differ when capital-goods prices diverge from general inflation"

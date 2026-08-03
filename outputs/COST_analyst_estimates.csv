@@ -1,0 +1,23 @@
+field,value,data_as_of
+ticker,COST,req-2026-08-03T18:41:01Z
+company,Costco Wholesale Corp,req-2026-08-03T18:41:01Z
+source,eodhd:Highlights+AnalystRatings,req-2026-08-03T18:41:01Z
+eodhd_updated_at,2026-08-02,req-2026-08-03T18:41:01Z
+rating,3.9737,req-2026-08-03T18:41:01Z
+target_price,1076.9143,req-2026-08-03T18:41:01Z
+wall_street_target_price,1076.9143,req-2026-08-03T18:41:01Z
+strong_buy,17,req-2026-08-03T18:41:01Z
+buy,5,req-2026-08-03T18:41:01Z
+hold,15,req-2026-08-03T18:41:01Z
+sell,0,req-2026-08-03T18:41:01Z
+strong_sell,1,req-2026-08-03T18:41:01Z
+analyst_count,38,req-2026-08-03T18:41:01Z
+eps_est_current_year,20.5861,req-2026-08-03T18:41:01Z
+eps_est_next_year,22.6914,req-2026-08-03T18:41:01Z
+eps_est_current_quarter,4.923,req-2026-08-03T18:41:01Z
+eps_est_next_quarter,0,req-2026-08-03T18:41:01Z
+most_recent_quarter,2026-05-31,req-2026-08-03T18:41:01Z
+eps_ttm,19.89,req-2026-08-03T18:41:01Z
+pe_ratio,47.8577,req-2026-08-03T18:41:01Z
+consensus_revenue_current_year,,req-2026-08-03T18:41:01Z
+consensus_revenue_next_year,,req-2026-08-03T18:41:01Z

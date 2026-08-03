@@ -1,0 +1,62 @@
+{
+  "ticker": "PG",
+  "config_hash": "1c4d33a97679c94c",
+  "data_vintage": "req-2026-08-03T18:34:53Z",
+  "gates_ok": true,
+  "tie_check": {
+    "tie_check": "PASS",
+    "audit_ok": true,
+    "tie_ok": true,
+    "mode_ok": true,
+    "max_identity_tie": 3.53793438989669e-10,
+    "mode_tie": 0,
+    "tie_tol": 1e-08,
+    "reasons": []
+  },
+  "rd_wedge": {
+    "opex_wedge": 7661.31048042666,
+    "wedge_pct_ebit": 0.3767355862101547,
+    "rev_scaled_consistent": true,
+    "rd_reserve": 0,
+    "rd_capitalization_wired": false,
+    "rd_reserve_nonzero_but_inert": false
+  },
+  "audit_status": "PASS \u2014 all identities tie",
+  "max_identity_tie": 3.53793438989669e-10,
+  "equity_value": 113.455198864393,
+  "enterprise_value": 113.455198864393,
+  "mode_tie": 0,
+  "anchor_year": 2025,
+  "disclosure": {
+    "base_equity_ps": 113.455198864393,
+    "adjusted_equity_ps": 103.40860501880302,
+    "debt_capital_gain_ps": 0.9571972082790096,
+    "idiosyncratic_haircut_ps": 11.003791053868994
+  },
+  "outputs": [
+    "PG_anchors.csv",
+    "PG_valuation.csv",
+    "PG_summary.csv",
+    "PG_restated_real.csv",
+    "PG_reported_is.csv",
+    "PG_reported_bs.csv",
+    "PG_reported_cf.csv",
+    "PG_restated.csv",
+    "PG_fact_sheet.csv",
+    "PG_restated_bs.csv",
+    "PG_restated_is.csv",
+    "PG_aeg_schedule.csv",
+    "PG_dupont.json",
+    "PG_dupont.csv",
+    "PG_analyst_estimates.csv",
+    "PG_growth_trend.csv"
+  ],
+  "cost_of_debt": {
+    "cod_source": "issuer_bonds",
+    "rating": "BBB",
+    "coverage": null,
+    "audit": "GREEN",
+    "as_of": "req-2026-08-03T18:34:53Z",
+    "flags": []
+  }
+}

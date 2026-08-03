@@ -1,0 +1,16 @@
+field,value
+ticker,WMT
+run_status,OK
+anchor_year,2026
+tie_check,PASS
+max_identity_tie,9.20408638194203e-10
+anchor_earnings_check,PASS
+anchor_oi_at0,22524.2110977009
+anchor_representativeness,PASS
+anchor_margin,0.041820733829433104
+anchor_normal_margin,0.04126156263514897
+anchor_margin_vs_normal,1.0135518666422925
+inflation_verdict,NET LOSER from inflation
+rd_capitalization_wired,False
+config_hash,0f6fec000de311da
+vintage,req-2026-08-03T08:38:11Z

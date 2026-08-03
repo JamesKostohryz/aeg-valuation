@@ -1,0 +1,22 @@
+field,value
+verdict,NET BENEFICIARY of inflation
+net_inflation_position_annual,109.62629685034811
+depreciation_penalty_annual,94.88549879711992
+interest_benefit_annual,204.51179564746803
+tax_rate,0.190258
+expected_inflation,0.026626
+rd_nominal,0.06435322837725588
+net_debt,40371
+nominal_interest,1121
+econ_depreciation,4117.497930397483
+reported_ppe_depreciation,3618.777777777778
+depreciation_shortfall,498.72015261970546
+avg_asset_age_yrs,7.481075298216266
+debt_to_annual_da,11.155976542110595
+breakeven_leverage,8.158916337348826
+interest_tax_shield_pv_fixed_nominal,3314.196092070161
+interest_tax_shield_pv_constant_real,5653.190737132889
+interest_tax_shield_pv_adopted,5653.190737132889
+debt_policy,constant_real
+shield_treatment,excluded from headline (Miller 1977); disclosure only
+verdict_basis,"net_inflation_position (t*pi*net_debt vs t*shortfall), using the engine's BEA capital-goods deflator for PP&E; the breakeven_leverage column is v1.4's general-CPI rule of thumb and can differ when capital-goods prices diverge from general inflation"

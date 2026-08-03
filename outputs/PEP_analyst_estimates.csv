@@ -1,0 +1,23 @@
+field,value,data_as_of
+ticker,PEP,req-2026-08-03T05:00:12Z
+company,PepsiCo Inc,req-2026-08-03T05:00:12Z
+source,eodhd:Highlights+AnalystRatings,req-2026-08-03T05:00:12Z
+eodhd_updated_at,2026-08-02,req-2026-08-03T05:00:12Z
+rating,3.3478,req-2026-08-03T05:00:12Z
+target_price,155,req-2026-08-03T05:00:12Z
+wall_street_target_price,155,req-2026-08-03T05:00:12Z
+strong_buy,4,req-2026-08-03T05:00:12Z
+buy,2,req-2026-08-03T05:00:12Z
+hold,16,req-2026-08-03T05:00:12Z
+sell,0,req-2026-08-03T05:00:12Z
+strong_sell,1,req-2026-08-03T05:00:12Z
+analyst_count,23,req-2026-08-03T05:00:12Z
+eps_est_current_year,8.5598,req-2026-08-03T05:00:12Z
+eps_est_next_year,8.9784,req-2026-08-03T05:00:12Z
+eps_est_current_quarter,2.2101,req-2026-08-03T05:00:12Z
+eps_est_next_quarter,2.4316,req-2026-08-03T05:00:12Z
+most_recent_quarter,2026-06-30,req-2026-08-03T05:00:12Z
+eps_ttm,7.63,req-2026-08-03T05:00:12Z
+pe_ratio,18.291,req-2026-08-03T05:00:12Z
+consensus_revenue_current_year,,req-2026-08-03T05:00:12Z
+consensus_revenue_next_year,,req-2026-08-03T05:00:12Z

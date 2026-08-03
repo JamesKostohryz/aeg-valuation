@@ -1,0 +1,62 @@
+{
+  "ticker": "KO",
+  "config_hash": "a95f6f7e06085ce0",
+  "data_vintage": "req-2026-08-03T18:37:19Z",
+  "gates_ok": true,
+  "tie_check": {
+    "tie_check": "PASS",
+    "audit_ok": true,
+    "tie_ok": true,
+    "mode_ok": true,
+    "max_identity_tie": 4.06316758017056e-10,
+    "mode_tie": 0,
+    "tie_tol": 1e-08,
+    "reasons": []
+  },
+  "rd_wedge": {
+    "opex_wedge": 5840.70830240136,
+    "wedge_pct_ebit": 0.44781974074133973,
+    "rev_scaled_consistent": true,
+    "rd_reserve": 0,
+    "rd_capitalization_wired": false,
+    "rd_reserve_nonzero_but_inert": false
+  },
+  "audit_status": "PASS \u2014 all identities tie",
+  "max_identity_tie": 4.06316758017056e-10,
+  "equity_value": 41.0252166226025,
+  "enterprise_value": 41.0252166226025,
+  "mode_tie": 0,
+  "anchor_year": 2025,
+  "disclosure": {
+    "base_equity_ps": 41.0252166226025,
+    "adjusted_equity_ps": 38.94336381242773,
+    "debt_capital_gain_ps": 2.1666384968699286,
+    "idiosyncratic_haircut_ps": 4.248491307044702
+  },
+  "outputs": [
+    "KO_anchors.csv",
+    "KO_valuation.csv",
+    "KO_summary.csv",
+    "KO_restated_real.csv",
+    "KO_reported_is.csv",
+    "KO_reported_bs.csv",
+    "KO_reported_cf.csv",
+    "KO_restated.csv",
+    "KO_fact_sheet.csv",
+    "KO_restated_bs.csv",
+    "KO_restated_is.csv",
+    "KO_aeg_schedule.csv",
+    "KO_dupont.json",
+    "KO_dupont.csv",
+    "KO_analyst_estimates.csv",
+    "KO_growth_trend.csv"
+  ],
+  "cost_of_debt": {
+    "cod_source": "issuer_bonds",
+    "rating": "A",
+    "coverage": null,
+    "audit": "GREEN",
+    "as_of": "req-2026-08-03T18:37:19Z",
+    "flags": []
+  }
+}

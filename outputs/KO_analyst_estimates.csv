@@ -1,0 +1,23 @@
+field,value,data_as_of
+ticker,KO,req-2026-08-03T18:37:19Z
+company,The Coca-Cola Company,req-2026-08-03T18:37:19Z
+source,eodhd:Highlights+AnalystRatings,req-2026-08-03T18:37:19Z
+eodhd_updated_at,2026-08-02,req-2026-08-03T18:37:19Z
+rating,4.3462,req-2026-08-03T18:37:19Z
+target_price,94.6957,req-2026-08-03T18:37:19Z
+wall_street_target_price,94.6957,req-2026-08-03T18:37:19Z
+strong_buy,14,req-2026-08-03T18:37:19Z
+buy,8,req-2026-08-03T18:37:19Z
+hold,3,req-2026-08-03T18:37:19Z
+sell,1,req-2026-08-03T18:37:19Z
+strong_sell,0,req-2026-08-03T18:37:19Z
+analyst_count,26,req-2026-08-03T18:37:19Z
+eps_est_current_year,3.3014,req-2026-08-03T18:37:19Z
+eps_est_next_year,3.5264,req-2026-08-03T18:37:19Z
+eps_est_current_quarter,0.9323,req-2026-08-03T18:37:19Z
+eps_est_next_quarter,0.8756,req-2026-08-03T18:37:19Z
+most_recent_quarter,2026-06-30,req-2026-08-03T18:37:19Z
+eps_ttm,3.33,req-2026-08-03T18:37:19Z
+pe_ratio,26.3033,req-2026-08-03T18:37:19Z
+consensus_revenue_current_year,,req-2026-08-03T18:37:19Z
+consensus_revenue_next_year,,req-2026-08-03T18:37:19Z

@@ -220,10 +220,12 @@ def populate_raw_tabs(wb, parsed):
     r_ta = _row_of(BSws, "Total Assets")
     r_tl = _row_of(BSws, "Total Liabilities Net Minority Interest")
     r_te = _row_of(BSws, "Total Equity Gross Minority Interest")
+    r_cse = _row_of(BSws, "Common Stock Equity")
     if all(x is not None for x in (r_mi, r_ta, r_tl, r_te)):
         filled = []          # blank / hard-zero MI filled from the balance plug (as before)
         reconciled = []      # filed MI nudged by a SUB-materiality residual so the BS articulates
         warned = []          # small-but-notable imbalance: ABSORBED so the tie holds, WARNED loudly
+        grossnet = []        # gross-reported equity: NCI netted out of common equity for that year
         material = []        # imbalance > the warn margin: flagged loudly, left for the tie to catch
         MATL_FRAC = 0.001    # sub-materiality threshold = 0.1% of total assets (absorbed quietly)
         # "warn but allow within a relatively small margin" (James, 2026-08-03): a source-data
@@ -252,9 +254,29 @@ def populate_raw_tabs(wb, parsed):
                 permitted.add(("Balance Sheet", c_mi.coordinate))
                 filled.append((yr, close))
             else:
-                # Non-zero filed NCI is respected UNLESS the reported balance sheet fails to
-                # articulate (TA != TL + TE + MI). Such gaps are source-data noise — rounding
-                # and merger/spinoff-year reclassifications (e.g. MRK 2009, Schering-Plough).
+                # GROSS-equity case (e.g. Walmart): the reported totals ALREADY articulate
+                # (TA = TL + TE) because "Total Equity Gross Minority Interest" already INCLUDES
+                # the noncontrolling interest. The filed NCI is then a disclosed component that
+                # lives INSIDE TE, not a missing plug — so the sheet is balanced regardless of the
+                # NCI's size. BUT "Common Stock Equity" is mapped to the same (gross) total, so it
+                # over-states COMMON equity by the NCI. Net the disclosed NCI out of the common-
+                # equity row for this year so the economic common-equity book (minority_include=
+                # False) excludes minority interest and the four-method tie closes. Names with ~0
+                # NCI never reach here, so they are untouched. (Anchor years with a blank NCI are
+                # the NET case and are handled by the plug branch above.)
+                if abs(close) <= 1e-6 * abs(ta):
+                    if r_cse is not None:
+                        c_cse = BSws.cell(r_cse, 2 + j)
+                        if isinstance(c_cse.value, (int, float)) and abs(round(c_cse.value - te, 6)) < 1e-6:
+                            # CSE row == gross TE -> it carries the NCI; net it out to get common.
+                            c_cse.value = round(te - filed, 6)
+                            c_cse.font = copy.copy(blue_font)
+                            permitted.add(("Balance Sheet", c_cse.coordinate))
+                            grossnet.append((yr, filed, (filed / ta) if ta else 0.0))
+                    continue
+                # Otherwise the equity total is NET of MI: the reported BS articulates only when
+                # TA = TL + TE + MI, i.e. filed NCI should equal `close`. A gap is source-data
+                # noise — rounding, merger/spinoff-year reclassifications (e.g. MRK 2009).
                 resid = round(close - filed, 6)
                 if abs(resid) < 1e-9:
                     continue                  # already closes -> filed NCI untouched
@@ -284,6 +306,10 @@ def populate_raw_tabs(wb, parsed):
             print("  [loader] reported BS did not articulate; absorbed sub-materiality residual "
                   "(<0.1% assets) into Minority Interest for: "
                   + ", ".join(f"{y}={r:+,.1f} ({p*100:+.4f}% TA)" for y, r, p in reconciled))
+        if grossnet:
+            print("  [loader] equity reported GROSS of minority interest; netted the disclosed NCI "
+                  "out of Common Stock Equity (common = gross - NCI) for: "
+                  + ", ".join(f"{y}=-{v:,.0f} ({p*100:.3f}% TA)" for y, v, p in grossnet))
         for y, r, p in warned:
             print(f"  [loader] *** WARNING reported-BS imbalance {y}: {r:+,.1f} "
                   f"({p*100:+.3f}% of assets) exceeds 0.1% but is within the {WARN_FRAC*100:.1f}% "

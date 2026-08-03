@@ -30,9 +30,13 @@ WHAT WE DELIBERATELY DO NOT AUTO-DETECT (silent-wrong candidates)
                        business, not a default.
   rd_capitalize        Left false. R&D capitalization is documented INERT in the engine, so
                        false is both the safe and the honest default.
-  cost_of_debt         Only ever 'bond_list', and only when the bond-based curve validates.
-                       We never invent a discount rate; an unbonded name requires a human to
-                       supply single_ytw / ytw_points.
+  cost_of_debt         Preferred 'bond_list' when the issuer's bond curve validates (bonded).
+                       When a name has too few traded bonds, we DO NOT refuse: we emit
+                       bonded:false and let the valuation take the wired synthetic-rating ladder
+                       (cod_fallback: interest-coverage rating -> real_cod_<rating>, AMBER). A
+                       human can still override with single_ytw / ytw_points if the synthetic
+                       rating is wrong for the name. Cost of EQUITY (coe_v2) is still required
+                       for every name — that is genuinely firm-specific, not a bond dependency.
 Everything written here is a committed, reviewable judgment — the point is that a default is
 visible in a diff, not buried in code.
 """
@@ -70,6 +74,33 @@ def check_rate_readiness(ticker, *, local_dir=None):
     mvd = (feed.get("company") or {}).get("market_value_of_debt")
     return True, (f"coe_v2 + cod({n} tenors) + company OK; "
                   f"market_value_of_debt={mvd:.4g}; nfo_basis={feed.get('nfo_basis')}")
+
+
+def check_rate_readiness_unbonded(ticker, *, local_dir=None):
+    """Can we price this name WITHOUT an issuer bond curve? The valuation's synthetic-rating
+    cost-of-debt ladder (run_company -> cod_fallback) needs only: (1) the per-company cost of
+    EQUITY (coe_v2, still genuinely firm-specific) + the global real curve, both via
+    RF.load_all(bonded=False), and (2) the generic by-rating credit curve
+    (market_credit_latest_annual.csv) that maps a rating to real_cod_<rating>. Cost of debt is
+    then computed from the firm's own interest-coverage rating at valuation time (AMBER).
+    Returns (ready: bool, detail: str)."""
+    import rate_feed as RF
+    try:
+        RF.load_all(ticker, cash=0.0, sti=0.0, local_dir=local_dir, bonded=False)
+    except RF.RateFeedError as e:
+        return False, f"cost-of-equity feed not ready: {e}"
+    except Exception as e:
+        return False, f"cost-of-equity feed not ready: {type(e).__name__}: {e}"
+    try:
+        import cod_fallback as CF
+        curve = CF.load_credit_curve(local_dir=local_dir)
+    except Exception as e:
+        return False, f"by-rating credit curve unavailable: {type(e).__name__}: {e}"
+    nt = len(curve.get("tenor") or [])
+    if nt < MIN_COD_TENORS:
+        return False, f"credit curve has {nt} tenors, need {MIN_COD_TENORS}"
+    return True, (f"coe_v2 + global curve + by-rating credit curve({nt} tenors) OK; "
+                  f"cost of debt from the SYNTHETIC-RATING ladder (AMBER); book NFO")
 
 
 def missing_feeds(ticker, *, local_dir=None):
@@ -155,7 +186,33 @@ def detect_company_facts(ticker, *, cached_dir=None, api_key=None):
 
 
 # ------------------------------------------------------------------ config
-def render_config(ticker, company, fy_end_month, readiness_detail):
+def _cod_block(t, bonded):
+    """The cost_of_debt + bonded lines, honest about which pricing path the name takes."""
+    if bonded:
+        return (
+            "cost_of_debt:\n"
+            "  source: bond_list            # validated against the live cod_{t} curve at onboarding\n"
+            "\n"
+            "bonded: true                   # cod_{t} / company_{t} published upstream and contract-valid\n"
+        ).replace("{t}", t)
+    return (
+        "cost_of_debt:\n"
+        "  source: bond_list            # PREFERRED but unavailable: {t} has too few traded bonds to\n"
+        "                               # fit an issuer curve. Cost of debt is taken from the\n"
+        "                               # SYNTHETIC-RATING ladder instead (cod_fallback: the firm's\n"
+        "                               # interest-coverage rating -> real_cod_<rating> off the\n"
+        "                               # by-rating credit curve), flagged AMBER in the cockpit audit.\n"
+        "                               # TO OVERRIDE with your own estimate, replace the two lines\n"
+        "                               # above with:  source: single_ytw  and  single_ytw: 0.05\n"
+        "                               # (a real yield, e.g. 0.05 = 5%), or source: ytw_points with a\n"
+        "                               # [[tenor, ytw], ...] list. That is the manual last resort.\n"
+        "\n"
+        "bonded: false                  # NO issuer bond curve -> rating-curve cost of debt + book NFO.\n"
+        "                               # Cost of EQUITY (coe_v2) is still published upstream and used.\n"
+    ).replace("{t}", t)
+
+
+def render_config(ticker, company, fy_end_month, readiness_detail, *, bonded=True):
     t = ticker.upper()
     return f'''# Per-company statement-adjustment config — {company}
 # AUTO-GENERATED by pipeline/onboard.py. Every field is a committed, reviewable judgment:
@@ -198,11 +255,7 @@ price:
   source: market               # "market" = latest close from the staged prices file
   override: null
 
-cost_of_debt:
-  source: bond_list            # validated against the live cod_{t} curve at onboarding
-
-bonded: true                   # cod_{t} / company_{t} published upstream and contract-valid
-
+{_cod_block(t, bonded)}
 # Forecast row 61 is the reported-vs-economic operating-expense wedge (R&D + other opex).
 # Left UNASSERTED (false) on purpose: setting true makes the run ABORT unless the wedge is
 # ~0, which is a real claim about the business. Flip it only once you've seen this name's
@@ -224,16 +277,25 @@ def onboard(ticker, *, cached_dir=None, api_key=None, local_dir=None,
     if not in_scope:
         raise OnboardError(scope_detail)
 
+    # Two-step readiness: prefer the issuer bond curve; fall back to the synthetic-rating ladder
+    # when the name is thin-/no-bond but its cost of equity is published. Only refuse when even the
+    # cost-of-equity feed is missing (that IS genuinely not-priceable).
+    bonded, detail = True, None
     ready, detail = check_rate_readiness(t, local_dir=local_dir)
     if not ready:
-        feeds = missing_feeds(t, local_dir=local_dir)
-        raise OnboardError(
-            f"RATE FEED NOT READY for {t} — the engine cannot price it yet.\n"
-            f"  contract error : {detail}\n"
-            f"  per-feed status: " + ", ".join(f"{k}={v}" for k, v in feeds.items()) + "\n"
-            f"  These are produced by the RATE side (real-yields company.yml -> asfp.run_company),\n"
-            f"  not by this repo. Ask the rate chat to publish {t}, then re-run onboarding.\n"
-            f"  Refusing to write a config that would fail mid-valuation.")
+        u_ready, u_detail = check_rate_readiness_unbonded(t, local_dir=local_dir)
+        if u_ready:
+            bonded, detail = False, u_detail
+        else:
+            feeds = missing_feeds(t, local_dir=local_dir)
+            raise OnboardError(
+                f"RATE FEED NOT READY for {t} — the engine cannot price it yet.\n"
+                f"  bonded path    : {detail}\n"
+                f"  unbonded path  : {u_detail}\n"
+                f"  per-feed status: " + ", ".join(f"{k}={v}" for k, v in feeds.items()) + "\n"
+                f"  The cost-of-EQUITY feed (coe_v2) is produced by the RATE side (real-yields\n"
+                f"  company.yml -> asfp.run_company) and is required for every name. Publish {t}\n"
+                f"  upstream, then re-run onboarding. Refusing to write a config that can't price.")
 
     facts = {"company": company_name, "fy_end_month": fy_end_month or 0}
     if not company_name:
@@ -242,7 +304,7 @@ def onboard(ticker, *, cached_dir=None, api_key=None, local_dir=None,
         if fy_end_month is None:
             facts["fy_end_month"] = got["fy_end_month"]
 
-    text = render_config(t, facts["company"], facts["fy_end_month"], detail)
+    text = render_config(t, facts["company"], facts["fy_end_month"], detail, bonded=bonded)
     os.makedirs(out_dir, exist_ok=True)
     with open(path, "w") as fh:
         fh.write(text)
@@ -261,7 +323,7 @@ def onboard(ticker, *, cached_dir=None, api_key=None, local_dir=None,
 
     return {"ticker": t, "path": path, "company": facts["company"],
             "fy_end_month": facts["fy_end_month"], "config_hash": norm.get("config_hash"),
-            "readiness": detail}
+            "bonded": bonded, "readiness": detail}
 
 
 def main():
@@ -284,12 +346,18 @@ def main():
         if not in_scope:
             return 1
         ready, detail = check_rate_readiness(t, local_dir=args.rate_feed_dir)
-        print(f"[onboard] {t} rate readiness: {'READY' if ready else 'NOT READY'}")
+        print(f"[onboard] {t} bonded readiness: {'READY' if ready else 'NOT READY'}")
         print(f"  {detail}")
         if not ready:
-            for k, v in missing_feeds(t, local_dir=args.rate_feed_dir).items():
-                print(f"    {k:8} {v}")
-        return 0 if ready else 1
+            u_ready, u_detail = check_rate_readiness_unbonded(t, local_dir=args.rate_feed_dir)
+            print(f"[onboard] {t} unbonded (synthetic-rating) readiness: "
+                  f"{'READY' if u_ready else 'NOT READY'}")
+            print(f"  {u_detail}")
+            if not u_ready:
+                for k, v in missing_feeds(t, local_dir=args.rate_feed_dir).items():
+                    print(f"    {k:8} {v}")
+            return 0 if u_ready else 1
+        return 0
 
     try:
         rep = onboard(t, cached_dir=args.cached, local_dir=args.rate_feed_dir,
@@ -302,6 +370,7 @@ def main():
     print(f"  company     : {rep['company']}")
     print(f"  fy_end_month: {rep['fy_end_month']} (0 = auto-detect)")
     print(f"  config_hash : {rep['config_hash']}")
+    print(f"  cost of debt: {'issuer bonds (bonded)' if rep['bonded'] else 'SYNTHETIC RATING (unbonded, AMBER)'}")
     print(f"  readiness   : {rep['readiness']}")
     print("  NEXT: review the file (spinoff / expect_zero_rd_wedge / rd_capitalize are "
           "conservative defaults), then run the valuation to prove it TIES before trusting it.")

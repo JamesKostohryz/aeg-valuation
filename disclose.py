@@ -57,6 +57,7 @@ def _read_engine(path, price):
         "book_debt": _nm(wb, "in_debt"),           # book (carrying) value of debt, engine units
         "cash": _nm(wb, "in_cash"),
         "sti": _nm(wb, "in_sti"),
+        "coe_lr": _nm(wb, "val_rhoe_lr"),          # long-run real COE = neutral cap rate c = 1/anchor P/E
     }
 
 
@@ -119,7 +120,21 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
     sens = _read_engine(sens_path, price)
     idio_haircut_ps = base["equity"] - sens["equity"]
 
-    adjusted = base["equity"] + debt_gain_ps - idio_haircut_ps
+    # --- 3) depreciation penalty to the anchor (Increment 1: the measurement defect).
+    #   Historical-cost depreciation understates the real cost of maintaining capacity, so
+    #   normal (distributable) earnings are OVERSTATED by (t x shortfall)/shares each year.
+    #   That is a perpetual real shortfall; capitalize it at the long-run real COE c (= the
+    #   neutral cap rate, 1/anchor P/E) and take it straight off the anchor. Anchor-level and
+    #   tie-preserving, exactly like the debt mark — it never disturbs the four-method tie.
+    import scorecard as SC
+    _dp = SC.depreciation_penalty(engine_path)          # engine already recalced just above
+    penalty_annual = _dp.get("penalty_annual")
+    c = base.get("coe_lr")
+    dep_anchor_penalty_ps = None
+    if penalty_annual is not None and c and base["shares"]:
+        dep_anchor_penalty_ps = (penalty_annual / float(base["shares"])) / c
+
+    adjusted = base["equity"] + debt_gain_ps - idio_haircut_ps - (dep_anchor_penalty_ps or 0.0)
     return {
         "ticker": feed.get("ticker"),
         "base_equity_ps": base["equity"],
@@ -137,12 +152,16 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
         "sens_equity_ps": sens["equity"],
         "sens_tie": sens["tie"],
         "idiosyncratic_haircut_ps": idio_haircut_ps,
+        "depreciation_penalty_annual": penalty_annual,
+        "depreciation_anchor_penalty_ps": dep_anchor_penalty_ps,
+        "coe_longrun": c,
         "adjusted_equity_ps": adjusted,
         "bridge": [
             ("base equity (book debt, tied)", round(base["equity"], 4)),
+            ("- depreciation penalty (to anchor)", round(-(dep_anchor_penalty_ps or 0.0), 4)),
             ("+ debt capital gain (MV debt)", round(debt_gain_ps, 4)),
             ("- idiosyncratic haircut", round(-idio_haircut_ps, 4)),
-            ("= adjusted equity (market debt, idio-disclosed)", round(adjusted, 4)),
+            ("= adjusted equity (design basis: dep+debt+idio)", round(adjusted, 4)),
         ],
     }
 

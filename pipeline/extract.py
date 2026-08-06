@@ -152,6 +152,7 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
     if disclosure:
         val += [
             ("adjusted_equity_ps", disclosure.get("adjusted_equity_ps")),
+            ("depreciation_anchor_penalty_ps", disclosure.get("depreciation_anchor_penalty_ps")),
             ("debt_capital_gain_ps", disclosure.get("debt_capital_gain_ps")),
             ("idiosyncratic_haircut_ps", disclosure.get("idiosyncratic_haircut_ps")),
         ]
@@ -166,6 +167,13 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
     if disclosure and isinstance(disclosure.get("adjusted_equity_ps"), (int, float)):
         summary = [(f, disclosure["adjusted_equity_ps"] if f == "intrinsic_value_ps" else v)
                    for f, v in summary]
+    # design-basis anchor: no-growth value net of the depreciation penalty (Increment 1).
+    # The raw anchor (normal_no_growth_value_ps) stays for cross-checks.
+    if disclosure and isinstance(disclosure.get("depreciation_anchor_penalty_ps"), (int, float)):
+        _nz = dict(summary).get("normal_no_growth_value_ps")
+        if isinstance(_nz, (int, float)):
+            summary.append(("normal_no_growth_value_adj_ps",
+                            _nz - disclosure["depreciation_anchor_penalty_ps"]))
     if "val_active" in [n for n, _ in SUMMARY_NAMES] and results.get("equity_value") is not None:
         va = dict(summary).get("intrinsic_value_ps"); rp = _scalar(wb, "val_realprice")
         if isinstance(va, (int, float)) and isinstance(rp, (int, float)) and rp:
@@ -240,6 +248,7 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
         "disclosure": (None if not disclosure else {
             "base_equity_ps": disclosure.get("base_equity_ps"),
             "adjusted_equity_ps": disclosure.get("adjusted_equity_ps"),
+            "depreciation_anchor_penalty_ps": disclosure.get("depreciation_anchor_penalty_ps"),
             "debt_capital_gain_ps": disclosure.get("debt_capital_gain_ps"),
             "idiosyncratic_haircut_ps": disclosure.get("idiosyncratic_haircut_ps"),
         }),

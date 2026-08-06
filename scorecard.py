@@ -49,6 +49,32 @@ def _last(x):
     return x
 
 
+def depreciation_penalty(engine):
+    """Annual depreciation penalty  t x shortfall  = t x (economic - reported
+    historical-cost) PP&E depreciation of the SAME live vintages, in engine monetary
+    units. This is the measurement defect Increment 1 charges against the anchor: the
+    single source of truth shared by the scorecard AND the disclose.py valuation bridge.
+
+    `engine` is a recalced-workbook path or an already-loaded data_only workbook. Needs
+    only the engine (no rate feed). None-safe: returns Nones when Cap Engine / tax / life
+    are unavailable, so callers can treat it as a no-op."""
+    wb = engine if hasattr(engine, "sheetnames") else openpyxl.load_workbook(engine, data_only=True)
+    t = _nm(wb, "in_tax0")
+    L = _nm(wb, "in_ppe_life")
+    if "Cap Engine" not in wb.sheetnames or t is None or not L:
+        return {"shortfall": None, "penalty_annual": None,
+                "econ_dep": None, "reported_ppe_dep": None}
+    CE = wb["Cap Engine"]
+    real_gross = CE["B46"].value or 0.0
+    nom_live_gross = sum((CE.cell(row=r, column=2).value or 0.0) * (CE.cell(row=r, column=6).value or 0.0)
+                         for r in range(7, 44))
+    econ_dep = real_gross / L
+    reported_ppe_dep = nom_live_gross / L
+    shortfall = econ_dep - reported_ppe_dep
+    return {"shortfall": shortfall, "penalty_annual": t * shortfall,
+            "econ_dep": econ_dep, "reported_ppe_dep": reported_ppe_dep}
+
+
 def compute_scorecard(engine_path, feed, *, debt_policy="constant_real"):
     """Return the disclosed inflation scorecard for one recalced engine + its feed.
     All money quantities are in the engine's own monetary units (so the penalty and
@@ -61,15 +87,13 @@ def compute_scorecard(engine_path, feed, *, debt_policy="constant_real"):
     L = _nm(wb, "in_ppe_life")
 
     # --- depreciation penalty: t x (current-cost - historical-cost) PP&E depreciation
-    #     of the SAME live vintages (identical construction to Increment 1's engine fix).
-    CE = wb["Cap Engine"]
-    real_gross = CE["B46"].value or 0.0
-    nom_live_gross = sum((CE.cell(row=r, column=2).value or 0.0) * (CE.cell(row=r, column=6).value or 0.0)
-                         for r in range(7, 44))
-    econ_dep = (real_gross / L) if L else 0.0
-    reported_ppe_dep = (nom_live_gross / L) if L else 0.0
-    shortfall = econ_dep - reported_ppe_dep
-    dep_penalty = t * shortfall                          # annual; >0 = penalty
+    #     of the SAME live vintages. Shared with disclose.py so the scorecard and the
+    #     valuation bridge charge the identical shortfall (Increment 1).
+    _dp = depreciation_penalty(wb)
+    econ_dep = _dp["econ_dep"] or 0.0
+    reported_ppe_dep = _dp["reported_ppe_dep"] or 0.0
+    shortfall = _dp["shortfall"] or 0.0
+    dep_penalty = _dp["penalty_annual"] or 0.0           # annual; >0 = penalty
 
     # --- rates from the feed
     pi = _last(feed.get("exp_inflation_fwd1y"))
@@ -96,6 +120,8 @@ def compute_scorecard(engine_path, feed, *, debt_policy="constant_real"):
     # --- breakeven leverage: debt / annual D&A vs [(1+pi)^age - 1]/pi
     #     reported (historical-cost) annual PP&E depreciation ~ nom_live_gross / L;
     #     average live-vintage age from the vintage table (real-gross weighted).
+    CE = wb["Cap Engine"]
+    real_gross = CE["B46"].value or 0.0
     num = sum((CE.cell(row=r, column=8).value or 0.0) * (CE.cell(row=r, column=5).value or 0.0)
               for r in range(7, 44))                     # H (real gross contrib) x E (age)
     den = real_gross

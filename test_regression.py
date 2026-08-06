@@ -118,7 +118,9 @@ def main():
                          sens_path=os.path.join(WORK, "AAPL_disc_sens.xlsx"))
         check(res["base_tie"] < 1e-9 and res["sens_tie"] < 1e-9,
               f"disclosure ties (base {res['base_tie']:.0e}, sens {res['sens_tie']:.0e})")
-        recon = res["base_equity_ps"] + res["debt_capital_gain_ps"] - res["idiosyncratic_haircut_ps"]
+        recon = (res["base_equity_ps"] + res["debt_capital_gain_ps"]
+                 - res["idiosyncratic_haircut_ps"]
+                 - (res.get("depreciation_anchor_penalty_ps") or 0.0))  # Increment 1: 4th bridge term
         check(abs(recon - res["adjusted_equity_ps"]) < 1e-9, "bridge sums to adjusted equity")
     except Exception as e:
         check(False, f"disclosure stage errored: {e}")

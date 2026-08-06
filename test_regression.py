@@ -63,6 +63,9 @@ def main():
     # SP500 spec 5(2): Mode A reproduces the v4 golden fixture to the penny (~2e-4;
     # penny not bit-exact, per COCKPIT 20260721-0842 addendum).
     run_unit("normalization/tests/test_normalization_fixture.py")
+    # E2 convergence period: faithfulness (on-trend reproduces the engine to the penny) +
+    # correction (peak catches down, trough catches up) + the reconciliation guard.
+    run_unit("test_convergence.py")
 
     print("== Stage 2: build golden AAPL + standing tie check ==")
     files = {"is_csv": f"{GOLDEN}/REAL_IS.csv", "bs_csv": f"{GOLDEN}/REAL_BS.csv",

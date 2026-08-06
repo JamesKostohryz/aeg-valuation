@@ -1,7 +1,7 @@
 {
   "ticker": "PG",
   "config_hash": "1c4d33a97679c94c",
-  "data_vintage": "2026-08-06T03:38Z",
+  "data_vintage": "2026-08-06T08:04Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -57,7 +57,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-06T03:38Z",
+    "as_of": "2026-08-06T08:04Z",
     "flags": []
   }
 }

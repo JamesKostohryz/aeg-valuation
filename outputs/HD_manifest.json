@@ -1,7 +1,7 @@
 {
   "ticker": "HD",
   "config_hash": "a2d6e5a338abf245",
-  "data_vintage": "2026-08-06T03:38Z",
+  "data_vintage": "2026-08-06T08:04Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -58,7 +58,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-06T03:38Z",
+    "as_of": "2026-08-06T08:04Z",
     "flags": []
   }
 }

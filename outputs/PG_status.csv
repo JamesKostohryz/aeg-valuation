@@ -3,7 +3,7 @@ ticker,PG
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,3.53793438989669e-10
+max_identity_tie,5.73436409467831e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,16094.1569837048
 anchor_representativeness,PASS
@@ -13,4 +13,4 @@ anchor_margin_vs_normal,1.0984295404088134
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 config_hash,1c4d33a97679c94c
-vintage,req-2026-08-03T18:34:53Z
+vintage,2026-08-06T03:38Z

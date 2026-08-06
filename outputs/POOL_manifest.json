@@ -1,14 +1,14 @@
 {
   "ticker": "POOL",
   "config_hash": "561419bf80bbda9d",
-  "data_vintage": "2026-08-03T04:34Z",
+  "data_vintage": "2026-08-06T03:38Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 1.31024080474162e-11,
+    "max_identity_tie": 1.61861635206151e-11,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,16 +22,17 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 1.31024080474162e-11,
-  "equity_value": 190.002337281618,
-  "enterprise_value": 190.002337281618,
+  "max_identity_tie": 1.61861635206151e-11,
+  "equity_value": 190.322506571396,
+  "enterprise_value": 190.322506571396,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 190.002337281618,
-    "adjusted_equity_ps": 119.97981087976,
+    "base_equity_ps": 190.322506571396,
+    "adjusted_equity_ps": 119.65972630070199,
+    "depreciation_anchor_penalty_ps": 0.4215962611760064,
     "debt_capital_gain_ps": 0.0,
-    "idiosyncratic_haircut_ps": 70.022526401858
+    "idiosyncratic_haircut_ps": 70.241184009518
   },
   "outputs": [
     "POOL_anchors.csv",
@@ -57,7 +58,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-03T04:34Z",
+    "as_of": "2026-08-06T03:38Z",
     "flags": []
   }
 }

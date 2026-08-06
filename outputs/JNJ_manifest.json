@@ -1,14 +1,14 @@
 {
   "ticker": "JNJ",
   "config_hash": "b35c24cb3765a77c",
-  "data_vintage": "req-2026-08-03T17:37:14Z",
+  "data_vintage": "2026-08-06T03:38Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 9.16770659387112e-10,
+    "max_identity_tie": 5.92081050854176e-10,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,16 +22,17 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 9.16770659387112e-10,
-  "equity_value": 173.946643738462,
-  "enterprise_value": 173.946643738462,
+  "max_identity_tie": 5.92081050854176e-10,
+  "equity_value": 172.601952255397,
+  "enterprise_value": 172.601952255397,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 173.946643738462,
-    "adjusted_equity_ps": 157.3339193401592,
+    "base_equity_ps": 172.601952255397,
+    "adjusted_equity_ps": 155.5644538386438,
+    "depreciation_anchor_penalty_ps": 0.6502740178414478,
     "debt_capital_gain_ps": 1.458655113145222,
-    "idiosyncratic_haircut_ps": 18.071379511448015
+    "idiosyncratic_haircut_ps": 17.845879512056996
   },
   "outputs": [
     "JNJ_anchors.csv",
@@ -56,7 +57,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "req-2026-08-03T17:37:14Z",
+    "as_of": "2026-08-06T03:38Z",
     "flags": []
   }
 }

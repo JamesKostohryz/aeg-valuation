@@ -3,7 +3,7 @@ ticker,PEP
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,4.39285940956324e-10
+max_identity_tie,5.46151568414643e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,11464.0616423778
 anchor_representativeness,PASS
@@ -13,4 +13,4 @@ anchor_margin_vs_normal,1.0126354739132681
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 config_hash,b41e02f56fb5f5cb
-vintage,req-2026-08-03T05:00:12Z
+vintage,2026-08-06T03:38Z

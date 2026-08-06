@@ -1,14 +1,14 @@
 {
   "ticker": "PEP",
   "config_hash": "b41e02f56fb5f5cb",
-  "data_vintage": "req-2026-08-03T05:00:12Z",
+  "data_vintage": "2026-08-06T03:38Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 4.39285940956324e-10,
+    "max_identity_tie": 5.46151568414643e-10,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,14 +22,15 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 4.39285940956324e-10,
-  "equity_value": 130.451333872542,
-  "enterprise_value": 130.451333872542,
+  "max_identity_tie": 5.46151568414643e-10,
+  "equity_value": 130.670390872621,
+  "enterprise_value": 130.670390872621,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 130.451333872542,
-    "adjusted_equity_ps": 135.80575634358343,
+    "base_equity_ps": 130.670390872621,
+    "adjusted_equity_ps": 134.7827245125283,
+    "depreciation_anchor_penalty_ps": 1.2420888311341274,
     "debt_capital_gain_ps": 5.35442247104142,
     "idiosyncratic_haircut_ps": 0.0
   },
@@ -56,7 +57,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "req-2026-08-03T05:00:12Z",
+    "as_of": "2026-08-06T03:38Z",
     "flags": []
   }
 }

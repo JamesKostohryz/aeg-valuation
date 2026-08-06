@@ -3,7 +3,7 @@ ticker,NKE
 run_status,OK
 anchor_year,2026
 tie_check,PASS
-max_identity_tie,5.35465005668812e-11
+max_identity_tie,5.99129634792917e-11
 anchor_earnings_check,PASS
 anchor_oi_at0,3005.64557997626
 anchor_representativeness,PASS
@@ -13,4 +13,4 @@ anchor_margin_vs_normal,0.6709864288102898
 inflation_verdict,NET LOSER from inflation
 rd_capitalization_wired,False
 config_hash,1f511232fa92be16
-vintage,req-2026-08-03T18:46:04Z
+vintage,2026-08-06T03:38Z

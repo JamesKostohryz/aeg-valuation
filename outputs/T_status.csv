@@ -3,7 +3,7 @@ ticker,T
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,1.05410435935482e-09
+max_identity_tie,1.34423316922039e-09
 anchor_earnings_check,PASS
 anchor_oi_at0,21570.5763077281
 anchor_representativeness,PASS
@@ -13,4 +13,4 @@ anchor_margin_vs_normal,1.2152131419380572
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 config_hash,c890f2fe69d3f7ad
-vintage,2026-08-03T04:34Z
+vintage,2026-08-06T03:38Z

@@ -131,8 +131,22 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
     penalty_annual = _dp.get("penalty_annual")
     c = base.get("coe_lr")
     dep_anchor_penalty_ps = None
-    if penalty_annual is not None and c and base["shares"]:
+    dep_basis = None
+
+    #  Stage B1: if the engine forecasts cash tax on the historical-cost depreciation basis,
+    #  years 1..N are already inside the tied valuation via EPS -> AEG. Charging the old flat
+    #  perpetuity on top would DOUBLE-COUNT. All that is missing is the permanent step from
+    #  the year-N wedge to the steady-state wedge, because the engine truncates at N and so
+    #  assumes the year-N wedge persists for ever. Charge only that step.
+    #  On a pre-Stage-B1 engine the helper returns None and we fall back to the flat
+    #  perpetuity, so this is backward compatible.
+    _ts = SC.depreciation_terminal_step(engine_path)
+    if _ts.get("terminal_step_ps") is not None:
+        dep_anchor_penalty_ps = _ts["terminal_step_ps"]
+        dep_basis = "terminal-step (years 1..N priced in-engine)"
+    elif penalty_annual is not None and c and base["shares"]:
         dep_anchor_penalty_ps = (penalty_annual / float(base["shares"])) / c
+        dep_basis = "flat perpetuity at anchor (pre-Stage-B1 engine)"
 
     adjusted = base["equity"] + debt_gain_ps - idio_haircut_ps - (dep_anchor_penalty_ps or 0.0)
     return {
@@ -154,11 +168,14 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
         "idiosyncratic_haircut_ps": idio_haircut_ps,
         "depreciation_penalty_annual": penalty_annual,
         "depreciation_anchor_penalty_ps": dep_anchor_penalty_ps,
+        "depreciation_basis": dep_basis,
+        "depreciation_wedge_N": _ts.get("wedge_N"),
+        "depreciation_wedge_steadystate": _ts.get("wedge_ss"),
         "coe_longrun": c,
         "adjusted_equity_ps": adjusted,
         "bridge": [
             ("base equity (book debt, tied)", round(base["equity"], 4)),
-            ("- depreciation penalty (to anchor)", round(-(dep_anchor_penalty_ps or 0.0), 4)),
+            (f"- depreciation penalty [{dep_basis or 'n/a'}]", round(-(dep_anchor_penalty_ps or 0.0), 4)),
             ("+ debt capital gain (MV debt)", round(debt_gain_ps, 4)),
             ("- idiosyncratic haircut", round(-idio_haircut_ps, 4)),
             ("= adjusted equity (design basis: dep+debt+idio)", round(adjusted, 4)),

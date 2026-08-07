@@ -173,3 +173,66 @@ def write_scorecard_csv(path, d):
         for k in _CSV_FIELDS:
             w.writerow([k, d.get(k)])
     return path
+
+
+# ---------------------------------------------------------------- Increment 0 Stage B1
+def depreciation_terminal_step(engine, ss_from=25, ss_to=30):
+    """The TERMINAL half of the historical-cost depreciation penalty.
+
+    Stage B1 puts the year-by-year penalty inside the nominal forecast, so years 1..N are
+    priced by the engine's own AEG machinery. But the engine truncates at N and therefore
+    assumes the year-N wedge persists for ever. The wedge is NOT flat: a firm adding capex
+    at current cost dilutes it (new assets have a tax basis equal to replacement cost, so
+    zero wedge) and it then rebuilds as those assets age. With cfg_N=4 the forecast can stop
+    near the bottom of that transient.
+
+    This returns the value of the missing permanent STEP from the year-N wedge to the
+    steady-state wedge, read off the engine's own long-tenor path (so it uses the engine's
+    depreciation construction rather than imposing an external formula). Closed form for a
+    straight-line stack, wedge = 1 - S(n)/S(g) with S(r)=sum (1+r)^-k, k=0..L-1 and
+    n=(1+g)(1+pi)-1, is a cross-check on magnitude; it is 0 when pi is 0, as it must be.
+
+    Anchor-level and tie-preserving: it never enters the four-method identity.
+    """
+    wb = engine if hasattr(engine, "sheetnames") else openpyxl.load_workbook(engine, data_only=True)
+    if "Forecast" not in wb.sheetnames or "Valuation" not in wb.sheetnames:
+        return {"terminal_step_ps": None}
+    F, V = wb["Forecast"], wb["Valuation"]
+    t = _nm(wb, "in_tax0"); shares = _nm(wb, "anchor_shares0")
+    N = _nm(wb, "cfg_N")
+    rho = V["B20"].value                      # long-run REAL cost of equity
+    if None in (t, shares, N, rho) or not shares or not rho:
+        return {"terminal_step_ps": None}
+    N = int(N)
+
+    def cell(row, tt):                        # Forecast col G == t=1
+        return F.cell(row, 6 + tt).value
+    def num(x):
+        return x if isinstance(x, (int, float)) else None
+
+    econ_n, tax_n = num(cell(52, N)), num(cell(49, N))
+    if not econ_n or tax_n is None:
+        return {"terminal_step_ps": None}     # not a Stage B1 engine
+    wedge_N = (econ_n - tax_n) / econ_n
+
+    ws = []
+    for tt in range(ss_from, ss_to + 1):
+        e, x = num(cell(52, tt)), num(cell(49, tt))
+        if e:
+            ws.append((e - x) / e)
+    if not ws:
+        return {"terminal_step_ps": None}
+    wedge_ss = sum(ws) / len(ws)
+
+    econ_real_N = num(cell(13, N))             # economic depreciation, real spine
+    dfE_N = num(V.cell(16, 2 + N).value)       # nominal cumulative DF to N
+    idx_N = num(V.cell(57, 2 + N).value)       # cumulative inflation index to N
+    if None in (econ_real_N, dfE_N, idx_N):
+        return {"terminal_step_ps": None}
+    df_real_N = dfE_N * idx_N                  # real discount factor to N
+
+    step_annual_real = t * econ_real_N * (wedge_ss - wedge_N)
+    step_ps = (step_annual_real / shares) / rho * df_real_N
+    return {"wedge_N": wedge_N, "wedge_ss": wedge_ss, "N": N,
+            "econ_dep_real_N": econ_real_N, "step_annual_real": step_annual_real,
+            "df_real_N": df_real_N, "terminal_step_ps": step_ps}

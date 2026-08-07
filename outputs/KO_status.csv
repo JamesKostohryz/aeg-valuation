@@ -3,7 +3,7 @@ ticker,KO
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,3.69709596270695e-10
+max_identity_tie,3.64252628060058e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,10652.6024450766
 anchor_representativeness,PASS
@@ -13,4 +13,4 @@ anchor_margin_vs_normal,1.1033584548356974
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 config_hash,a95f6f7e06085ce0
-vintage,2026-08-06T08:04Z
+vintage,2026-08-07T01:46Z

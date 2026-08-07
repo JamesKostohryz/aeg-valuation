@@ -1,14 +1,14 @@
 {
   "ticker": "WMT",
   "config_hash": "0f6fec000de311da",
-  "data_vintage": "2026-08-06T08:04Z",
+  "data_vintage": "2026-08-07T01:46Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 8.00810084911063e-10,
+    "max_identity_tie": 5.66615199204534e-10,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,15 +22,15 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 8.00810084911063e-10,
-  "equity_value": 55.6178181274043,
-  "enterprise_value": 55.6178181274043,
+  "max_identity_tie": 5.66615199204534e-10,
+  "equity_value": 56.6269951197423,
+  "enterprise_value": 56.6269951197423,
   "mode_tie": 0,
   "anchor_year": 2026,
   "disclosure": {
-    "base_equity_ps": 55.6178181274043,
-    "adjusted_equity_ps": 54.957723330373845,
-    "depreciation_anchor_penalty_ps": 0.9342446754896896,
+    "base_equity_ps": 56.6269951197423,
+    "adjusted_equity_ps": 55.95853124334894,
+    "depreciation_anchor_penalty_ps": 0.9426137548525904,
     "debt_capital_gain_ps": 0.2741498784592367,
     "idiosyncratic_haircut_ps": 0.0
   },
@@ -57,7 +57,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-06T08:04Z",
+    "as_of": "2026-08-07T01:46Z",
     "flags": []
   }
 }

@@ -3,7 +3,7 @@ ticker,POOL
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,1.61861635206151e-11
+max_identity_tie,1.45021772368636e-11
 anchor_earnings_check,PASS
 anchor_oi_at0,474.382182582987
 anchor_representativeness,PASS
@@ -13,4 +13,4 @@ anchor_margin_vs_normal,0.9371861321492544
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 config_hash,561419bf80bbda9d
-vintage,2026-08-06T08:04Z
+vintage,2026-08-07T01:46Z

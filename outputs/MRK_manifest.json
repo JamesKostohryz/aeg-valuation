@@ -1,14 +1,14 @@
 {
   "ticker": "MRK",
   "config_hash": "eb1ccc00506e2492",
-  "data_vintage": "2026-08-07T01:46Z",
+  "data_vintage": "2026-08-07T23:55Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 5.27961674379185e-10,
+    "max_identity_tie": 6.30279828328639e-10,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,17 +22,17 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 5.27961674379185e-10,
-  "equity_value": 159.816525032556,
-  "enterprise_value": 159.816525032556,
+  "max_identity_tie": 6.30279828328639e-10,
+  "equity_value": 148.302312343713,
+  "enterprise_value": 148.302312343713,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 159.816525032556,
-    "adjusted_equity_ps": 126.04307687965934,
-    "depreciation_anchor_penalty_ps": 0.33877300238029956,
+    "base_equity_ps": 148.302312343713,
+    "adjusted_equity_ps": 100.77316747604402,
+    "depreciation_anchor_penalty_ps": 0.03633515452772014,
     "debt_capital_gain_ps": 2.4241000558436383,
-    "idiosyncratic_haircut_ps": 35.85877520636001
+    "idiosyncratic_haircut_ps": 49.916909768984894
   },
   "outputs": [
     "MRK_anchors.csv",
@@ -58,7 +58,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-07T01:46Z",
+    "as_of": "2026-08-07T23:55Z",
     "flags": []
   }
 }

@@ -1,38 +1,38 @@
 {
   "ticker": "PG",
   "config_hash": "1c4d33a97679c94c",
-  "data_vintage": "2026-08-07T01:46Z",
+  "data_vintage": "2026-08-07T23:55Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 2.64662958215922e-10,
+    "max_identity_tie": 4.95674612466246e-10,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
   },
   "rd_wedge": {
-    "opex_wedge": 7661.31048042666,
-    "wedge_pct_ebit": 0.3767355862101547,
+    "opex_wedge": -3202.02992604408,
+    "wedge_pct_ebit": 0.1642198371784285,
     "rev_scaled_consistent": true,
     "rd_reserve": 0,
     "rd_capitalization_wired": false,
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 2.64662958215922e-10,
-  "equity_value": 114.252403210922,
-  "enterprise_value": 114.252403210922,
+  "max_identity_tie": 4.95674612466246e-10,
+  "equity_value": 107.685493862465,
+  "enterprise_value": 107.685493862465,
   "mode_tie": 0,
-  "anchor_year": 2025,
+  "anchor_year": 2026,
   "disclosure": {
-    "base_equity_ps": 114.252403210922,
-    "adjusted_equity_ps": 103.33537322552809,
-    "depreciation_anchor_penalty_ps": 0.779425296398929,
-    "debt_capital_gain_ps": 0.9571972082790096,
-    "idiosyncratic_haircut_ps": 11.094801897273996
+    "base_equity_ps": 107.685493862465,
+    "adjusted_equity_ps": 94.31940879363985,
+    "depreciation_anchor_penalty_ps": -3.6218714573251884,
+    "debt_capital_gain_ps": 0.7894096297213627,
+    "idiosyncratic_haircut_ps": 17.77736615587169
   },
   "outputs": [
     "PG_anchors.csv",
@@ -57,7 +57,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-07T01:46Z",
+    "as_of": "2026-08-07T23:55Z",
     "flags": []
   }
 }

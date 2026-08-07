@@ -1,14 +1,14 @@
 {
   "ticker": "NKE",
   "config_hash": "1f511232fa92be16",
-  "data_vintage": "2026-08-07T01:46Z",
+  "data_vintage": "2026-08-07T23:55Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 5.57065504835919e-11,
+    "max_identity_tie": 6.83257894706912e-11,
     "mode_tie": 0,
     "tie_tol": 1e-08,
     "reasons": []
@@ -22,17 +22,17 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 5.57065504835919e-11,
-  "equity_value": 39.2797884470561,
-  "enterprise_value": 39.2797884470561,
+  "max_identity_tie": 6.83257894706912e-11,
+  "equity_value": 35.4351303885577,
+  "enterprise_value": 35.4351303885577,
   "mode_tie": 0,
   "anchor_year": 2026,
   "disclosure": {
-    "base_equity_ps": 39.2797884470561,
-    "adjusted_equity_ps": 24.984489900105977,
-    "depreciation_anchor_penalty_ps": 0.276479951914224,
+    "base_equity_ps": 35.4351303885577,
+    "adjusted_equity_ps": 6.9562297772634025,
+    "depreciation_anchor_penalty_ps": 7.741140536414797,
     "debt_capital_gain_ps": 0.0,
-    "idiosyncratic_haircut_ps": 14.0188185950359
+    "idiosyncratic_haircut_ps": 20.737760074879503
   },
   "outputs": [
     "NKE_anchors.csv",
@@ -57,7 +57,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-07T01:46Z",
+    "as_of": "2026-08-07T23:55Z",
     "flags": []
   }
 }

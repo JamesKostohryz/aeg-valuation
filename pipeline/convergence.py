@@ -49,6 +49,26 @@ def _series(ws, r):
             for c in range(2, ws.max_column + 1)]   # index 0 = col B = t=0 anchor
 
 
+# ---------------------------------------------------------------- inflation frame
+# Increment 0 Stage A: the engine may publish a NOMINAL forecast path. When it does,
+# Valuation row 56 carries pi_t (expected inflation fwd) and row 57 the cumulative
+# index I_t. On a real-frame engine those rows are absent, pi is 0 and every formula
+# below collapses to the previous real-terms behaviour. Frame-agnostic by construction.
+def _infl(V, N_max=40):
+    pi = _series(V, 56)
+    if not any(isinstance(x, (int, float)) and x not in (0, None) for x in pi[1:]):
+        return (lambda t: 0.0), (lambda t: 1.0)
+    last = max(i for i, x in enumerate(pi) if isinstance(x, (int, float)))
+    def pi_at(t):
+        return float(pi[t]) if (t <= last and isinstance(pi[t], (int, float))) else float(pi[last])
+    def idx(t):
+        v = 1.0
+        for s in range(1, t + 1):
+            v *= (1 + pi_at(s))
+        return v
+    return pi_at, idx
+
+
 def converge_valuation(engine_path, K=3, norm_eps_N=None, shape="geometric"):
     """Compute the convergence-corrected equity value from a recalc'd engine.
 
@@ -66,7 +86,8 @@ def converge_valuation(engine_path, K=3, norm_eps_N=None, shape="geometric"):
     ret = _series(V, 9)      # retained per year
     dfE = _series(V, 16)     # DF^E cumulative
     N = int(_nm(wb, "cfg_N"))
-    rho_LR = V["B20"].value
+    rho_LR = V["B20"].value          # long-run REAL cost of equity (unchanged by Stage A)
+    pi_at, _idx = _infl(V)
     eng_intrinsic = V["B44"].value
 
     if K <= 0 or norm_eps_N is None:
@@ -84,9 +105,13 @@ def converge_valuation(engine_path, K=3, norm_eps_N=None, shape="geometric"):
         return rho[t] if (t < len(rho) and isinstance(rho[t], (int, float))) else rho_LR
 
     # normal (AEG=0) continuation off actual[N]
+    #  real normal growth from reinvestment, then inflation on top. NOT rho_nom*b:
+    #  nominal earnings grow at (1 + rho_real*b)(1 + pi) - 1.
     npath = {N: actualN}
     for t in range(N + 1, N + K + 1):
-        npath[t] = npath[t - 1] * (1 + rho_at(t) * b)
+        p = pi_at(t)
+        r_real = (1 + rho_at(t)) / (1 + p) - 1      # de-Fisher the per-year rate
+        npath[t] = npath[t - 1] * (1 + r_real * b) * (1 + p)
 
     # geometric glide of the actual->normalized ratio onto that normal path;
     # ratio = norm_eps_N / actual[N] (1.0 => on-trend => glide == npath => AEG 0)
@@ -102,10 +127,13 @@ def converge_valuation(engine_path, K=3, norm_eps_N=None, shape="geometric"):
     sched = []
     for t in range(N + 1, N + K + 1):
         rt = rho_at(t)
-        normal_t = glide[t - 1] * (1 + rt * b)
+        p = pi_at(t)
+        #  benchmark: inflate the prior flow, charge the REAL rate on retention
+        normal_t = (1 + p) * glide[t - 1] + (rt - p) * b * glide[t - 1]
         aeg_t = glide[t] - normal_t
         dfEx[t] = dfEx[t - 1] / (1 + rt)
-        contrib = aeg_t * dfEx[t - 1] / rho_LR
+        #  DF sits one period behind the flow, so the cap rate carries (1 + pi_t)
+        contrib = aeg_t * dfEx[t - 1] / (rho_LR * (1 + p))
         conv_value += contrib
         sched.append({"t": t, "phase": "convergence", "eps": glide[t], "normal_eps": normal_t,
                       "aeg_eps": aeg_t, "contrib_eps": contrib, "coe": rt})
@@ -160,11 +188,15 @@ def normalized_eps_at_N(engine_path, X=4, g=None):
     eps = _series(V, 7)
     ret = _series(V, 9)
     N = int(_nm(wb, "cfg_N"))
-    rho_LR = V["B20"].value
+    rho_LR = V["B20"].value          # long-run REAL cost of equity
+    pi_at, idx = _infl(V)
     b = ret[N] / eps[N]
     if g is None:
-        g = rho_LR * b
-    anchors = [eps[N - a] * (1 + g) ** a for a in range(1, X + 1)
+        g = rho_LR * b               # REAL normal growth from reinvestment
+    #  grow each anchor forward in real terms, then re-inflate from (N-a) dollars to
+    #  N dollars with the engine's own cumulative index. Exact, no approximation.
+    anchors = [eps[N - a] * (1 + g) ** a * (idx(N) / idx(N - a))
+               for a in range(1, X + 1)
                if N - a >= 0 and isinstance(eps[N - a], (int, float))]
     return statistics.median(anchors) if anchors else eps[N]
 

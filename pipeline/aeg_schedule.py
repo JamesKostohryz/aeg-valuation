@@ -34,6 +34,9 @@ PERYEAR_ROWS = {
     "normal_oi": 30, "aeg_oi": 31, "contrib_oi": 32,
     # E4.1 driver rows
     "coe": 5, "eps": 7, "dps": 8, "retained": 9,
+    # Increment 0 Stage A: the engine's forecast path is NOMINAL. These two rows carry the
+    # frame so a consumer can deflate. Absent on a pre-Stage-A engine -> emitted blank.
+    "pi": 56, "infl_index": 57,
 }
 R_NORMAL_VALUE = 43     # Normal value = normal EPS1 / rhoE_LR
 R_INTRINSIC = 44        # Intrinsic value (= V(EPS))
@@ -98,9 +101,19 @@ def write_aeg_schedule(engine_path, ticker, out_dir):
 
     os.makedirs(out_dir, exist_ok=True)
     fn = f"{ticker}_aeg_schedule.csv"
+    #  UNITS (Increment 0 Stage A). Existing column names are unchanged so no downstream
+    #  consumer breaks, but be explicit about the frame:
+    #    NOMINAL, year-t dollars : normal_eps, aeg_eps, normal_nfe, aeg_nfe, normal_oi,
+    #                              aeg_oi, retained_eps, eps, dps
+    #    NOMINAL rate            : coe, df_cumulative
+    #    REAL 2026$ (time-0 PV)  : contrib_*, cum_contrib_eps
+    #    unitless                : retention_rate, rore, pi, infl_index
+    #  pi / infl_index are appended so any consumer can deflate: real = nominal / infl_index.
+    #  eps_real / dps_real are provided pre-deflated for convenience.
     hdr = ["t", "df_cumulative", "normal_eps", "aeg_eps", "contrib_eps", "cum_contrib_eps",
            "normal_nfe", "aeg_nfe", "contrib_nfe", "normal_oi", "aeg_oi", "contrib_oi",
-           "retention_rate", "retained_eps", "coe", "rore"]
+           "retention_rate", "retained_eps", "coe", "rore",
+           "pi", "infl_index", "eps_real", "dps_real"]
     with open(os.path.join(out_dir, fn), "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(hdr)
@@ -140,7 +153,10 @@ def write_aeg_schedule(engine_path, ticker, out_dir):
                    g("contrib_eps"), round(cum, 8),
                    g("normal_nfe"), g("aeg_nfe"), g("contrib_nfe"),
                    g("normal_oi"), g("aeg_oi"), g("contrib_oi"),
-                   rnd(retention_rate), rnd(retained_t), rnd(coe_t), rnd(rore)]
+                   rnd(retention_rate), rnd(retained_t), rnd(coe_t), rnd(rore),
+                   rnd(_num(g("pi"))), rnd(_num(g("infl_index"))),
+                   rnd(_safe(_num(g("eps")), _num(g("infl_index")))),
+                   rnd(_safe(_num(g("dps")), _num(g("infl_index"))))]
             w.writerow(["" if v is None else v for v in row])
     return fn
 

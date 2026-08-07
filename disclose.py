@@ -57,7 +57,7 @@ def _read_engine(path, price):
         "book_debt": _nm(wb, "in_debt"),           # book (carrying) value of debt, engine units
         "cash": _nm(wb, "in_cash"),
         "sti": _nm(wb, "in_sti"),
-        "coe_lr": _nm(wb, "val_rhoe_lr"),          # long-run real COE = neutral cap rate c = 1/anchor P/E
+        "coe_lr": _nm(wb, "val_rhoe_lr"),          # long-run real COE (INDEX(finrate_coe, 30) - the 30y tenor point on the term structure). The neutral cap rate/anchor P/E is DERIVED from this, not the reverse.
     }
 
 
@@ -124,7 +124,7 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
     #   Historical-cost depreciation understates the real cost of maintaining capacity, so
     #   normal (distributable) earnings are OVERSTATED by (t x shortfall)/shares each year.
     #   That is a perpetual real shortfall; capitalize it at the long-run real COE c (= the
-    #   neutral cap rate, 1/anchor P/E) and take it straight off the anchor. Anchor-level and
+    #   neutral cap rate, which is derived FROM this rate, not the reverse) and take it straight off the anchor. Anchor-level and
     #   tie-preserving, exactly like the debt mark — it never disturbs the four-method tie.
     import scorecard as SC
     _dp = SC.depreciation_penalty(engine_path)          # engine already recalced just above

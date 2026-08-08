@@ -110,10 +110,30 @@ def write_aeg_schedule(engine_path, ticker, out_dir):
     #    unitless                : retention_rate, rore, pi, infl_index
     #  pi / infl_index are appended so any consumer can deflate: real = nominal / infl_index.
     #  eps_real / dps_real are provided pre-deflated for convenience.
-    hdr = ["t", "df_cumulative", "normal_eps", "aeg_eps", "contrib_eps", "cum_contrib_eps",
+    #  S3 — `phase` labels each year "explicit" (t <= cfg_N) or "continuing" (t > cfg_N).
+    #  Without it the schedule shows an unexplained cliff: on the Apple fixture real
+    #  earnings per share fall from about $8.61 in year four to about $2.35 in year five.
+    #  That is not a defect and not a truncation. Forecast row 16 reads
+    #      =IF(t<=cfg_N, EBIT*(1-tax) - depreciation_penalty, required_return * prior NOA)
+    #  so beyond the explicit horizon the model IMPOSES that operations earn exactly their
+    #  required return and residual income goes to zero. That is the competitive-advantage
+    #  period doing its job. Note the correction it implies to an earlier finding: the
+    #  DRIVER rows do all propagate across thirty columns, but the EARNINGS path does not —
+    #  row 16 branches on cfg_N explicitly, so moving cfg_N also moves where the regime
+    #  switch falls, not merely how many years of the same behaviour get booked.
+    hdr = ["t", "phase", "df_cumulative", "normal_eps", "aeg_eps", "contrib_eps",
+           "cum_contrib_eps",
            "normal_nfe", "aeg_nfe", "contrib_nfe", "normal_oi", "aeg_oi", "contrib_oi",
            "retention_rate", "retained_eps", "coe", "rore",
            "pi", "infl_index", "eps_real", "dps_real"]
+    cfg_N = None
+    try:
+        _dn = wb.defined_names.get("cfg_N")
+        if _dn is not None:
+            _sh, _cell = str(_dn.value).replace("$", "").replace("'", "").split("!")
+            cfg_N = int(wb[_sh][_cell].value)
+    except Exception:
+        cfg_N = None
     with open(os.path.join(out_dir, fn), "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(hdr)
@@ -149,7 +169,9 @@ def write_aeg_schedule(engine_path, ticker, out_dir):
             def rnd(v, n=6):
                 return round(v, n) if isinstance(v, (int, float)) else None
 
-            row = [i + 1, g("df_cumulative"), g("normal_eps"), g("aeg_eps"),
+            phase = ("explicit" if (cfg_N is not None and (i + 1) <= cfg_N)
+                     else ("continuing" if cfg_N is not None else ""))
+            row = [i + 1, phase, g("df_cumulative"), g("normal_eps"), g("aeg_eps"),
                    g("contrib_eps"), round(cum, 8),
                    g("normal_nfe"), g("aeg_nfe"), g("contrib_nfe"),
                    g("normal_oi"), g("aeg_oi"), g("contrib_oi"),

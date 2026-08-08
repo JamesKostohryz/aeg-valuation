@@ -65,9 +65,49 @@ def load_config(path):
         "rd_life":          float(_opt(j, "rd_life", (int, float), 0.0)),
         "dps_override":     (None if j.get("dps_override") is None
                              else float(j["dps_override"])),
+        # P1/P3 escape hatches. Both inputs are derived from the filings by default; an
+        # override is for the case where the filings cannot support a derivation (a loss
+        # year for the payout, a missing Gross PP&E line for the plant life) or where the
+        # analyst has a better estimate. Leaving them null is the normal case.
+        "payout_override":   (None if j.get("payout_override") is None
+                              else float(j["payout_override"])),
+        "ppe_life_override": (None if j.get("ppe_life_override") is None
+                              else float(j["ppe_life_override"])),
     }
     if judgments["rd_capitalize"] and judgments["rd_life"] <= 0:
         raise ConfigError("rd_capitalize=true requires rd_life > 0")
+    if judgments["payout_override"] is not None and not 0.0 <= judgments["payout_override"] <= 2.0:
+        raise ConfigError(f"judgments.payout_override must be between 0 and 2.0, "
+                          f"got {judgments['payout_override']}")
+    if judgments["ppe_life_override"] is not None and not 2.0 <= judgments["ppe_life_override"] <= 50.0:
+        raise ConfigError(f"judgments.ppe_life_override must be between 2 and 50 years, "
+                          f"got {judgments['ppe_life_override']}")
+
+    # P2 — the explicit forecast horizon. REQUIRED, no default. cfg_N is the
+    # competitive-advantage period: how many years abnormal earnings growth is forecast
+    # to persist. It moves the Apple fixture 31% between 4 and 30 years, so it is a
+    # first-order forecasting judgment and must be chosen per company rather than
+    # inherited from the template. Choosing 4 is legitimate and raises no warning.
+    fc = raw.get("forecast", {}) or {}
+    if not isinstance(fc, dict):
+        raise ConfigError("'forecast' must be a mapping")
+    if fc.get("horizon_N") is None:
+        raise ConfigError(
+            "missing required 'forecast.horizon_N' — the explicit forecast horizon "
+            "(cfg_N), i.e. the number of years you judge abnormal earnings growth to "
+            "persist for this company. There is deliberately no default. Add e.g.\n"
+            "  forecast:\n    horizon_N: 4\n"
+            "to the company config. Any integer 1..30 is accepted.")
+    try:
+        horizon_N = int(fc["horizon_N"])
+    except (TypeError, ValueError):
+        raise ConfigError(f"forecast.horizon_N must be an integer 1..30, "
+                          f"got {fc['horizon_N']!r}")
+    if not 1 <= horizon_N <= 30:
+        raise ConfigError(f"forecast.horizon_N must be between 1 and 30, got {horizon_N}")
+    # Purely informational: marks a horizon the analyst has reviewed since cfg_N became
+    # an explicit input. Never blocks a run and never changes a number.
+    horizon_reviewed = bool(_opt(fc, "reviewed", bool, False))
 
     sp = raw.get("spinoff", {}) or {}
     spinoff = {"factor": float(_opt(sp, "factor", (int, float), 1.0)),
@@ -108,6 +148,7 @@ def load_config(path):
 
     normalized = {
         "company": company, "ticker": ticker, "fy_end_month": fy_end_month,
+        "forecast_horizon_N": horizon_N, "horizon_reviewed": horizon_reviewed,
         "judgments": judgments, "spinoff": spinoff,
         "price_source": price_source, "price_override": price_override,
         "cost_of_debt": cod_norm, "bonded": bonded,
@@ -120,9 +161,14 @@ def load_config(path):
 def config_hash(normalized):
     """Stable hash of the judgment-bearing config, for the run manifest. Excludes any
     volatile resolved fields (price, live rates) so the hash identifies the *decisions*."""
+    # forecast_horizon_N belongs here: cfg_N is a decision, and a first-order one — it
+    # moves the Apple fixture 31% between 4 and 30 years. A hash that ignored it would
+    # report two materially different valuations as the same set of decisions.
+    # horizon_reviewed is deliberately EXCLUDED: it is a bookkeeping flag about whether
+    # a human has looked at the horizon, and toggling it changes no number.
     core = {k: normalized[k] for k in
-            ("company", "ticker", "fy_end_month", "judgments", "spinoff",
-             "cost_of_debt", "bonded") if k in normalized}
+            ("company", "ticker", "fy_end_month", "forecast_horizon_N", "judgments",
+             "spinoff", "cost_of_debt", "bonded") if k in normalized}
     blob = json.dumps(core, sort_keys=True, default=str)
     return hashlib.sha256(blob.encode()).hexdigest()[:16]
 

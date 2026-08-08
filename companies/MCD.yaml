@@ -7,6 +7,15 @@ company: "McDonald’s Corporation"
 ticker: MCD
 fy_end_month: 0          # 0 = auto-detect from statement dates
 
+forecast:
+  # P2 — the explicit forecast horizon cfg_N: the competitive-advantage period, i.e. the
+  # number of years abnormal earnings growth is judged to persist for THIS company. There
+  # is deliberately no default; the value below is what this name was already running at
+  # when the horizon became an explicit input, and it has NOT yet been reviewed. Set
+  # reviewed: true once you have deliberately chosen it. Any integer 1..30; 4 is fine.
+  horizon_N: 4
+  reviewed: false
+
 judgments:
   minority_include: false      # exclude minority interest from common equity
   finlease: 0.0                # KEEP 0.0. The add-back is NOT wired: in_finlease feeds no engine

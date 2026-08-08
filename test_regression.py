@@ -78,6 +78,27 @@ def main():
     run_unit("test_dupont_extract.py")
     run_unit("test_fact_sheet.py")
     run_unit("test_restated_split.py")
+    # S1 — three suites that existed but were run by nothing: absent from this list and
+    # from every workflow. test_curve_shapes.py is the five-curve-shape property test that
+    # exposed the AEG-vs-residual-income cross-tab gap in PR #3, the largest correctness
+    # defect this engine has had (up to 22.6% on an inverted curve). Leaving the test that
+    # caught it out of the harness is the worst possible place to have a gap.
+    run_unit("test_curve_shapes.py")
+    run_unit("test_disclose.py")
+    # P1/P2/P3/P4/P5 — per-company policy inputs, the Valuation row-11 financing path, and
+    # the value-weighted operations tie.
+    run_unit("test_policy_inputs.py")
+    # S5 — the three previously untested on-demand modules. apply_payload is the sole
+    # writer of cfg_N and the payout seed, i.e. the only path by which the two most
+    # powerful judgments in the model can be set at all.
+    run_unit("test_apply_payload.py")
+    run_unit("test_run_scenarios.py")
+    run_unit("test_kit_feeds.py")
+    # Ten configurations, each a build + recalc, so it is too slow for every run. Stage 3
+    # covers the same ground more cheaply on the standard path; this is the exhaustive
+    # cross-tab version and belongs on --full rather than nowhere, which is where it was.
+    if full:
+        run_unit("test_nominal_nest.py")
 
     print("== Stage 2: build golden AAPL + standing tie check ==")
     files = {"is_csv": f"{GOLDEN}/REAL_IS.csv", "bs_csv": f"{GOLDEN}/REAL_BS.csv",
@@ -85,6 +106,8 @@ def main():
              "dividends": f"{GOLDEN}/REAL_div.csv", "splits": f"{GOLDEN}/REAL_splits.csv"}
     cfg = {"company": "Apple Inc.", "ticker": "AAPL", "price": 315.0, "files": files,
            "fy_end_month": 9,
+           "forecast_horizon_N": 4,   # P2: cfg_N is required and has no default; 4 is the
+                                     # horizon these fixtures have always run at.
            "judgments": {"minority_include": False, "finlease": 0.0, "oi_adj_override": None,
                          "rd_capitalize": True, "rd_life": 5.0, "dps_override": None},
            "cost_of_debt": {"single_ytw": 0.05}}

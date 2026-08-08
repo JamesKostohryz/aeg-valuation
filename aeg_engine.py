@@ -16,8 +16,14 @@ config = {
   "price",                                  # current share price
   "files": {"is_csv","bs_csv","cf_csv","prices","dividends","splits"},  # paths
   "fy_end_month": 0,                        # 0 = auto-detect from statement dates
+  "forecast_horizon_N": int,                # REQUIRED. The competitive-advantage period
+                                            # (cfg_N, Inputs B26). No default: this is a
+                                            # first-order forecasting judgment, not
+                                            # plumbing. 4 is a perfectly legitimate
+                                            # choice when it is chosen deliberately.
   "judgments": {"minority_include","finlease","oi_adj_override",
-                "rd_capitalize","rd_life","dps_override"},
+                "rd_capitalize","rd_life","dps_override",
+                "payout_override","ppe_life_override"},
   "cost_of_debt": {"ytw_points": [(tenor,yield),...] | None,
                    "single_ytw": float|None,
                    "interest_expense": float|None, "total_debt": float|None},
@@ -35,9 +41,29 @@ def build_model(config, template_path, out_path):
     build report. Raises ValueError (fail-loud) on missing critical line / bad alignment."""
     files = config["files"]
     j = dict(minority_include=False, finlease=0.0, oi_adj_override=None,
-             rd_capitalize=False, rd_life=0.0, dps_override=None)
+             rd_capitalize=False, rd_life=0.0, dps_override=None,
+             payout_override=None, ppe_life_override=None)
     j.update(config.get("judgments", {}))
     cod = config.get("cost_of_debt", {}) or {}
+
+    # P2 — the explicit forecast horizon cfg_N is REQUIRED and has no default. It is the
+    # competitive-advantage period: the number of years the analyst believes abnormal
+    # earnings growth persists. A 31% valuation swing rides on it between 4 and 30 years
+    # on the Apple fixture, so it cannot sit in the plumbing as an unchosen constant.
+    # Choosing 4 is fine; INHERITING 4 is not, and that is the distinction enforced here.
+    N = config.get("forecast_horizon_N")
+    if N is None:
+        raise ValueError(
+            "config['forecast_horizon_N'] is required. cfg_N is the competitive-advantage "
+            "period — the number of years abnormal earnings growth is forecast to persist — "
+            "and there is deliberately no default. Set forecast.horizon_N in the company "
+            "config (any integer 1..30; 4 is a legitimate choice).")
+    try:
+        N = int(N)
+    except (TypeError, ValueError):
+        raise ValueError(f"forecast_horizon_N must be an integer 1..30, got {N!r}")
+    if not 1 <= N <= 30:
+        raise ValueError(f"forecast_horizon_N must be between 1 and 30, got {N}")
 
     shutil.copy(template_path, out_path)
     wb = openpyxl.load_workbook(out_path)
@@ -67,6 +93,27 @@ def build_model(config, template_path, out_path):
                           splits_path=files.get("splits"), anchor_year=anchor_year,
                           fy_end_month=fyem, manual_dps=j["dps_override"])
 
+    # 3b) DEFECT FIX — apply_market_data resolves the FY0 dividend per share from the
+    #     dividends file and documents the precedence "manual > dividends file >
+    #     cash-flow-derived fallback", but it only mutates `derived`; write_inputs had
+    #     already run, so the file-derived figure never reached the sheet and every
+    #     valuation silently used the cash-flow fallback instead. On the Apple golden
+    #     fixture that is $0.96 filed against $1.027724 carried. Re-write the Inputs
+    #     scalars so the resolved dividend actually lands.
+    LC.write_inputs(wb, derived)
+
+    # 3c) P1/P3 — per-company policy scalars that used to inherit the template base
+    #     company's values (AT&T's 36.5% dividend payout, AT&T's 18-year plant life).
+    #     Runs after market data so the payout seed is computed against the dividend
+    #     per share that actually lands on the sheet.
+    policy_report = LC.resolve_policy_inputs(
+        wb, derived, payout_override=j["payout_override"],
+        ppe_life_override=j["ppe_life_override"])
+    LC.write_inputs(wb, derived)
+
+    # 3d) P2 — land the explicitly chosen forecast horizon.
+    wb["Inputs"]["B26"] = N
+
     # 4) cost of debt (per-company YTW curve; statement-implied fallback, flagged).
     #    When no explicit COD is given (e.g. cost_of_debt.source=bond_list, where the
     #    rate re-point will override COD downstream), auto-derive the statement-implied
@@ -88,10 +135,17 @@ def build_model(config, template_path, out_path):
     # 5) relabel every base-company cell (headers -> company, notes genericized)
     lbl_report = CS.set_company_labels(wb, config["company"], config["ticker"], anchor_year)
 
+    # 6) S2 — provenance register: every valuation-relevant Inputs cell, its value and
+    #    where the value came from. cfg_N is analyst-set by construction (step 3d).
+    register = LC.provenance_register(wb, derived, analyst_set={"cfg_N"})
+
     wb.save(out_path)
     return {"anchor_year": anchor_year, "match_report": match_report,
             "cost_of_debt": cod_report, "labels": lbl_report,
             "cod_flagged": cod_report.get("flagged", False),
+            "forecast_horizon_N": N, "policy": policy_report,
+            "inputs_register": register,
+            "template_defaults": [r["name"] for r in register if r["provenance"] == "template"],
             "cost_boundary": {k: v for k, v in cost_boundary_report.items() if k != "permitted"}}
 
 
@@ -113,7 +167,15 @@ def read_results(out_path, price=None):
         except Exception:
             return None
 
-    ties = [A[t].value for t in ["B27", "B28", "B29", "B31", "B44", "B50", "B58", "B63"]
+    # Mirror the in-sheet master gate Audit!B5 exactly. Two changes from the original
+    # list. B72 (the AEG-form vs residual-income cross-tab check landed in PR #3) and B77
+    # (CHECK 7: value-weighted operations tie + flow additivity) are now included — B72
+    # was summed into B5 in-sheet but was missing from this Python-side metric, so
+    # max_identity_tie could read clean while the strongest check in the model was not
+    # represented in it. B27 and B28 are dropped because both are identically zero for
+    # any inputs whatsoever (B28 compares val_voi against val_intrinsic+val_vnfe, and
+    # val_voi is DEFINED as that sum), so including them only diluted the maximum.
+    ties = [A[t].value for t in ["B29", "B31", "B44", "B50", "B58", "B63", "B72", "B77"]
             if isinstance(A[t].value, (int, float))]
     results = {
         "ok": ok,

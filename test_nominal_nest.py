@@ -35,13 +35,18 @@ WHAT THIS GATES, in order of importance.
    carries an extra buyback-dilution term. It now works per ANCHOR share, matching what
    DCF Reconciliation has always done in aggregate.
 
-PROVENANCE OF THE FLAT-CURVE CASE. With cfg_coe_mode = "Single" the curve is flat, and on
-a flat curve the term-structure correction provably collapses to nothing. That case reads
-108.904642614247 here against 109.000664184498 on the pre-correction real-terms engine at
-main. The entire -0.096021570 difference is Stage B-1's depreciation tax charge, a real
-economic effect; the AEG correction contributes exactly zero. If that case ever moves by
-anything other than a deliberate Stage B change, the correction has stopped being a
-generalisation and has started changing answers it was never supposed to touch.
+THE FLAT-CURVE CASE. With cfg_coe_mode = "Single" the curve is flat, and on a flat curve
+the term-structure correction provably collapses to nothing. That is now asserted directly:
+the AEG form and the residual-income form must agree to the last bit in that case.
+
+It used to be asserted indirectly, as a delta against the flat-curve value of the engine
+before the correction (109.000664184498), with the whole movement expected to be Stage
+B-1's depreciation tax charge (0.096021570) and nothing else. That historical reference was
+retired on 2026-08-08. It could no longer be recomputed — it was measured on a superseded
+template AND on three inputs that have since been corrected per company — so the delta had
+stopped measuring the correction and started measuring the input changes too. The two
+constants are kept below as an audit trail only. The direct assertion is strictly stronger,
+because it tests the property rather than a historical difference.
 
 Run:  python3 test_nominal_nest.py            (uses ./MODEL_TEMPLATE.xlsx)
       python3 test_nominal_nest.py <template>
@@ -68,17 +73,36 @@ FLAT_PRE_CORRECTION_GOLDEN = 109.000664184498    # real-terms engine at main
 FLAT_STAGE_B1_CHARGE = 0.096021570               # Stage B-1 depreciation tax, flat curve
 
 # (cfg_mode, cfg_N, cfg_scenario, cfg_coe_mode) -> equity value per share
+#
+# BASELINE REBASED 2026-08-08 (P1/P3 plus the dividend-feed fix). These are frozen expected
+# values, so they moved when the INPUTS were corrected. The previous baseline was built on
+# three inputs that no company had ever chosen: the template base company's 36.5% dividend
+# payout seed, its 18-year composite plant life, and a cash-flow-derived dividend per share
+# of 1.027724 that silently overrode Apple's filed 0.96 because write_inputs ran before
+# apply_market_data resolved it. Apple now runs at a 12.86% dividend payout and a 10.37-year
+# plant life, both derived from its own filings.
+#
+# The base case moved 115.819983568982 -> 106.373075210994, attributed by isolating each
+# input on the live engine: payout seed -5.97, plant life -3.74, interaction -0.26. Setting
+# all three back to their old values reproduces 115.819983568982 exactly, which is also the
+# evidence that the P4 financing-path fix and the P5 value-weighted operations tie moved no
+# published number.
+#
+# Nothing STRUCTURAL moved. Through the whole rebase every case held its cross-tab
+# agreement at +0.00e+00, its four-method tie between 0 and 1.2e-14, and its audit status at
+# PASS. If a future change moves these numbers again, that is the question to ask first: did
+# an input change, or did an identity break? Only the first is a reason to rebase.
 CASES = [
-    ("Equity",      4, "Consensus", "Term",   115.819983568982),
-    ("Equity",      8, "Consensus", "Term",   107.639957703621),
-    ("Equity",     15, "Consensus", "Term",    97.5798309008793),
-    ("Enterprise",  4, "Consensus", "Term",   130.626227866193),
-    ("Enterprise",  8, "Consensus", "Term",   141.828253497193),
-    ("Enterprise", 15, "Consensus", "Term",   157.555987326986),
-    ("Equity",      4, "Bull",      "Term",   113.508130391957),
-    ("Equity",      4, "Bear",      "Term",    96.1823720312737),
-    ("Equity",      4, "Normal",    "Term",   102.440741441175),
-    ("Equity",      4, "Consensus", "Single", 108.904642614247),
+    ("Equity",      4, "Consensus", "Term",   106.373075210994),
+    ("Equity",      8, "Consensus", "Term",    90.478447361143),
+    ("Equity",     15, "Consensus", "Term",    71.098500965495),
+    ("Enterprise",  4, "Consensus", "Term",   128.094726972107),
+    ("Enterprise",  8, "Consensus", "Term",   139.935655008626),
+    ("Enterprise", 15, "Consensus", "Term",   156.048079155291),
+    ("Equity",      4, "Bull",      "Term",   104.163184982686),
+    ("Equity",      4, "Bear",      "Term",    87.628997052327),
+    ("Equity",      4, "Normal",    "Term",    93.595519241455),
+    ("Equity",      4, "Consensus", "Single",  99.616363590783),
 ]
 CELL = dict(cfg_N="B26", cfg_coe_mode="B29", cfg_mode="B37", cfg_scenario="B69")
 
@@ -147,14 +171,31 @@ def main():
               f"{tag} four-method tie {tie:.1e}")
         check(bool(audit) and str(audit).startswith("PASS"), f"{tag} audit {audit!r}")
 
-        # flat curve: the AEG correction must contribute exactly nothing, so the only
-        # movement from the pre-correction golden is Stage B-1's depreciation charge
+        # FLAT CURVE. The property is that the term-structure correction landed in PR #3
+        # contributes exactly nothing when the cost-of-equity curve is flat, so the AEG form
+        # and the residual-income form must agree to the last bit.
+        #
+        # This used to be asserted indirectly, as a delta against
+        # FLAT_PRE_CORRECTION_GOLDEN — the flat-curve value of the engine as it stood at
+        # main BEFORE PR #3 — with the whole movement expected to be Stage B-1's
+        # depreciation charge and nothing else. That historical reference was retired on
+        # 2026-08-08 and both constants are kept above only as an audit trail. It could no
+        # longer be recomputed: it was measured on a superseded template AND on three inputs
+        # that have since been corrected per company (the payout seed, the plant life and
+        # the dividend feed), so the delta stopped measuring the correction and started
+        # measuring the input changes as well. Rebasing it against the current engine would
+        # have made it circular — deriving the reference from the answer it checks.
+        #
+        # The direct assertion below is strictly stronger than the delta it replaces, since
+        # it tests the property itself rather than a historical difference, and
+        # test_curve_shapes.py independently confirms the same zero across five curve shapes
+        # including the inverted one.
         if coe == "Single":
-            implied = FLAT_PRE_CORRECTION_GOLDEN - got
-            check(abs(implied - FLAT_STAGE_B1_CHARGE) < 1e-6,
-                  f"{tag} FLAT CURVE: movement from pre-correction golden is "
-                  f"{implied:.9f}, i.e. Stage B-1's charge alone "
-                  f"({FLAT_STAGE_B1_CHARGE:.9f}); AEG correction contributes 0")
+            _xtab = (got - ri) if isinstance(ri, (int, float)) else float("nan")
+            check(abs(_xtab) < 1e-12,
+                  f"{tag} FLAT CURVE: the AEG and residual-income forms agree to "
+                  f"{_xtab:+.2e} — the term-structure correction contributes exactly zero "
+                  f"when the curve is flat")
 
     print()
     if _fails:

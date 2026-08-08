@@ -66,6 +66,18 @@ def main():
     # E2 convergence period: faithfulness (on-trend reproduces the engine to the penny) +
     # correction (peak catches down, trough catches up) + the reconciliation guard.
     run_unit("test_convergence.py")
+    # AEG-Coverage-Map-2026-08-08.md: nine every-build modules that previously had zero
+    # automated coverage. Each builds+recalcs the golden AAPL engine independently and
+    # re-derives its numbers from raw cells rather than re-testing the module against itself.
+    run_unit("test_synthetic_rating.py")
+    run_unit("test_cod_fallback.py")
+    run_unit("test_deflator_extend.py")
+    run_unit("test_repoint_fy0.py")
+    run_unit("test_scorecard.py")
+    run_unit("test_aeg_schedule.py")
+    run_unit("test_dupont_extract.py")
+    run_unit("test_fact_sheet.py")
+    run_unit("test_restated_split.py")
 
     print("== Stage 2: build golden AAPL + standing tie check ==")
     files = {"is_csv": f"{GOLDEN}/REAL_IS.csv", "bs_csv": f"{GOLDEN}/REAL_BS.csv",

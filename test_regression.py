@@ -88,6 +88,11 @@ def main():
     # P1/P2/P3/P4/P5 — per-company policy inputs, the Valuation row-11 financing path, and
     # the value-weighted operations tie.
     run_unit("test_policy_inputs.py")
+    # The anchor-date convention, checked against the dividend discount model — an oracle
+    # OUTSIDE the four spokes. All four legs share the timing convention, so a wrong anchor
+    # date would leave the four-method tie reading 1e-15 while every published number was
+    # wrong by the anchor year's retained earnings. The tie cannot see this class of error.
+    run_unit("test_anchor_timing.py")
     # S5 — the three previously untested on-demand modules. apply_payload is the sole
     # writer of cfg_N and the payout seed, i.e. the only path by which the two most
     # powerful judgments in the model can be set at all.

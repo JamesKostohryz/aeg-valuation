@@ -1,0 +1,10 @@
+field,value
+ticker,HD
+verdict,REFUSED — no valuation was produced by this run
+reason,"CONVERGENCE REVIEW REQUIRED — no valuation produced for HD. The explicit forecast ends at earnings per share of 920.0804 in year cfg_N=10, but the normalized (neutral) line for that year is 308.4096 — a gap of +611.6708 per share. Guard: off-trend gap 66% of EPS and convergence moves 177% of value — confirm the analyst's stop year and the normalized line Uncorrected 6064.18 per share; convergence-corrected 2173.77. The continuing period must begin at a neutral earnings level, so a gap this large means the valuation rests on a level no one has vouched for. There are four things that cause it, and the review is deciding which: 1. The forecast horizon is in the wrong place — it stops while abnormal earnings growth is still running. Remedy: move forecast.horizon_N. 2. The forecast drivers produce an implausible earnings path. Remedy: fix the inputs. This is the Home Depot case. 3. The anchor year is distorted (the anchor checks above cover most of this). 4. The normalized line itself misfired — it is the median of the last four forecast years walked forward at normal growth, and an unusual pattern can defeat it. Once you have looked and either fixed it or accepted the gap, add to companies/HD.yaml: convergence: reviewed: true note: <which of the four it was, and what you concluded> HD_convergence.csv and HD_periods.csv WERE written to the output directory, so you can see the earnings path the review is about. No valuation file was refreshed — the previous run's numbers stand until this is resolved. Nothing else clears this gate. That is intended."
+stale_files_quarantined,4
+HD_valuation.csv,HD_valuation.STALE.csv
+HD_summary.csv,HD_summary.STALE.csv
+HD_manifest.json,HD_manifest.STALE.json
+HD_fact_sheet.csv,HD_fact_sheet.STALE.csv
+note,The .STALE files hold the PREVIOUS run's numbers. They are not current and must not be published or quoted.

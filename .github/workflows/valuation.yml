@@ -87,7 +87,13 @@ jobs:
           fi
 
       - name: Commit refreshed outputs (push to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # always() so a refusal does not freeze the fleet's outputs. Without it GitHub adds an
+        # implicit success() to this custom if:, so ANY refusal skipped this step and nothing was
+        # committed at all - the very freeze 60f8822 set out to prevent, just moved one step later.
+        # A refused company writes no outputs (run_company _fails first), so it simply holds at its
+        # last good vintage while the others refresh; status.csv carries vintage + config_hash so
+        # the Cockpit can see which names are stale.
+        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           set -euo pipefail
           git config user.name  "aeg-pipeline[bot]"

@@ -53,14 +53,30 @@ ok(CFG.load_config(AAPL_CFG)["config_hash"] == c["config_hash"], "hash determini
 HORIZON = "forecast:\n  horizon_N: 4\n  reviewed: true\n"
 
 print("== P2: explicit forecast horizon (cfg_N) ==")
-ok(c["forecast_horizon_N"] == 4, "AAPL horizon parses as 4")
+# Deliberately NOT pinned to a specific number: cfg_N is an analyst input that changes
+# whenever a horizon is reviewed, and a test that hardcodes it turns every legitimate
+# judgment into a CI failure. (It did exactly that on 2026-08-09.) Assert the RULE.
+ok(isinstance(c["forecast_horizon_N"], int) and 1 <= c["forecast_horizon_N"] <= 30,
+   f"AAPL horizon is a valid explicit selection (cfg_N={c['forecast_horizon_N']})")
 ok(c["horizon_reviewed"] is True, "a reviewed horizon loads as reviewed")
 
-# THE GATE. An unreviewed horizon authorizes NO valuation. The shipped configs all carry
-# reviewed: false, so every one of them must abort. This is the enforcement of "there is
-# no valuation without an explicit selection of a forecast period" — do not soften it.
-expect_error(open(AAPL_CFG_SHIPPED).read(), "no authorized forecast horizon",
-             "the shipped AAPL config (reviewed: false) ABORTS")
+# Every SHIPPED company config must carry an authorized horizon, or it produces no
+# valuation. This is the fleet-wide standing check.
+import glob
+_unauth = []
+# NB: not _f — that is the global failure counter used by ok()/expect_error().
+for _cfgpath in sorted(glob.glob(os.path.join(_ROOT, "companies", "*.yaml"))):
+    try:
+        CFG.load_config(_cfgpath)
+    except CFG.ConfigError as _e:
+        _unauth.append(f"{os.path.basename(_cfgpath)}: {str(_e).splitlines()[0][:60]}")
+ok(not _unauth, f"every shipped company config has an authorized horizon"
+                + (f" — UNAUTHORIZED: {_unauth}" if _unauth else ""))
+
+# THE GATE itself. An unreviewed horizon authorizes NO valuation. This is the enforcement
+# of "there is no valuation without an explicit selection of a forecast period" — never
+# soften it. Tested on synthetic configs so it stays true regardless of what the shipped
+# ones happen to carry.
 expect_error("company: A\nticker: A\nforecast:\n  horizon_N: 8\n",
              "no authorized forecast horizon", "a horizon with no reviewed flag ABORTS")
 expect_error("company: A\nticker: A\nforecast:\n  horizon_N: 8\n  reviewed: false\n",

@@ -133,6 +133,34 @@ expect_error("company: A\nticker: A\n" + HORIZON + "judgments:\n  payout_overrid
 expect_error("company: A\nticker: A\n" + HORIZON + "judgments:\n  ppe_life_override: 99\n",
              "ppe_life_override", "implausible plant life override aborts")
 
+print("== convergence review flag (the escape hatch for the REVIEW refusal) ==")
+# Assert the RULE, never a particular company's answer: absent means false (the safe
+# direction, so a new or untouched config can never silently clear the gate), an explicit
+# true parses, and the note is carried through for the record. Toggling it must not change
+# the config hash, because it gates whether a number is PUBLISHED, not what the number is.
+_cv0 = write("company: A\nticker: A\n" + HORIZON)
+_cv1 = write("company: A\nticker: A\n" + HORIZON +
+             "convergence:\n  reviewed: true\n  note: horizon stops mid-cycle; accepted\n")
+try:
+    _c0 = CFG.load_config(_cv0)
+    _c1 = CFG.load_config(_cv1)
+    ok(_c0["convergence_reviewed"] is False,
+       "convergence.reviewed absent defaults to FALSE (gate stays armed)")
+    ok(_c0["convergence_note"] == "", "convergence.note absent defaults to empty")
+    ok(_c1["convergence_reviewed"] is True, "convergence.reviewed: true parses")
+    ok(_c1["convergence_note"].startswith("horizon stops"), "convergence.note is carried through")
+    ok(_c0["config_hash"] == _c1["config_hash"],
+       "reviewing does NOT change the config hash (it publishes a number, it does not move one)")
+finally:
+    os.unlink(_cv0); os.unlink(_cv1)
+_cvf = write("company: A\nticker: A\n" + HORIZON + "convergence:\n  reviewed: false\n")
+try:
+    ok(CFG.load_config(_cvf)["convergence_reviewed"] is False, "explicit false parses as false")
+finally:
+    os.unlink(_cvf)
+expect_error("company: A\nticker: A\n" + HORIZON + "convergence: 3\n", "convergence",
+             "a non-mapping convergence block aborts")
+
 print("== fail-loud gates ==")
 expect_error("ticker: X\n", "company", "missing company aborts")
 expect_error("company: A\nticker: A\nfy_end_month: 13\n", "fy_end_month", "bad month aborts")

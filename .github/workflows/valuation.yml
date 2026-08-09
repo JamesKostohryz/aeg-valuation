@@ -67,14 +67,24 @@ jobs:
         run: |
           set -euo pipefail
           VINTAGE=$(date -u +%Y-%m-%dT%H:%MZ)
+          # Collect refusals instead of aborting on the first one. Every gate in
+          # run_company.py exits non-zero by design, and under a bare set -e loop the first
+          # refusal stopped every company after it alphabetically, so one company awaiting a
+          # human review silently froze the outputs of all the others. The step still FAILS
+          # if anything refused; it just runs the whole fleet first and names every offender.
+          REFUSED=""
           for cfg in ${{ steps.pick.outputs.list }}; do
             echo "::group::$cfg"
             python pipeline/run_company.py "$cfg" \
               --rate-feed-live \
               --out-dir outputs \
-              --vintage "$VINTAGE"
+              --vintage "$VINTAGE" || REFUSED="$REFUSED $cfg"
             echo "::endgroup::"
           done
+          if [ -n "$REFUSED" ]; then
+            echo "::error::refused or failed:$REFUSED"
+            exit 1
+          fi
 
       - name: Commit refreshed outputs (push to main only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

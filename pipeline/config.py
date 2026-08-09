@@ -141,6 +141,25 @@ def load_config(path):
             f"  There is no default and there is no way around this gate. That is intended.")
     horizon_reviewed = True
 
+    # --- CONVERGENCE REVIEW (James, 2026-08-09). The convergence reconciliation guard reports
+    # REVIEW when the explicit forecast ends at an earnings level far from its own neutral line.
+    # That verdict now REFUSES the valuation, and this flag is the analyst's escape hatch, in
+    # deliberate parallel to forecast.reviewed above: the gate is cleared by a written human
+    # assertion, never by a code change or a threshold tweak.
+    #
+    # Unlike forecast.reviewed this is NOT mandatory, because the gate only engages when the
+    # guard actually trips. A company whose forecast lands near its neutral line never needs it.
+    # Absent means false, which is the safe direction.
+    #
+    # `note` is free text recording WHAT the analyst concluded — which of the four causes it was
+    # — so the review is a recorded answer per company rather than a rubber stamp. It is optional
+    # and carries no logic.
+    cv = raw.get("convergence", {}) or {}
+    if not isinstance(cv, dict):
+        raise ConfigError("'convergence' must be a mapping")
+    convergence_reviewed = _opt(cv, "reviewed", bool, False) is True
+    convergence_note = _opt(cv, "note", str, "")
+
     sp = raw.get("spinoff", {}) or {}
     spinoff = {"factor": float(_opt(sp, "factor", (int, float), 1.0)),
                "before_year": int(_opt(sp, "before_year", int, 0))}
@@ -181,6 +200,7 @@ def load_config(path):
     normalized = {
         "company": company, "ticker": ticker, "fy_end_month": fy_end_month,
         "forecast_horizon_N": horizon_N, "horizon_reviewed": horizon_reviewed,
+        "convergence_reviewed": convergence_reviewed, "convergence_note": convergence_note,
         "judgments": judgments, "spinoff": spinoff,
         "price_source": price_source, "price_override": price_override,
         "cost_of_debt": cod_norm, "bonded": bonded,
@@ -197,7 +217,9 @@ def config_hash(normalized):
     # moves the Apple fixture 31% between 4 and 30 years. A hash that ignored it would
     # report two materially different valuations as the same set of decisions.
     # horizon_reviewed is deliberately EXCLUDED: it is a bookkeeping flag about whether
-    # a human has looked at the horizon, and toggling it changes no number.
+    # a human has looked at the horizon, and toggling it changes no number. convergence_reviewed
+    # and convergence_note are excluded for exactly the same reason — they gate whether a number
+    # is published, not what the number is.
     core = {k: normalized[k] for k in
             ("company", "ticker", "fy_end_month", "forecast_horizon_N", "judgments",
              "spinoff", "cost_of_debt", "bonded") if k in normalized}

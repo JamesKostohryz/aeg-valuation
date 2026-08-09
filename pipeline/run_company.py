@@ -513,6 +513,8 @@ def main():
         "schedule": _conv["schedule"],
         "outputs": [f"{tk}_convergence.csv", _periods_fn],
     }
+    convergence["reviewed"] = bool(cfg.get("convergence_reviewed"))
+    convergence["review_note"] = cfg.get("convergence_note") or ""
     results["convergence"] = convergence
     print(f"[convergence] K={_conv['K']} after cfg_N={_conv['N']}: actual EPS "
           f"{_periods['actual_eps_N']:.4f} -> normalized {_conv['norm_eps_N']:.4f} "
@@ -524,9 +526,53 @@ def main():
         print(f"[periods] {_b['period']:<12} yrs {_b['years']:<8} "
               f"PV {_b['pv_contribution_ps']:+9.4f}/sh  "
               f"({(_b['pct_of_corrected_value'] or 0):+.1%} of value)")
-    print(f"[convergence] guard {_conv['verdict']}: {_conv['verdict_reason']}")
+    print(f"[convergence] guard {_conv['verdict']}: {_conv['verdict_reason']}"
+          + ("  [REVIEWED by analyst]" if convergence["reviewed"] else ""))
     print("[convergence] NOTE: this increment is the equity (EPS) leg only and is OUTSIDE the "
           "four-method tie; the tie still gates everything through cfg_N.")
+
+    # --- CONVERGENCE REVIEW GATE (James, 2026-08-09).
+    #
+    #     A REVIEW verdict means the explicit forecast ends at an earnings level far from its own
+    #     neutral line. The continuing period is then started from a level nobody has vouched for,
+    #     and the four-method tie cannot see the problem: Home Depot ties at 1.2e-12 relative
+    #     while valuing the equity at roughly seventeen times its market price. So REVIEW refuses
+    #     to produce a valuation.
+    #
+    #     It is cleared by a human assertion in the company config, never by a code change and
+    #     never by moving the thresholds — exactly like forecast.reviewed. The thresholds
+    #     themselves (convergence.GAP_FRAC_WARN / VALUE_FRAC_WARN) are PROVISIONAL and unstudied,
+    #     which is precisely why the escape hatch belongs to the analyst rather than to whoever
+    #     is editing the code that day.
+    if _conv["verdict"] == "REVIEW" and not convergence["reviewed"]:
+        _fail(
+            "CONVERGENCE REVIEW REQUIRED — no valuation produced for " + tk + ".\n"
+            f"  The explicit forecast ends at earnings per share of {_periods['actual_eps_N']:.4f} "
+            f"in year cfg_N={_conv['N']}, but the normalized (neutral) line for that year is "
+            f"{_conv['norm_eps_N']:.4f} — a gap of {_conv['converge_gap_ps']:+.4f} per share.\n"
+            f"  Guard: {_conv['verdict_reason']}\n"
+            f"  Uncorrected {convergence['headline_value_pre_convergence_ps']:.2f} per share; "
+            f"convergence-corrected {convergence['headline_value_ps']:.2f}.\n"
+            "  The continuing period must begin at a neutral earnings level, so a gap this large "
+            "means the valuation rests on a level no one has vouched for. There are four things "
+            "that cause it, and the review is deciding which:\n"
+            "    1. The forecast horizon is in the wrong place — it stops while abnormal earnings "
+            "growth is still running. Remedy: move forecast.horizon_N.\n"
+            "    2. The forecast drivers produce an implausible earnings path. Remedy: fix the "
+            "inputs. This is the Home Depot case.\n"
+            "    3. The anchor year is distorted (the anchor checks above cover most of this).\n"
+            "    4. The normalized line itself misfired — it is the median of the last four "
+            "forecast years walked forward at normal growth, and an unusual pattern can defeat "
+            "it.\n"
+            "  Once you have looked and either fixed it or accepted the gap, add to "
+            f"companies/{tk}.yaml:\n"
+            "      convergence:\n"
+            "        reviewed: true\n"
+            "        note: <which of the four it was, and what you concluded>\n"
+            f"  {tk}_convergence.csv and {tk}_periods.csv WERE written to the output directory, "
+            "so you can see the earnings path the review is about. No valuation file was "
+            "refreshed — the previous run's numbers stand until this is resolved.\n"
+            "  Nothing else clears this gate. That is intended.")
 
     # --- extract committed outputs + manifest
     manifest = EX.extract_outputs(out_xlsx, tk, args.out_dir, results=results,
@@ -567,6 +613,8 @@ def main():
         ("actual_eps_at_N", convergence["actual_eps_N"]),
         ("normalized_eps_at_N", convergence["normalized_eps_N"]),
         ("convergence_guard", convergence["guard"]),
+        ("convergence_reviewed", convergence["reviewed"]),
+        ("convergence_review_note", (convergence["review_note"] or "").replace(",", ";")),
         ("convergence_in_four_method_tie", convergence["in_four_method_tie"]),
         # P1/P2/P3 — the first-order judgments, surfaced so the cockpit can show them.
         ("cfg_N", rep["forecast_horizon_N"]),

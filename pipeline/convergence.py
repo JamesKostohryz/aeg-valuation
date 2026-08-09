@@ -27,7 +27,14 @@ AND a normalized level is supplied.
 import csv
 import os
 
-# reconciliation-guard thresholds (REVIEW above these; tune per spec)
+# Reconciliation-guard thresholds. A REVIEW verdict now REFUSES the valuation in run_company.py,
+# cleared only by `convergence.reviewed: true` in the company config — a human assertion, exactly
+# like forecast.reviewed.
+#
+# THESE TWO NUMBERS ARE PROVISIONAL AND UNSTUDIED. They came from the module's first draft. They
+# are the reason the escape hatch belongs to the ANALYST and not to whoever is editing this file:
+# a false trip is cleared by a person looking and saying so, never by loosening a threshold here.
+# Do not tune them to make a company pass. Revisit them only with evidence from many names.
 GAP_FRAC_WARN = 0.15      # |actual[N] - norm[N]| / actual[N]  above this => analyst stopped far off-trend
 VALUE_FRAC_WARN = 0.10    # |convergence value| / intrinsic     above this => the glide drives material value
 

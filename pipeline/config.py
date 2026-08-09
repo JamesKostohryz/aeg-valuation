@@ -83,31 +83,63 @@ def load_config(path):
         raise ConfigError(f"judgments.ppe_life_override must be between 2 and 50 years, "
                           f"got {judgments['ppe_life_override']}")
 
-    # P2 — the explicit forecast horizon. REQUIRED, no default. cfg_N is the
-    # competitive-advantage period: how many years abnormal earnings growth is forecast
-    # to persist. It moves the Apple fixture 31% between 4 and 30 years, so it is a
-    # first-order forecasting judgment and must be chosen per company rather than
-    # inherited from the template. Choosing 4 is legitimate and raises no warning.
+    # P2 — the explicit forecast horizon. MANDATORY INPUT. NO DEFAULT. EVER.
+    #
+    # James's standing rule, restated 2026-08-09 after being asked about this too many
+    # times: "There is no limit to the forecast period. And there is no default. It is a
+    # free input. It is a mandatory input. The analyst must select the forecast period.
+    # There is no valuation without an explicit selection of a forecast period."
+    #
+    # cfg_N is the competitive-advantage period: how many years abnormal earnings growth
+    # is forecast to persist. It moves the Apple fixture 31% between 4 and 30 years, so
+    # it is a first-order forecasting judgment — the single most powerful one in the
+    # model — and it belongs to the analyst under rule D1.
+    #
+    # This is enforced HERE, in code, and not as a warning. A warning that does not stop
+    # a run is how a 4 nobody chose ended up on fourteen companies, and how the question
+    # kept coming back. Both conditions below ABORT. Do not soften either of them, and do
+    # not suggest a value anywhere in this file — suggesting one is how the last default
+    # got established.
     fc = raw.get("forecast", {}) or {}
     if not isinstance(fc, dict):
         raise ConfigError("'forecast' must be a mapping")
     if fc.get("horizon_N") is None:
         raise ConfigError(
             "missing required 'forecast.horizon_N' — the explicit forecast horizon "
-            "(cfg_N), i.e. the number of years you judge abnormal earnings growth to "
-            "persist for this company. There is deliberately no default. Add e.g.\n"
-            "  forecast:\n    horizon_N: 4\n"
-            "to the company config. Any integer 1..30 is accepted.")
+            "(cfg_N), i.e. the number of years YOU judge abnormal earnings growth to "
+            "persist for this company. There is no default and there never will be. "
+            "Any integer from 1 upward is accepted. Set it deliberately, then set "
+            "'forecast.reviewed: true' to confirm you chose it.")
     try:
         horizon_N = int(fc["horizon_N"])
     except (TypeError, ValueError):
         raise ConfigError(f"forecast.horizon_N must be an integer 1..30, "
                           f"got {fc['horizon_N']!r}")
     if not 1 <= horizon_N <= 30:
-        raise ConfigError(f"forecast.horizon_N must be between 1 and 30, got {horizon_N}")
-    # Purely informational: marks a horizon the analyst has reviewed since cfg_N became
-    # an explicit input. Never blocks a run and never changes a number.
-    horizon_reviewed = bool(_opt(fc, "reviewed", bool, False))
+        # 30 is a STRUCTURAL ceiling, not a judgment: the Forecast tab of MODEL_TEMPLATE
+        # carries thirty forecast columns. It is not a policy limit on how long an
+        # advantage period may be. Extending the template is a separate piece of work.
+        raise ConfigError(
+            f"forecast.horizon_N must be between 1 and 30, got {horizon_N}. Note that 30 "
+            f"is a STRUCTURAL limit — the Forecast tab has thirty columns — not a cap on "
+            f"your judgment. Extending it is a template change.")
+    # MANDATORY CONFIRMATION. A horizon that no human deliberately chose is not a valid
+    # horizon, so an unreviewed config produces NO VALUATION. This is a hard gate, not a
+    # warning; see the block above for why.
+    if _opt(fc, "reviewed", bool, False) is not True:
+        raise ConfigError(
+            f"forecast.reviewed is not true — this company has NO AUTHORIZED FORECAST "
+            f"HORIZON, so no valuation will be produced.\n"
+            f"  The config currently carries horizon_N: {horizon_N}. If that value was "
+            f"not deliberately chosen by the analyst for THIS company, it is an artifact "
+            f"and must not be inherited.\n"
+            f"  cfg_N is the competitive-advantage period — the number of years you judge "
+            f"abnormal earnings growth to persist. It is the most powerful single judgment "
+            f"in the model (31% on the Apple fixture between 4 and 30 years).\n"
+            f"  To authorize a valuation, set forecast.horizon_N deliberately and add:\n"
+            f"      forecast:\n        reviewed: true\n"
+            f"  There is no default and there is no way around this gate. That is intended.")
+    horizon_reviewed = True
 
     sp = raw.get("spinoff", {}) or {}
     spinoff = {"factor": float(_opt(sp, "factor", (int, float), 1.0)),

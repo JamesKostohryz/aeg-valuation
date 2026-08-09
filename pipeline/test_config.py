@@ -5,7 +5,18 @@ import config as CFG
 
 # resolve companies/AAPL.yaml relative to the repo root, wherever the test is run from
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-AAPL_CFG = os.path.join(_ROOT, "companies", "AAPL.yaml")
+AAPL_CFG_SHIPPED = os.path.join(_ROOT, "companies", "AAPL.yaml")
+
+# The shipped company configs carry forecast.reviewed: false, which is a HARD ABORT — an
+# unreviewed horizon authorizes no valuation (James's standing rule, 2026-08-09). So the
+# tests below that exercise OTHER parts of the loader run against a reviewed COPY. The
+# gate itself is tested explicitly further down against the shipped file.
+def _reviewed_copy(src):
+    txt = open(src).read().replace("reviewed: false", "reviewed: true")
+    fd, path = tempfile.mkstemp(suffix=".yaml"); os.close(fd)
+    open(path, "w").write(txt); return path
+
+AAPL_CFG = _reviewed_copy(AAPL_CFG_SHIPPED)
 
 _p = _f = 0
 def ok(c, m):
@@ -39,11 +50,21 @@ ok(CFG.load_config(AAPL_CFG)["config_hash"] == c["config_hash"], "hash determini
 # P2: cfg_N is a REQUIRED input with no default, so every fixture below that exercises
 # some OTHER gate has to supply it — otherwise the horizon gate fires first and the test
 # proves nothing about the gate it names. HORIZON is that minimum valid block.
-HORIZON = "forecast:\n  horizon_N: 4\n"
+HORIZON = "forecast:\n  horizon_N: 4\n  reviewed: true\n"
 
 print("== P2: explicit forecast horizon (cfg_N) ==")
 ok(c["forecast_horizon_N"] == 4, "AAPL horizon parses as 4")
-ok(c["horizon_reviewed"] is False, "AAPL horizon flagged not-yet-reviewed")
+ok(c["horizon_reviewed"] is True, "a reviewed horizon loads as reviewed")
+
+# THE GATE. An unreviewed horizon authorizes NO valuation. The shipped configs all carry
+# reviewed: false, so every one of them must abort. This is the enforcement of "there is
+# no valuation without an explicit selection of a forecast period" — do not soften it.
+expect_error(open(AAPL_CFG_SHIPPED).read(), "no authorized forecast horizon",
+             "the shipped AAPL config (reviewed: false) ABORTS")
+expect_error("company: A\nticker: A\nforecast:\n  horizon_N: 8\n",
+             "no authorized forecast horizon", "a horizon with no reviewed flag ABORTS")
+expect_error("company: A\nticker: A\nforecast:\n  horizon_N: 8\n  reviewed: false\n",
+             "no authorized forecast horizon", "reviewed: false ABORTS")
 # 4 must remain a completely ordinary choice: no error, no warning, no special casing.
 _p4 = write("company: A\nticker: A\nforecast:\n  horizon_N: 4\n  reviewed: true\n")
 try:
@@ -53,14 +74,14 @@ try:
 finally:
     os.unlink(_p4)
 for _n in (1, 8, 15, 30):
-    _pn = write(f"company: A\nticker: A\nforecast:\n  horizon_N: {_n}\n")
+    _pn = write(f"company: A\nticker: A\nforecast:\n  horizon_N: {_n}\n  reviewed: true\n")
     try:
         ok(CFG.load_config(_pn)["forecast_horizon_N"] == _n, f"horizon {_n} accepted")
     finally:
         os.unlink(_pn)
 # the horizon changes the valuation, so it must change the config hash
-_pa = write("company: A\nticker: A\nforecast:\n  horizon_N: 4\n")
-_pb = write("company: A\nticker: A\nforecast:\n  horizon_N: 8\n")
+_pa = write("company: A\nticker: A\nforecast:\n  horizon_N: 4\n  reviewed: true\n")
+_pb = write("company: A\nticker: A\nforecast:\n  horizon_N: 8\n  reviewed: true\n")
 try:
     ok(CFG.load_config(_pa)["config_hash"] != CFG.load_config(_pb)["config_hash"],
        "horizon is part of the config hash")

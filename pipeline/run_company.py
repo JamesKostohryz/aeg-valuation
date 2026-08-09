@@ -122,7 +122,12 @@ def main():
     ap.add_argument("--payload", help="RUN-button forecast payload: JSON string or path to .json")
     args = ap.parse_args()
 
-    cfg = CFG.load_config(args.config)
+    # A config problem is an operator problem, not a bug: report it as a plain-language
+    # refusal rather than a Python traceback. The horizon gate lands here most often.
+    try:
+        cfg = CFG.load_config(args.config)
+    except CFG.ConfigError as e:
+        _fail(f"CONFIG REJECTED ({args.config})\n{e}")
     tk = cfg["ticker"]
     os.makedirs(args.work_dir, exist_ok=True)
     print(f"[run_company] {tk}  config_hash={cfg['config_hash']}  bonded={cfg['bonded']}")

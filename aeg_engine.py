@@ -36,9 +36,18 @@ import company_setup as CS
 import validate_load as VL
 
 
-def build_model(config, template_path, out_path):
+def build_model(config, template_path, out_path, resolve_debt_basis=False,
+                sec_cache_dir=None):
     """Populate + repoint the model from config. openpyxl only (no recalc). Returns a
-    build report. Raises ValueError (fail-loud) on missing critical line / bad alignment."""
+    build report. Raises ValueError (fail-loud) on missing critical line / bad alignment.
+
+    resolve_debt_basis: apply THE LEASE RULING (James, 2026-08-09) to the anchor-year debt
+    figure -- consume primary-source BORROWINGS rather than the vendor's total-debt row,
+    whose lease definition changes partway through most companies' histories. Applied ONLY
+    where the anchor corroborates two independent ways; see debt_feed for the evidence and
+    the fleet measurement. Defaults False so tests that drive the engine directly, and the
+    golden regression harness, are unaffected by a network-dependent input.
+    """
     files = config["files"]
     j = dict(minority_include=False, finlease=0.0, oi_adj_override=None,
              rd_capitalize=False, rd_life=0.0, dps_override=None,
@@ -78,12 +87,45 @@ def build_model(config, template_path, out_path):
     #     Stable-margin filers (AAPL) are left exactly as filed.
     cost_boundary_report = LC.stabilize_cost_boundary(wb)
 
+    # 1b) THE LEASE RULING (James, 2026-08-09). The vendor's total-debt row folds capitalized
+    #     leases in from whatever year that vendor chose, so one company's series carries two
+    #     different lease treatments. Replace it with primary-source borrowings -- but only in
+    #     the years where the two independent routes agree, because an unvalidated
+    #     reconstruction would trade a measured error for an unmeasured one.
+    #
+    #     This edits the BALANCE SHEET, before anything is derived from it. Debt is not a
+    #     deduction at the end: net operating assets is plugged from common equity plus net
+    #     financial obligations, so the figure moves the operating side and the forecast
+    #     profitability with it. Overriding only the Inputs scalar leaves the anchor
+    #     disagreeing with the statements and breaks the four-method tie.
+    debt_basis = None
+    if resolve_debt_basis:
+        try:
+            import debt_feed as _DF
+            vendor_series = _DF.vendor_total_debt_from_workbook(wb)
+            repl, debt_basis = _DF.corroborated_debt_series(
+                config["ticker"], vendor_series, cache_dir=sec_cache_dir)
+            if repl:
+                ay = max(vendor_series)
+                debt_basis["anchor_year"] = ay
+                debt_basis["anchor_replaced"] = ay in repl
+                if ay in repl:
+                    debt_basis["anchor_before"] = vendor_series[ay]
+                    debt_basis["anchor_after"] = repl[ay]
+                debt_basis["cells_written"] = _DF.write_debt_series_to_workbook(wb, repl)
+            else:
+                debt_basis["anchor_replaced"] = False
+        except Exception as e:                    # never let a feed problem fail a build
+            debt_basis = {"ticker": config.get("ticker"), "anchor_replaced": False,
+                          "error": f"{type(e).__name__}: {e}"[:160]}
+
     # 2) derive Inputs scalars, fold in judgments, write
     derived = LC.derive_inputs(wb, anchor_year, parsed)
     LC.apply_judgments(derived, price=float(config["price"]),
                        minority_include=j["minority_include"], finlease=j["finlease"],
                        oi_adj_override=j["oi_adj_override"], rd_capitalize=j["rd_capitalize"],
                        rd_life=j["rd_life"], dps_override=j["dps_override"])
+
     LC.write_inputs(wb, derived)
 
     # 3) market data (year-end prices + near-term dividend)
@@ -140,7 +182,7 @@ def build_model(config, template_path, out_path):
     register = LC.provenance_register(wb, derived, analyst_set={"cfg_N"})
 
     wb.save(out_path)
-    return {"anchor_year": anchor_year, "match_report": match_report,
+    return {"debt_basis": debt_basis, "anchor_year": anchor_year, "match_report": match_report,
             "cost_of_debt": cod_report, "labels": lbl_report,
             "cod_flagged": cod_report.get("flagged", False),
             "forecast_horizon_N": N, "policy": policy_report,

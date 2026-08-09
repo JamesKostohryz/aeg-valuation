@@ -358,6 +358,34 @@ def vendor_total_debt(reported_bs_csv):
     return {}
 
 
+def vendor_total_debt_from_workbook(wb):
+    """{fiscal_year: total debt} read from a BUILT engine's Balance Sheet tab.
+
+    Same quantity as vendor_total_debt(), taken from the workbook instead of a committed
+    CSV, so the lease ruling can be resolved DURING the build -- before in_debt is written --
+    rather than after a valuation already exists. Row 3 carries the fiscal-year headers.
+    """
+    try:
+        BS = wb["Balance Sheet"]
+    except KeyError:
+        return {}
+    years = {}
+    for c in range(2, BS.max_column + 1):
+        try:
+            years[c] = int(str(BS.cell(3, c).value))
+        except (TypeError, ValueError):
+            continue
+    for r in range(4, BS.max_row + 1):
+        if str(BS.cell(r, 1).value or "").strip().lower() == "total debt":
+            out = {}
+            for c, y in years.items():
+                v = BS.cell(r, c).value
+                if isinstance(v, (int, float)):
+                    out[y] = float(v)
+            return out
+    return {}
+
+
 # ------------------------------------------------------------------- the guard
 
 def _agrees(a, b, tol_frac):
@@ -382,6 +410,7 @@ def infer_vendor_scale(vendor, primary, tol_frac=DEFAULT_TOL_FRAC):
     for k in CANDIDATE_SCALES:
         n = sum(1 for r in primary
                 if r["fiscal_year"] in vendor
+                and r.get("borrowings_musd") is not None
                 and _agrees(vendor[r["fiscal_year"]] * k, r["borrowings_musd"], tol_frac))
         if n > best[1]:
             best = (k, n)
@@ -673,86 +702,114 @@ if __name__ == "__main__":
 ANCHOR_CORROBORATION_TOL = 0.01      # 1%: filers round; a lease-sized gap is far larger
 
 
-def resolve_anchor_debt_basis(ticker, reported_bs_csv, vendor_scale=None,
-                              cache_dir=None, allow_network=True):
-    """Decide the anchor-year debt figure the engine should consume.
+def anchor_basis_console_line(res):
+    """One plain-language line for the run log. Disclosed either way, on every run."""
+    t = res.get("ticker", "?")
+    if res.get("error"):
+        return (f"[debt-basis] {t} LEASE RULING NOT APPLIED: {res['error']}. The engine is "
+                f"still valuing on the vendor total-debt row.")
+    nrep, ntot = res.get("years_replaced", 0), res.get("years_total", 0)
+    if res.get("anchor_replaced"):
+        r = res["replaced"][res["anchor_year"]]
+        v, b = r["vendor_musd"], r["borrowings_musd"]
+        return (f"[debt-basis] {t} LEASE RULING APPLIED: anchor FY{res['anchor_year']} debt "
+                f"{v:,.0f} -> {b:,.0f} ({b - v:+,.0f}m, {100.0 * (b - v) / v:+.1f}%), "
+                f"stripping {r['leases_musd']:,.0f}m of capitalized leases. "
+                f"{nrep} of {ntot} years corroborated and replaced.")
+    return (f"[debt-basis] {t} LEASE RULING NOT APPLIED at the anchor "
+            f"({nrep} of {ntot} years corroborated). The engine is still valuing on the vendor "
+            f"total-debt row, whose lease definition changes mid-series.")
 
-    Returns a dict that is always safe to act on. `apply` is True only when the ruling can
-    be applied with evidence; `debt_musd` then carries borrowings-only for the anchor year.
-    Any failure -- no network, no filer match, no tags -- returns apply=False with a reason,
-    never an exception, because a debt-feed problem must not take down a valuation run.
+
+def corroborated_debt_series(ticker, vendor, cache_dir=None, allow_network=True,
+                             tol=ANCHOR_CORROBORATION_TOL):
+    """Per-year borrowings, for every year the two routes agree on.
+
+    James's ruling is "borrowings only, in EVERY year" -- the point being that a series
+    carrying two lease treatments breaks anything that differences it, the DuPont
+    decomposition above all. But corroboration is per-year: a filer can tag leases cleanly
+    in 2025 and not in 2019. So each year is judged on its own evidence and only the years
+    that agree are replaced. Years that do not corroborate keep the vendor figure and are
+    reported, never silently substituted.
+
+    Returns (replacements, report) where replacements maps fiscal year -> borrowings in the
+    VENDOR'S OWN SCALE, so the caller can write them straight back into the statement tab.
     """
-    out = {"ticker": ticker, "apply": False, "verdict": "UNRESOLVED", "reason": "",
-           "anchor_year": None, "vendor_musd": None, "borrowings_musd": None,
-           "leases_musd": None, "vendor_less_leases_musd": None, "scale": vendor_scale}
+    rep = {"ticker": ticker, "years_total": len(vendor or {}), "years_replaced": 0,
+           "replaced": {}, "kept": {}, "scale": None, "error": None}
+    if not vendor:
+        rep["error"] = "no vendor series"
+        return {}, rep
     try:
-        vendor = vendor_total_debt(reported_bs_csv)
-        if not vendor:
-            out["reason"] = "no vendor total-debt series in the reported balance sheet"
-            return out
-        ay = max(vendor)
-        out["anchor_year"] = ay
-
         cik = resolve_cik(ticker, cache_dir, allow_network)
         rows = {r["fiscal_year"]: r for r in build_primary_series(cik, cache_dir, allow_network)}
-        p = rows.get(ay)
-        if p is None:
-            out["verdict"] = "NO PRIMARY"
-            out["reason"] = f"no primary-source row for fiscal {ay}"
-            return out
-
-        if vendor_scale is None:
-            vendor_scale, _ = infer_vendor_scale(vendor, list(rows.values()))
-        out["scale"] = vendor_scale
-        v = vendor[ay] * (vendor_scale or 1.0)
-        out["vendor_musd"] = v
-
-        borrow, leases = p["borrowings_musd"], p["lease_liabilities_musd"]
-        out["borrowings_musd"], out["leases_musd"] = borrow, leases
-
-        if borrow is None:
-            out["verdict"] = "NO PRIMARY"
-            out["reason"] = "no borrowings route resolved from this filer's tags"
-            return out
-
-        if leases is None:
-            # No lease tags. If the vendor row already equals borrowings it never carried
-            # leases and the ruling is a no-op; otherwise the gap is unexplained.
-            if _agrees(v, borrow, ANCHOR_CORROBORATION_TOL):
-                out.update(verdict="NO LEASES IN ROW", apply=False,
-                           reason="vendor row already equals borrowings — ruling is a no-op")
+        if not rows:
+            rep["error"] = "no primary-source rows"
+            return {}, rep
+        scale, _ = infer_vendor_scale(vendor, list(rows.values()))
+        scale = scale or 1.0
+        rep["scale"] = scale
+        out = {}
+        for y, v in vendor.items():
+            p = rows.get(y)
+            if p is None:
+                rep["kept"][y] = "no primary row"
+                continue
+            borrow, leases = p["borrowings_musd"], p["lease_liabilities_musd"]
+            if borrow is None:
+                rep["kept"][y] = "no borrowings route"
+                continue
+            v_musd = v * scale
+            # Order matters. Test "the vendor row is ALREADY borrowings-only" FIRST: a company
+            # can have capitalized leases on its balance sheet in a year when the vendor has
+            # not yet folded them into this row, and subtracting them there would be wrong.
+            # Apple is exactly that case for fiscal 2020-2023 -- leases tagged, vendor row
+            # still borrowings-only, nothing to do.
+            if _agrees(v_musd, borrow, tol):
+                rep["kept"][y] = "already borrowings-only"
+                continue
+            if leases is None:
+                rep["kept"][y] = "no lease tags and vendor != borrowings"
+                continue
+            if _agrees(v_musd - leases, borrow, tol):
+                out[y] = borrow / scale          # back into the vendor's own units
+                rep["replaced"][y] = {"vendor_musd": v_musd, "borrowings_musd": borrow,
+                                      "leases_musd": leases}
             else:
-                out.update(verdict="UNCORROBORATED",
-                           reason="no lease tags, and the vendor row does not equal "
-                                  "borrowings — the gap is unexplained")
-            return out
-
-        route2 = v - leases
-        out["vendor_less_leases_musd"] = route2
-        if _agrees(route2, borrow, ANCHOR_CORROBORATION_TOL):
-            out.update(verdict="CORROBORATED", apply=True, debt_musd=borrow,
-                       reason=(f"vendor {v:,.0f} less leases {leases:,.0f} = {route2:,.0f} "
-                               f"agrees with primary-source borrowings {borrow:,.0f}"))
-        else:
-            out.update(verdict="UNCORROBORATED",
-                       reason=(f"routes disagree by {route2 - borrow:,.0f}m "
-                               f"(vendor less leases {route2:,.0f} vs borrowings {borrow:,.0f}) "
-                               f"— one side's tags are incomplete and we cannot tell which"))
-        return out
-    except Exception as e:                       # never take down a valuation run
-        out["verdict"] = "ERROR"
-        out["reason"] = f"{type(e).__name__}: {e}"[:160]
-        return out
+                rep["kept"][y] = f"routes disagree by {v_musd - leases - borrow:,.0f}m"
+        rep["years_replaced"] = len(out)
+        return out, rep
+    except Exception as e:
+        rep["error"] = f"{type(e).__name__}: {e}"[:160]
+        return {}, rep
 
 
-def anchor_basis_console_line(res):
-    """One plain-language line for the run log."""
-    t, v = res["ticker"], res["verdict"]
-    if res.get("apply"):
-        old, new = res["vendor_musd"], res["borrowings_musd"]
-        return (f"[debt-basis] {t} LEASE RULING APPLIED: anchor debt {old:,.0f} -> {new:,.0f} "
-                f"({new - old:+,.0f}m, {100.0 * (new - old) / old:+.1f}%). {res['reason']}")
-    if v == "NO LEASES IN ROW":
-        return f"[debt-basis] {t} no change needed: {res['reason']}"
-    return (f"[debt-basis] {t} LEASE RULING NOT APPLIED ({v}): {res['reason']}. The engine is "
-            f"still valuing on the vendor row, whose lease definition changes mid-series.")
+def write_debt_series_to_workbook(wb, replacements):
+    """Overwrite the Balance Sheet 'Total Debt' row for the given fiscal years.
+
+    The debt figure is NOT a deduction at the end: net operating assets is plugged from
+    common equity plus net financial obligations, so debt has to change in the STATEMENT the
+    whole build derives from, not only in the Inputs scalar. Changing the scalar alone leaves
+    the anchor disagreeing with the statements and breaks the four-method tie -- measured at
+    1.4e-2 on 2026-08-09 before this was understood.
+    """
+    try:
+        BS = wb["Balance Sheet"]
+    except KeyError:
+        return 0
+    years = {}
+    for c in range(2, BS.max_column + 1):
+        try:
+            years[int(str(BS.cell(3, c).value))] = c
+        except (TypeError, ValueError):
+            continue
+    n = 0
+    for r in range(4, BS.max_row + 1):
+        if str(BS.cell(r, 1).value or "").strip().lower() == "total debt":
+            for y, v in replacements.items():
+                c = years.get(y)
+                if c:
+                    BS.cell(r, c).value = float(v)
+                    n += 1
+            break
+    return n

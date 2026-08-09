@@ -87,6 +87,10 @@ def main():
     # Company-independent arithmetic, and an error class the four-method tie is
     # structurally blind to -- the tie never looks at the price series.
     run_unit("test_market_cap_split.py")
+    # THE LEASE RULING decision logic: apply only where two independent routes agree,
+    # never subtract leases from a year already on borrowings, and hand back figures in
+    # the vendor's own units. All three were got wrong once and are silent if regressed.
+    run_unit("test_lease_ruling.py")
     # Phase 1, Property 4: post-horizon years cannot move value. Measured at exactly
     # 0.0 on N=4 and N=8 under four adversarial perturbations. Drives the engine, so
     # it needs LibreOffice and costs real wall-clock -- full scope only.

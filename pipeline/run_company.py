@@ -221,7 +221,9 @@ def main():
     # source. REPORT ONLY: it writes <TICKER>_debt_feed.csv and prints a line, and it
     # cannot change in_debt or any valuation number. Off is for air-gapped runs.
     ap.add_argument("--no-debt-feed-check", action="store_true",
-                    help="skip the vendor-vs-primary-source debt comparison (report only)")
+                    help="skip BOTH the vendor-vs-primary-source debt report AND the lease "
+                         "ruling, so in_debt comes from the vendor row unchanged. For "
+                         "air-gapped runs and for reproducing a pre-ruling number.")
     ap.add_argument("--sec-cache-dir", default=None,
                     help="directory to cache Securities and Exchange Commission responses in")
     args = ap.parse_args()
@@ -278,11 +280,19 @@ def main():
     }
     out_xlsx = os.path.join(args.work_dir, f"{tk}_engine.xlsx")
     try:
-        rep = AE.build_model(build_config, args.template, out_xlsx)
+        rep = AE.build_model(build_config, args.template, out_xlsx,
+                             resolve_debt_basis=not args.no_debt_feed_check,
+                             sec_cache_dir=args.sec_cache_dir)
     except Exception as e:
         _fail(f"build_model failed (statement adjustment): {e}")
     print(f"[build] anchor {rep['anchor_year']}  COD {rep['cost_of_debt']['source']}"
           f"{'  [FLAGGED fallback]' if rep.get('cod_flagged') else ''}")
+    # THE LEASE RULING, disclosed either way. Where the anchor could not be corroborated the
+    # engine is still valuing on a vendor row whose lease definition changes mid-series, and
+    # saying so on every run is the whole point of not applying it silently.
+    if rep.get("debt_basis"):
+        import debt_feed as _DF
+        print(_DF.anchor_basis_console_line(rep["debt_basis"]))
     # P1/P2/P3 — the three first-order judgments that used to be template constants.
     print(f"[policy] cfg_N={rep['forecast_horizon_N']}"
           f"{'' if cfg['horizon_reviewed'] else '  [HORIZON NOT YET REVIEWED]'}"

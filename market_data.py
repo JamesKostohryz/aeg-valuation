@@ -143,6 +143,33 @@ def yearend_prices(price_rows, splits, fy_end_month=12,
     return out
 
 
+def yearend_prices_adjusted(price_rows, fy_end_month=12):
+    """Year-end close on TODAY'S split basis (Yahoo's adjusted close, un-un-adjusted).
+
+    Why this exists: md_yeprice is deliberately CONTEMPORANEOUS (as-traded) because the
+    buyback reserve must value repurchases at the price actually paid. But the reported
+    share count is on today's split basis, so contemporaneous price x reported shares is
+    a product of two different bases and overstates market capitalization by the
+    cumulative split factor -- Apple fiscal 2013 computed to $12.4tn against an actual
+    near $444bn. This series keeps the adjusted close so market capitalization can be
+    formed on a single consistent basis. Same selection rule as yearend_prices.
+    """
+    out = {}
+    if not price_rows:
+        return out
+    years = range(price_rows[0][0].year, price_rows[-1][0].year + 2)
+    for y in years:
+        fye = _fy_end_date(y, fy_end_month)
+        candidates = [(d, c) for d, c in price_rows if d <= fye]
+        if not candidates:
+            continue
+        d0, close = candidates[-1]
+        if (fye - d0).days > 10:
+            continue
+        out[y] = round(close, 6)
+    return out
+
+
 # ---------------------------------------------------------------- dividends
 def parse_dividends(path):
     """Yahoo dividends export (Date, Dividends). Returns [(date, dps)]."""
@@ -181,14 +208,24 @@ def fiscal_year_dps(div_rows, splits, anchor_year, fy_end_month=12):
 
 
 # ---------------------------------------------------------------- write md_yeprice
+def populate_series(wb, series, name, default_row, blue_from=None):
+    """Write {year: value} into the Market Data row bound to defined name `name`,
+    aligned to md_years. Same clearing semantics as populate_market_data."""
+    return _populate_row(wb, series, name, default_row, blue_from)
+
+
 def populate_market_data(wb, yearend, blue_from=None):
     """Write the contemporaneous year-end prices into Market Data row 16
     (md_yeprice), aligned to md_years (row 7). Returns (permitted, written_years).
     Only columns whose md_years label has a price are written; others left as-is
     unless they must be cleared for a fresh company (we clear stale prices first)."""
+    return _populate_row(wb, yearend, "md_yeprice", 16, blue_from)
+
+
+def _populate_row(wb, yearend, series_name, default_row, blue_from=None):
     MD = wb["Market Data"]
     permitted = set()
-    # locate md_years row (7) and md_yeprice row (16) via defined names for safety
+    # locate md_years row (7) and the target row via defined names for safety
     def _row_of(name, default):
         dn = wb.defined_names.get(name)
         if dn is None:
@@ -196,7 +233,7 @@ def populate_market_data(wb, yearend, blue_from=None):
         ref = str(dn.attr_text).replace("$", "")
         return int("".join(ch for ch in ref.split("!")[1].split(":")[0] if ch.isdigit()))
     yr_row = _row_of("md_years", 7)
-    px_row = _row_of("md_yeprice", 16)
+    px_row = _row_of(series_name, default_row)
     blue = copy.copy((blue_from or MD.cell(px_row, 25)).font)
 
     written = []
@@ -252,6 +289,13 @@ def apply_market_data(wb, derived, *, prices_path=None, dividends_path=None,
         report["prices_written"] = written
         report["n_prices"] = len(written)
         report["price_fy0"] = ye.get(anchor_year)
+        # Split-consistent market capitalization: reported shares are on today's split
+        # basis, so market cap must use the adjusted close, not the contemporaneous one.
+        # Absent this row the Econ Statements formula falls back to the old product.
+        ye_adj = yearend_prices_adjusted(rows, fy_end_month=fy_end_month)
+        perm_a, written_a = populate_series(wb, ye_adj, "md_yeprice_adj", 17)
+        permitted |= perm_a
+        report["prices_adj_written"] = written_a
 
     # near-term dividend
     if manual_dps is not None:

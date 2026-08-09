@@ -83,6 +83,15 @@ def main():
     run_unit("test_dupont_extract.py")
     run_unit("test_fact_sheet.py")
     run_unit("test_restated_split.py")
+    # REGISTER ITEM 12: a stock split must not change market capitalization.
+    # Company-independent arithmetic, and an error class the four-method tie is
+    # structurally blind to -- the tie never looks at the price series.
+    run_unit("test_market_cap_split.py")
+    # Phase 1, Property 4: post-horizon years cannot move value. Measured at exactly
+    # 0.0 on N=4 and N=8 under four adversarial perturbations. Drives the engine, so
+    # it needs LibreOffice and costs real wall-clock -- full scope only.
+    if full:
+        run_unit("test_horizon_gating.py")
     # S1 — three suites that existed but were run by nothing: absent from this list and
     # from every workflow. test_curve_shapes.py is the five-curve-shape property test that
     # exposed the AEG-vs-residual-income cross-tab gap in PR #3, the largest correctness

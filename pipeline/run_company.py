@@ -16,6 +16,7 @@ Pipeline (every stage deterministic, fail-loud):
 The engine + restatement stay in the sealed Excel; this job orchestrates and gates them.
 """
 import os, sys, argparse, shutil
+import csv
 import openpyxl
 
 # make the build_v2 modules importable when run from the pipeline/ dir
@@ -33,8 +34,99 @@ RAW_FILES = {"is_csv": "REAL_IS.csv", "bs_csv": "REAL_BS.csv", "cf_csv": "REAL_C
              "prices": "REAL_prices.csv", "dividends": "REAL_div.csv", "splits": "REAL_splits.csv"}
 
 
+# A refusal must not leave a number behind that the engine will not stand behind.
+# Before 2026-08-09 a company that tripped the horizon or convergence gate exited while its
+# PREVIOUS <T>_valuation.csv, <T>_summary.csv and <T>_manifest.json sat in the output
+# directory looking perfectly current -- Home Depot at $2,173.77 per share against a $360
+# price, with nothing in the file to say the engine had declined to publish it. Anything
+# reading the outputs directory (the cockpit, a report generator, a person at 2am) got a
+# stale number with no warning. The gate protected the run; it did not protect the reader.
+#
+# We QUARANTINE rather than delete: the files are renamed to <T>_<name>.STALE.<ext>, so the
+# previous numbers stay readable for the review the refusal is asking for, while any consumer
+# globbing *_summary.csv simply does not find one -- which is the honest state.
+_REFUSAL_CTX = {"ticker": None, "out_dir": None}
+
+# Files that carry a headline valuation a reader could quote. Diagnostics the reviewer needs
+# (convergence, periods, status, restated statements) are deliberately NOT quarantined.
+_VALUATION_BEARING = ("{t}_valuation.csv", "{t}_summary.csv", "{t}_manifest.json",
+                      "{t}_fact_sheet.csv")
+
+
+def _quarantine_stale_outputs(ticker, out_dir, reason):
+    """Rename valuation-bearing outputs aside and drop a REFUSED marker. Best-effort:
+    a failure here must never mask the refusal that caused it."""
+    moved = []
+    try:
+        for pat in _VALUATION_BEARING:
+            fn = pat.format(t=ticker)
+            src = os.path.join(out_dir, fn)
+            if not os.path.exists(src):
+                continue
+            stem, ext = os.path.splitext(fn)
+            dst = os.path.join(out_dir, f"{stem}.STALE{ext}")
+            os.replace(src, dst)
+            moved.append((fn, os.path.basename(dst)))
+        marker = os.path.join(out_dir, f"{ticker}_REFUSED.csv")
+        with open(marker, "w", newline="") as fh:
+            w = csv.writer(fh)
+            w.writerow(["field", "value"])
+            w.writerow(["ticker", ticker])
+            w.writerow(["verdict", "REFUSED — no valuation was produced by this run"])
+            w.writerow(["reason", " ".join(str(reason).split())])
+            w.writerow(["stale_files_quarantined", len(moved)])
+            for was, now in moved:
+                w.writerow([was, now])
+            w.writerow(["note", "The .STALE files hold the PREVIOUS run's numbers. They are "
+                                "not current and must not be published or quoted."])
+        if moved:
+            sys.stderr.write(f"[run_company] quarantined {len(moved)} stale output(s) for "
+                             f"{ticker}: {', '.join(w for w, _ in moved)}\n")
+        sys.stderr.write(f"[run_company] wrote {ticker}_REFUSED.csv\n")
+    except Exception as e:                                  # never mask the real refusal
+        sys.stderr.write(f"[run_company] WARNING: could not quarantine stale outputs "
+                         f"for {ticker}: {e}\n")
+    return moved
+
+
+def _clear_stale_markers(ticker, out_dir):
+    """On a successful run, remove a previous refusal's marker and quarantined files."""
+    try:
+        for pat in _VALUATION_BEARING:
+            stem, ext = os.path.splitext(pat.format(t=ticker))
+            f = os.path.join(out_dir, f"{stem}.STALE{ext}")
+            if os.path.exists(f):
+                os.remove(f)
+        m = os.path.join(out_dir, f"{ticker}_REFUSED.csv")
+        if os.path.exists(m):
+            os.remove(m)
+    except Exception as e:
+        sys.stderr.write(f"[run_company] WARNING: could not clear stale markers "
+                         f"for {ticker}: {e}\n")
+
+
+def _peek_ticker(config_path):
+    """Read just the ticker, tolerating a config that will not validate.
+
+    The horizon gate refuses INSIDE load_config, so the quarantine has to know the ticker
+    before the config is known to be good. Returns None if it cannot be read, in which case
+    the quarantine simply does not run and behaviour is unchanged.
+    """
+    try:
+        import yaml
+        with open(config_path) as fh:
+            doc = yaml.safe_load(fh) or {}
+        t = doc.get("ticker")
+        return str(t).strip() if t else None
+    except Exception:
+        return None
+
+
 def _fail(msg, code=1):
     sys.stderr.write(f"\n[run_company] ABORT: {msg}\n")
+    t, o = _REFUSAL_CTX["ticker"], _REFUSAL_CTX["out_dir"]
+    if t and o and os.path.isdir(o):
+        _quarantine_stale_outputs(t, o, msg)
     sys.exit(code)
 
 
@@ -134,6 +226,13 @@ def main():
                     help="directory to cache Securities and Exchange Commission responses in")
     args = ap.parse_args()
 
+    # Arm the refusal quarantine BEFORE the config gate. The horizon gate refuses inside
+    # load_config, which is exactly the case that would otherwise leave a stale valuation
+    # sitting in the output directory looking current -- so reading the ticker has to happen
+    # first, independently of whether the config validates.
+    _REFUSAL_CTX["out_dir"] = args.out_dir
+    _REFUSAL_CTX["ticker"] = _peek_ticker(args.config)
+
     # A config problem is an operator problem, not a bug: report it as a plain-language
     # refusal rather than a Python traceback. The horizon gate lands here most often.
     try:
@@ -141,6 +240,7 @@ def main():
     except CFG.ConfigError as e:
         _fail(f"CONFIG REJECTED ({args.config})\n{e}")
     tk = cfg["ticker"]
+    _REFUSAL_CTX["ticker"] = tk        # authoritative, replaces the peeked value
     os.makedirs(args.work_dir, exist_ok=True)
     print(f"[run_company] {tk}  config_hash={cfg['config_hash']}  bonded={cfg['bonded']}")
 
@@ -757,6 +857,9 @@ def main():
                   f"{feed['cod_provenance']['audit']} rating={feed['cod_provenance']['rating']}")
         except Exception as _e:
             print(f"[cod] manifest provenance skip ({_e})")
+    # A run that reaches the headline produced a valuation, so any quarantine left by a
+    # previous refusal is obsolete: clear the marker and the .STALE files.
+    _clear_stale_markers(tk, args.out_dir)
     print(f"[done] {tk}  HEADLINE (convergence-corrected) "
           f"{convergence['headline_value_ps']:.4f}/sh  |  pre-convergence "
           f"{convergence['headline_value_pre_convergence_ps']:.4f}/sh  |  "

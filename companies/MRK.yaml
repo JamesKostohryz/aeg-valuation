@@ -13,9 +13,13 @@ forecast:
   # is deliberately no default; the value below is what this name was already running at
   # when the horizon became an explicit input, and it has NOT yet been reviewed. Set
   # reviewed: true once you have deliberately chosen it. Any integer 1..30; 4 is fine.
-  horizon_N: 4
-  reviewed: false
-
+  # HORIZON PROVENANCE: not studied. Value selected by Claude and authorized by James
+  # on 2026-08-09 ("You select the numbers. I don't care what they are... If I ever
+  # decide to do a valuation of those companies I will study the matter."). MUST be
+  # revisited before this company is published. See
+  # claude/AEG-DECISIONS-SETTLED-DO-NOT-REASK-2026-08-09.md
+  horizon_N: 6
+  reviewed: true
 judgments:
   minority_include: false      # exclude minority interest from common equity
   finlease: 0.0                # finance/capital-lease obligations to add back (0 = none)

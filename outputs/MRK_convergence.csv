@@ -1,0 +1,5 @@
+# convergence guard,verdict=PASS,gap_ps=-0.4052,converge_value_ps=4.4115,eng_intrinsic=136.8984,corrected_intrinsic=141.3100
+t,phase,eps,normal_eps,aeg_eps,contrib_eps,coe
+7,convergence,12.188341,12.046094,0.14224724,1.4991719,0.099363
+8,convergence,13.136064,12.982756,0.15330788,1.47018477,0.098782
+9,convergence,14.1513,13.986143,0.16515646,1.44216625,0.098368

@@ -1,7 +1,7 @@
 {
   "ticker": "NKE",
   "config_hash": "696c909df88be1d1",
-  "data_vintage": "2026-08-09T04:46Z",
+  "data_vintage": "2026-08-09T05:21Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -39,6 +39,103 @@
     "debt_capital_gain_ps": 0.0,
     "idiosyncratic_haircut_ps": 22.2440091606228
   },
+  "convergence": {
+    "cfg_N": 8,
+    "K": 3,
+    "actual_eps_N": 3.46238664016844,
+    "normalized_eps_N": 3.3317566590002894,
+    "gap_ps": 0.1306299811681506,
+    "engine_intrinsic_ps": 37.1768446702255,
+    "corrected_intrinsic_ps": 36.021283933072375,
+    "convergence_value_ps": -1.1555607371531258,
+    "convergence_value_idio_adjusted_ps": -0.22857016331868274,
+    "headline_value_ps": 14.885950720396032,
+    "headline_value_pre_convergence_ps": 15.114520883714714,
+    "headline_basis": "adjusted equity (dep + market debt + idiosyncratic) + convergence increment priced at the idiosyncratic-inclusive cost of equity",
+    "guard": "PASS",
+    "guard_reason": "gap 4% of EPS, convergence value 3% of intrinsic",
+    "in_four_method_tie": false,
+    "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
+    "periods": [
+      {
+        "period": "explicit",
+        "years": "1..8",
+        "n_years": 8,
+        "eps_entry": 1.98730957522254,
+        "eps_exit": 3.46238664016844,
+        "eps_growth_annualized": 0.07186170467241104,
+        "aeg_sum_nominal_ps": 0.38224826935606193,
+        "aeg_first_ps": 0.0870252259253421,
+        "aeg_last_ps": 0.0205501223176365,
+        "pv_contribution_ps": 4.932126580280055,
+        "pct_of_corrected_value": 0.13692256471046277
+      },
+      {
+        "period": "convergence",
+        "years": "9..11",
+        "n_years": 3,
+        "eps_entry": 3.46238664016844,
+        "eps_exit": 3.897054844885283,
+        "eps_growth_annualized": 0.040208308154964456,
+        "aeg_sum_nominal_ps": -0.145173899561855,
+        "aeg_first_ps": -0.04650735527669969,
+        "aeg_last_ps": -0.05027981060744091,
+        "pv_contribution_ps": -1.1555607371531258,
+        "pct_of_corrected_value": -0.03207994304978579
+      },
+      {
+        "period": "combined",
+        "years": "1..11",
+        "n_years": 11,
+        "eps_entry": 1.98730957522254,
+        "eps_exit": 3.897054844885283,
+        "eps_growth_annualized": 0.06313464764019439,
+        "aeg_sum_nominal_ps": 0.23707436979420693,
+        "aeg_first_ps": 0.0870252259253421,
+        "aeg_last_ps": -0.05027981060744091,
+        "pv_contribution_ps": 3.7765658431269298,
+        "pct_of_corrected_value": 0.10484262166067698
+      }
+    ],
+    "identity_checks": {
+      "normal_value_ps": 32.2447180899454,
+      "explicit_identity_residual": 4.263256414560601e-14,
+      "combined_identity_residual": 4.263256414560601e-14
+    },
+    "schedule": [
+      {
+        "t": 9,
+        "phase": "convergence",
+        "eps": 3.6046618317421166,
+        "normal_eps": 3.6511691870188163,
+        "aeg_eps": -0.04650735527669969,
+        "contrib_eps": -0.4061078818688155,
+        "coe": 0.0983683896358327
+      },
+      {
+        "t": 10,
+        "phase": "convergence",
+        "eps": 3.7503274699886484,
+        "normal_eps": 3.798714203666363,
+        "aeg_eps": -0.0483867336777144,
+        "contrib_eps": -0.3849148419304442,
+        "coe": 0.0975903754320682
+      },
+      {
+        "t": 11,
+        "phase": "convergence",
+        "eps": 3.897054844885283,
+        "normal_eps": 3.9473346554927238,
+        "aeg_eps": -0.05027981060744091,
+        "contrib_eps": -0.3645380133538661,
+        "coe": 0.0949419243784944
+      }
+    ],
+    "outputs": [
+      "NKE_convergence.csv",
+      "NKE_periods.csv"
+    ]
+  },
   "outputs": [
     "NKE_anchors.csv",
     "NKE_valuation.csv",
@@ -55,7 +152,9 @@
     "NKE_dupont.json",
     "NKE_dupont.csv",
     "NKE_analyst_estimates.csv",
-    "NKE_growth_trend.csv"
+    "NKE_growth_trend.csv",
+    "NKE_convergence.csv",
+    "NKE_periods.csv"
   ],
   "tie_residuals": {
     "components": {
@@ -160,7 +259,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T04:46Z",
+    "as_of": "2026-08-09T05:21Z",
     "flags": []
   }
 }

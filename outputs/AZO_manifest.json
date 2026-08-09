@@ -1,7 +1,7 @@
 {
   "ticker": "AZO",
   "config_hash": "ca6b9b0c64b133bc",
-  "data_vintage": "2026-08-09T04:46Z",
+  "data_vintage": "2026-08-09T05:21Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -39,6 +39,103 @@
     "debt_capital_gain_ps": 0.0,
     "idiosyncratic_haircut_ps": 2058.6295873318304
   },
+  "convergence": {
+    "cfg_N": 10,
+    "K": 3,
+    "actual_eps_N": 502.548438140246,
+    "normalized_eps_N": 423.47890264434506,
+    "gap_ps": 79.06953549590094,
+    "engine_intrinsic_ps": 3624.73848191173,
+    "corrected_intrinsic_ps": 2997.6052035423418,
+    "convergence_value_ps": -627.1332783693881,
+    "convergence_value_idio_adjusted_ps": -270.0029782963076,
+    "headline_value_ps": 1301.0072194479956,
+    "headline_value_pre_convergence_ps": 1571.0101977443032,
+    "headline_basis": "adjusted equity (dep + market debt + idiosyncratic) + convergence increment priced at the idiosyncratic-inclusive cost of equity",
+    "guard": "REVIEW",
+    "guard_reason": "off-trend gap 16% of EPS and convergence moves 21% of value \u2014 confirm the analyst's stop year and the normalized line",
+    "in_four_method_tie": false,
+    "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
+    "periods": [
+      {
+        "period": "explicit",
+        "years": "1..10",
+        "n_years": 10,
+        "eps_entry": 155.062816814438,
+        "eps_exit": 502.548438140246,
+        "eps_growth_annualized": 0.12477855074809674,
+        "aeg_sum_nominal_ps": 98.33941694352104,
+        "aeg_first_ps": -0.90678374351765,
+        "aeg_last_ps": 26.0153934316521,
+        "pv_contribution_ps": 1403.421603908239,
+        "pct_of_corrected_value": 0.46818093398349525
+      },
+      {
+        "period": "convergence",
+        "years": "11..13",
+        "n_years": 3,
+        "eps_entry": 502.548438140246,
+        "eps_exit": 553.7727594424291,
+        "eps_growth_annualized": 0.03288321599341337,
+        "aeg_sum_nominal_ps": -94.562973091338,
+        "aeg_first_ps": -30.520371627881786,
+        "aeg_last_ps": -32.5187949198189,
+        "pv_contribution_ps": -627.1332783693881,
+        "pct_of_corrected_value": -0.20921143238885817
+      },
+      {
+        "period": "combined",
+        "years": "1..13",
+        "n_years": 13,
+        "eps_entry": 155.062816814438,
+        "eps_exit": 553.7727594424291,
+        "eps_growth_annualized": 0.10287150738840811,
+        "aeg_sum_nominal_ps": 3.77644385218305,
+        "aeg_first_ps": -0.90678374351765,
+        "aeg_last_ps": -32.5187949198189,
+        "pv_contribution_ps": 776.2883255388508,
+        "pct_of_corrected_value": 0.25896950159463705
+      }
+    ],
+    "identity_checks": {
+      "normal_value_ps": 2221.31687800349,
+      "explicit_identity_residual": 1.3642420526593924e-12,
+      "combined_identity_residual": 9.094947017729282e-13
+    },
+    "schedule": [
+      {
+        "t": 11,
+        "phase": "convergence",
+        "eps": 519.740982322806,
+        "normal_eps": 550.2613539506877,
+        "aeg_eps": -30.520371627881786,
+        "contrib_eps": -221.27839197554997,
+        "coe": 0.0949419243784944
+      },
+      {
+        "t": 12,
+        "phase": "convergence",
+        "eps": 536.8287902686104,
+        "normal_eps": 568.3525968122477,
+        "aeg_eps": -31.523806543637306,
+        "contrib_eps": -208.82306565511263,
+        "coe": 0.0935304625626954
+      },
+      {
+        "t": 13,
+        "phase": "convergence",
+        "eps": 553.7727594424291,
+        "normal_eps": 586.291554362248,
+        "aeg_eps": -32.5187949198189,
+        "contrib_eps": -197.03182073872551,
+        "coe": 0.0921388066181923
+      }
+    ],
+    "outputs": [
+      "AZO_convergence.csv",
+      "AZO_periods.csv"
+    ]
+  },
   "outputs": [
     "AZO_anchors.csv",
     "AZO_valuation.csv",
@@ -55,7 +152,9 @@
     "AZO_dupont.json",
     "AZO_dupont.csv",
     "AZO_analyst_estimates.csv",
-    "AZO_growth_trend.csv"
+    "AZO_growth_trend.csv",
+    "AZO_convergence.csv",
+    "AZO_periods.csv"
   ],
   "tie_residuals": {
     "components": {
@@ -160,7 +259,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T04:46Z",
+    "as_of": "2026-08-09T05:21Z",
     "flags": []
   }
 }

@@ -1,7 +1,7 @@
 {
   "ticker": "MCD",
   "config_hash": "937ebf8f3b64bd48",
-  "data_vintage": "2026-08-09T04:46Z",
+  "data_vintage": "2026-08-09T05:21Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -39,6 +39,103 @@
     "debt_capital_gain_ps": 0.0,
     "idiosyncratic_haircut_ps": 122.56936322693497
   },
+  "convergence": {
+    "cfg_N": 12,
+    "K": 3,
+    "actual_eps_N": 71.4270735168465,
+    "normalized_eps_N": 50.642538568323744,
+    "gap_ps": 20.78453494852276,
+    "engine_intrinsic_ps": 556.896007413415,
+    "corrected_intrinsic_ps": 429.3363524837568,
+    "convergence_value_ps": -127.55965492965818,
+    "convergence_value_idio_adjusted_ps": -96.1158936495794,
+    "headline_value_ps": 338.3117349294766,
+    "headline_value_pre_convergence_ps": 434.427628579056,
+    "headline_basis": "adjusted equity (dep + market debt + idiosyncratic) + convergence increment priced at the idiosyncratic-inclusive cost of equity",
+    "guard": "REVIEW",
+    "guard_reason": "off-trend gap 29% of EPS and convergence moves 30% of value \u2014 confirm the analyst's stop year and the normalized line",
+    "in_four_method_tie": false,
+    "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
+    "periods": [
+      {
+        "period": "explicit",
+        "years": "1..12",
+        "n_years": 12,
+        "eps_entry": 11.7939321380701,
+        "eps_exit": 71.4270735168465,
+        "eps_growth_annualized": 0.16193995555011775,
+        "aeg_sum_nominal_ps": 42.425490407510104,
+        "aeg_first_ps": -0.0876946272753738,
+        "aeg_last_ps": 8.92619980145597,
+        "pv_contribution_ps": 396.32778948072274,
+        "pct_of_corrected_value": 0.9231172417334894
+      },
+      {
+        "period": "convergence",
+        "years": "13..15",
+        "n_years": 3,
+        "eps_entry": 71.4270735168465,
+        "eps_exit": 58.54449091355429,
+        "eps_growth_annualized": -0.064146808587498,
+        "aeg_sum_nominal_ps": -22.835488825995846,
+        "aeg_first_ps": -8.123152652390615,
+        "aeg_last_ps": -7.1106135878968715,
+        "pv_contribution_ps": -127.55965492965818,
+        "pct_of_corrected_value": -0.29710890818285457
+      },
+      {
+        "period": "combined",
+        "years": "1..15",
+        "n_years": 15,
+        "eps_entry": 11.7939321380701,
+        "eps_exit": 58.54449091355429,
+        "eps_growth_annualized": 0.11272666115081642,
+        "aeg_sum_nominal_ps": 19.590001581514258,
+        "aeg_first_ps": -0.0876946272753738,
+        "aeg_last_ps": -7.1106135878968715,
+        "pv_contribution_ps": 268.7681345510646,
+        "pct_of_corrected_value": 0.6260083335506349
+      }
+    ],
+    "identity_checks": {
+      "normal_value_ps": 160.568217932692,
+      "explicit_identity_residual": 2.2737367544323206e-13,
+      "combined_identity_residual": 2.2737367544323206e-13
+    },
+    "schedule": [
+      {
+        "t": 13,
+        "phase": "convergence",
+        "eps": 66.88112506307014,
+        "normal_eps": 75.00427771546076,
+        "aeg_eps": -8.123152652390615,
+        "contrib_eps": -49.218292411681034,
+        "coe": 0.0921388066181923
+      },
+      {
+        "t": 14,
+        "phase": "convergence",
+        "eps": 62.58798531871767,
+        "normal_eps": 70.18970790442603,
+        "aeg_eps": -7.601722585708359,
+        "contrib_eps": -42.17612735904771,
+        "coe": 0.0907165212475163
+      },
+      {
+        "t": 15,
+        "phase": "convergence",
+        "eps": 58.54449091355429,
+        "normal_eps": 65.65510450145116,
+        "aeg_eps": -7.1106135878968715,
+        "contrib_eps": -36.165235158929434,
+        "coe": 0.0893485684139139
+      }
+    ],
+    "outputs": [
+      "MCD_convergence.csv",
+      "MCD_periods.csv"
+    ]
+  },
   "outputs": [
     "MCD_anchors.csv",
     "MCD_valuation.csv",
@@ -55,7 +152,9 @@
     "MCD_dupont.json",
     "MCD_dupont.csv",
     "MCD_analyst_estimates.csv",
-    "MCD_growth_trend.csv"
+    "MCD_growth_trend.csv",
+    "MCD_convergence.csv",
+    "MCD_periods.csv"
   ],
   "tie_residuals": {
     "components": {
@@ -160,7 +259,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T04:46Z",
+    "as_of": "2026-08-09T05:21Z",
     "flags": []
   }
 }

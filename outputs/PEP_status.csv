@@ -12,10 +12,19 @@ anchor_normal_margin,0.14184361835179532
 anchor_margin_vs_normal,1.0126354739132681
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
+headline_value_ps,152.19816016196833
+headline_value_pre_convergence_ps,156.4144611834156
+convergence_K,3
+convergence_value_ps,-4.216301021447275
+convergence_value_idio_adjusted_ps,-4.216301021447275
+actual_eps_at_N,13.8461052520308
+normalized_eps_at_N,13.126410444214152
+convergence_guard,PASS
+convergence_in_four_method_tie,False
 cfg_N,12
 cfg_N_reviewed,True
 payout_seed,0.937106
 ppe_life_years,15.87
 inputs_on_template_default,0
 config_hash,a253b27cde209dcd
-vintage,2026-08-09T04:46Z
+vintage,2026-08-09T05:21Z

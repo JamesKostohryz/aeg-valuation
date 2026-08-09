@@ -1,7 +1,7 @@
 {
   "ticker": "JNJ",
   "config_hash": "e1383c584bea4d4b",
-  "data_vintage": "2026-08-09T04:46Z",
+  "data_vintage": "2026-08-09T05:21Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -39,6 +39,103 @@
     "debt_capital_gain_ps": 1.458655113145222,
     "idiosyncratic_haircut_ps": 29.97247506803599
   },
+  "convergence": {
+    "cfg_N": 8,
+    "K": 3,
+    "actual_eps_N": 13.6386200982852,
+    "normalized_eps_N": 14.084843268571015,
+    "gap_ps": -0.4462231702858155,
+    "engine_intrinsic_ps": 141.777388670428,
+    "corrected_intrinsic_ps": 145.7891049383186,
+    "convergence_value_ps": 4.011716267890588,
+    "convergence_value_idio_adjusted_ps": 3.9109362519647615,
+    "headline_value_ps": 117.17095307121448,
+    "headline_value_pre_convergence_ps": 113.26001681924973,
+    "headline_basis": "adjusted equity (dep + market debt + idiosyncratic) + convergence increment priced at the idiosyncratic-inclusive cost of equity",
+    "guard": "PASS",
+    "guard_reason": "gap 3% of EPS, convergence value 3% of intrinsic",
+    "in_four_method_tie": false,
+    "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
+    "periods": [
+      {
+        "period": "explicit",
+        "years": "1..8",
+        "n_years": 8,
+        "eps_entry": 9.76192846612955,
+        "eps_exit": 13.6386200982852,
+        "eps_growth_annualized": 0.04268794245972507,
+        "aeg_sum_nominal_ps": -1.6206025731578022,
+        "aeg_first_ps": -0.0480005387012081,
+        "aeg_last_ps": -0.327739900881905,
+        "pv_contribution_ps": -13.397289944715443,
+        "pct_of_corrected_value": -0.09189500100424963
+      },
+      {
+        "period": "convergence",
+        "years": "9..11",
+        "n_years": 3,
+        "eps_entry": 13.6386200982852,
+        "eps_exit": 16.89729567450363,
+        "eps_growth_annualized": 0.07402796736765938,
+        "aeg_sum_nominal_ps": 0.5049932960684913,
+        "aeg_first_ps": 0.15650096063998298,
+        "aeg_last_ps": 0.18035986660025216,
+        "pv_contribution_ps": 4.011716267890588,
+        "pct_of_corrected_value": 0.02751725699659032
+      },
+      {
+        "period": "combined",
+        "years": "1..11",
+        "n_years": 11,
+        "eps_entry": 9.76192846612955,
+        "eps_exit": 16.89729567450363,
+        "eps_growth_annualized": 0.05114338618460246,
+        "aeg_sum_nominal_ps": -1.115609277089311,
+        "aeg_first_ps": -0.0480005387012081,
+        "aeg_last_ps": 0.18035986660025216,
+        "pv_contribution_ps": -9.385573676824855,
+        "pct_of_corrected_value": -0.06437774400765932
+      }
+    ],
+    "identity_checks": {
+      "normal_value_ps": 155.174678615143,
+      "explicit_identity_residual": 4.547473508864641e-13,
+      "combined_identity_residual": 4.547473508864641e-13
+    },
+    "schedule": [
+      {
+        "t": 9,
+        "phase": "convergence",
+        "eps": 14.662036821854935,
+        "normal_eps": 14.505535861214952,
+        "aeg_eps": 0.15650096063998298,
+        "contrib_eps": 1.3665854198288547,
+        "coe": 0.0983683896358327
+      },
+      {
+        "t": 10,
+        "phase": "convergence",
+        "eps": 15.75175282521174,
+        "normal_eps": 15.583620356383484,
+        "aeg_eps": 0.16813246882825617,
+        "contrib_eps": 1.3374881448592237,
+        "coe": 0.0975903754320682
+      },
+      {
+        "t": 11,
+        "phase": "convergence",
+        "eps": 16.89729567450363,
+        "normal_eps": 16.71693580790338,
+        "aeg_eps": 0.18035986660025216,
+        "contrib_eps": 1.307642703202509,
+        "coe": 0.0949419243784944
+      }
+    ],
+    "outputs": [
+      "JNJ_convergence.csv",
+      "JNJ_periods.csv"
+    ]
+  },
   "outputs": [
     "JNJ_anchors.csv",
     "JNJ_valuation.csv",
@@ -55,7 +152,9 @@
     "JNJ_dupont.json",
     "JNJ_dupont.csv",
     "JNJ_analyst_estimates.csv",
-    "JNJ_growth_trend.csv"
+    "JNJ_growth_trend.csv",
+    "JNJ_convergence.csv",
+    "JNJ_periods.csv"
   ],
   "tie_residuals": {
     "components": {
@@ -160,7 +259,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T04:46Z",
+    "as_of": "2026-08-09T05:21Z",
     "flags": []
   }
 }

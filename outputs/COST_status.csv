@@ -12,10 +12,19 @@ anchor_normal_margin,0.03304017380040482
 anchor_margin_vs_normal,1.1417653818437647
 inflation_verdict,NET LOSER from inflation
 rd_capitalization_wired,False
+headline_value_ps,148.53334729915701
+headline_value_pre_convergence_ps,144.91428912811534
+convergence_K,3
+convergence_value_ps,2.7307580101461255
+convergence_value_idio_adjusted_ps,3.6190581710416865
+actual_eps_at_N,32.3024509401601
+normalized_eps_at_N,32.73058002007723
+convergence_guard,PASS
+convergence_in_four_method_tie,False
 cfg_N,12
 cfg_N_reviewed,True
 payout_seed,0.277899
 ppe_life_years,19.66
 inputs_on_template_default,0
 config_hash,04bcb0fd6136220c
-vintage,2026-08-09T04:46Z
+vintage,2026-08-09T05:21Z

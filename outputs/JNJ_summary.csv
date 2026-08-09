@@ -1,5 +1,5 @@
 field,value
-intrinsic_value_ps,113.26001681924973
+intrinsic_value_ps,117.17095307121448
 current_price_real_ps,269.853006650246
 equity_enterprise_tie,0
 normal_no_growth_value_ps,155.174678615143
@@ -10,4 +10,12 @@ economic_rnoa,0.190302591264285
 real_coe_longrun,0.0548806713262307
 economic_noa,128990.163208686
 normal_no_growth_value_adj_ps,155.1711267188555
-upside_downside,-0.5802899577619123
+intrinsic_value_pre_convergence_ps,113.26001681924973
+convergence_value_ps,4.011716267890588
+convergence_value_idio_adjusted_ps,3.9109362519647615
+convergence_K,3
+actual_eps_at_N,13.6386200982852
+normalized_eps_at_N,14.084843268571015
+convergence_guard,PASS
+convergence_in_four_method_tie,False
+upside_downside,-0.5657971184917029

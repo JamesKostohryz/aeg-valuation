@@ -1,7 +1,7 @@
 {
   "ticker": "MRK",
   "config_hash": "3fa30d2dfdc7a432",
-  "data_vintage": "2026-08-09T04:46Z",
+  "data_vintage": "2026-08-09T05:21Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -39,6 +39,103 @@
     "debt_capital_gain_ps": 2.4241000558436383,
     "idiosyncratic_haircut_ps": 49.953035199139194
   },
+  "convergence": {
+    "cfg_N": 6,
+    "K": 3,
+    "actual_eps_N": 11.3040104783348,
+    "normalized_eps_N": 11.709210722478252,
+    "gap_ps": -0.4052002441434528,
+    "engine_intrinsic_ps": 136.898444947142,
+    "corrected_intrinsic_ps": 141.30996787257482,
+    "convergence_value_ps": 4.4115229254328305,
+    "convergence_value_idio_adjusted_ps": 4.3319901236271665,
+    "headline_value_ps": 93.79063974624141,
+    "headline_value_pre_convergence_ps": 89.45864962261425,
+    "headline_basis": "adjusted equity (dep + market debt + idiosyncratic) + convergence increment priced at the idiosyncratic-inclusive cost of equity",
+    "guard": "PASS",
+    "guard_reason": "gap 4% of EPS, convergence value 3% of intrinsic",
+    "in_four_method_tie": false,
+    "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
+    "periods": [
+      {
+        "period": "explicit",
+        "years": "1..6",
+        "n_years": 6,
+        "eps_entry": 8.62412784164447,
+        "eps_exit": 11.3040104783348,
+        "eps_growth_annualized": 0.046131375474702585,
+        "aeg_sum_nominal_ps": -0.9182956019903019,
+        "aeg_first_ps": 0.155729677639927,
+        "aeg_last_ps": -0.282561045536305,
+        "pv_contribution_ps": -5.84329715372462,
+        "pct_of_corrected_value": -0.04135091983740148
+      },
+      {
+        "period": "convergence",
+        "years": "7..9",
+        "n_years": 3,
+        "eps_entry": 11.3040104783348,
+        "eps_exit": 14.1512995519568,
+        "eps_growth_annualized": 0.07775800581702597,
+        "aeg_sum_nominal_ps": 0.46071157021399856,
+        "aeg_first_ps": 0.1422472350304016,
+        "aeg_last_ps": 0.16515645502760634,
+        "pv_contribution_ps": 4.4115229254328305,
+        "pct_of_corrected_value": 0.031218766742703442
+      },
+      {
+        "period": "combined",
+        "years": "1..9",
+        "n_years": 9,
+        "eps_entry": 8.62412784164447,
+        "eps_exit": 14.1512995519568,
+        "eps_growth_annualized": 0.056569097399244095,
+        "aeg_sum_nominal_ps": -0.45758403177630336,
+        "aeg_first_ps": 0.155729677639927,
+        "aeg_last_ps": 0.16515645502760634,
+        "pv_contribution_ps": -1.4317742282917902,
+        "pct_of_corrected_value": -0.010132153094698044
+      }
+    ],
+    "identity_checks": {
+      "normal_value_ps": 142.741742100867,
+      "explicit_identity_residual": 3.694822225952521e-13,
+      "combined_identity_residual": 3.694822225952521e-13
+    },
+    "schedule": [
+      {
+        "t": 7,
+        "phase": "convergence",
+        "eps": 12.188341249007017,
+        "normal_eps": 12.046094013976615,
+        "aeg_eps": 0.1422472350304016,
+        "contrib_eps": 1.4991719026873593,
+        "coe": 0.0993634189328516
+      },
+      {
+        "t": 8,
+        "phase": "convergence",
+        "eps": 13.136063833534033,
+        "normal_eps": 12.982755953378042,
+        "aeg_eps": 0.15330788015599062,
+        "contrib_eps": 1.470184773360258,
+        "coe": 0.0987817921393792
+      },
+      {
+        "t": 9,
+        "phase": "convergence",
+        "eps": 14.1512995519568,
+        "normal_eps": 13.986143096929194,
+        "aeg_eps": 0.16515645502760634,
+        "contrib_eps": 1.4421662493852128,
+        "coe": 0.0983683896358327
+      }
+    ],
+    "outputs": [
+      "MRK_convergence.csv",
+      "MRK_periods.csv"
+    ]
+  },
   "outputs": [
     "MRK_anchors.csv",
     "MRK_valuation.csv",
@@ -56,7 +153,9 @@
     "MRK_dupont.csv",
     "MRK_analyst_estimates.csv",
     "MRK_aeg_momentum.csv",
-    "MRK_growth_trend.csv"
+    "MRK_growth_trend.csv",
+    "MRK_convergence.csv",
+    "MRK_periods.csv"
   ],
   "tie_residuals": {
     "components": {
@@ -161,7 +260,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T04:46Z",
+    "as_of": "2026-08-09T05:21Z",
     "flags": []
   }
 }

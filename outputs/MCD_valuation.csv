@@ -12,3 +12,10 @@ adjusted_equity_ps,434.427628579056
 depreciation_anchor_penalty_ps,-0.10098439257599635
 debt_capital_gain_ps,0.0
 idiosyncratic_haircut_ps,122.56936322693497
+headline_value_ps,338.3117349294766
+headline_value_pre_convergence_ps,434.427628579056
+convergence_value_ps,-127.55965492965818
+convergence_value_idio_adjusted_ps,-96.1158936495794
+convergence_K,3
+convergence_guard,REVIEW
+convergence_in_four_method_tie,False

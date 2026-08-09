@@ -1,7 +1,7 @@
 {
   "ticker": "HD",
   "config_hash": "80da59d1ddb736d9",
-  "data_vintage": "2026-08-09T04:46Z",
+  "data_vintage": "2026-08-09T05:21Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -39,6 +39,103 @@
     "debt_capital_gain_ps": 7.507302469945259,
     "idiosyncratic_haircut_ps": 1252.9824420568602
   },
+  "convergence": {
+    "cfg_N": 10,
+    "K": 3,
+    "actual_eps_N": 920.08036383438,
+    "normalized_eps_N": 308.4095931071393,
+    "gap_ps": 611.6707707272408,
+    "engine_intrinsic_ps": 7307.92114496305,
+    "corrected_intrinsic_ps": 2637.2379425176478,
+    "convergence_value_ps": -4670.6832024454025,
+    "convergence_value_idio_adjusted_ps": -3890.410634877349,
+    "headline_value_ps": 2173.7676648673673,
+    "headline_value_pre_convergence_ps": 6064.178299744716,
+    "headline_basis": "adjusted equity (dep + market debt + idiosyncratic) + convergence increment priced at the idiosyncratic-inclusive cost of equity",
+    "guard": "REVIEW",
+    "guard_reason": "off-trend gap 66% of EPS and convergence moves 177% of value \u2014 confirm the analyst's stop year and the normalized line",
+    "in_four_method_tie": false,
+    "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
+    "periods": [
+      {
+        "period": "explicit",
+        "years": "1..10",
+        "n_years": 10,
+        "eps_entry": 15.7273108298919,
+        "eps_exit": 920.08036383438,
+        "eps_growth_annualized": 0.5021632372771789,
+        "aeg_sum_nominal_ps": 798.2230766908604,
+        "aeg_first_ps": 0.46624744450817,
+        "aeg_last_ps": 330.840889509202,
+        "pv_contribution_ps": 7078.31124414522,
+        "pct_of_corrected_value": 2.6839865793026956
+      },
+      {
+        "period": "convergence",
+        "years": "11..13",
+        "n_years": 3,
+        "eps_entry": 920.08036383438,
+        "eps_exit": 377.98650307856514,
+        "eps_growth_annualized": -0.2566097796164972,
+        "aeg_sum_nominal_ps": -690.8267315506339,
+        "aeg_first_ps": -300.9544461983993,
+        "aeg_last_ps": -166.15132715336136,
+        "pv_contribution_ps": -4670.6832024454025,
+        "pct_of_corrected_value": -1.77105111645198
+      },
+      {
+        "period": "combined",
+        "years": "1..13",
+        "n_years": 13,
+        "eps_entry": 15.7273108298919,
+        "eps_exit": 377.98650307856514,
+        "eps_growth_annualized": 0.27707694085848944,
+        "aeg_sum_nominal_ps": 107.39634514022652,
+        "aeg_first_ps": 0.46624744450817,
+        "aeg_last_ps": -166.15132715336136,
+        "pv_contribution_ps": 2407.628041699818,
+        "pct_of_corrected_value": 0.9129354628507157
+      }
+    ],
+    "identity_checks": {
+      "normal_value_ps": 229.609900817828,
+      "explicit_identity_residual": 1.8189894035458565e-12,
+      "combined_identity_residual": 1.8189894035458565e-12
+    },
+    "schedule": [
+      {
+        "t": 11,
+        "phase": "convergence",
+        "eps": 684.6572979792037,
+        "normal_eps": 985.611744177603,
+        "aeg_eps": -300.9544461983993,
+        "contrib_eps": -2181.975918400567,
+        "coe": 0.0949419243784944
+      },
+      {
+        "t": 12,
+        "phase": "convergence",
+        "eps": 508.9547228047355,
+        "normal_eps": 732.6756810036087,
+        "aeg_eps": -223.72095819887318,
+        "contrib_eps": -1481.9941328379161,
+        "coe": 0.0935304625626954
+      },
+      {
+        "t": 13,
+        "phase": "convergence",
+        "eps": 377.98650307856514,
+        "normal_eps": 544.1378302319265,
+        "aeg_eps": -166.15132715336136,
+        "contrib_eps": -1006.713151206919,
+        "coe": 0.0921388066181923
+      }
+    ],
+    "outputs": [
+      "HD_convergence.csv",
+      "HD_periods.csv"
+    ]
+  },
   "outputs": [
     "HD_anchors.csv",
     "HD_valuation.csv",
@@ -56,7 +153,9 @@
     "HD_dupont.csv",
     "HD_analyst_estimates.csv",
     "HD_aeg_momentum.csv",
-    "HD_growth_trend.csv"
+    "HD_growth_trend.csv",
+    "HD_convergence.csv",
+    "HD_periods.csv"
   ],
   "tie_residuals": {
     "components": {
@@ -161,7 +260,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T04:46Z",
+    "as_of": "2026-08-09T05:21Z",
     "flags": []
   }
 }

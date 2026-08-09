@@ -91,11 +91,19 @@ def main():
     # never subtract leases from a year already on borrowings, and hand back figures in
     # the vendor's own units. All three were got wrong once and are silent if regressed.
     run_unit("test_lease_ruling.py")
+    # Phase 1, Property 8: the continuing period must begin at a NORMALIZED, neutral
+    # earnings level with abnormal growth already zero. This is the machinery behind the
+    # headline convergence-corrected value, and that increment sits OUTSIDE the
+    # four-method tie -- so nothing else in the harness can see it.
+    run_unit("test_convergence_start.py")
     # Phase 1, Property 4: post-horizon years cannot move value. Measured at exactly
     # 0.0 on N=4 and N=8 under four adversarial perturbations. Drives the engine, so
     # it needs LibreOffice and costs real wall-clock -- full scope only.
     if full:
         run_unit("test_horizon_gating.py")
+        # Phase 1, Property 5, full-retention end. Zero retention is already covered by
+        # test_zero_growth.py. Three builds with recalculation, so full scope only.
+        run_unit("test_full_retention.py")
     # S1 — three suites that existed but were run by nothing: absent from this list and
     # from every workflow. test_curve_shapes.py is the five-curve-shape property test that
     # exposed the AEG-vs-residual-income cross-tab gap in PR #3, the largest correctness

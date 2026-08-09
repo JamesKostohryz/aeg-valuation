@@ -63,14 +63,15 @@ jobs:
       - name: Run pipeline (gates are required checks)
         env:
           EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
           set -euo pipefail
           VINTAGE=$(date -u +%Y-%m-%dT%H:%MZ)
           for cfg in ${{ steps.pick.outputs.list }}; do
             echo "::group::$cfg"
-            python pipeline/run_company.py "$cfg" \
-              --rate-feed-live \
-              --out-dir outputs \
+            python pipeline/run_company.py "$cfg" \\
+              --rate-feed-live \\
+              --out-dir outputs \\
               --vintage "$VINTAGE"
             echo "::endgroup::"
           done

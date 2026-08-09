@@ -18,7 +18,7 @@ forecast:
   # decide to do a valuation of those companies I will study the matter."). MUST be
   # revisited before this company is published. See
   # claude/AEG-DECISIONS-SETTLED-DO-NOT-REASK-2026-08-09.md
-  horizon_N: 10
+  horizon_N: 4
   reviewed: true
 judgments:
   minority_include: false      # exclude minority interest from common equity

@@ -342,8 +342,11 @@ def main():
     import checks as CK
     tie_ok, tie_detail = CK.tie_check(results)
     results["tie_check"] = tie_detail
+    _rel = tie_detail.get("tie_relative")
     print(f"[tie-check] {tie_detail['tie_check']}  "
-          f"(audit_ok={tie_detail['audit_ok']} tie_ok={tie_detail['tie_ok']} mode_ok={tie_detail['mode_ok']})")
+          f"(audit_ok={tie_detail['audit_ok']} tie_ok={tie_detail['tie_ok']} mode_ok={tie_detail['mode_ok']})"
+          + (f"  relative={_rel:.2e} of scale {tie_detail['tie_scale']:.4g}"
+             f" (tol {tie_detail['tie_rel_tol']:g})" if isinstance(_rel, float) else ""))
     if not tie_ok:
         _fail("TIE CHECK FAILED: " + "; ".join(tie_detail["reasons"]))
 

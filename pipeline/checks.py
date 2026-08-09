@@ -10,15 +10,77 @@ the manual "is the tie still tiny?" verification we have been doing by hand.
 
 Three conditions, all required:
   1. the engine's own in-sheet audit verdict is PASS (its relative in_tie_tol logic),
-  2. the max identity residual is below an absolute backstop, and
+  2. the max identity residual is small RELATIVE TO THE MODEL'S OWN SCALE, and
   3. equity and enterprise modes still agree (mode_tie ~ 0).
+
+Why condition 2 is scale-relative (changed 2026-08-09)
+------------------------------------------------------
+max_identity_tie is an ABSOLUTE maximum over Audit cells B29, B31, B44, B50, B58, B63,
+B72 and B77, denominated in whatever currency units the model happens to be running in.
+An absolute threshold on that quantity therefore measures COMPANY SIZE, not correctness:
+a firm with $60bn of net operating assets carries ~1e-9 of ordinary double-precision
+accumulation and passes, while an identically correct firm ten times larger carries
+~1e-8 and fails.
+
+The old backstop was 1e-8 absolute, with a comment claiming "engine ties ~1e-13". That
+comment was measured on the sealed regression harness, which builds from golden fixtures
+that are ALREADY denominated in millions and are then divided by 1e6 a second time by
+loader_core (line ~179, the unconditional /1e6 that raw EODHD dollars require). The
+harness therefore runs the engine at one MILLIONTH of production scale, and its absolute
+residuals are ~1e6 smaller for that reason alone. Expressed relative to scale the harness
+sits at 4.4e-14 — the HIGH end of the live fleet, not the low end. See
+claude/AEG-Tie-Gate-RESOLVED-Scale-Artifact-2026-08-09.md for the full derivation.
+
+Measured relative residuals (residual / anchor scale), 2026-08-09:
+    live fleet, 14 names ... 3.3e-17 .. 8.1e-14   (median ~5e-15)
+    sealed harness (AAPL) .. 4.4e-14
+    HD on this branch ...... 2.1e-13   (the worst value ever observed)
+DEFAULT_TIE_REL_TOL = 1e-11 clears that worst case by ~47x and the fleet median by more
+than three orders of magnitude, while a genuine algebraic break — which presents at 1e-6
+or worse, not 1e-13 — is still caught by an enormous margin. It is immune to company size
+and immune to the fixture double-scaling defect.
+
+DEFAULT_TIE_ABS_RAIL is a loose absolute sanity ceiling kept alongside it. It is NOT the
+correctness test; it exists so that a run whose scale is itself absurd cannot pass on a
+flattering ratio. It should never bind on a legitimate run of any size.
 """
+import math
 
-DEFAULT_TIE_TOL = 1e-8      # absolute backstop on max identity residual (engine ties ~1e-13)
-DEFAULT_MODE_TOL = 1e-6     # equity-vs-enterprise agreement
+DEFAULT_TIE_REL_TOL = 1e-11   # PRIMARY: max identity residual / model scale
+DEFAULT_TIE_ABS_RAIL = 1e-3   # secondary: loose absolute sanity ceiling, never binds normally
+DEFAULT_MODE_TOL = 1e-6       # equity-vs-enterprise agreement
+
+# Backward-compatible alias. Nothing in the tree passes tie_tol, but the name appears in
+# older notes and in serialized manifests, so keep it resolvable.
+DEFAULT_TIE_TOL = DEFAULT_TIE_ABS_RAIL
 
 
-def tie_check(results, tie_tol=DEFAULT_TIE_TOL, mode_tol=DEFAULT_MODE_TOL):
+def tie_scale(results):
+    """The model's own currency-unit scale, read from the anchors read_results returns.
+
+    Returns a positive float, or None if no anchor is usable. Three candidates are tried
+    and the largest is taken, so a single missing or zero anchor cannot shrink the
+    denominator (which would make the gate spuriously strict):
+        real net operating assets, book common equity + net financial obligations,
+        real common equity + real net financial obligations.
+    """
+    a = results.get("anchors") or {}
+
+    def mag(key):
+        v = a.get(key)
+        return abs(v) if isinstance(v, (int, float)) and math.isfinite(v) else 0.0
+
+    candidates = (
+        mag("anchor_real_noa0"),
+        mag("anchor_cse0") + mag("anchor_nfo0"),
+        mag("anchor_real_cse0") + mag("anchor_real_nfo0"),
+    )
+    s = max(candidates)
+    return s if (s > 0.0 and math.isfinite(s)) else None
+
+
+def tie_check(results, rel_tol=DEFAULT_TIE_REL_TOL, mode_tol=DEFAULT_MODE_TOL,
+              abs_rail=DEFAULT_TIE_ABS_RAIL):
     """Evaluate the standing tie check against an aeg_engine.read_results dict.
     Returns (ok: bool, detail: dict). Never raises — the caller decides to abort."""
     reasons = []
@@ -29,9 +91,31 @@ def tie_check(results, tie_tol=DEFAULT_TIE_TOL, mode_tol=DEFAULT_MODE_TOL):
         reasons.append(f"in-sheet audit not PASS (got {audit!r})")
 
     tie = results.get("max_identity_tie")
-    tie_ok = isinstance(tie, (int, float)) and abs(tie) <= tie_tol
-    if not tie_ok:
-        reasons.append(f"max identity residual {tie} exceeds backstop {tie_tol:g}")
+    scale = tie_scale(results)
+    scale_known = scale is not None
+    # Fail CLOSED, and loudly, when the anchors cannot be read: fall back to scale 1.0 so
+    # the relative gate degenerates into a 1e-11 ABSOLUTE gate. Any production-scale run
+    # will then fail with the reason below rather than pass on an unverifiable denominator.
+    scale_used = scale if scale_known else 1.0
+
+    if not isinstance(tie, (int, float)):
+        tie_ok, rel = False, None
+        reasons.append(f"max identity residual is not numeric (got {tie!r})")
+    else:
+        rel = abs(tie) / scale_used
+        rel_ok = rel <= rel_tol
+        rail_ok = abs(tie) <= abs_rail
+        tie_ok = rel_ok and rail_ok
+        if not rel_ok:
+            reasons.append(
+                f"max identity residual {tie:g} is {rel:g} of model scale {scale_used:g}, "
+                f"exceeding the relative tolerance {rel_tol:g}"
+                + ("" if scale_known else " [MODEL SCALE UNREADABLE — anchors missing; "
+                                          "denominator forced to 1.0, so this is an "
+                                          "absolute test and the run cannot be cleared]"))
+        if not rail_ok:
+            reasons.append(f"max identity residual {tie:g} exceeds the absolute sanity "
+                           f"rail {abs_rail:g}")
 
     mode = results.get("mode_tie")
     # mode_tie may be None when only one mode is active; treat present-and-large as fail
@@ -47,7 +131,13 @@ def tie_check(results, tie_tol=DEFAULT_TIE_TOL, mode_tol=DEFAULT_MODE_TOL):
         "mode_ok": mode_ok,
         "max_identity_tie": tie,
         "mode_tie": mode,
-        "tie_tol": tie_tol,
+        # scale-free series — this is the number to track over time, not the raw residual
+        "tie_scale": scale_used,
+        "tie_scale_known": scale_known,
+        "tie_relative": rel,
+        "tie_rel_tol": rel_tol,
+        "tie_abs_rail": abs_rail,
+        "tie_tol": abs_rail,      # legacy key, retained so older readers still resolve
         "reasons": reasons,
     }
 

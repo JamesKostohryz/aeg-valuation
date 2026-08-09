@@ -1,7 +1,7 @@
 {
   "ticker": "AAPL",
   "config_hash": "2e10fdea5a2797c1",
-  "data_vintage": "2026-08-09T05:52Z",
+  "data_vintage": "2026-08-09T09:14Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -134,7 +134,9 @@
     "outputs": [
       "AAPL_convergence.csv",
       "AAPL_periods.csv"
-    ]
+    ],
+    "reviewed": false,
+    "review_note": ""
   },
   "outputs": [
     "AAPL_anchors.csv",
@@ -260,7 +262,7 @@
     "rating": "AA",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T05:52Z",
+    "as_of": "2026-08-09T09:14Z",
     "flags": []
   }
 }

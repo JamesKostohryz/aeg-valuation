@@ -20,6 +20,8 @@ convergence_value_idio_adjusted_ps,3.9109362519647615
 actual_eps_at_N,13.6386200982852
 normalized_eps_at_N,14.084843268571015
 convergence_guard,PASS
+convergence_reviewed,False
+convergence_review_note,
 convergence_in_four_method_tie,False
 cfg_N,8
 cfg_N_reviewed,True
@@ -27,4 +29,4 @@ payout_seed,0.465868
 ppe_life_years,6.76
 inputs_on_template_default,0
 config_hash,e1383c584bea4d4b
-vintage,2026-08-09T05:52Z
+vintage,2026-08-09T09:14Z

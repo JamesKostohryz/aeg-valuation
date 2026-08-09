@@ -125,6 +125,13 @@ def main():
     # which reproduces the pre-convergence (uncorrected, and by his argument wrong) valuation.
     ap.add_argument("--converge-K", type=int, default=3,
                     help="convergence period length in years after cfg_N (default 3; 0 = off)")
+    # The vendor total-debt row against Securities and Exchange Commission primary
+    # source. REPORT ONLY: it writes <TICKER>_debt_feed.csv and prints a line, and it
+    # cannot change in_debt or any valuation number. Off is for air-gapped runs.
+    ap.add_argument("--no-debt-feed-check", action="store_true",
+                    help="skip the vendor-vs-primary-source debt comparison (report only)")
+    ap.add_argument("--sec-cache-dir", default=None,
+                    help="directory to cache Securities and Exchange Commission responses in")
     args = ap.parse_args()
 
     # A config problem is an operator problem, not a bug: report it as a plain-language
@@ -631,6 +638,48 @@ def main():
         for _k, _v in _status:
             _w.writerow([_k, _v])
     print(f"[status] wrote {tk}_status.csv (anchor-health + run verdicts)")
+
+    # --- debt-feed guard (REPORT ONLY, 2026-08-09).
+    #     The vendor "Total Debt" row changes definition partway through its own series
+    #     for at least one committed name: it agrees with primary source to the dollar
+    #     for Apple through fiscal 2021, then absorbs capitalized leases. That row is
+    #     `in_debt`, which sets net financial obligations and — because net operating
+    #     assets is plugged from common equity plus net financial obligations — reprices
+    #     the whole forecast. Perturbation on 2026-08-09 moved Apple's tied equity from
+    #     87.1659 to 89.8409 per share with the four-method tie green at 1.3e-14 BOTH
+    #     times, so the tie cannot catch this class of error and something else has to.
+    #
+    #     This block does NOT change what the engine consumes. `in_debt` still comes off
+    #     the vendor row exactly as before, so every valuation number is bit-identical
+    #     with and without it. Which lease treatment the engine should VALUE on is a
+    #     gated judgment that has not been made. All this does is refuse to let the
+    #     disagreement stay invisible. It never aborts a run: a network failure, an
+    #     unknown filer or an uncorroborated construction all report UNVERIFIED.
+    if not args.no_debt_feed_check:
+        try:
+            import debt_feed as DFEED
+            _bs = os.path.join(args.out_dir, f"{tk}_reported_bs.csv")
+            if os.path.exists(_bs):
+                _rep = DFEED.audit_debt_feed(
+                    tk, _bs, anchor_year=results.get("anchor_year"),
+                    cache_dir=args.sec_cache_dir)
+                DFEED.write_report(_rep, os.path.join(args.out_dir, f"{tk}_debt_feed.csv"))
+                print(DFEED.console_line(_rep))
+                for _d in _rep["disagreements"]:
+                    _lz = _d["lease_liabilities_musd"]
+                    print(f"[debt-feed]   FY{_d['fiscal_year']}  vendor {_d['vendor_musd']:,.0f}"
+                          f"  primary source {_d['primary_source_musd']:,.0f}"
+                          f"  gap {_d['gap_musd']:+,.0f}m"
+                          + (f"  = {_d['gap_equals']}" if _d["explained_by_leases"]
+                             else "  UNEXPLAINED"))
+                if _rep["verdict"] in ("AMBER", "RED"):
+                    print("[debt-feed] NOTE: the engine is still valuing on the VENDOR row. "
+                          "Changing that is gated and has not been authorized.")
+            else:
+                print("[debt-feed] skipped (no reported balance sheet written)")
+        except Exception as _e:
+            # Report-only work must never take down a valuation run.
+            print(f"[debt-feed] skipped ({type(_e).__name__}: {_e})")
 
     # --- S2: input provenance register. One row per valuation-relevant Inputs cell with
     #     its value and whether that value came from this company's filings, was set

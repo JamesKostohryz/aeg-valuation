@@ -641,3 +641,118 @@ if __name__ == "__main__":
         if a.write:
             print("   ->", write_report(rep, os.path.join(a.outputs_dir,
                                                           f"{tk}_debt_feed.csv")))
+
+
+# ---------------------------------------------------------------------------
+# THE LEASE RULING — approved by James 2026-08-09.
+#
+# "Feed the debt row from primary-source BORROWINGS only, in every year", so the engine
+# stops switching lease treatments partway through a company's history. Background and
+# mechanism: claude/00-ENGINE-STATE-SINGLE-SOURCE-OF-TRUTH-2026-08-09.md section 4.
+#
+# WHY THIS IS NOT A BLIND SUBSTITUTION. Applying the ruling means replacing a figure whose
+# defect is KNOWN (the vendor's definition changes mid-series) with one whose accuracy is
+# ASSUMED (a reconstruction from the filer's own tags). On 2026-08-09 that reconstruction
+# was measured against the fleet and it does not generalize: of fourteen names, four
+# corroborate, eight disagree between routes, and two return no usable primary row. Swapping
+# all fourteen would trade a known error for an unmeasured one, which is the exact mistake
+# this project has been making.
+#
+# So the switch is made ONLY where the anchor year is corroborated TWO INDEPENDENT WAYS:
+#
+#     route 1   primary-source borrowings, from the filer's XBRL tags
+#     route 2   vendor total debt MINUS tagged capitalized lease liabilities
+#
+# Different data, different paths. Agreement is evidence; disagreement means one side's tags
+# are incomplete and we cannot say which, so nothing changes and the run says so out loud.
+#
+# The valuation depends on the ANCHOR YEAR ALONE -- established by perturbation to fifteen
+# significant figures -- so the anchor is what this resolves. Applying the ruling across the
+# whole series, which the DuPont decomposition needs, is a separate register item.
+
+ANCHOR_CORROBORATION_TOL = 0.01      # 1%: filers round; a lease-sized gap is far larger
+
+
+def resolve_anchor_debt_basis(ticker, reported_bs_csv, vendor_scale=None,
+                              cache_dir=None, allow_network=True):
+    """Decide the anchor-year debt figure the engine should consume.
+
+    Returns a dict that is always safe to act on. `apply` is True only when the ruling can
+    be applied with evidence; `debt_musd` then carries borrowings-only for the anchor year.
+    Any failure -- no network, no filer match, no tags -- returns apply=False with a reason,
+    never an exception, because a debt-feed problem must not take down a valuation run.
+    """
+    out = {"ticker": ticker, "apply": False, "verdict": "UNRESOLVED", "reason": "",
+           "anchor_year": None, "vendor_musd": None, "borrowings_musd": None,
+           "leases_musd": None, "vendor_less_leases_musd": None, "scale": vendor_scale}
+    try:
+        vendor = vendor_total_debt(reported_bs_csv)
+        if not vendor:
+            out["reason"] = "no vendor total-debt series in the reported balance sheet"
+            return out
+        ay = max(vendor)
+        out["anchor_year"] = ay
+
+        cik = resolve_cik(ticker, cache_dir, allow_network)
+        rows = {r["fiscal_year"]: r for r in build_primary_series(cik, cache_dir, allow_network)}
+        p = rows.get(ay)
+        if p is None:
+            out["verdict"] = "NO PRIMARY"
+            out["reason"] = f"no primary-source row for fiscal {ay}"
+            return out
+
+        if vendor_scale is None:
+            vendor_scale, _ = infer_vendor_scale(vendor, list(rows.values()))
+        out["scale"] = vendor_scale
+        v = vendor[ay] * (vendor_scale or 1.0)
+        out["vendor_musd"] = v
+
+        borrow, leases = p["borrowings_musd"], p["lease_liabilities_musd"]
+        out["borrowings_musd"], out["leases_musd"] = borrow, leases
+
+        if borrow is None:
+            out["verdict"] = "NO PRIMARY"
+            out["reason"] = "no borrowings route resolved from this filer's tags"
+            return out
+
+        if leases is None:
+            # No lease tags. If the vendor row already equals borrowings it never carried
+            # leases and the ruling is a no-op; otherwise the gap is unexplained.
+            if _agrees(v, borrow, ANCHOR_CORROBORATION_TOL):
+                out.update(verdict="NO LEASES IN ROW", apply=False,
+                           reason="vendor row already equals borrowings — ruling is a no-op")
+            else:
+                out.update(verdict="UNCORROBORATED",
+                           reason="no lease tags, and the vendor row does not equal "
+                                  "borrowings — the gap is unexplained")
+            return out
+
+        route2 = v - leases
+        out["vendor_less_leases_musd"] = route2
+        if _agrees(route2, borrow, ANCHOR_CORROBORATION_TOL):
+            out.update(verdict="CORROBORATED", apply=True, debt_musd=borrow,
+                       reason=(f"vendor {v:,.0f} less leases {leases:,.0f} = {route2:,.0f} "
+                               f"agrees with primary-source borrowings {borrow:,.0f}"))
+        else:
+            out.update(verdict="UNCORROBORATED",
+                       reason=(f"routes disagree by {route2 - borrow:,.0f}m "
+                               f"(vendor less leases {route2:,.0f} vs borrowings {borrow:,.0f}) "
+                               f"— one side's tags are incomplete and we cannot tell which"))
+        return out
+    except Exception as e:                       # never take down a valuation run
+        out["verdict"] = "ERROR"
+        out["reason"] = f"{type(e).__name__}: {e}"[:160]
+        return out
+
+
+def anchor_basis_console_line(res):
+    """One plain-language line for the run log."""
+    t, v = res["ticker"], res["verdict"]
+    if res.get("apply"):
+        old, new = res["vendor_musd"], res["borrowings_musd"]
+        return (f"[debt-basis] {t} LEASE RULING APPLIED: anchor debt {old:,.0f} -> {new:,.0f} "
+                f"({new - old:+,.0f}m, {100.0 * (new - old) / old:+.1f}%). {res['reason']}")
+    if v == "NO LEASES IN ROW":
+        return f"[debt-basis] {t} no change needed: {res['reason']}"
+    return (f"[debt-basis] {t} LEASE RULING NOT APPLIED ({v}): {res['reason']}. The engine is "
+            f"still valuing on the vendor row, whose lease definition changes mid-series.")

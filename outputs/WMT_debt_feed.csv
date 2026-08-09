@@ -1,0 +1,2 @@
+ticker,fiscal_year,period_end,vendor_musd,primary_source_musd,gap_musd,gap_pct_of_primary,lease_liabilities_musd,operating_lease_musd,finance_lease_musd,explained_by_leases,gap_equals,borrowings_basis,verdict,note,cik,anchor_year,years_agreeing,first_disagreeing_year,vendor_scale_factor
+WMT,,,,,,,,,,,,,UNVERIFIED,"cannot verify: only 0 year(s) agree with primary source; 3 are required before a disagreement is claimed, because too few means our own construction of gross borrowings from the filings is probably incomplete for this filer",0000104169,2026,0,2009,1.0

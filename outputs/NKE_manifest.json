@@ -1,7 +1,7 @@
 {
   "ticker": "NKE",
   "config_hash": "696c909df88be1d1",
-  "data_vintage": "2026-08-09T09:34Z",
+  "data_vintage": "2026-08-09T09:44Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -261,7 +261,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T09:34Z",
+    "as_of": "2026-08-09T09:44Z",
     "flags": []
   }
 }

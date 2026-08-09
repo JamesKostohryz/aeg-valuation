@@ -22,6 +22,15 @@ under debt policy) and 15 (capital-intensity vs leverage scorecard):
 The interest tax shield is reported under both debt policies (fixed-nominal vs
 constant-real) and EXCLUDED from the headline by default (Miller 1977) — disclosure
 only, exactly as the new engine treats it.
+
+INFLATION SERIES (corrected 2026-08-09). pi is read from the feed's TIPS BREAKEVEN
+series, which is the same inflation the sealed engine is re-pointed from (repoint_rates
+writes feed['breakeven_spot'] to Market Data row 21 and the engine derives its own
+one-year-forward path from it). Reading pi from the feed's exp_inflation_* series
+instead put a Cleveland-Fed-style expectation curve alongside a breakeven-discounted
+valuation; at the 2026-08-09 vintage the two differed by ~51bp at the long end, which
+was enough to invert the net verdict on Apple. The series actually used is now recorded
+in the output as `inflation_series` so the choice can never be silent again.
 """
 import openpyxl
 
@@ -96,9 +105,16 @@ def compute_scorecard(engine_path, feed, *, debt_policy="constant_real"):
     dep_penalty = _dp["penalty_annual"] or 0.0           # annual; >0 = penalty
 
     # --- rates from the feed
-    pi = _last(feed.get("exp_inflation_fwd1y"))
-    if pi is None:
-        pi = _last(feed.get("exp_inflation_spot"))
+    #  TIPS breakevens first — the engine discounts on this series (see module docstring).
+    #  The exp_inflation_* keys remain only as a last-resort fallback for fixtures that
+    #  carry no breakeven curve; whichever is used is reported in `inflation_series`.
+    pi, pi_series = None, None
+    for _key in ("breakeven_fwd1y", "breakeven_spot",
+                 "exp_inflation_fwd1y", "exp_inflation_spot"):
+        pi = _last(feed.get(_key))
+        if pi is not None:
+            pi_series = _key
+            break
     rd_real = _last(feed.get("real_cod"))
     rd_nom = ((1 + rd_real) * (1 + pi) - 1) if (rd_real is not None and pi is not None) else None
 
@@ -131,7 +147,8 @@ def compute_scorecard(engine_path, feed, *, debt_policy="constant_real"):
 
     return {
         "debt_policy": debt_policy,
-        "tax_rate": t, "expected_inflation": pi, "rd_nominal": rd_nom,
+        "tax_rate": t, "expected_inflation": pi, "inflation_series": pi_series,
+        "rd_nominal": rd_nom,
         "net_debt": net_debt, "nominal_interest": interest,
         "econ_depreciation": econ_dep, "reported_ppe_depreciation": reported_ppe_dep,
         "depreciation_shortfall": shortfall,
@@ -147,16 +164,18 @@ def compute_scorecard(engine_path, feed, *, debt_policy="constant_real"):
         "interest_tax_shield_pv_adopted": pv_adopted,
         "shield_treatment": "excluded from headline (Miller 1977); disclosure only",
         "verdict_basis": ("net_inflation_position (t*pi*net_debt vs t*shortfall), using the "
-                          "engine's BEA capital-goods deflator for PP&E; the breakeven_leverage "
-                          "column is v1.4's general-CPI rule of thumb and can differ when "
-                          "capital-goods prices diverge from general inflation"),
+                          "engine's BEA capital-goods deflator for PP&E and the TIPS-breakeven "
+                          "inflation the valuation itself is discounted on (see inflation_series); "
+                          "the breakeven_leverage column is v1.4's general-CPI rule of thumb and "
+                          "can differ when capital-goods prices diverge from general inflation"),
     }
 
 
 # ---- ordered field list for the disclosed CSV ---------------------------------------
 _CSV_FIELDS = [
     "verdict", "net_inflation_position_annual", "depreciation_penalty_annual",
-    "interest_benefit_annual", "tax_rate", "expected_inflation", "rd_nominal", "net_debt",
+    "interest_benefit_annual", "tax_rate", "expected_inflation", "inflation_series",
+    "rd_nominal", "net_debt",
     "nominal_interest", "econ_depreciation", "reported_ppe_depreciation",
     "depreciation_shortfall", "avg_asset_age_yrs", "debt_to_annual_da", "breakeven_leverage",
     "interest_tax_shield_pv_fixed_nominal", "interest_tax_shield_pv_constant_real",

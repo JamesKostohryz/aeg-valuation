@@ -98,6 +98,19 @@ def main():
     # date would leave the four-method tie reading 1e-15 while every published number was
     # wrong by the anchor year's retained earnings. The tie cannot see this class of error.
     run_unit("test_anchor_timing.py")
+    # PHASE 1 PROPERTY SUITE — the engine measured against closed forms computed OUTSIDE the
+    # model, which is the only kind of evidence that can answer "is the arithmetic right?".
+    # The four-method tie cannot answer it: all four legs are transformations of one restated
+    # stream sharing one timing convention, so they agree for any forecast and any anchor,
+    # including wrong ones.
+    #   Property 1 — unit-scale invariance. Multiply every currency input by k; every
+    #                per-share output must be bit-identical.
+    #   Property 2 — the zero-abnormal-growth reduction. Strip the abnormal growth out of
+    #                the forecast and the valuation must collapse to forward normal earnings
+    #                over the cost of equity, and to a dividend discount model summed in
+    #                plain Python.
+    run_unit("test_scale_invariance.py")
+    run_unit("test_zero_growth.py")
     # S5 — the three previously untested on-demand modules. apply_payload is the sole
     # writer of cfg_N and the payout seed, i.e. the only path by which the two most
     # powerful judgments in the model can be set at all.

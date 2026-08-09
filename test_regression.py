@@ -104,6 +104,14 @@ def main():
     run_unit("test_apply_payload.py")
     run_unit("test_run_scenarios.py")
     run_unit("test_kit_feeds.py")
+    # The debt-feed guard (2026-08-09). The vendor "Total Debt" row is `in_debt`, which
+    # sets net financial obligations and, through the identity that plugs net operating
+    # assets, reprices the whole forecast — and the four-method tie stays green at 1e-14
+    # whether the figure is right or wrong, so the tie cannot police it. These tests are
+    # offline and deterministic: they check that the guard claims the vendor is wrong ONLY
+    # on a clean, observed break, and refuses on the three ways our own reconstruction of
+    # gross borrowings from the filings can look like a vendor defect.
+    run_unit("test_debt_feed.py")
     # Ten configurations, each a build + recalc, so it is too slow for every run. Stage 3
     # covers the same ground more cheaply on the standard path; this is the exhaustive
     # cross-tab version and belongs on --full rather than nowhere, which is where it was.

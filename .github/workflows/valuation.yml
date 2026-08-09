@@ -63,6 +63,7 @@ jobs:
       - name: Run pipeline (gates are required checks)
         env:
           EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
           set -euo pipefail
           VINTAGE=$(date -u +%Y-%m-%dT%H:%MZ)

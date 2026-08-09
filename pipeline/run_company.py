@@ -122,7 +122,12 @@ def main():
     ap.add_argument("--payload", help="RUN-button forecast payload: JSON string or path to .json")
     args = ap.parse_args()
 
-    cfg = CFG.load_config(args.config)
+    # A config problem is an operator problem, not a bug: report it as a plain-language
+    # refusal rather than a Python traceback. The horizon gate lands here most often.
+    try:
+        cfg = CFG.load_config(args.config)
+    except CFG.ConfigError as e:
+        _fail(f"CONFIG REJECTED ({args.config})\n{e}")
     tk = cfg["ticker"]
     os.makedirs(args.work_dir, exist_ok=True)
     print(f"[run_company] {tk}  config_hash={cfg['config_hash']}  bonded={cfg['bonded']}")
@@ -156,6 +161,7 @@ def main():
     build_config = {
         "company": cfg["company"], "ticker": tk, "price": price, "files": files,
         "fy_end_month": cfg["fy_end_month"], "judgments": cfg["judgments"],
+        "forecast_horizon_N": cfg["forecast_horizon_N"],
         "cost_of_debt": build_cost_of_debt(cfg),
     }
     out_xlsx = os.path.join(args.work_dir, f"{tk}_engine.xlsx")
@@ -165,6 +171,15 @@ def main():
         _fail(f"build_model failed (statement adjustment): {e}")
     print(f"[build] anchor {rep['anchor_year']}  COD {rep['cost_of_debt']['source']}"
           f"{'  [FLAGGED fallback]' if rep.get('cod_flagged') else ''}")
+    # P1/P2/P3 — the three first-order judgments that used to be template constants.
+    print(f"[policy] cfg_N={rep['forecast_horizon_N']}"
+          f"{'' if cfg['horizon_reviewed'] else '  [HORIZON NOT YET REVIEWED]'}"
+          f"  payout_seed={rep['policy']['payout_seed']}"
+          f"{'  [PAYOUT > 1.0 — REVIEW]' if rep['policy'].get('payout_review') else ''}"
+          f"  ppe_life={rep['policy']['ppe_life']}y")
+    if rep["template_defaults"]:
+        print(f"[inputs] {len(rep['template_defaults'])} valuation-relevant input(s) still "
+              f"carrying MODEL_TEMPLATE defaults: {', '.join(rep['template_defaults'])}")
 
     # Keep the real-terms deflator tables (CPI-U + BEA PP&E) covering the anchor fiscal
     # year using monthly FRED CPI-U, and IFERROR-guard the cap-engine capex window. Must
@@ -332,8 +347,11 @@ def main():
     import checks as CK
     tie_ok, tie_detail = CK.tie_check(results)
     results["tie_check"] = tie_detail
+    _rel = tie_detail.get("tie_relative")
     print(f"[tie-check] {tie_detail['tie_check']}  "
-          f"(audit_ok={tie_detail['audit_ok']} tie_ok={tie_detail['tie_ok']} mode_ok={tie_detail['mode_ok']})")
+          f"(audit_ok={tie_detail['audit_ok']} tie_ok={tie_detail['tie_ok']} mode_ok={tie_detail['mode_ok']})"
+          + (f"  relative={_rel:.2e} of scale {tie_detail['tie_scale']:.4g}"
+             f" (tol {tie_detail['tie_rel_tol']:g})" if isinstance(_rel, float) else ""))
     if not tie_ok:
         _fail("TIE CHECK FAILED: " + "; ".join(tie_detail["reasons"]))
 
@@ -438,6 +456,12 @@ def main():
         ("anchor_margin_vs_normal", _re.get("margin_vs_normal")),
         ("inflation_verdict", results.get("inflation_verdict")),
         ("rd_capitalization_wired", False),
+        # P1/P2/P3 — the first-order judgments, surfaced so the cockpit can show them.
+        ("cfg_N", rep["forecast_horizon_N"]),
+        ("cfg_N_reviewed", cfg["horizon_reviewed"]),
+        ("payout_seed", rep["policy"]["payout_seed"]),
+        ("ppe_life_years", rep["policy"]["ppe_life"]),
+        ("inputs_on_template_default", len(rep["template_defaults"])),
         ("config_hash", cfg["config_hash"]),
         ("vintage", args.vintage),
     ]
@@ -447,6 +471,66 @@ def main():
         for _k, _v in _status:
             _w.writerow([_k, _v])
     print(f"[status] wrote {tk}_status.csv (anchor-health + run verdicts)")
+
+    # --- S2: input provenance register. One row per valuation-relevant Inputs cell with
+    #     its value and whether that value came from this company's filings, was set
+    #     deliberately by the analyst, or is still whatever MODEL_TEMPLATE.xlsx shipped
+    #     with. The third category is the one that matters: it is how the template base
+    #     company's dividend payout and plant life reached every valuation in the system.
+    _reg_path = os.path.join(args.out_dir, f"{tk}_inputs_register.csv")
+    with open(_reg_path, "w", newline="") as _fh:
+        _w = _csv.DictWriter(_fh, fieldnames=["cell", "name", "class", "label", "value",
+                                              "provenance", "source"])
+        _w.writeheader()
+        for _row in rep["inputs_register"]:
+            _w.writerow({k: _row[k] for k in _w.fieldnames})
+    print(f"[inputs] wrote {tk}_inputs_register.csv "
+          f"({sum(1 for r in rep['inputs_register'] if r['provenance'] == 'filings')} from filings, "
+          f"{sum(1 for r in rep['inputs_register'] if r['provenance'] == 'analyst')} analyst-set, "
+          f"{len(rep['template_defaults'])} template default)")
+
+    # --- S4: per-identity tie residual breakdown into the manifest. The standing gate
+    #     reports one aggregate number (Audit!B5). When a live run ties at 1e-9 while the
+    #     golden fixture ties at 1e-15, that aggregate cannot say WHICH identity carries
+    #     the residual. This writes the component-level breakdown on every run, so the
+    #     question is answered by the next refresh instead of by an investigation.
+    try:
+        import openpyxl as _oxl
+        _vals = _oxl.load_workbook(out_xlsx, data_only=True)["Audit"]
+        _IDENT = [
+            ("bs_noa_cse_nfo", "B22"), ("bs_flev_cse_nfo", "B23"), ("bs_bps_shares", "B24"),
+            ("bs_nfops_shares", "B25"), ("equity_enterprise_tie", "B27"),
+            ("value_additivity", "B28"), ("buyback_vp6_invariance", "B29"),
+            ("sum_balance_ties", "B31"), ("sum_anchor_reconciliation", "B44"),
+            ("reform_partition_nominal", "B47"), ("reform_partition_real", "B48"),
+            ("cap_engine_anchor", "B49"), ("sum_reformulation_ties", "B50"),
+            ("forecast_bs", "B55"), ("forecast_eps_shares", "B56"), ("forecast_fcfe", "B57"),
+            ("sum_forecast_ties", "B58"), ("dcf_fcfe_vs_ri", "B61"),
+            ("dcf_fcff_vs_ri", "B62"), ("sum_dcf_recon", "B63"),
+            ("crosstab_aeg_vs_ri", "B72"), ("ops_direct_vs_additive", "B75"),
+            ("master_total", "B5"),
+        ]
+        _breakdown, _worst, _worstv = {}, None, -1.0
+        for _nm, _cell in _IDENT:
+            _v = _vals[_cell].value
+            _v = float(_v) if isinstance(_v, (int, float)) else None
+            _breakdown[_nm] = {"cell": f"Audit!{_cell}", "residual": _v}
+            if _nm.startswith("sum_") or _nm == "master_total":
+                continue
+            if _v is not None and abs(_v) > _worstv:
+                _worst, _worstv = _nm, abs(_v)
+        import json as _json
+        _mp = os.path.join(args.out_dir, f"{tk}_manifest.json")
+        with open(_mp) as _fh:
+            _mj = _json.load(_fh)
+        _mj["tie_residuals"] = {"components": _breakdown, "worst_identity": _worst,
+                                "worst_abs_residual": (None if _worst is None else _worstv)}
+        with open(_mp, "w") as _fh:
+            _json.dump(_mj, _fh, indent=2)
+        print(f"[ties] residual breakdown -> manifest (worst identity: {_worst} "
+              f"at {_worstv:.2e})")
+    except Exception as _e:
+        print(f"[ties] residual breakdown skipped ({_e})")
     # cost-of-debt provenance -> manifest (audit tab: cod_source / rating / coverage / audit / as_of)
     if feed is not None and feed.get("cod_provenance"):
         import json as _json

@@ -61,6 +61,8 @@ files = {"is_csv": f"{GOLDEN}/REAL_IS.csv", "bs_csv": f"{GOLDEN}/REAL_BS.csv",
           "dividends": f"{GOLDEN}/REAL_div.csv", "splits": f"{GOLDEN}/REAL_splits.csv"}
 cfg = {"company": "Apple Inc.", "ticker": "AAPL", "price": 315.0, "files": files,
        "fy_end_month": 9,
+       "forecast_horizon_N": 4,   # P2: cfg_N is required and has no default; 4 is the
+                                 # horizon these fixtures have always run at.
        "judgments": {"minority_include": False, "finlease": 0.0, "oi_adj_override": None,
                      "rd_capitalize": True, "rd_life": 5.0, "dps_override": None},
        "cost_of_debt": {"single_ytw": 0.05}}

@@ -417,6 +417,209 @@ def _fy0(ws, label):
     return None
 
 
+def _lastn(ws, label, n=3):
+    """Return the last `n` numeric values of a raw-tab row (oldest first, blanks skipped).
+
+    Used by the multi-year policy estimators in resolve_policy_inputs, where a single
+    fiscal year is too noisy to characterise a policy: a composite depreciable life read
+    off one year swings with a single large disposal or acquisition."""
+    c_last = _last_year_col(ws)
+    for r in range(4, ws.max_row + 1):
+        if ws.cell(r, 1).value is not None and norm(ws.cell(r, 1).value) == norm(label):
+            vals = [ws.cell(r, c).value for c in range(2, c_last + 1)]
+            vals = [v for v in vals if isinstance(v, (int, float))]
+            return vals[-n:] if vals else []
+    return []
+
+
+class PolicyInputError(Exception):
+    """A per-company policy input could not be derived from the filings and has no
+    override in the company config. Fail loud: the alternative is silently inheriting
+    the template's base-company value, which is the defect this class exists to stop."""
+
+
+def resolve_policy_inputs(wb, derived, *, payout_override=None, ppe_life_override=None):
+    """P1/P3 — set the two Inputs scalars that used to ship as template constants.
+
+    `in_payout_seed` (Inputs B39) and `in_ppe_life` (Inputs B42) were never written by
+    the build. Every issuer therefore inherited the template base company's values
+    (AT&T's 36.5% dividend payout and 18-year composite plant life), and nothing in the
+    system flagged it. Both are first-order: the payout seed drives Forecast row 29 in
+    Equity mode (dividends per share = seed x earnings per share) and so drives retained
+    earnings, the book roll and the normal-earnings benchmark; the plant life drives tax
+    depreciation, the economic depreciation restatement and the disclosure bridge's
+    depreciation-anchor penalty.
+
+    Call AFTER apply_market_data, so the payout seed is computed against the dividend
+    per share that actually lands on the sheet.
+
+    Definition note: the payout seed here is the DIVIDEND payout ratio — dividends per
+    share divided by diluted earnings per share. It deliberately EXCLUDES share
+    repurchases. In Equity mode the share count is currently held constant, so buybacks
+    have no representation anywhere in the forecast; whether that should change, and
+    whether the seed should therefore carry total shareholder distribution instead, is an
+    open modelling question and is NOT settled by this function.
+
+    Mutates `derived` (adding rows 39 and 42) and returns a report dict.
+    """
+    IS = wb["Income Statement"]; BS = wb["Balance Sheet"]
+    report = {}
+
+    # --- in_payout_seed (B39) -------------------------------------------------
+    eps = derived.get(13, {}).get("value")
+    dps = derived.get(15, {}).get("value")
+    if payout_override is not None:
+        payout = float(payout_override)
+        p_src = f"company config judgments.payout_override = {payout}"
+        p_kind = "analyst"
+    elif dps is None:
+        # A genuine non-payer is derivable and correct: zero dividends, full retention.
+        payout, p_src, p_kind = 0.0, "no dividend found in the filings -> non-payer, payout 0.0", "derived"
+    elif eps is None or eps <= 0:
+        raise PolicyInputError(
+            f"cannot derive the dividend payout seed: diluted EPS is {eps!r} (a loss or "
+            f"missing year), so dividends {dps!r} / EPS is not a usable policy ratio. Set "
+            f"judgments.payout_override in the company config to the payout ratio you "
+            f"intend the forecast to carry.")
+    else:
+        payout = round(float(dps) / float(eps), 6)
+        p_src = (f"dividends per share {dps} / diluted EPS {eps} = {payout}  "
+                 f"(FY0 dividend payout; EXCLUDES buybacks)")
+        p_kind = "derived"
+    if payout < 0 or payout > 2.0:
+        raise PolicyInputError(
+            f"derived dividend payout seed {payout} is outside the plausible band [0, 2.0] "
+            f"({p_src}). This usually means a trough or restated earnings year. Set "
+            f"judgments.payout_override in the company config.")
+    report["payout_seed"] = payout
+    report["payout_review"] = payout > 1.0   # paying out more than it earns: worth a look
+    derived[39] = dict(name="in_payout_seed", meaning="Dividend payout seed (equity-mode DPS driver)",
+                       value=payout, source=p_src, kind=p_kind)
+
+    # --- in_ppe_life (B42) ----------------------------------------------------
+    gross = _lastn(BS, "Gross PPE", 3)
+    dep = _lastn(IS, "Reconciled Depreciation", 3)
+    if ppe_life_override is not None:
+        life = float(ppe_life_override)
+        l_src = f"company config judgments.ppe_life_override = {life}"
+        l_kind = "analyst"
+    elif gross and dep and sum(dep) > 0:
+        n = min(len(gross), len(dep))
+        gbar = sum(gross[-n:]) / n
+        dbar = sum(dep[-n:]) / n
+        life = round(gbar / dbar, 2)
+        l_src = (f"mean Gross PPE over {n}y ({gbar:.6g}) / mean reported depreciation "
+                 f"({dbar:.6g}) = {life} years")
+        l_kind = "derived"
+    else:
+        raise PolicyInputError(
+            f"cannot derive the composite depreciable life: Gross PPE series={gross!r}, "
+            f"depreciation series={dep!r}. Set judgments.ppe_life_override in the company "
+            f"config to the composite life you intend.")
+    if life < 2.0 or life > 50.0:
+        raise PolicyInputError(
+            f"derived composite depreciable life {life} years is outside the plausible band "
+            f"[2, 50] ({l_src}). Set judgments.ppe_life_override in the company config.")
+    report["ppe_life"] = life
+    derived[42] = dict(name="in_ppe_life", meaning="PP&E composite depreciable life L (yr)",
+                       value=life, source=l_src, kind=l_kind)
+    return report
+
+
+# Inputs rows that shape the valuation, with a class for each:
+#   company  — a fact or policy of THIS company; must come from its filings or config
+#   control  — a run-mode switch (Equity/Enterprise, Single/Term, scenario). Chosen per
+#              run by the harness, the payload or the analyst, not a company fact.
+#   inert    — present but not referenced by any live formula in the default
+#              configuration; kept so the register can say so out loud instead of
+#              leaving someone to assume it matters.
+VALUATION_RELEVANT_ROWS = {
+    5:  ("in_debt", "company"),        6:  ("in_cash", "company"),
+    7:  ("in_sti", "company"),         8:  ("in_finlease", "company"),
+    9:  ("anchor_shares0", "company"), 10: ("anchor_cse0", "company"),
+    11: ("in_intexp0", "company"),     12: ("in_oiadj0", "company"),
+    13: ("anchor_eps0", "company"),    14: ("in_tax0", "company"),
+    15: ("anchor_dps0", "company"),    25: ("in_price", "company"),
+    26: ("cfg_N", "company"),          27: ("in_g_terminal", "inert"),
+    28: ("in_erp", "company"),         29: ("cfg_coe_mode", "control"),
+    30: ("cfg_rf_mode", "control"),    31: ("in_rf_single", "inert"),
+    32: ("in_rf_lr", "inert"),         33: ("cfg_cod_mode", "control"),
+    34: ("cfg_valread", "control"),    37: ("cfg_mode", "control"),
+    39: ("in_payout_seed", "company"), 42: ("in_ppe_life", "company"),
+    43: ("in_rd_life", "company"),     45: ("in_rd_expense0", "company"),
+    47: ("cfg_buyback", "control"),    66: ("in_anchor_year", "company"),
+    67: ("cfg_view", "control"),       68: ("cfg_funding", "control"),
+    69: ("cfg_scenario", "control"),
+}
+
+# Why each 'inert' row is inert. Read directly off the template's formula graph rather
+# than asserted: in_g_terminal is referenced by no formula at all; in_rf_single and
+# in_rf_lr are referenced only inside IF(cfg_rf_mode="Single", ...) branches and the
+# template ships in "Term" mode. If cfg_rf_mode is ever switched to Single, the last two
+# stop being inert and become unset template constants that move numbers.
+INERT_NOTES = {
+    "in_g_terminal": "referenced by no formula in the template (dead input)",
+    "in_rf_single": "only live when cfg_rf_mode='Single'; template ships 'Term'",
+    "in_rf_lr": "only live when cfg_rf_mode='Single'; template ships 'Term'",
+}
+
+# Company-class inputs the BUILD does not set but a LATER pipeline stage does. The
+# register is written at build time, so without this note it would report them as
+# template leftovers on every live run, which would be wrong and would train the reader
+# to ignore the column that matters.
+LATE_BOUND_NOTES = {
+    "in_erp": ("template value at build time; superseded on live runs by the rate feed, "
+               "which rewrites the market equity-risk-premium term structure on "
+               "Market Data row 25 (repoint_rates). Live on a fixture build."),
+}
+
+
+def provenance_register(wb, derived, analyst_set=()):
+    """S2 — one row per valuation-relevant Inputs cell: value, provenance, source.
+
+    Provenance is one of:
+      filings   — computed from this company's own statements or market data
+      analyst   — set deliberately for this company (config judgment or explicit control)
+      control   — a run-mode switch, carrying the template's shipped mode
+      inert     — not referenced by any live formula in this configuration
+      template  — a COMPANY-level input still carrying whatever the template shipped with
+
+    'template' is the category that matters, and after P1/P2/P3 it should normally be
+    empty. It is how the template base company's dividend payout, its 18-year plant life
+    and an unchosen four-year forecast horizon reached every valuation in the system
+    without anyone noticing. Anything left in that category is reported, not silently
+    accepted.
+    """
+    inp = wb["Inputs"]
+    kind_map = {"auto": "filings", "derived": "filings", "judgment": "analyst",
+                "analyst": "analyst"}
+    out = []
+    for row in sorted(VALUATION_RELEVANT_ROWS):
+        name, cls = VALUATION_RELEVANT_ROWS[row]
+        cell = inp.cell(row, 2)
+        d = derived.get(row)
+        if d is not None:
+            prov = kind_map.get(d.get("kind"), "filings")
+            src = d.get("source", "")
+        elif name in analyst_set:
+            prov, src = "analyst", "set explicitly for this run"
+        elif cls == "control":
+            prov = "control"
+            src = "run-mode switch; carries the template's shipped mode unless overridden"
+        elif cls == "inert":
+            prov = "inert"
+            src = INERT_NOTES.get(name, "not referenced by any live formula")
+        elif name in LATE_BOUND_NOTES:
+            prov, src = "late-bound", LATE_BOUND_NOTES[name]
+        else:
+            prov = "template"
+            src = "NOT set by the build — inherited from MODEL_TEMPLATE.xlsx"
+        out.append({"row": row, "cell": f"B{row}", "name": name, "class": cls,
+                    "label": str(inp.cell(row, 1).value or "").strip(),
+                    "value": cell.value, "provenance": prov, "source": src})
+    return out
+
+
 def derive_inputs(wb, anchor_year, parsed=None):
     """Auto-derive every non-judgment Inputs scalar from the populated raw tabs.
 

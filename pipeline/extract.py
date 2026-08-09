@@ -146,6 +146,11 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
         ("active_value", results.get("active_value")),
         ("mode_tie", results.get("mode_tie")),
         ("max_identity_tie", results.get("max_identity_tie")),
+        # The scale-free residual. max_identity_tie is denominated in engine currency
+        # units, so it tracks company size; this is the number to compare across names
+        # and over time. See checks.tie_scale.
+        ("tie_relative", (results.get("tie_check") or {}).get("tie_relative")),
+        ("tie_scale", (results.get("tie_check") or {}).get("tie_scale")),
         ("audit_status", results.get("audit_status")),
         ("tie_check", (results.get("tie_check") or {}).get("tie_check")),
     ]

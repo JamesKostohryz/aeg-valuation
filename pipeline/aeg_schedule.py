@@ -34,6 +34,20 @@ PERYEAR_ROWS = {
     "normal_oi": 30, "aeg_oi": 31, "contrib_oi": 32,
     # E4.1 driver rows
     "coe": 5, "eps": 7, "dps": 8, "retained": 9,
+    # The EQUITY-leg discounting. df_cumulative above is row 18, DF^F — the operating /
+    # blended factor — but contrib_eps is built as AEG x A^E, the EQUITY annuity factor on
+    # row 62, which starts from DF^E on row 16. Emitting only DF^F left the file unable to
+    # explain its own contribution column: anyone reconciling contrib_eps by hand reached
+    # for df_cumulative and got the wrong factor. Both equity factors are now emitted, so
+    # contrib_eps = aeg_eps x annuity_equity is verifiable from the CSV alone.
+    "df_equity": 16, "annuity_equity": 62,
+    # dRI^E (row 63) is the residual-income INCREMENT the contribution is actually built
+    # from, and it equals raw AEG only in year one (its own formula zeroes the correction
+    # term at t=1). Beyond year one it carries the inflation and capital-charge terms the
+    # term-structure correction introduced in PR #3, so without it the file reconciles at
+    # t=1 and silently fails to reconcile at t=2..N. With it,
+    # contrib_eps = dri_equity x annuity_equity holds for every explicit year.
+    "dri_equity": 63,
     # Increment 0 Stage A: the engine's forecast path is NOMINAL. These two rows carry the
     # frame so a consumer can deflate. Absent on a pre-Stage-A engine -> emitted blank.
     "pi": 56, "infl_index": 57,
@@ -110,10 +124,31 @@ def write_aeg_schedule(engine_path, ticker, out_dir):
     #    unitless                : retention_rate, rore, pi, infl_index
     #  pi / infl_index are appended so any consumer can deflate: real = nominal / infl_index.
     #  eps_real / dps_real are provided pre-deflated for convenience.
-    hdr = ["t", "df_cumulative", "normal_eps", "aeg_eps", "contrib_eps", "cum_contrib_eps",
+    #  S3 — `phase` labels each year "explicit" (t <= cfg_N) or "continuing" (t > cfg_N).
+    #  Without it the schedule shows an unexplained cliff: on the Apple fixture real
+    #  earnings per share fall from about $8.61 in year four to about $2.35 in year five.
+    #  That is not a defect and not a truncation. Forecast row 16 reads
+    #      =IF(t<=cfg_N, EBIT*(1-tax) - depreciation_penalty, required_return * prior NOA)
+    #  so beyond the explicit horizon the model IMPOSES that operations earn exactly their
+    #  required return and residual income goes to zero. That is the competitive-advantage
+    #  period doing its job. Note the correction it implies to an earlier finding: the
+    #  DRIVER rows do all propagate across thirty columns, but the EARNINGS path does not —
+    #  row 16 branches on cfg_N explicitly, so moving cfg_N also moves where the regime
+    #  switch falls, not merely how many years of the same behaviour get booked.
+    hdr = ["t", "phase", "df_cumulative", "df_equity", "annuity_equity", "dri_equity",
+           "normal_eps", "aeg_eps", "contrib_eps",
+           "cum_contrib_eps",
            "normal_nfe", "aeg_nfe", "contrib_nfe", "normal_oi", "aeg_oi", "contrib_oi",
            "retention_rate", "retained_eps", "coe", "rore",
            "pi", "infl_index", "eps_real", "dps_real"]
+    cfg_N = None
+    try:
+        _dn = wb.defined_names.get("cfg_N")
+        if _dn is not None:
+            _sh, _cell = str(_dn.value).replace("$", "").replace("'", "").split("!")
+            cfg_N = int(wb[_sh][_cell].value)
+    except Exception:
+        cfg_N = None
     with open(os.path.join(out_dir, fn), "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(hdr)
@@ -149,7 +184,11 @@ def write_aeg_schedule(engine_path, ticker, out_dir):
             def rnd(v, n=6):
                 return round(v, n) if isinstance(v, (int, float)) else None
 
-            row = [i + 1, g("df_cumulative"), g("normal_eps"), g("aeg_eps"),
+            phase = ("explicit" if (cfg_N is not None and (i + 1) <= cfg_N)
+                     else ("continuing" if cfg_N is not None else ""))
+            row = [i + 1, phase, g("df_cumulative"), g("df_equity"), g("annuity_equity"),
+                   g("dri_equity"),
+                   g("normal_eps"), g("aeg_eps"),
                    g("contrib_eps"), round(cum, 8),
                    g("normal_nfe"), g("aeg_nfe"), g("contrib_nfe"),
                    g("normal_oi"), g("aeg_oi"), g("contrib_oi"),

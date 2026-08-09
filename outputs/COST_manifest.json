@@ -1,7 +1,7 @@
 {
   "ticker": "COST",
   "config_hash": "04bcb0fd6136220c",
-  "data_vintage": "2026-08-09T20:57Z",
+  "data_vintage": "2026-08-09T21:49Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -261,7 +261,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T20:57Z",
+    "as_of": "2026-08-09T21:49Z",
     "flags": []
   }
 }

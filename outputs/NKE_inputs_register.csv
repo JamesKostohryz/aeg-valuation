@@ -1,5 +1,5 @@
 cell,name,class,label,value,provenance,source
-B5,in_debt,company,Total debt incl. finance leases,11033.0,filings,BS 'Total Debt'
+B5,in_debt,company,Total debt incl. finance leases,7942.0,filings,BS 'Total Debt'
 B6,in_cash,company,Cash & equivalents,7563.0,filings,BS 'Cash And Cash Equivalents'
 B7,in_sti,company,Short-term investments,1464.0,filings,BS 'Other Short Term Investments' (blank->0)
 B8,in_finlease,company,of which finance/capital lease obligation,0.0,analyst,filed BS 'Capital Lease Obligations' = 3091.0 (default 0 unless you include it)

@@ -1,19 +1,19 @@
 field,value
 verdict,NET LOSER from inflation
-net_inflation_position_annual,-36.72922250013917
+net_inflation_position_annual,-82.84413464413916
 depreciation_penalty_annual,230.60007763613913
-interest_benefit_annual,193.87085513599996
+interest_benefit_annual,147.75594299199997
 tax_rate,0.1561
 expected_inflation,0.021532
 inflation_series,breakeven_fwd1y
 rd_nominal,0.05971326117357201
-net_debt,57680
+net_debt,43960
 nominal_interest,0
 econ_depreciation,13286.612570686499
 reported_ppe_depreciation,11809.353905496626
 depreciation_shortfall,1477.2586651898728
 avg_asset_age_yrs,5.292868957179929
-debt_to_annual_da,4.884263818459453
+debt_to_annual_da,3.722472910185117
 breakeven_leverage,5.543342749349403
 interest_tax_shield_pv_fixed_nominal,0.0
 interest_tax_shield_pv_constant_real,0.0

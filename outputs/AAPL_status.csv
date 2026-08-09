@@ -3,7 +3,7 @@ ticker,AAPL
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,1.23400241136551e-08
+max_identity_tie,1.12340785562992e-08
 anchor_earnings_check,PASS
 anchor_oi_at0,115710.470488936
 anchor_representativeness,PASS
@@ -12,13 +12,13 @@ anchor_normal_margin,0.2827140286814577
 anchor_margin_vs_normal,1.1308529651570398
 inflation_verdict,NET LOSER from inflation
 rd_capitalization_wired,False
-headline_value_ps,62.73982261867781
-headline_value_pre_convergence_ps,55.14226500706865
+headline_value_ps,63.649963501273845
+headline_value_pre_convergence_ps,56.75154344444094
 convergence_K,3
-convergence_value_ps,9.044545434372866
-convergence_value_idio_adjusted_ps,7.5975576116091625
-actual_eps_at_N,10.9913173077189
-normalized_eps_at_N,12.152588736867301
+convergence_value_ps,8.016270915421007
+convergence_value_idio_adjusted_ps,6.898420056832903
+actual_eps_at_N,11.4753401453742
+normalized_eps_at_N,12.504553871196613
 convergence_guard,PASS
 convergence_reviewed,False
 convergence_review_note,
@@ -29,4 +29,4 @@ payout_seed,0.136638
 ppe_life_years,10.37
 inputs_on_template_default,0
 config_hash,2e10fdea5a2797c1
-vintage,2026-08-09T20:57Z
+vintage,2026-08-09T21:49Z

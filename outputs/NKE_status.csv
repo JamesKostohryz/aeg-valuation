@@ -3,7 +3,7 @@ ticker,NKE
 run_status,OK
 anchor_year,2026
 tie_check,PASS
-max_identity_tie,1.60980562213808e-10
+max_identity_tie,1.38925315695815e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,2987.35749717903
 anchor_representativeness,PASS
@@ -12,13 +12,13 @@ anchor_normal_margin,0.12205922263628641
 anchor_margin_vs_normal,0.6709864288102898
 inflation_verdict,NET LOSER from inflation
 rd_capitalization_wired,False
-headline_value_ps,14.885950720396032
-headline_value_pre_convergence_ps,15.114520883714714
+headline_value_ps,37.48107635812271
+headline_value_pre_convergence_ps,39.0286083386878
 convergence_K,3
-convergence_value_ps,-1.1555607371531258
-convergence_value_idio_adjusted_ps,-0.22857016331868274
-actual_eps_at_N,3.46238664016844
-normalized_eps_at_N,3.3317566590002894
+convergence_value_ps,-1.5475319805650867
+convergence_value_idio_adjusted_ps,
+actual_eps_at_N,3.63549069649837
+normalized_eps_at_N,3.460567812025239
 convergence_guard,PASS
 convergence_reviewed,False
 convergence_review_note,
@@ -29,4 +29,4 @@ payout_seed,0.586862
 ppe_life_years,16.92
 inputs_on_template_default,0
 config_hash,696c909df88be1d1
-vintage,2026-08-09T20:57Z
+vintage,2026-08-09T21:49Z

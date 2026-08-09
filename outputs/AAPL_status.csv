@@ -10,7 +10,7 @@ anchor_representativeness,PASS
 anchor_margin,0.31970799762591884
 anchor_normal_margin,0.2827140286814577
 anchor_margin_vs_normal,1.1308529651570398
-inflation_verdict,NET BENEFICIARY of inflation
+inflation_verdict,NET LOSER from inflation
 rd_capitalization_wired,False
 headline_value_ps,62.73982261867781
 headline_value_pre_convergence_ps,55.14226500706865
@@ -27,4 +27,4 @@ payout_seed,0.136638
 ppe_life_years,10.37
 inputs_on_template_default,0
 config_hash,2e10fdea5a2797c1
-vintage,2026-08-09T05:21Z
+vintage,2026-08-09T05:52Z

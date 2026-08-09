@@ -127,10 +127,11 @@ def _dump_grid(ws, path, start_row):
 
 
 def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
-                    vintage, disclosure=None):
+                    vintage, disclosure=None, convergence=None):
     """Write <TICKER>_anchors.csv, _valuation.csv, _restated_real.csv, and _manifest.json.
     `results` is aeg_engine.read_results(...) output; `disclosure` is disclose.disclose(...)
-    output or None (rate feed not yet live). Returns the manifest dict."""
+    output or None (rate feed not yet live); `convergence` is the convergence-period block
+    assembled by run_company.py or None. Returns the manifest dict."""
     import os
     os.makedirs(out_dir, exist_ok=True)
     wb = openpyxl.load_workbook(engine_path, data_only=True)
@@ -161,6 +162,21 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
             ("debt_capital_gain_ps", disclosure.get("debt_capital_gain_ps")),
             ("idiosyncratic_haircut_ps", disclosure.get("idiosyncratic_haircut_ps")),
         ]
+    if convergence:
+        # equity_value / adjusted_equity_ps above are PRE-convergence and stay that way: they
+        # are the figures the four-method tie actually covers. headline_value_ps is what the
+        # valuation IS. Both are published so the correction is visible, never absorbed.
+        val += [
+            ("headline_value_ps", convergence.get("headline_value_ps")),
+            ("headline_value_pre_convergence_ps",
+             convergence.get("headline_value_pre_convergence_ps")),
+            ("convergence_value_ps", convergence.get("convergence_value_ps")),
+            ("convergence_value_idio_adjusted_ps",
+             convergence.get("convergence_value_idio_adjusted_ps")),
+            ("convergence_K", convergence.get("K")),
+            ("convergence_guard", convergence.get("guard")),
+            ("convergence_in_four_method_tie", convergence.get("in_four_method_tie")),
+        ]
     _write_kv(os.path.join(out_dir, f"{ticker}_valuation.csv"), val)
 
     # --- research-note summary (headline value, implied expectations, reformulation)
@@ -179,6 +195,24 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
         if isinstance(_nz, (int, float)):
             summary.append(("normal_no_growth_value_adj_ps",
                             _nz - disclosure["depreciation_anchor_penalty_ps"]))
+    # CONVERGENCE PERIOD — the headline. Confirmed by James 2026-08-09: capitalizing a
+    # non-neutral terminal earnings level is wrong even with abnormal growth at zero, so the
+    # convergence-corrected figure IS the valuation and the uncorrected one is diagnostic.
+    # The pre-convergence value is kept alongside it, under its own name, because that is the
+    # number the four-method tie actually covers — the increment does not enter the tie.
+    if convergence and isinstance(convergence.get("headline_value_ps"), (int, float)):
+        _pre_conv = dict(summary).get("intrinsic_value_ps")
+        summary = [(f, convergence["headline_value_ps"] if f == "intrinsic_value_ps" else v)
+                   for f, v in summary]
+        summary.append(("intrinsic_value_pre_convergence_ps", _pre_conv))
+        summary.append(("convergence_value_ps", convergence.get("convergence_value_ps")))
+        summary.append(("convergence_value_idio_adjusted_ps",
+                        convergence.get("convergence_value_idio_adjusted_ps")))
+        summary.append(("convergence_K", convergence.get("K")))
+        summary.append(("actual_eps_at_N", convergence.get("actual_eps_N")))
+        summary.append(("normalized_eps_at_N", convergence.get("normalized_eps_N")))
+        summary.append(("convergence_guard", convergence.get("guard")))
+        summary.append(("convergence_in_four_method_tie", convergence.get("in_four_method_tie")))
     if "val_active" in [n for n, _ in SUMMARY_NAMES] and results.get("equity_value") is not None:
         va = dict(summary).get("intrinsic_value_ps"); rp = _scalar(wb, "val_realprice")
         if isinstance(va, (int, float)) and isinstance(rp, (int, float)) and rp:
@@ -257,8 +291,10 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
             "debt_capital_gain_ps": disclosure.get("debt_capital_gain_ps"),
             "idiosyncratic_haircut_ps": disclosure.get("idiosyncratic_haircut_ps"),
         }),
+        "convergence": convergence,
         "outputs": [f"{ticker}_anchors.csv", f"{ticker}_valuation.csv",
-                    f"{ticker}_summary.csv", f"{ticker}_restated_real.csv"] + stmt_files + extra_files,
+                    f"{ticker}_summary.csv", f"{ticker}_restated_real.csv"] + stmt_files
+                   + extra_files + ((convergence or {}).get("outputs") or []),
     }
     with open(os.path.join(out_dir, f"{ticker}_manifest.json"), "w") as fh:
         json.dump(manifest, fh, indent=2, default=str)

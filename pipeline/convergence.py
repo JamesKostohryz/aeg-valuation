@@ -69,6 +69,23 @@ def _infl(V, N_max=40):
     return pi_at, idx
 
 
+def _guard_terminal_eps(eps, N):
+    """The glide is a RATIO of the normalized level to actual EPS at the forecast end, and the
+    retention rate is retained/EPS at that same year. Both are meaningless at a zero or negative
+    terminal EPS, and a bare ZeroDivisionError deep in the arithmetic tells an operator nothing.
+    Refuse with the actual reason instead: a forecast that ends at or below zero earnings has no
+    neutral level to hand the continuing period, and capitalizing that level is exactly the error
+    the convergence period exists to prevent."""
+    v = eps[N] if N < len(eps) else None
+    if not isinstance(v, (int, float)) or v <= 0:
+        raise ValueError(
+            f"actual EPS at the forecast end (year cfg_N={N}) is {v!r}. The convergence period "
+            "glides that level onto the normalized line, so a missing, zero or negative terminal "
+            "EPS has no normalized ratio and the continuing period cannot be started from a "
+            "neutral earnings level. Revisit the forecast or the horizon for this company — do "
+            "not capitalize this level.")
+
+
 def converge_valuation(engine_path, K=3, norm_eps_N=None, shape="geometric"):
     """Compute the convergence-corrected equity value from a recalc'd engine.
 
@@ -98,6 +115,7 @@ def converge_valuation(engine_path, K=3, norm_eps_N=None, shape="geometric"):
                 "verdict": "PASS", "verdict_reason": "convergence off / on-trend (no glide)",
                 "schedule": []}
 
+    _guard_terminal_eps(eps, N)
     b = ret[N] / eps[N]
     actualN = eps[N]
 
@@ -175,6 +193,138 @@ def write_convergence_csv(result, ticker, out_dir):
     return fn
 
 
+# ---------------------------------------------------------------- three-period statistics
+# James, 2026-08-09: "if there is any calculation of AEG prior to the continuing period, it
+# obviously has to include the convergence period. So there can be statistics calculated for
+# the explicit forecast period, for the convergence period and for the combination of both."
+#
+# The explicit block is read straight off the Valuation tab (rows 22/23/24, the engine's own
+# normal / AEG / PV-contribution rows for t = 1..cfg_N). The convergence block is the schedule
+# converge_valuation just computed. Combined is the two added — which is the ONLY figure that
+# should ever be quoted as "abnormal earnings growth before the continuing period."
+#
+# Self-verifying: normal_value + explicit PV must equal the engine's intrinsic, and
+# normal_value + explicit PV + convergence PV must equal the corrected intrinsic. A mismatch
+# raises rather than shipping statistics that do not tie to the valuation they describe.
+R_NORMAL_VALUE = 43       # Valuation: normal (no-growth) value = normal EPS1 / rho_LR
+R_INTRINSIC = 44          # Valuation: intrinsic value V(EPS)
+PERIOD_TIE_TOL = 1e-6     # $/share
+
+
+def _annualized(entry, exit_, years):
+    if not isinstance(entry, (int, float)) or not isinstance(exit_, (int, float)):
+        return None
+    if not years or entry <= 0 or exit_ <= 0:
+        return None
+    return (exit_ / entry) ** (1.0 / years) - 1.0
+
+
+def _block(name, t_first, t_last, eps_entry, eps_exit, aegs, pvs, corrected):
+    n = max(0, t_last - t_first + 1)
+    pv = sum(pvs) if pvs else 0.0
+    return {
+        "period": name,
+        "years": (f"{t_first}..{t_last}" if n else "none"),
+        "n_years": n,
+        "eps_entry": eps_entry,
+        "eps_exit": eps_exit,
+        "eps_growth_annualized": _annualized(eps_entry, eps_exit, n),
+        "aeg_sum_nominal_ps": (sum(aegs) if aegs else 0.0),
+        "aeg_first_ps": (aegs[0] if aegs else None),
+        "aeg_last_ps": (aegs[-1] if aegs else None),
+        "pv_contribution_ps": pv,
+        "pct_of_corrected_value": (pv / corrected if corrected else None),
+    }
+
+
+def period_report(engine_path, result):
+    """Explicit / convergence / combined statistics for one recalc'd engine + its convergence
+    result. `result` is what converge_valuation or converge_auto returned."""
+    import openpyxl
+    wb = openpyxl.load_workbook(engine_path, data_only=True)
+    V = wb["Valuation"]
+    eps = _series(V, 7)          # index 0 = column B = t=0 anchor
+    aeg_row = _series(V, 23)
+    contrib_row = _series(V, 24)
+    N = int(result["N"])
+    K = int(result["K"])
+    corrected = result["corrected_intrinsic"]
+
+    exp_aeg = [aeg_row[t] for t in range(1, N + 1) if isinstance(aeg_row[t], (int, float))]
+    exp_pv = [contrib_row[t] for t in range(1, N + 1) if isinstance(contrib_row[t], (int, float))]
+    sched = result.get("schedule") or []
+    con_aeg = [s["aeg_eps"] for s in sched]
+    con_pv = [s["contrib_eps"] for s in sched]
+
+    eps_anchor = eps[0]
+    eps_N = eps[N]
+    eps_end = sched[-1]["eps"] if sched else eps_N
+
+    explicit = _block("explicit", 1, N, eps_anchor, eps_N, exp_aeg, exp_pv, corrected)
+    conv = _block("convergence", N + 1, N + len(sched), eps_N, eps_end, con_aeg, con_pv, corrected)
+    combined = _block("combined", 1, N + len(sched), eps_anchor, eps_end,
+                      exp_aeg + con_aeg, exp_pv + con_pv, corrected)
+
+    # --- self-verify against the two value identities
+    normal_value = V.cell(R_NORMAL_VALUE, 2).value
+    if not isinstance(normal_value, (int, float)):
+        for c in range(2, V.max_column + 1):
+            if isinstance(V.cell(R_NORMAL_VALUE, c).value, (int, float)):
+                normal_value = V.cell(R_NORMAL_VALUE, c).value
+                break
+    checks = {}
+    if isinstance(normal_value, (int, float)):
+        r1 = abs(normal_value + explicit["pv_contribution_ps"] - result["eng_intrinsic"])
+        r2 = abs(normal_value + combined["pv_contribution_ps"] - corrected)
+        checks = {"normal_value_ps": normal_value, "explicit_identity_residual": r1,
+                  "combined_identity_residual": r2}
+        if r1 > PERIOD_TIE_TOL or r2 > PERIOD_TIE_TOL:
+            raise ValueError(
+                "convergence period statistics do not tie: normal_value + explicit PV = "
+                f"{normal_value + explicit['pv_contribution_ps']:.8f} vs engine "
+                f"{result['eng_intrinsic']:.8f} (resid {r1:.2e}); + convergence PV = "
+                f"{normal_value + combined['pv_contribution_ps']:.8f} vs corrected "
+                f"{corrected:.8f} (resid {r2:.2e})")
+
+    return {"N": N, "K": K, "blocks": [explicit, conv, combined], "identity_checks": checks,
+            "eng_intrinsic": result["eng_intrinsic"], "corrected_intrinsic": corrected,
+            "norm_eps_N": result.get("norm_eps_N"), "actual_eps_N": eps_N,
+            "verdict": result["verdict"], "verdict_reason": result["verdict_reason"]}
+
+
+PERIOD_FIELDS = ["period", "years", "n_years", "eps_entry", "eps_exit",
+                 "eps_growth_annualized", "aeg_sum_nominal_ps", "aeg_first_ps", "aeg_last_ps",
+                 "pv_contribution_ps", "pct_of_corrected_value"]
+
+
+def write_periods_csv(report, ticker, out_dir):
+    """Emit <T>_periods.csv — the explicit / convergence / combined statistics.
+
+    UNITS: eps_* and aeg_* are NOMINAL per-share dollars of their own year (so a sum across
+    years mixes vintages and is a scale indicator, not a present value). pv_contribution_ps is
+    a time-0 present value and IS additive. Quote `combined` whenever describing abnormal
+    earnings growth before the continuing period."""
+    os.makedirs(out_dir, exist_ok=True)
+    fn = os.path.join(out_dir, f"{ticker}_periods.csv")
+    with open(fn, "w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["# AEG by period", f"cfg_N={report['N']}", f"convergence_K={report['K']}",
+                    f"actual_eps_N={report['actual_eps_N']}",
+                    f"normalized_eps_N={report['norm_eps_N']}",
+                    f"engine_intrinsic_ps={report['eng_intrinsic']}",
+                    f"corrected_intrinsic_ps={report['corrected_intrinsic']}",
+                    f"guard={report['verdict']}"])
+        w.writerow(["# CAVEAT", "the convergence increment is computed on the EQUITY (EPS) leg "
+                    "only and therefore sits OUTSIDE the four-method tie; the tie covers the "
+                    "explicit period"])
+        w.writerow(PERIOD_FIELDS)
+        for b in report["blocks"]:
+            w.writerow([("" if b[k] is None else
+                         (round(b[k], 8) if isinstance(b[k], float) else b[k]))
+                        for k in PERIOD_FIELDS])
+    return f"{ticker}_periods.csv"
+
+
 def normalized_eps_at_N(engine_path, X=4, g=None):
     """Model-default normalized EPS at the forecast end (year cfg_N): take EPS from each of the
     last X years, grow each forward to cfg_N at the NORMAL rate g = rho_LR * b, and take the
@@ -190,6 +340,7 @@ def normalized_eps_at_N(engine_path, X=4, g=None):
     N = int(_nm(wb, "cfg_N"))
     rho_LR = V["B20"].value          # long-run REAL cost of equity
     pi_at, idx = _infl(V)
+    _guard_terminal_eps(eps, N)
     b = ret[N] / eps[N]
     if g is None:
         g = rho_LR * b               # REAL normal growth from reinvestment

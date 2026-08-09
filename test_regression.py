@@ -66,6 +66,11 @@ def main():
     # E2 convergence period: faithfulness (on-trend reproduces the engine to the penny) +
     # correction (peak catches down, trough catches up) + the reconciliation guard.
     run_unit("test_convergence.py")
+    # The standing WIRING check. test_convergence.py passed here on every run for weeks while
+    # convergence.py was imported by nothing except itself, so the feature reached no valuation
+    # at all and no check could see it. This fails when any module in pipeline/ has no importer
+    # outside its own test.
+    run_unit("test_orphan_modules.py")
     # AEG-Coverage-Map-2026-08-08.md: nine every-build modules that previously had zero
     # automated coverage. Each builds+recalcs the golden AAPL engine independently and
     # re-derives its numbers from raw cells rather than re-testing the module against itself.

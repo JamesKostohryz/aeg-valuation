@@ -48,4 +48,39 @@ check(nl > epsN, f"AAPL below-normal grower normalizes UP: norm[N]={nl:.3f} > ac
 ra = C.converge_auto(ENG, K=3)
 check(abs(ra["norm_eps_N"] - nl) < 1e-9 and ra["corrected_intrinsic"] > eng,
       f"converge_auto lifts AAPL to {ra['corrected_intrinsic']:.2f} (from {eng:.2f}), verdict {ra['verdict']}")
+print("== three-period statistics (explicit / convergence / combined) ==")
+# James, 2026-08-09: any figure describing abnormal earnings growth before the continuing
+# period must include the convergence years, so the three blocks have to be produced together
+# and `combined` has to be exactly the sum of the other two.
+rep = C.period_report(ENG, ra)
+blocks = {b["period"]: b for b in rep["blocks"]}
+check(set(blocks) == {"explicit", "convergence", "combined"},
+      f"three period blocks emitted: {sorted(blocks)}")
+check(blocks["explicit"]["n_years"] == N and blocks["convergence"]["n_years"] == 3
+      and blocks["combined"]["n_years"] == N + 3,
+      f"period lengths explicit={blocks['explicit']['n_years']} convergence="
+      f"{blocks['convergence']['n_years']} combined={blocks['combined']['n_years']} (cfg_N={N})")
+_sum = blocks["explicit"]["pv_contribution_ps"] + blocks["convergence"]["pv_contribution_ps"]
+check(abs(_sum - blocks["combined"]["pv_contribution_ps"]) < 1e-9,
+      f"combined PV = explicit + convergence ({blocks['combined']['pv_contribution_ps']:.6f})")
+# the two value identities period_report self-verifies: the explicit block must rebuild the
+# engine's own intrinsic off the no-growth anchor, and the combined block the corrected one.
+_ic = rep["identity_checks"]
+check(_ic and _ic["explicit_identity_residual"] < 1e-6,
+      f"normal value + explicit PV = engine intrinsic (resid {_ic['explicit_identity_residual']:.1e})")
+check(_ic and _ic["combined_identity_residual"] < 1e-6,
+      f"normal value + combined PV = corrected intrinsic (resid {_ic['combined_identity_residual']:.1e})")
+check(blocks["convergence"]["pv_contribution_ps"] > 0
+      and abs(blocks["convergence"]["pv_contribution_ps"] - ra["converge_value_ps"]) < 1e-9,
+      "convergence block PV equals the reported convergence increment")
+
+print("== convergence OFF still produces a well-formed three-period report ==")
+r_off = C.converge_valuation(ENG, K=0, norm_eps_N=None)
+rep0 = C.period_report(ENG, r_off)
+b0 = {b["period"]: b for b in rep0["blocks"]}
+check(b0["convergence"]["n_years"] == 0 and b0["convergence"]["pv_contribution_ps"] == 0.0,
+      "K=0 gives an empty convergence block, not a crash")
+check(abs(b0["combined"]["pv_contribution_ps"] - b0["explicit"]["pv_contribution_ps"]) < 1e-12,
+      "K=0: combined equals explicit")
+
 print(f"\n{'ALL CONVERGENCE TESTS PASSED' if fails==0 else f'{fails} FAILED'}"); sys.exit(1 if fails else 0)

@@ -120,6 +120,11 @@ def main():
     ap.add_argument("--price", type=float, help="explicit price (repro/test)")
     ap.add_argument("--vintage", default="unset", help="data vintage tag for the manifest")
     ap.add_argument("--payload", help="RUN-button forecast payload: JSON string or path to .json")
+    # The convergence period after cfg_N. Three years is James's specification (2026-08-09) and
+    # is the module default; this flag exists for diagnostics only. 0 turns the correction off,
+    # which reproduces the pre-convergence (uncorrected, and by his argument wrong) valuation.
+    ap.add_argument("--converge-K", type=int, default=3,
+                    help="convergence period length in years after cfg_N (default 3; 0 = off)")
     args = ap.parse_args()
 
     # A config problem is an operator problem, not a bug: report it as a plain-language
@@ -427,10 +432,106 @@ def main():
         except Exception as e:
             print(f"[scorecard] skipped ({e})")
 
+    # --- CONVERGENCE PERIOD (James's specification 2026-08-09; see
+    #     claude/AEG-CONVERGENCE-PERIOD-REQUIRED-2026-08-09.md).
+    #
+    #     Beyond the explicit horizon cfg_N the engine hard-gates every AEG contribution to zero,
+    #     which capitalizes whatever earnings level the forecast happened to END on. The
+    #     continuing period must instead BEGIN at a normalized (neutral) level. So a K-year glide
+    #     (K = 3) carries actual EPS at cfg_N onto the normalized line, books the reversion
+    #     abnormal earnings growth with the engine's own formulas, and the corrected value is the
+    #     HEADLINE valuation. The uncorrected engine figure is retained as diagnostic output.
+    #
+    #     THE CAVEAT THAT MUST NOT BE LOST: the increment is computed on the EQUITY (EPS) leg
+    #     only, so it sits OUTSIDE the four-method tie. The tie gate above is unchanged and still
+    #     governs everything through cfg_N; it simply does not cover this increment. Extending
+    #     the operating-income and net-financial-expense legs inside the template is a separate,
+    #     gated spreadsheet change.
+    #
+    #     FAIL-LOUD: the corrected value IS the valuation, so a convergence failure must not
+    #     degrade quietly into publishing the uncorrected number. It aborts the run.
+    import convergence as CV
+    try:
+        _conv = CV.converge_auto(out_xlsx, K=args.converge_K)
+        _periods = CV.period_report(out_xlsx, _conv)
+        CV.write_convergence_csv(_conv, tk, args.out_dir)
+        _periods_fn = CV.write_periods_csv(_periods, tk, args.out_dir)
+    except Exception as e:
+        _fail("CONVERGENCE PERIOD FAILED: the continuing period could not be started from a "
+              f"normalized earnings level, so no headline valuation can be produced ({e})")
+
+    #     The idiosyncratic haircut is measured as a SENSITIVITY re-run of the whole engine at a
+    #     higher cost of equity (disclose.py). A convergence increment priced at the base cost of
+    #     equity would therefore escape that haircut entirely and overstate the headline. Price
+    #     the increment on the sensitivity workbook too; the increment that survives the haircut
+    #     is the sensitivity one, and adjusted + sens_increment is algebraically identical to
+    #     re-deriving the whole bridge from corrected base and corrected sensitivity values.
+    _conv_sens_ps = None
+    _sens_path = os.path.join(args.work_dir, f"{tk}_idiosens.xlsx")
+    if disclosure is not None and os.path.exists(_sens_path):
+        try:
+            _conv_sens_ps = CV.converge_auto(_sens_path, K=args.converge_K)["converge_value_ps"]
+        except Exception as e:
+            _fail("CONVERGENCE PERIOD FAILED on the idiosyncratic sensitivity run, so the "
+                  f"headline cannot be priced consistently with the disclosed haircut ({e})")
+
+    _adj = (disclosure or {}).get("adjusted_equity_ps")
+    if isinstance(_adj, (int, float)) and _conv_sens_ps is not None:
+        _headline = _adj + _conv_sens_ps
+        _headline_basis = ("adjusted equity (dep + market debt + idiosyncratic) + convergence "
+                           "increment priced at the idiosyncratic-inclusive cost of equity")
+        _pre = _adj
+    elif isinstance(_adj, (int, float)):
+        _headline = _adj + _conv["converge_value_ps"]
+        _headline_basis = ("adjusted equity (dep + market debt + idiosyncratic) + convergence "
+                           "increment at the BASE cost of equity (no sensitivity workbook)")
+        _pre = _adj
+    else:
+        _headline = _conv["corrected_intrinsic"]
+        _headline_basis = "engine equity value + convergence increment (no disclosure bridge)"
+        _pre = _conv["eng_intrinsic"]
+
+    convergence = {
+        "cfg_N": _conv["N"], "K": _conv["K"],
+        "actual_eps_N": _periods["actual_eps_N"],
+        "normalized_eps_N": _conv.get("norm_eps_N"),
+        "gap_ps": _conv["converge_gap_ps"],
+        "engine_intrinsic_ps": _conv["eng_intrinsic"],
+        "corrected_intrinsic_ps": _conv["corrected_intrinsic"],
+        "convergence_value_ps": _conv["converge_value_ps"],
+        "convergence_value_idio_adjusted_ps": _conv_sens_ps,
+        "headline_value_ps": _headline,
+        "headline_value_pre_convergence_ps": _pre,
+        "headline_basis": _headline_basis,
+        "guard": _conv["verdict"], "guard_reason": _conv["verdict_reason"],
+        "in_four_method_tie": False,
+        "caveat": ("the convergence increment is computed on the EQUITY (EPS) leg only and "
+                   "therefore sits OUTSIDE the four-method tie; the tie covers the explicit "
+                   "period through cfg_N"),
+        "periods": _periods["blocks"],
+        "identity_checks": _periods["identity_checks"],
+        "schedule": _conv["schedule"],
+        "outputs": [f"{tk}_convergence.csv", _periods_fn],
+    }
+    results["convergence"] = convergence
+    print(f"[convergence] K={_conv['K']} after cfg_N={_conv['N']}: actual EPS "
+          f"{_periods['actual_eps_N']:.4f} -> normalized {_conv['norm_eps_N']:.4f} "
+          f"(gap {_conv['converge_gap_ps']:+.4f}/sh)")
+    print(f"[convergence] engine {_conv['eng_intrinsic']:.4f} + {_conv['converge_value_ps']:+.4f} "
+          f"= {_conv['corrected_intrinsic']:.4f} /sh  |  HEADLINE {_pre:.4f} -> "
+          f"{_headline:.4f} /sh  ({_headline_basis})")
+    for _b in _periods["blocks"]:
+        print(f"[periods] {_b['period']:<12} yrs {_b['years']:<8} "
+              f"PV {_b['pv_contribution_ps']:+9.4f}/sh  "
+              f"({(_b['pct_of_corrected_value'] or 0):+.1%} of value)")
+    print(f"[convergence] guard {_conv['verdict']}: {_conv['verdict_reason']}")
+    print("[convergence] NOTE: this increment is the equity (EPS) leg only and is OUTSIDE the "
+          "four-method tie; the tie still gates everything through cfg_N.")
+
     # --- extract committed outputs + manifest
     manifest = EX.extract_outputs(out_xlsx, tk, args.out_dir, results=results,
                                   config_hash=cfg["config_hash"], vintage=args.vintage,
-                                  disclosure=disclosure)
+                                  disclosure=disclosure, convergence=convergence)
     print(f"[extract] wrote {', '.join(manifest['outputs'])} + {tk}_manifest.json to {args.out_dir}")
 
     # --- run-status / anchor-health CSV (cockpit feed). The guard verdicts are otherwise
@@ -456,6 +557,17 @@ def main():
         ("anchor_margin_vs_normal", _re.get("margin_vs_normal")),
         ("inflation_verdict", results.get("inflation_verdict")),
         ("rd_capitalization_wired", False),
+        # Convergence period — the headline the cockpit should display, plus the figure it
+        # replaced and the guard, so the Sheet can show the correction rather than absorb it.
+        ("headline_value_ps", convergence["headline_value_ps"]),
+        ("headline_value_pre_convergence_ps", convergence["headline_value_pre_convergence_ps"]),
+        ("convergence_K", convergence["K"]),
+        ("convergence_value_ps", convergence["convergence_value_ps"]),
+        ("convergence_value_idio_adjusted_ps", convergence["convergence_value_idio_adjusted_ps"]),
+        ("actual_eps_at_N", convergence["actual_eps_N"]),
+        ("normalized_eps_at_N", convergence["normalized_eps_N"]),
+        ("convergence_guard", convergence["guard"]),
+        ("convergence_in_four_method_tie", convergence["in_four_method_tie"]),
         # P1/P2/P3 — the first-order judgments, surfaced so the cockpit can show them.
         ("cfg_N", rep["forecast_horizon_N"]),
         ("cfg_N_reviewed", cfg["horizon_reviewed"]),
@@ -548,7 +660,10 @@ def main():
                   f"{feed['cod_provenance']['audit']} rating={feed['cod_provenance']['rating']}")
         except Exception as _e:
             print(f"[cod] manifest provenance skip ({_e})")
-    print(f"[done] {tk}  equity={results.get('equity_value')}  tie={tie}")
+    print(f"[done] {tk}  HEADLINE (convergence-corrected) "
+          f"{convergence['headline_value_ps']:.4f}/sh  |  pre-convergence "
+          f"{convergence['headline_value_pre_convergence_ps']:.4f}/sh  |  "
+          f"tied engine equity={results.get('equity_value')}  tie={tie}")
 
 
 if __name__ == "__main__":

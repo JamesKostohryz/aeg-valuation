@@ -1,36 +1,41 @@
 {
   "ticker": "WMT",
-  "config_hash": "0f6fec000de311da",
-  "data_vintage": "2026-08-08T04:24Z",
+  "config_hash": "149c0056471fed53",
+  "data_vintage": "2026-08-09T04:46Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 7.93079379945993e-10,
+    "max_identity_tie": 2.2409949451685e-09,
     "mode_tie": 0,
-    "tie_tol": 1e-08,
+    "tie_scale": 155985,
+    "tie_scale_known": true,
+    "tie_relative": 1.4366733629313715e-14,
+    "tie_rel_tol": 1e-11,
+    "tie_abs_rail": 0.001,
+    "tie_tol": 0.001,
     "reasons": []
   },
   "rd_wedge": {
     "opex_wedge": -8920.08526549554,
-    "wedge_pct_ebit": 0.29383772433386207,
+    "wedge_pct_ebit": 0.3002597878139671,
     "rev_scaled_consistent": true,
     "rd_reserve": 0,
     "rd_capitalization_wired": false,
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 7.93079379945993e-10,
-  "equity_value": 52.293122639415,
-  "enterprise_value": 52.293122639415,
+  "max_identity_tie": 2.2409949451685e-09,
+  "equity_value": 45.6564037588594,
+  "enterprise_value": 45.6564037588594,
   "mode_tie": 0,
   "anchor_year": 2026,
   "disclosure": {
-    "base_equity_ps": 52.293122639415,
-    "adjusted_equity_ps": 57.847103359197874,
-    "depreciation_anchor_penalty_ps": -5.279830841323637,
+    "base_equity_ps": 45.6564037588594,
+    "adjusted_equity_ps": 50.1272510092061,
+    "depreciation_anchor_penalty_ps": -4.196697371887466,
     "debt_capital_gain_ps": 0.2741498784592367,
     "idiosyncratic_haircut_ps": 0.0
   },
@@ -52,12 +57,110 @@
     "WMT_analyst_estimates.csv",
     "WMT_growth_trend.csv"
   ],
+  "tie_residuals": {
+    "components": {
+      "bs_noa_cse_nfo": {
+        "cell": "Audit!B22",
+        "residual": 0.0
+      },
+      "bs_flev_cse_nfo": {
+        "cell": "Audit!B23",
+        "residual": 0.0
+      },
+      "bs_bps_shares": {
+        "cell": "Audit!B24",
+        "residual": 0.0
+      },
+      "bs_nfops_shares": {
+        "cell": "Audit!B25",
+        "residual": 0.0
+      },
+      "equity_enterprise_tie": {
+        "cell": "Audit!B27",
+        "residual": 0.0
+      },
+      "value_additivity": {
+        "cell": "Audit!B28",
+        "residual": 0.0
+      },
+      "buyback_vp6_invariance": {
+        "cell": "Audit!B29",
+        "residual": 0.0
+      },
+      "sum_balance_ties": {
+        "cell": "Audit!B31",
+        "residual": 0.0
+      },
+      "sum_anchor_reconciliation": {
+        "cell": "Audit!B44",
+        "residual": 0.0
+      },
+      "reform_partition_nominal": {
+        "cell": "Audit!B47",
+        "residual": 0.0
+      },
+      "reform_partition_real": {
+        "cell": "Audit!B48",
+        "residual": 0.0
+      },
+      "cap_engine_anchor": {
+        "cell": "Audit!B49",
+        "residual": 0.0
+      },
+      "sum_reformulation_ties": {
+        "cell": "Audit!B50",
+        "residual": 0.0
+      },
+      "forecast_bs": {
+        "cell": "Audit!B55",
+        "residual": 0.0
+      },
+      "forecast_eps_shares": {
+        "cell": "Audit!B56",
+        "residual": 0.0
+      },
+      "forecast_fcfe": {
+        "cell": "Audit!B57",
+        "residual": 9.74978320300579e-10
+      },
+      "sum_forecast_ties": {
+        "cell": "Audit!B58",
+        "residual": 9.74978320300579e-10
+      },
+      "dcf_fcfe_vs_ri": {
+        "cell": "Audit!B61",
+        "residual": 0.0
+      },
+      "dcf_fcff_vs_ri": {
+        "cell": "Audit!B62",
+        "residual": 0.0
+      },
+      "sum_dcf_recon": {
+        "cell": "Audit!B63",
+        "residual": 0.0
+      },
+      "crosstab_aeg_vs_ri": {
+        "cell": "Audit!B72",
+        "residual": 0.0
+      },
+      "ops_direct_vs_additive": {
+        "cell": "Audit!B75",
+        "residual": 0.0
+      },
+      "master_total": {
+        "cell": "Audit!B5",
+        "residual": 3.21597326546907e-09
+      }
+    },
+    "worst_identity": "forecast_fcfe",
+    "worst_abs_residual": 9.74978320300579e-10
+  },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-08T04:24Z",
+    "as_of": "2026-08-09T04:46Z",
     "flags": []
   }
 }

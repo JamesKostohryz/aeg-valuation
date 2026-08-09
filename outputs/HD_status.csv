@@ -3,14 +3,19 @@ ticker,HD
 run_status,OK
 anchor_year,2026
 tie_check,PASS
-max_identity_tie,5.07361619384028e-09
+max_identity_tie,9.57807060331106e-08
 anchor_earnings_check,PASS
-anchor_oi_at0,17593.4163915692
+anchor_oi_at0,17540.0574832055
 anchor_representativeness,PASS
 anchor_margin,0.12684976591390731
 anchor_normal_margin,0.14362989622420497
 anchor_margin_vs_normal,0.88317104759232
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
-config_hash,a2d6e5a338abf245
-vintage,2026-08-08T04:24Z
+cfg_N,10
+cfg_N_reviewed,True
+payout_seed,0.328201
+ppe_life_years,17.45
+inputs_on_template_default,0
+config_hash,80da59d1ddb736d9
+vintage,2026-08-09T04:46Z

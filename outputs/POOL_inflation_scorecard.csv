@@ -1,19 +1,19 @@
 field,value
 verdict,NET BENEFICIARY of inflation
-net_inflation_position_annual,8.20014651096741
-depreciation_penalty_annual,0.8746664971228937
+net_inflation_position_annual,8.174220621938847
+depreciation_penalty_annual,0.9005923861514574
 interest_benefit_annual,9.074813008090304
 tax_rate,0.238328
 expected_inflation,0.026626
 rd_nominal,0.07134695887522624
 net_debt,1430.068
 nominal_interest,46.77
-econ_depreciation,33.70934481802206
-reported_ppe_depreciation,30.03933333333334
-depreciation_shortfall,3.6700114846887217
-avg_asset_age_yrs,6.09916984168074
-debt_to_annual_da,47.60651590137375
-breakeven_leverage,6.528591274078868
+econ_depreciation,34.289806601224846
+reported_ppe_depreciation,30.511012728278917
+depreciation_shortfall,3.778793872945929
+avg_asset_age_yrs,6.3459497674797625
+debt_to_annual_da,46.870551716382444
+breakeven_leverage,6.8154086306796
 interest_tax_shield_pv_fixed_nominal,156.23091349266224
 interest_tax_shield_pv_constant_real,249.24779880278473
 interest_tax_shield_pv_adopted,249.24779880278473

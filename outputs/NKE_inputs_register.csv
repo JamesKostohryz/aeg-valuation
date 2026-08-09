@@ -1,0 +1,32 @@
+cell,name,class,label,value,provenance,source
+B5,in_debt,company,Total debt incl. finance leases,11033.0,filings,BS 'Total Debt'
+B6,in_cash,company,Cash & equivalents,7563.0,filings,BS 'Cash And Cash Equivalents'
+B7,in_sti,company,Short-term investments,1464.0,filings,BS 'Other Short Term Investments' (blank->0)
+B8,in_finlease,company,of which finance/capital lease obligation,0.0,analyst,filed BS 'Capital Lease Obligations' = 3091.0 (default 0 unless you include it)
+B9,anchor_shares0,company,Common shares outstanding,1482.9,filings,BS 'Ordinary Shares Number' (/1e6)
+B10,anchor_cse0,company,Common stock equity (CSE),14865.0,analyst,BS 'Common Stock Equity' = 14865.0; 'Minority Interest' = 0.0  (Exclude MI -> 14865.0; Include MI -> 14865.0)  -> chose Exclude
+B11,in_intexp0,company,Interest expense (FY2025),50.0,filings,IS 'Interest Expense' (blank->0)
+B12,in_oiadj0,company,"Operating income, adjusted (FY2025)",3800.0,analyst,IS 'Operating Income' = 3800.0; 'Total Unusual Items' = None  (default = Operating Income)
+B13,anchor_eps0,company,Diluted EPS (FY2025),2.095893,filings,IS 'Diluted EPS' (unscaled)
+B14,in_tax0,company,Effective tax rate (FY2025),0.203077,filings,IS 'Tax Rate for Calcs' = 0.203077  (provision/pretax = 0.20308)
+B15,anchor_dps0,company,"Dividends per share, period-0 (FY2025)",1.23,filings,FY2026 dividends file: 3 ex-date(s) summing to 1.23
+B25,in_price,company,Current price ($/sh)  [LIVE — refresh each session],41.7,analyst,today's market price (external)
+B26,cfg_N,company,Explicit forecast horizon N  (≤ 30),8,analyst,set explicitly for this run
+B27,in_g_terminal,inert,"Terminal growth g (continuing, real)",0,inert,referenced by no formula in the template (dead input)
+B28,in_erp,company,Equity risk premium ERP (real),0.04,late-bound,"template value at build time; superseded on live runs by the rate feed, which rewrites the market equity-risk-premium term structure on Market Data row 25 (repoint_rates). Live on a fixture build."
+B29,cfg_coe_mode,control,COE mode  {Single | Term}   (ρE),Term,control,run-mode switch; carries the template's shipped mode unless overridden
+B30,cfg_rf_mode,control,Enterprise ρF mode  {Single | Term},Term,control,run-mode switch; carries the template's shipped mode unless overridden
+B31,in_rf_single,inert,Enterprise ρF single (real),0.06,inert,only live when cfg_rf_mode='Single'; template ships 'Term'
+B32,in_rf_lr,inert,Enterprise ρF long-run r_LR (real),0.07,inert,only live when cfg_rf_mode='Single'; template ships 'Term'
+B33,cfg_cod_mode,control,ρD mode  {Single | Term},Term,control,run-mode switch; carries the template's shipped mode unless overridden
+B34,cfg_valread,control,Valuation READ toggle  {Equity path | Enterprise path},Equity path,control,run-mode switch; carries the template's shipped mode unless overridden
+B37,cfg_mode,control,Forecast-side  {Equity | Enterprise},Equity,control,run-mode switch; carries the template's shipped mode unless overridden
+B39,in_payout_seed,company,Default dividend payout (seed; per-year driver in Step 5),0.586862,filings,dividends per share 1.23 / diluted EPS 2.095893 = 0.586862  (FY0 dividend payout; EXCLUDES buybacks)
+B42,in_ppe_life,company,PP&E composite depreciable life L (yr),16.92,filings,mean Gross PPE over 3y (13812) / mean reported depreciation (816.333) = 16.92 years
+B43,in_rd_life,company,R&D amortization life (yr; ≈0 telecom),0,analyst,0 = do not capitalize
+B45,in_rd_expense0,company,"R&D expense, period-0 ($mm)",0,filings,IS 'Research & Development' (blank->0)
+B47,cfg_buyback,control,Buyback adjustment  {On | Off},On,control,run-mode switch; carries the template's shipped mode unless overridden
+B66,in_anchor_year,company,Anchor / period-0 fiscal year,2026,filings,latest full fiscal year in CSVs
+B67,cfg_view,control,Restatement view  {Economic | Reported},Economic,control,run-mode switch; carries the template's shipped mode unless overridden
+B68,cfg_funding,control,Financing mode  {Target FLEV | Funding policy},Target FLEV,control,run-mode switch; carries the template's shipped mode unless overridden
+B69,cfg_scenario,control,Scenario  {Bear | Consensus | Bull | Normal},Consensus,control,run-mode switch; carries the template's shipped mode unless overridden

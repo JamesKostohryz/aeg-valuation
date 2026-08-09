@@ -1,38 +1,43 @@
 {
   "ticker": "AAPL",
-  "config_hash": "80e5fcb7cc6a0fda",
-  "data_vintage": "2026-08-08T04:24Z",
+  "config_hash": "2e10fdea5a2797c1",
+  "data_vintage": "2026-08-09T04:46Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 1.88447302207351e-09,
+    "max_identity_tie": 1.23400241136551e-08,
     "mode_tie": 0,
-    "tie_tol": 1e-08,
+    "tie_scale": 152376.629615187,
+    "tie_scale_known": true,
+    "tie_relative": 8.098370560379687e-14,
+    "tie_rel_tol": 1e-11,
+    "tie_abs_rail": 0.001,
+    "tie_tol": 0.001,
     "reasons": []
   },
   "rd_wedge": {
     "opex_wedge": 23787.5362905856,
-    "wedge_pct_ebit": 0.16902451775569585,
+    "wedge_pct_ebit": 0.1731422849342996,
     "rev_scaled_consistent": true,
     "rd_reserve": 172750,
     "rd_capitalization_wired": false,
     "rd_reserve_nonzero_but_inert": true
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 1.88447302207351e-09,
-  "equity_value": 131.378599748996,
-  "enterprise_value": 131.378599748996,
+  "max_identity_tie": 1.23400241136551e-08,
+  "equity_value": 81.5919498994243,
+  "enterprise_value": 81.5919498994244,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 131.378599748996,
-    "adjusted_equity_ps": 105.45157948821972,
-    "depreciation_anchor_penalty_ps": 0.11900643001175826,
+    "base_equity_ps": 81.5919498994243,
+    "adjusted_equity_ps": 55.14226500706865,
+    "depreciation_anchor_penalty_ps": -0.018584033852580475,
     "debt_capital_gain_ps": 2.87246803450946,
-    "idiosyncratic_haircut_ps": 28.680481865274004
+    "idiosyncratic_haircut_ps": 29.340736960717706
   },
   "outputs": [
     "AAPL_anchors.csv",
@@ -53,12 +58,110 @@
     "AAPL_aeg_momentum.csv",
     "AAPL_growth_trend.csv"
   ],
+  "tie_residuals": {
+    "components": {
+      "bs_noa_cse_nfo": {
+        "cell": "Audit!B22",
+        "residual": 0.0
+      },
+      "bs_flev_cse_nfo": {
+        "cell": "Audit!B23",
+        "residual": 0.0
+      },
+      "bs_bps_shares": {
+        "cell": "Audit!B24",
+        "residual": 0.0
+      },
+      "bs_nfops_shares": {
+        "cell": "Audit!B25",
+        "residual": 0.0
+      },
+      "equity_enterprise_tie": {
+        "cell": "Audit!B27",
+        "residual": 0.0
+      },
+      "value_additivity": {
+        "cell": "Audit!B28",
+        "residual": 0.0
+      },
+      "buyback_vp6_invariance": {
+        "cell": "Audit!B29",
+        "residual": 0.0
+      },
+      "sum_balance_ties": {
+        "cell": "Audit!B31",
+        "residual": 0.0
+      },
+      "sum_anchor_reconciliation": {
+        "cell": "Audit!B44",
+        "residual": 0.0
+      },
+      "reform_partition_nominal": {
+        "cell": "Audit!B47",
+        "residual": 0.0
+      },
+      "reform_partition_real": {
+        "cell": "Audit!B48",
+        "residual": 0.0
+      },
+      "cap_engine_anchor": {
+        "cell": "Audit!B49",
+        "residual": 0.0
+      },
+      "sum_reformulation_ties": {
+        "cell": "Audit!B50",
+        "residual": 0.0
+      },
+      "forecast_bs": {
+        "cell": "Audit!B55",
+        "residual": 0.0
+      },
+      "forecast_eps_shares": {
+        "cell": "Audit!B56",
+        "residual": 0.0
+      },
+      "forecast_fcfe": {
+        "cell": "Audit!B57",
+        "residual": 5.31326804775745e-09
+      },
+      "sum_forecast_ties": {
+        "cell": "Audit!B58",
+        "residual": 5.31326804775745e-09
+      },
+      "dcf_fcfe_vs_ri": {
+        "cell": "Audit!B61",
+        "residual": 0.0
+      },
+      "dcf_fcff_vs_ri": {
+        "cell": "Audit!B62",
+        "residual": 0.0
+      },
+      "sum_dcf_recon": {
+        "cell": "Audit!B63",
+        "residual": 0.0
+      },
+      "crosstab_aeg_vs_ri": {
+        "cell": "Audit!B72",
+        "residual": 0.0
+      },
+      "ops_direct_vs_additive": {
+        "cell": "Audit!B75",
+        "residual": 0.0
+      },
+      "master_total": {
+        "cell": "Audit!B5",
+        "residual": 1.76532921614125e-08
+      }
+    },
+    "worst_identity": "forecast_fcfe",
+    "worst_abs_residual": 5.31326804775745e-09
+  },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "AA",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-08T04:24Z",
+    "as_of": "2026-08-09T04:46Z",
     "flags": []
   }
 }

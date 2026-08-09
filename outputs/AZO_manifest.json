@@ -1,38 +1,43 @@
 {
   "ticker": "AZO",
-  "config_hash": "e584948db539deb2",
-  "data_vintage": "2026-08-08T04:24Z",
+  "config_hash": "ca6b9b0c64b133bc",
+  "data_vintage": "2026-08-09T04:46Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 1.71418435002124e-13,
+    "max_identity_tie": 3.42879502568394e-10,
     "mode_tie": 0,
-    "tie_tol": 1e-08,
+    "tie_scale": 18126.166280833582,
+    "tie_scale_known": true,
+    "tie_relative": 1.8916272600398197e-14,
+    "tie_rel_tol": 1e-11,
+    "tie_abs_rail": 0.001,
+    "tie_tol": 0.001,
     "reasons": []
   },
   "rd_wedge": {
     "opex_wedge": -638.302707240101,
-    "wedge_pct_ebit": 0.16831206560475603,
+    "wedge_pct_ebit": 0.1645666805564529,
     "rev_scaled_consistent": true,
     "rd_reserve": 0,
     "rd_capitalization_wired": false,
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 1.71418435002124e-13,
-  "equity_value": 2896.09337161806,
-  "enterprise_value": 2896.09337161806,
+  "max_identity_tie": 3.42879502568394e-10,
+  "equity_value": 3624.73848191173,
+  "enterprise_value": 3624.73848191173,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 2896.09337161806,
-    "adjusted_equity_ps": 2038.8846380451823,
-    "depreciation_anchor_penalty_ps": -2.535463707942369,
+    "base_equity_ps": 3624.73848191173,
+    "adjusted_equity_ps": 1571.0101977443032,
+    "depreciation_anchor_penalty_ps": -4.9013031644036245,
     "debt_capital_gain_ps": 0.0,
-    "idiosyncratic_haircut_ps": 859.7441972808199
+    "idiosyncratic_haircut_ps": 2058.6295873318304
   },
   "outputs": [
     "AZO_anchors.csv",
@@ -52,12 +57,110 @@
     "AZO_analyst_estimates.csv",
     "AZO_growth_trend.csv"
   ],
+  "tie_residuals": {
+    "components": {
+      "bs_noa_cse_nfo": {
+        "cell": "Audit!B22",
+        "residual": 0.0
+      },
+      "bs_flev_cse_nfo": {
+        "cell": "Audit!B23",
+        "residual": 0.0
+      },
+      "bs_bps_shares": {
+        "cell": "Audit!B24",
+        "residual": 0.0
+      },
+      "bs_nfops_shares": {
+        "cell": "Audit!B25",
+        "residual": 0.0
+      },
+      "equity_enterprise_tie": {
+        "cell": "Audit!B27",
+        "residual": 0.0
+      },
+      "value_additivity": {
+        "cell": "Audit!B28",
+        "residual": 0.0
+      },
+      "buyback_vp6_invariance": {
+        "cell": "Audit!B29",
+        "residual": 0.0
+      },
+      "sum_balance_ties": {
+        "cell": "Audit!B31",
+        "residual": 0.0
+      },
+      "sum_anchor_reconciliation": {
+        "cell": "Audit!B44",
+        "residual": 0.0
+      },
+      "reform_partition_nominal": {
+        "cell": "Audit!B47",
+        "residual": 0.0
+      },
+      "reform_partition_real": {
+        "cell": "Audit!B48",
+        "residual": 0.0
+      },
+      "cap_engine_anchor": {
+        "cell": "Audit!B49",
+        "residual": 0.0
+      },
+      "sum_reformulation_ties": {
+        "cell": "Audit!B50",
+        "residual": 0.0
+      },
+      "forecast_bs": {
+        "cell": "Audit!B55",
+        "residual": 0.0
+      },
+      "forecast_eps_shares": {
+        "cell": "Audit!B56",
+        "residual": 0.0
+      },
+      "forecast_fcfe": {
+        "cell": "Audit!B57",
+        "residual": 0.0
+      },
+      "sum_forecast_ties": {
+        "cell": "Audit!B58",
+        "residual": 0.0
+      },
+      "dcf_fcfe_vs_ri": {
+        "cell": "Audit!B61",
+        "residual": 0.0
+      },
+      "dcf_fcff_vs_ri": {
+        "cell": "Audit!B62",
+        "residual": 0.0
+      },
+      "sum_dcf_recon": {
+        "cell": "Audit!B63",
+        "residual": 0.0
+      },
+      "crosstab_aeg_vs_ri": {
+        "cell": "Audit!B72",
+        "residual": 0.0
+      },
+      "ops_direct_vs_additive": {
+        "cell": "Audit!B75",
+        "residual": 0.0
+      },
+      "master_total": {
+        "cell": "Audit!B5",
+        "residual": 3.42879502568394e-10
+      }
+    },
+    "worst_identity": "bs_noa_cse_nfo",
+    "worst_abs_residual": 0.0
+  },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-08T04:24Z",
+    "as_of": "2026-08-09T04:46Z",
     "flags": []
   }
 }

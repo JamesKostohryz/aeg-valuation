@@ -3,14 +3,19 @@ ticker,MCD
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,1.48787648868165e-11
+max_identity_tie,8.65838956087828e-10
 anchor_earnings_check,PASS
-anchor_oi_at0,9750.73539229428
+anchor_oi_at0,9743.22262547739
 anchor_representativeness,PASS
 anchor_margin,0.4609633624697787
 anchor_normal_margin,0.42156609266034983
 anchor_margin_vs_normal,1.0934545507699802
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
-config_hash,4a8adf4e3e22ab64
-vintage,2026-08-08T04:24Z
+cfg_N,12
+cfg_N_reviewed,True
+payout_seed,0.599858
+ppe_life_years,28.61
+inputs_on_template_default,0
+config_hash,937ebf8f3b64bd48
+vintage,2026-08-09T04:46Z

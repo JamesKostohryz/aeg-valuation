@@ -3,14 +3,19 @@ ticker,WMT
 run_status,OK
 anchor_year,2026
 tie_check,PASS
-max_identity_tie,7.93079379945993e-10
+max_identity_tie,2.2409949451685e-09
 anchor_earnings_check,PASS
-anchor_oi_at0,22524.2110977009
+anchor_oi_at0,21993.0921603533
 anchor_representativeness,PASS
 anchor_margin,0.041820733829433104
 anchor_normal_margin,0.04126156263514897
 anchor_margin_vs_normal,1.0135518666422925
 inflation_verdict,NET LOSER from inflation
 rd_capitalization_wired,False
-config_hash,0f6fec000de311da
-vintage,2026-08-08T04:24Z
+cfg_N,10
+cfg_N_reviewed,True
+payout_seed,0.363121
+ppe_life_years,19.68
+inputs_on_template_default,0
+config_hash,149c0056471fed53
+vintage,2026-08-09T04:46Z

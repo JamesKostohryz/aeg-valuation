@@ -3,14 +3,19 @@ ticker,AAPL
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,1.88447302207351e-09
+max_identity_tie,1.23400241136551e-08
 anchor_earnings_check,PASS
-anchor_oi_at0,118575.537924172
+anchor_oi_at0,115710.470488936
 anchor_representativeness,PASS
 anchor_margin,0.31970799762591884
 anchor_normal_margin,0.2827140286814577
 anchor_margin_vs_normal,1.1308529651570398
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
-config_hash,80e5fcb7cc6a0fda
-vintage,2026-08-08T04:24Z
+cfg_N,10
+cfg_N_reviewed,True
+payout_seed,0.136638
+ppe_life_years,10.37
+inputs_on_template_default,0
+config_hash,2e10fdea5a2797c1
+vintage,2026-08-09T04:46Z

@@ -1,5 +1,5 @@
-# convergence guard,verdict=PASS,gap_ps=0.7197,converge_value_ps=-4.2163,eng_intrinsic=151.1114,corrected_intrinsic=146.8951
+# convergence guard,verdict=PASS,gap_ps=2.5473,converge_value_ps=-6.5162,eng_intrinsic=275.8351,corrected_intrinsic=269.3189
 t,phase,eps,normal_eps,aeg_eps,contrib_eps,coe
-13,convergence,13.96152,14.212154,-0.25063446,-1.51859763,0.092139
-14,convergence,14.075744,14.328429,-0.252685,-1.40195523,0.090717
-15,convergence,14.1915,14.446263,-0.25476302,-1.29574817,0.089349
+31,convergence,36.958026,37.846996,-0.88896934,-2.28452943,0.051177
+32,convergence,36.904295,37.791972,-0.88767691,-2.17014593,0.051177
+33,convergence,36.850642,37.737028,-0.88638637,-2.06148946,0.051177

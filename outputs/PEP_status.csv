@@ -3,7 +3,7 @@ ticker,PEP
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,4.22915036324412e-10
+max_identity_tie,3.23780113831162e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,11293.2355965138
 anchor_representativeness,PASS
@@ -12,13 +12,13 @@ anchor_normal_margin,0.14184361835179532
 anchor_margin_vs_normal,1.0126354739132681
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
-headline_value_ps,152.19816016196833
-headline_value_pre_convergence_ps,156.4144611834156
+headline_value_ps,274.65244816260633
+headline_value_pre_convergence_ps,281.1686129854225
 convergence_K,3
-convergence_value_ps,-4.216301021447275
-convergence_value_idio_adjusted_ps,-4.216301021447275
-actual_eps_at_N,13.8461052520308
-normalized_eps_at_N,13.126410444214152
+convergence_value_ps,-6.516164822816143
+convergence_value_idio_adjusted_ps,-6.516164822816143
+actual_eps_at_N,37.0118357928537
+normalized_eps_at_N,34.46455749954008
 convergence_guard,PASS
 convergence_reviewed,False
 convergence_review_note,
@@ -29,4 +29,4 @@ payout_seed,0.937106
 ppe_life_years,15.87
 inputs_on_template_default,0
 config_hash,a253b27cde209dcd
-vintage,2026-08-09T22:38Z
+vintage,run-2026-08-10T17:04:57Z

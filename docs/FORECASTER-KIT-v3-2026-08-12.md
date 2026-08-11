@@ -1,6 +1,8 @@
 # FORECASTER KIT — CURRENT VERSION (v2, 2026-08-11)
 
-**This is the authoritative kit. Anything older is superseded — see section 9.**
+**This is the authoritative kit. Anything older is superseded — see section 9.** The copy in the repository at `docs/` is the source of truth; any other copy is a working copy.
+
+> **Changing this document?** Follow `docs/KIT-CHANGE-PROCEDURE.md` first. A kit change is an end-to-end audit of the whole file plus four other places, not an edit to one section. Editing one section and leaving the rest is how this document went stale three times in a single day on 2026-08-12.
 
 Valid against commit `5069bc8` on `github.com/JamesKostohryz/aeg-valuation`. Regression harness
 green; four-method tie `8.396062e-16`, and as of this version the published value is **wholly

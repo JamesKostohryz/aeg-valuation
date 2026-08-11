@@ -1,4 +1,4 @@
-# convergence guard,verdict=PASS,gap_ps=-0.0412,converge_value_ps=0.2848,eng_intrinsic=347.2691,corrected_intrinsic=347.5540
+# convergence guard,verdict=PASS,gap_ps=-0.0412,converge_value_ps=0.2848,eng_intrinsic=347.2691,corrected_intrinsic=347.5540,trend_g_short=0.052712,trend_g_full=0.058692,trend_spread=-0.005980,trend_estimate=OK
 t,phase,eps,normal_eps,aeg_eps,contrib_eps,coe
 11,convergence,28.803911,28.78989,0.01402087,0.10149068,0.095579
 12,convergence,29.454608,29.44027,0.01433761,0.09476987,0.094165

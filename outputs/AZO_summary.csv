@@ -1,10 +1,10 @@
 field,value
 intrinsic_value_ps,1996.4370931930373
-current_price_real_ps,3193.59020935383
+current_price_real_ps,3167.21271292651
 equity_enterprise_tie,0
 normal_no_growth_value_ps,2216.88850966061
-pvgo_ps,976.701699693215
-implied_real_eps_growth,0.00270203220845916
+pvgo_ps,950.324203265898
+implied_real_eps_growth,0.00226988591708342
 growth_premium_turns,0.368261014653584
 economic_rnoa,0.449145620477752
 real_coe_longrun,0.0545909304464218
@@ -18,4 +18,4 @@ actual_eps_at_N,227.756891650492
 normalized_eps_at_N,227.06776868578294
 convergence_guard,PASS
 convergence_in_four_method_tie,False
-upside_downside,-0.37486121815328854
+upside_downside,-0.3696548750752121

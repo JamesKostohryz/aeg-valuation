@@ -1,7 +1,7 @@
 {
   "ticker": "MRK",
   "config_hash": "3fa30d2dfdc7a432",
-  "data_vintage": "2026-08-11T18:12Z",
+  "data_vintage": "2026-08-11T20:27Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -223,11 +223,11 @@
       },
       "forecast_fcfe": {
         "cell": "Audit!B57",
-        "residual": 0.0
+        "residual": 1.00044417195022e-11
       },
       "sum_forecast_ties": {
         "cell": "Audit!B58",
-        "residual": 0.0
+        "residual": 1.00044417195022e-11
       },
       "dcf_fcfe_vs_ri": {
         "cell": "Audit!B61",
@@ -251,18 +251,18 @@
       },
       "master_total": {
         "cell": "Audit!B5",
-        "residual": 5.82076609134674e-10
+        "residual": 5.92081050854176e-10
       }
     },
-    "worst_identity": "bs_noa_cse_nfo",
-    "worst_abs_residual": 0.0
+    "worst_identity": "forecast_fcfe",
+    "worst_abs_residual": 1.00044417195022e-11
   },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-11T18:12Z",
+    "as_of": "2026-08-11T20:27Z",
     "flags": []
   }
 }

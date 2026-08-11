@@ -1,7 +1,7 @@
 {
   "ticker": "MCD",
   "config_hash": "937ebf8f3b64bd48",
-  "data_vintage": "2026-08-11T18:12Z",
+  "data_vintage": "2026-08-11T20:27Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -153,7 +153,6 @@
     "MCD_aeg_schedule.csv",
     "MCD_dupont.json",
     "MCD_dupont.csv",
-    "MCD_analyst_estimates.csv",
     "MCD_growth_trend.csv",
     "MCD_convergence.csv",
     "MCD_periods.csv"
@@ -222,11 +221,11 @@
       },
       "forecast_fcfe": {
         "cell": "Audit!B57",
-        "residual": 0.0
+        "residual": 4.54747350886464e-12
       },
       "sum_forecast_ties": {
         "cell": "Audit!B58",
-        "residual": 0.0
+        "residual": 4.54747350886464e-12
       },
       "dcf_fcfe_vs_ri": {
         "cell": "Audit!B61",
@@ -250,18 +249,18 @@
       },
       "master_total": {
         "cell": "Audit!B5",
-        "residual": 2.33285391004756e-10
+        "residual": 2.37832864513621e-10
       }
     },
-    "worst_identity": "bs_noa_cse_nfo",
-    "worst_abs_residual": 0.0
+    "worst_identity": "forecast_fcfe",
+    "worst_abs_residual": 4.54747350886464e-12
   },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-11T18:12Z",
+    "as_of": "2026-08-11T20:27Z",
     "flags": []
   }
 }

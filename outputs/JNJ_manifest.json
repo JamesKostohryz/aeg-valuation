@@ -1,7 +1,7 @@
 {
   "ticker": "JNJ",
   "config_hash": "e1383c584bea4d4b",
-  "data_vintage": "2026-08-11T18:12Z",
+  "data_vintage": "2026-08-11T20:27Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -222,11 +222,11 @@
       },
       "forecast_fcfe": {
         "cell": "Audit!B57",
-        "residual": 4.82032191939652e-11
+        "residual": 4.501998773776e-11
       },
       "sum_forecast_ties": {
         "cell": "Audit!B58",
-        "residual": 4.82032191939652e-11
+        "residual": 4.501998773776e-11
       },
       "dcf_fcfe_vs_ri": {
         "cell": "Audit!B61",
@@ -250,18 +250,18 @@
       },
       "master_total": {
         "cell": "Audit!B5",
-        "residual": 5.86624082643539e-10
+        "residual": 5.83440851187334e-10
       }
     },
     "worst_identity": "forecast_fcfe",
-    "worst_abs_residual": 4.82032191939652e-11
+    "worst_abs_residual": 4.501998773776e-11
   },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-11T18:12Z",
+    "as_of": "2026-08-11T20:27Z",
     "flags": []
   }
 }

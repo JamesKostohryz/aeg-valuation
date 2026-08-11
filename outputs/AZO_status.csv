@@ -23,7 +23,7 @@ convergence_guard,PASS
 funding_guard,PASS
 funding_reviewed,False
 funding_review_note,
-funding_min_implied_dps,76.996985632456
+funding_min_implied_dps,77.8127844910328
 convergence_reviewed,False
 convergence_review_note,
 convergence_in_four_method_tie,False
@@ -33,4 +33,4 @@ payout_seed,0.0
 ppe_life_years,26.16
 inputs_on_template_default,0
 config_hash,ca6b9b0c64b133bc
-vintage,2026-08-11T18:12Z
+vintage,2026-08-11T20:27Z

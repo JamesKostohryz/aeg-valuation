@@ -77,9 +77,18 @@ without changing the document that states the rule is the thing this procedure e
 
 ## The check that closes it
 
-After pushing, read the pushed kit — not the local one — and confirm the preamble's commit hash is
-the commit you just made, or the one immediately before it. If it names an older commit, the audit
-in step 2 was not done.
+After pushing, read the pushed kit — not the local one — and confirm the preamble's "valid against"
+line names **the most recent commit that changed engine behavior**. Documentation-only commits made
+after it do not need to bump it, and an outputs refresh certainly does not: the line answers "which
+engine does this document describe," not "when was this file last touched."
+
+So the failure to look for is a preamble naming a commit older than the last behavioral change. If
+you find one, the audit in step 2 was not done, and the rest of the document is probably stale too —
+go back and read the whole thing.
+
+(This check was itself wrong when first written on 2026-08-12: it said the hash had to be the commit
+just made or the one before, which flags a false positive the moment a documentation commit lands on
+top. Corrected the same hour, by running it.)
 
 ## Standing rules that a kit change may not quietly overturn
 

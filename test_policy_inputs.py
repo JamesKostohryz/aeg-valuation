@@ -187,11 +187,23 @@ _f11 = FORM["Valuation"].cell(11, 3).value
 ok('cfg_mode="Enterprise"' in _f11, "row 11 now branches on cfg_mode like rows 7 and 10")
 ok("fc_nfo" in _f11, "row 11 reads the live forecast NFO path")
 ok("anchor_real_nfo0" not in _f11, "row 11 no longer freezes NFO at the anchor")
-# in Equity mode the per-share NFO must equal the Forecast tab's own nominal NFO / shares
+# The per-share basis depends on the closure, and row 11's own formula says so:
+# "/anchor_shares0" under Enterprise, "/INDEX(fc_shares,C4)" under Equity. Under the
+# canonical operating closure (2026-08-10) share repurchases are live, so the two
+# denominators genuinely differ -- by exactly the retirement rate -- and the assertion has
+# to pick the denominator the active closure actually uses. Comparing against the live
+# share count under Enterprise fails by the first-year buyback (about 3%), which is the
+# model behaving as designed, not a defect.
 _fc_nfo_1 = VALS["Forecast"].cell(44, 7).value        # G44, t=1
-_fc_sh_1 = VALS["Forecast"].cell(20, 7).value         # G20, t=1
-near(V.cell(11, 3).value, _fc_nfo_1 / _fc_sh_1, 1e-9,
-     "row 11 t=1 equals the Forecast tab's nominal NFO per share")
+_mode = FORM["Inputs"]["B37"].value
+if _mode == "Enterprise":
+    _den_1 = VALS["Forecast"].cell(20, 6).value       # F20, ANCHOR shares
+    _basis = "per ANCHOR share (Enterprise closure)"
+else:
+    _den_1 = VALS["Forecast"].cell(20, 7).value       # G20, live t=1 shares
+    _basis = "per live share (Equity closure)"
+near(V.cell(11, 3).value, _fc_nfo_1 / _den_1, 1e-9,
+     f"row 11 t=1 equals the Forecast tab's nominal NFO {_basis}")
 # and it must now actually move with the leverage target, which the frozen row could not do
 ok(abs(V.cell(11, 3).value - V.cell(11, 2).value) > 1e-6,
    "row 11 responds to the forecast financing path instead of tracking only inflation")

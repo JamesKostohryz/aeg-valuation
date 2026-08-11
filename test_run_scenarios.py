@@ -73,10 +73,10 @@ ok(_names == ["base", "bull"] and abs(_total - 1.0) < 1e-12,
 
 print("== payload reshaping ==")
 _single = RS._as_single_payload("AAPL", {**GOOD, "drivers": {"tax_rate": [0.2] * 4},
-                                         "singles": {"payout": 0.3}})
+                                         "singles": {"target_flev": 0.3}})
 ok(_single["ticker"] == "AAPL" and _single["mode"] == "Equity" and _single["N"] == 4,
    "the scenario's ticker/mode/N reach the payload")
-ok(_single["drivers"] == {"tax_rate": [0.2] * 4} and _single["singles"] == {"payout": 0.3},
+ok(_single["drivers"] == {"tax_rate": [0.2] * 4} and _single["singles"] == {"target_flev": 0.3},
    "drivers and singles pass through unchanged")
 ok("name" not in _single and "probability" not in _single,
    "scenario bookkeeping fields are not smuggled into the payload apply_payload validates")
@@ -99,10 +99,14 @@ recalc(BASE)
 ok(os.path.exists(BASE), "base engine built and recalculated")
 
 print("== two real scenarios: value, tie, and the expected-value row ==")
-SCEN = [{"name": "base", "probability": 0.6, "mode": "Equity", "N": 4,
-         "singles": {"payout": 0.20}},
-        {"name": "bear", "probability": 0.4, "mode": "Equity", "N": 4,
-         "singles": {"payout": 0.10}}]
+# CONTRACT CHANGE 2026-08-10: the payout seed is rejected under the canonical operating
+# closure (distributions are implied there), so scenarios differentiate on a live driver.
+# The tax rate is used because its direction is unambiguous: a lower rate leaves more
+# after-tax operating income, so it must value higher.
+SCEN = [{"name": "base", "probability": 0.6, "mode": "Enterprise", "N": 4,
+         "drivers": {"tax_rate": [0.15] * 4}},
+        {"name": "bear", "probability": 0.4, "mode": "Enterprise", "N": 4,
+         "drivers": {"tax_rate": [0.30] * 4}}]
 rep = RS.run_scenarios(BASE, SCEN, ticker="AAPL", price=315.0, out_dir=OUT,
                        recalc=recalc, work_dir=WORK, run_timestamp="2026-08-08T00:00:00Z")
 ok(rep["rows"] == 2 and rep["scenarios"] == ["base", "bear"], "both scenarios valued")
@@ -114,11 +118,10 @@ ok(len(ROWS) == 3, f"one row per scenario plus an expected-value summary row (go
 _num = {r["scenario"]: float(r["intrinsic_value_per_share_real"]) for r in ROWS
         if r.get("intrinsic_value_per_share_real")}
 ok("base" in _num and "bear" in _num, f"both scenario values present in the CSV ({sorted(_num)})")
-# higher payout retains less of a below-cost-of-equity reinvestment, so it must value higher
 ok(_num["base"] > _num["bear"],
-   f"the 20% payout scenario values above the 10% one "
-   f"({_num['base']:.6f} vs {_num['bear']:.6f}) — retention below the cost of equity "
-   f"destroys value, so distributing more is worth more")
+   f"the 15% tax scenario values above the 30% one "
+   f"({_num['base']:.6f} vs {_num['bear']:.6f}) — a lower tax rate leaves more after-tax "
+   f"operating income at every forecast date")
 # the expected-value row must be the probability-weighted combination, recomputed here
 _want = 0.6 * _num["base"] + 0.4 * _num["bear"]
 ok(abs(_num["expected_value"] - _want) < 1e-9,

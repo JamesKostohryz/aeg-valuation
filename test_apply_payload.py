@@ -132,28 +132,39 @@ _F = openpyxl.load_workbook(W1)["Forecast"]
 ok(_F.cell(AP.DRIVER_ROWS["tax_rate"], AP.COL_P1 + 4).value == "=$F$17",
    "year 5 of a driver written for N=4 keeps its anchor-hold formula")
 
-print("== cfg_N and the payout seed: the two first-order judgments ==")
+print("== cfg_N and the canonical closure: the first-order judgments ==")
+# CONTRACT CHANGE 2026-08-10: the operating closure is canonical. cfg_mode is forced to
+# Enterprise regardless of what the cockpit sends, and the payout seed is REJECTED because
+# it is inert there -- distributions are implied. See apply_payload.CANONICAL_MODE.
 W2 = os.path.join(WORK, "policy.xlsx")
 wb = openpyxl.load_workbook(ENG)
 AP.apply_payload(wb, {"ticker": "AAPL", "mode": "Equity", "N": 9,
-                      "singles": {"payout": 0.44}}, INFL)
+                      "singles": {"target_flev": 0.55}}, INFL)
 wb.save(W2)
 _wb2 = openpyxl.load_workbook(W2)
 ok(_wb2["Inputs"]["B26"].value == 9, "payload N lands on cfg_N (Inputs B26)")
-ok(_wb2["Inputs"]["B39"].value == 0.44, "payload payout lands on in_payout_seed (Inputs B39)")
-ok(_wb2["Inputs"]["B37"].value == "Equity", "payload mode lands on cfg_mode (Inputs B37)")
+ok(_wb2["Inputs"]["B37"].value == "Enterprise",
+   "a payload asking for Equity is forced to the canonical operating closure")
+_f51 = _wb2["Forecast"].cell(AP.SINGLE_ROWS["target_flev"], AP.COL_P1).value
+ok(_f51 == 0.55, "payload target_flev lands on the PERIOD leverage cell, not the anchor")
+expect_error(lambda: AP.apply_payload(openpyxl.load_workbook(ENG),
+                                      {"ticker": "AAPL", "mode": "Enterprise", "N": 4,
+                                       "singles": {"payout": 0.44}}, INFL),
+             "cannot be set under the canonical operating closure",
+             "a payout seed is rejected loudly rather than silently ignored")
 # a payload horizon must actually be honoured by the valuation, not just written
 recalc(W2)
 _r2 = AE.read_results(W2, price=315.0)
 ok(CK.tie_check(_r2)[0], f"the engine still ties after a payload ({_r2['max_identity_tie']:.1e})")
 # Change ONE judgment at a time. The combined payload above moves the horizon and the
-# payout together and they push in opposite directions here — longer horizon books more
-# years of below-cost-of-equity reinvestment (down), a higher payout retains less of it
-# (up) — so a combined test could pass or fail for reasons that have nothing to do with
-# whether the payload was honoured.
+# leverage together, so a combined test could pass or fail for reasons that have nothing
+# to do with whether the payload was honoured. The leverage leg is also the regression
+# test for the 2026-08-10 silent-ignore bug: before that fix, Forecast row 25 read the
+# ANCHOR leverage cell in both default branches, so a submitted target_flev was written
+# and never read, and this assertion would fail with the valuation completely unmoved.
 for _label, _pl in (("horizon", {"ticker": "AAPL", "mode": "Equity", "N": 12}),
-                    ("payout", {"ticker": "AAPL", "mode": "Equity", "N": 4,
-                                "singles": {"payout": 0.44}})):
+                    ("leverage", {"ticker": "AAPL", "mode": "Equity", "N": 4,
+                                  "singles": {"target_flev": 2.0}})):
     _w = os.path.join(WORK, f"iso_{_label}.xlsx")
     _wb = openpyxl.load_workbook(ENG)
     AP.apply_payload(_wb, _pl, INFL)

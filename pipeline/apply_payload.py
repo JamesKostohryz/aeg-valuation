@@ -67,6 +67,25 @@ SINGLE_CELLS = {"payout": ("Inputs", "B39")}   # in_payout_seed (equity-mode DPS
 CFG_CELLS = {"N": ("Inputs", "B26"), "mode": ("Inputs", "B37")}
 MODES = ("Equity", "Enterprise")
 
+# The OPERATING closure is canonical (signed off 2026-08-10). Net operating assets and
+# operating income are driven, financing absorbs, distributions are implied. The equity
+# view is PRESENTATION ONLY, selected by cfg_valread (Inputs!B34), and the two readings
+# agree exactly -- measured at 0.000000e+00 on Apple, not merely within tolerance.
+#
+# The equity closure derives net operating assets as a residual of book equity
+# (NOA = CSE x (1 + FLEV)), so any equity transaction moves operating assets: turning
+# share repurchases on collapsed Apple's net operating assets 43% in one forecast year and
+# broke the four-method tie at 1.98e+01 against a 1e-11 tolerance. It is a sound
+# presentation and an unsound forecasting closure.
+CANONICAL_MODE = "Enterprise"
+
+# in_payout_seed (Inputs!B39) appears in exactly one place in the workbook -- the EQUITY
+# branch of Forecast row 29 -- so under the canonical closure it is inert. Accepting it
+# would write a number that changes nothing while reporting itself as applied, which is
+# the silent-ignore failure class this engine has now been bitten by twice (the horizon
+# bug and the leverage bug, both 2026-08-10). Reject it instead, loudly, before any write.
+INERT_UNDER_CANONICAL = ("payout",)
+
 
 class PayloadError(Exception):
     """Malformed payload. Raised before anything is written."""
@@ -161,6 +180,29 @@ def apply_payload(wb, payload, inflation):
     """Write the payload into `wb` (a formulas workbook). Only supplied drivers are
     written; everything else keeps its existing formula. Returns a report dict."""
     ticker, mode, N = validate_payload(payload)
+
+    # --- canonical-closure guards. Both run BEFORE a single cell is written.
+    _singles = payload.get("singles") or {}
+    _inert = sorted(set(_singles) & set(INERT_UNDER_CANONICAL))
+    if _inert:
+        raise PayloadError(
+            f"PAYLOAD REJECTED: {_inert} cannot be set under the canonical operating "
+            f"closure. Distributions are IMPLIED there -- total distribution is net "
+            f"income less the change in book equity, and buyback_rate splits it between "
+            f"repurchase and dividend. A payout seed would be written and then ignored. "
+            f"Express the distribution view through the operating plan (noa_growth, "
+            f"capex_ratio) and the financing structure (target_flev), and use "
+            f"buyback_rate for the repurchase/dividend split. "
+            f"Two-of-three rule: set any two of the operating plan, the distribution "
+            f"policy and the financing structure -- the third is implied, because the "
+            f"balance sheet has to balance.")
+
+    if mode != CANONICAL_MODE:
+        print(f"[closure] payload sent mode={mode!r}; forcing canonical "
+              f"{CANONICAL_MODE!r}. The equity view is a presentation choice "
+              f"(cfg_valread), not a forecast closure, and both readings agree exactly.")
+        mode = CANONICAL_MODE
+
     if len(inflation) < N:
         raise PayloadError(f"inflation series has {len(inflation)} years, need >= {N}")
     if FORECAST_SHEET not in wb.sheetnames:

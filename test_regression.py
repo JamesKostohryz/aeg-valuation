@@ -66,6 +66,11 @@ def main():
     # E2 convergence period: faithfulness (on-trend reproduces the engine to the penny) +
     # correction (peak catches down, trough catches up) + the reconciliation guard.
     run_unit("test_convergence.py")
+    # Unfunded-distribution guard (2026-08-11). Under the canonical operating closure the
+    # distribution is a residual, and a residual can come out negative — an implied equity
+    # issuance nobody forecast. Thirteen checks that the guard discriminates rather than
+    # merely fires, driving the real engine for each case.
+    run_unit("test_funding_check.py")
     # The standing WIRING check. test_convergence.py passed here on every run for weeks while
     # convergence.py was imported by nothing except itself, so the feature reached no valuation
     # at all and no check could see it. This fails when any module in pipeline/ has no importer

@@ -443,6 +443,24 @@ def main():
         import apply_payload as AP
         try:
             payload = AP.load_payload(args.payload)
+            # FIX 2026-08-10: the cockpit's "Run valuation" button always sends a payload,
+            # even when no real forecast has been loaded -- it reads N from Forecast!C7
+            # unconditionally, which is not necessarily this company's reviewed horizon.
+            # An empty-drivers payload means "value at anchor, no forecast" -- there is no
+            # forecast whose length N is describing, so N here can only legitimately be
+            # this company's own reviewed cfg_N. Found by the PEP guest forecaster
+            # (2026-08-10): a plain "Run valuation" click had capitalized 30 years of
+            # abnormal growth against a reviewed, authorized horizon of 12, because
+            # Forecast!C7 held 30 and nothing checked it against the config. A payload
+            # that DOES carry real drivers is unaffected -- N there genuinely describes
+            # the forecast being submitted and is left exactly as sent.
+            if not (payload.get("drivers") or {}):
+                _sent_n = payload.get("N")
+                if _sent_n != cfg["forecast_horizon_N"]:
+                    print(f"[horizon] empty-drivers payload sent N={_sent_n!r}; overriding "
+                          f"to this company's reviewed cfg_N={cfg['forecast_horizon_N']} "
+                          f"(no forecast is being submitted, so N cannot mean anything else)")
+                payload["N"] = cfg["forecast_horizon_N"]
             vals = openpyxl.load_workbook(out_xlsx, data_only=True)
             infl = AP.engine_inflation(vals, int(payload.get("N") or 0) or 1)
             wbp = openpyxl.load_workbook(out_xlsx, data_only=False)
@@ -648,6 +666,60 @@ def main():
     print("[convergence] NOTE: this increment is the equity (EPS) leg only and is OUTSIDE the "
           "four-method tie; the tie still gates everything through cfg_N.")
 
+    # --- UNFUNDED DISTRIBUTION GATE (James, 2026-08-11).
+    #
+    #     Under the canonical operating closure distributions are IMPLIED -- Forecast row 29 is a
+    #     residual. A residual can come out negative, and a negative implied dividend means the
+    #     plan is asserting that the company issues equity in order to fund a buyback it cannot
+    #     afford, while simultaneously retiring shares. Nobody would sign that forecast.
+    #
+    #     Nothing else on this system can see it. On the golden Apple fixture under the default
+    #     Consensus overlay the implied dividend is negative in every forecast year while the
+    #     four-method tie reads 8.4e-16, the audit reads PASS and the convergence guard reads
+    #     PASS. Same failure class as the horizon bug and the leverage bug: silently wrong with
+    #     every gate green. So it refuses, and only a person clears it.
+    import funding_check as FCK
+    _fund = FCK.funding_report(out_xlsx)
+    funding = {"verdict": _fund["verdict"], "reason": _fund["reason"], "years": _fund["years"],
+               "reviewed": bool(cfg.get("funding_reviewed")),
+               "review_note": cfg.get("funding_note") or ""}
+    results["funding"] = funding
+    print(FCK.format_report(_fund))
+    if funding["reviewed"] and _fund["verdict"] == "REVIEW":
+        print("[funding] REVIEWED by analyst -- gate cleared by explicit assertion in the config")
+
+    if _fund["verdict"] == "REVIEW" and not funding["reviewed"]:
+        _w = _fund["worst"]
+        _fail(
+            "UNFUNDED DISTRIBUTION -- no valuation produced for " + tk + ".\n"
+            f"  {_fund['reason']}.\n"
+            f"  Worst year {_w['year']}: the operating plan and financing structure permit "
+            f"distributions of {_w['distribution_capacity']:.6f} (net income less the increase in "
+            f"common equity), but the plan calls for repurchases of {_w['repurchases']:.6f} -- a "
+            f"shortfall of {_w['funding_shortfall']:+.6f}, leaving an implied dividend of "
+            f"{_w['implied_dps']:+.4f} per share.\n"
+            "  A negative implied dividend is a capital RAISE. The forecast is buying back stock "
+            "with money it has not got.\n"
+            "  This is the two-of-three rule biting: you have set the operating plan AND the "
+            "distribution policy AND, through the target leverage, the financing structure. The "
+            "balance sheet has to balance, so something had to give, and it was the dividend.\n"
+            "  There are three things that cause it, and the review is deciding which:\n"
+            "    1. The buyback rate is too high for the operating plan. This is the default "
+            "Consensus overlay's case -- three percent of shares against 2.5 percent asset growth "
+            "is not fundable for a company at this price-to-book. Remedy: set a buyback rate the "
+            "plan can pay for.\n"
+            "    2. Net-operating-asset growth is too low, so the business throws off more cash "
+            "than the plan reinvests and the buyback overshoots what is left. Remedy: revisit the "
+            "operating plan.\n"
+            "    3. The target leverage is doing the work. Remedy: let financing absorb, which is "
+            "what the canonical closure is for.\n"
+            "  Once you have looked and either fixed it or accepted it, add to "
+            f"companies/{tk}.yaml:\n"
+            "      funding:\n"
+            "        reviewed: true\n"
+            "        note: <which of the three it was, and why the capital raise is intended>\n"
+            "  Nothing else clears this gate. That is intended.")
+
     # --- CONVERGENCE REVIEW GATE (James, 2026-08-09).
     #
     #     A REVIEW verdict means the explicit forecast ends at an earnings level far from its own
@@ -730,6 +802,11 @@ def main():
         ("actual_eps_at_N", convergence["actual_eps_N"]),
         ("normalized_eps_at_N", convergence["normalized_eps_N"]),
         ("convergence_guard", convergence["guard"]),
+        ("funding_guard", funding["verdict"]),
+        ("funding_reviewed", funding["reviewed"]),
+        ("funding_review_note", (funding["review_note"] or "").replace(",", ";")),
+        ("funding_min_implied_dps", (min((y["implied_dps"] for y in funding["years"]),
+                                         default=None))),
         ("convergence_reviewed", convergence["reviewed"]),
         ("convergence_review_note", (convergence["review_note"] or "").replace(",", ";")),
         ("convergence_in_four_method_tie", convergence["in_four_method_tie"]),

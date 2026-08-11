@@ -332,28 +332,73 @@ def write_periods_csv(report, ticker, out_dir):
     return f"{ticker}_periods.csv"
 
 
+def _normal_line_growth(eps, N, X=4):
+    """Growth rate of the NORMAL LINE, derived per company from the engine's own path.
+
+    normalization_engine.py defines the normal line as growing at g = b_norm * rho — retention
+    times normalized return on retained earnings — and describes rho = cost of equity as only
+    "the value-neutral default". Read off the engine's own series, with retention taken at t-1
+    and the return earned on it at t, that product reduces by identity to the realized growth
+    of the line:
+
+        b_{t-1} * RORE_t = (retained_{t-1} / E_{t-1}) * ((E_t - E_{t-1}) / retained_{t-1})
+                         = (E_t - E_{t-1}) / E_{t-1}
+
+    so the growth is read directly. That also keeps it finite as retention approaches zero, and
+    under the canonical operating closure retention IS a residual that approaches zero: for the
+    golden AAPL fixture it is 1.9%, where the value-neutral default put the normal line at 0.134%
+    a year against earnings that in fact track 5.26%. That mismatch is what made the normalizer
+    report an identical -7.0% "above normal" at years 4, 5, 6, 7 and 8 of a series with no cycle
+    in it — a constant offset, not a cyclical reading, which both fabricated a correction where
+    none was due and mis-sized the ones that were.
+
+    The rate is NORMALIZED the way the engine normalizes retention: the median across the
+    trailing window, so a single cyclical year perturbs one observation and is rejected.
+
+    Year N is deliberately excluded from its own trend estimate. The entire purpose of the
+    normalized level is to judge whether year N is representative, so year N must not help
+    define the line against which it is judged.
+
+    Nothing here is a constant: the rate is re-derived per company, per horizon, from that
+    company's own forecast path. There is no fallback rate — if the window yields no usable
+    observation the line is flat, which asserts nothing rather than inventing a drift.
+    """
+    import statistics
+    rates = []
+    for t in range(max(1, N - X + 1), N):
+        a, b = eps[t - 1], eps[t]
+        if isinstance(a, (int, float)) and isinstance(b, (int, float)) and a > 0:
+            rates.append(b / a - 1.0)
+    return statistics.median(rates) if rates else 0.0
+
+
 def normalized_eps_at_N(engine_path, X=4, g=None):
     """Model-default normalized EPS at the forecast end (year cfg_N): take EPS from each of the
-    last X years, grow each forward to cfg_N at the NORMAL rate g = rho_LR * b, and take the
-    median (mirrors normalization_engine.normalize_series forward mode, X=4). Growth is normal
-    per James (2026-08-06): "walk eps of last 4 years forward and take median... normal growth
-    from there." This is what feeds converge_valuation automatically."""
+    last X years, walk each forward to cfg_N along the normal line, and take the median. This is
+    what feeds converge_valuation automatically, and it is the ONLY thing that decides how much
+    value the convergence period books — the glide's AEG returns to zero for any level handed to
+    it, including a wrong one, so nothing downstream can catch an error here.
+
+    `g` may be supplied to override the derived normal-line growth; when it is None the rate is
+    derived per company by _normal_line_growth.
+
+    NO INFLATION RE-INDEX. An earlier version multiplied each walked anchor by the engine's
+    cumulative inflation index, on the reading that Valuation row 7 carried each year in its own
+    dollars. It does not — it is constant-dollar, which is checkable directly: the NOMINAL EPS
+    row divided by the real EPS row equals that same index exactly. The comparator, actual EPS at
+    year N, is read off the same constant-dollar row and was never re-indexed, so the uplift
+    applied to the anchors alone was a double count.
+    """
     import openpyxl
     import statistics
     wb = openpyxl.load_workbook(engine_path, data_only=True)
     V = wb["Valuation"]
     eps = _series(V, 7)
-    ret = _series(V, 9)
     N = int(_nm(wb, "cfg_N"))
-    rho_LR = V["B20"].value          # long-run REAL cost of equity
-    pi_at, idx = _infl(V)
     _guard_terminal_eps(eps, N)
-    b = ret[N] / eps[N]
     if g is None:
-        g = rho_LR * b               # REAL normal growth from reinvestment
-    #  grow each anchor forward in real terms, then re-inflate from (N-a) dollars to
-    #  N dollars with the engine's own cumulative index. Exact, no approximation.
-    anchors = [eps[N - a] * (1 + g) ** a * (idx(N) / idx(N - a))
+        g = _normal_line_growth(eps, N, X=X)
+    anchors = [eps[N - a] * (1 + g) ** a
                for a in range(1, X + 1)
                if N - a >= 0 and isinstance(eps[N - a], (int, float))]
     return statistics.median(anchors) if anchors else eps[N]

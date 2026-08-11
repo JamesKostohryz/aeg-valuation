@@ -109,6 +109,49 @@ check(_norm(_peak, 8) < _peak[8] * 0.80, f"a genuine peak normalizes DOWN ({_nor
 _trough = list(_smooth); _trough[8] *= 0.65
 check(_norm(_trough, 8) > _trough[8] * 1.20, f"a genuine trough normalizes UP ({_norm(_trough,8):.3f} vs {_trough[8]:.3f})")
 
+
+# ---------------------------------------------------------------- the shape that hides
+# Added 2026-08-11. The peak/trough checks above use a ONE-YEAR spike at the terminal year, and
+# every lookback window catches that shape. A real cyclical peak BUILDS over several years, and
+# when it builds across the estimator's own window the growth estimate absorbs it: on a path whose
+# true trend is 5.27%, a peak 25% above trend built over three years makes the short-window
+# estimate read 13.37% and collapses the reported gap from 20.0% to 0.5% -- a PASS on a company
+# whose published value is then about 18% too high.
+#
+# These are CHARACTERIZATION tests. They pin the defect as it currently stands so that it cannot
+# be reintroduced silently and cannot be forgotten. If someone repairs the normalizer so that it
+# sees a multi-year cycle, THE FIRST TWO CHECKS BELOW WILL FAIL. That is intended: the failure is
+# the signal to come here, delete them, and assert detection instead.
+print("== the multi-year cycle: known blind spot, and the diagnostic that makes it visible ==")
+
+def _humped(width, factor, n=10, trend=0.0527, base=10.0):
+    ser = [base * (1 + trend) ** t for t in range(n + 1)]
+    for i, k in enumerate(range(n - width + 1, n + 1)):
+        ser[k] *= 1 + (factor - 1) * ((i + 1) / width)
+    return ser
+
+_clean = [10 * (1.0527) ** t for t in range(11)]
+check(abs(C._normal_line_growth(_clean, 10, X=4) - 0.0527) < 1e-12,
+      "clean path -> short window reads the true trend")
+check(C.trend_diagnostics(_clean, 10)["flag"] == "OK",
+      "clean path -> diagnostic quiet")
+
+_h3 = _humped(3, 1.25)
+_g3 = C._normal_line_growth(_h3, 10, X=4)
+check(_g3 > 0.12,
+      f"KNOWN DEFECT: a 3-year build inflates the short-window trend to {_g3:.2%} (true 5.27%)")
+check(abs(_h3[10] - _norm(_h3, 10)) / _h3[10] < C.GAP_FRAC_WARN,
+      "KNOWN DEFECT: the gap guard therefore PASSES a 25% peak built over 3 years")
+
+for _w in (3, 4, 5):
+    for _f, _dir in ((1.25, "peak"), (0.80, "trough")):
+        _d = C.trend_diagnostics(_humped(_w, _f), 10)
+        check(_d["flag"] == "SUSPECT",
+              f"diagnostic flags the {_w}-year {_dir} (spread {_d['spread']:+.2%})")
+
+check(C.trend_diagnostics(_clean, 4, X=4) is None,
+      "too little path to compare -> None, not a fabricated reading")
+
 print("== auto normalized line (model default: last-4 walked along the normal line, median) ==")
 nl = C.normalized_eps_at_N(ENG, X=4)
 ra = C.converge_auto(ENG, K=3)

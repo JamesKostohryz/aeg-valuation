@@ -38,6 +38,20 @@ import os
 GAP_FRAC_WARN = 0.15      # |actual[N] - norm[N]| / actual[N]  above this => analyst stopped far off-trend
 VALUE_FRAC_WARN = 0.10    # |convergence value| / intrinsic     above this => the glide drives material value
 
+# Trend-contamination diagnostic (DISPLAY ONLY -- moves no value, refuses nothing).
+# The normal line's growth is estimated from the last X forecast years, and the level it produces
+# is then judged against year N. A cycle that BUILDS across those same X years is absorbed into
+# the growth estimate, the peak is declared normal, and the gap guard above sees nothing. Measured
+# 2026-08-11: on a synthetic path with a true trend of 5.27% and a peak 25% above trend built over
+# three years, the short-window estimate reads 13.37% and the reported gap collapses from 20.0% to
+# 0.5% -- a PASS on a company whose published value is then ~18% too high. A one-year spike is
+# caught at every window; it is the multi-year shape that hides, and the multi-year shape is what a
+# real cycle looks like.
+# This diagnostic does not fix that. It makes it VISIBLE: the short-window rate is published beside
+# a whole-path rate, and a wide spread means the estimator has probably eaten a cycle. It is a
+# reading aid for a human, not a gate, and it must not be turned into one without the study.
+TREND_SPREAD_FLAG = 0.02  # short-window minus whole-path growth, above this => estimate suspect
+
 
 def _nm(wb, name):
     dn = wb.defined_names.get(name)
@@ -192,7 +206,12 @@ def write_convergence_csv(result, ticker, out_dir):
                     f"gap_ps={result['converge_gap_ps']:.4f}",
                     f"converge_value_ps={result['converge_value_ps']:.4f}",
                     f"eng_intrinsic={result['eng_intrinsic']:.4f}",
-                    f"corrected_intrinsic={result['corrected_intrinsic']:.4f}"])
+                    f"corrected_intrinsic={result['corrected_intrinsic']:.4f}"]
+                   + ([] if not result.get("trend_diag") else [
+                       f"trend_g_short={result['trend_diag']['g_short']:.6f}",
+                       f"trend_g_full={result['trend_diag']['g_full']:.6f}",
+                       f"trend_spread={result['trend_diag']['spread']:+.6f}",
+                       f"trend_estimate={result['trend_diag']['flag']}"]))
         w.writerow(["t", "phase", "eps", "normal_eps", "aeg_eps", "contrib_eps", "coe"])
         for row in result["schedule"]:
             w.writerow([row["t"], row["phase"], round(row["eps"], 6), round(row["normal_eps"], 6),
@@ -372,6 +391,30 @@ def _normal_line_growth(eps, N, X=4):
     return statistics.median(rates) if rates else 0.0
 
 
+def trend_diagnostics(eps, N, X=4):
+    """Compare the normal line's growth as ESTIMATED (short window, X years) against the same
+    statistic taken over the whole forecast path. Both use _normal_line_growth, so this compares
+    like with like and the only difference is how far back the window reaches.
+
+    A large positive spread means the short window has absorbed a rising cycle and will report the
+    terminal year as normal when it is not. A large negative spread is the mirror case on a trough.
+    Small spread means the two readings agree and the normalized level can be taken at face value.
+
+    LIMITATION, stated plainly: the whole-path rate is not a clean control. A cycle that occupies
+    most of the forecast contaminates it too, and then both readings are wrong together and the
+    spread is small. This flags the common case, not every case.
+
+    Returns None when there is not enough path to compare (X >= N), rather than inventing a reading.
+    """
+    if not isinstance(N, int) or N <= X:
+        return None
+    g_short = _normal_line_growth(eps, N, X=X)
+    g_full = _normal_line_growth(eps, N, X=N)
+    spread = g_short - g_full
+    return {"g_short": g_short, "g_full": g_full, "spread": spread, "window_X": X,
+            "flag": "SUSPECT" if abs(spread) > TREND_SPREAD_FLAG else "OK"}
+
+
 def normalized_eps_at_N(engine_path, X=4, g=None):
     """Model-default normalized EPS at the forecast end (year cfg_N): take EPS from each of the
     last X years, walk each forward to cfg_N along the normal line, and take the median. This is
@@ -383,11 +426,12 @@ def normalized_eps_at_N(engine_path, X=4, g=None):
     derived per company by _normal_line_growth.
 
     NO INFLATION RE-INDEX. An earlier version multiplied each walked anchor by the engine's
-    cumulative inflation index, on the reading that Valuation row 7 carried each year in its own
-    dollars. It does not — it is constant-dollar, which is checkable directly: the NOMINAL EPS
-    row divided by the real EPS row equals that same index exactly. The comparator, actual EPS at
-    year N, is read off the same constant-dollar row and was never re-indexed, so the uplift
-    applied to the anchors alone was a double count.
+    cumulative inflation index. Removing it was right, but the reason recorded here was wrong and
+    is corrected 2026-08-11: Valuation row 7 is NOMINAL, not constant-dollar. Dividing row 7 by the
+    engine's cumulative inflation index reproduces the real EPS row exactly, verified on HD, PG and
+    T. The re-index is nonetheless a double count, because the growth rate this function walks the
+    anchors at is measured on that same nominal row and is therefore already nominal, and the
+    comparator -- actual EPS at year N -- is read off that row too. Frame in, frame out.
     """
     import openpyxl
     import statistics
@@ -407,9 +451,12 @@ def normalized_eps_at_N(engine_path, X=4, g=None):
 def converge_auto(engine_path, K=3, X=4):
     """The automatic pipeline path: derive the normalized level from the engine (model default)
     and apply convergence. Returns the same dict as converge_valuation plus the normalized level."""
+    import openpyxl
     nl = normalized_eps_at_N(engine_path, X=X)
     out = converge_valuation(engine_path, K=K, norm_eps_N=nl)
     out["norm_eps_N"] = nl
+    _wb = openpyxl.load_workbook(engine_path, data_only=True)
+    out["trend_diag"] = trend_diagnostics(_series(_wb["Valuation"], 7), out["N"], X=X)
     return out
 
 

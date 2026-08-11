@@ -1,206 +1,182 @@
 #!/usr/bin/env python3
-"""test_convergence.py — E2 convergence self-tests. Builds the golden AAPL engine (like the
-regression Stage 2) so it runs standalone in CI, then checks faithfulness + correction.
+"""test_convergence.py — the truncation gates.
 
-REWRITTEN 2026-08-11. Three checks here previously hard-coded that Apple is a below-normal
-grower and that the correction therefore lifts value. That was never a property of the
-convergence period; it was a property of the value-neutral rate the normalizer used to walk
-its anchors, which under the canonical operating closure collapses to 0.134% a year against
-earnings that track 5.26%. The checks are replaced by the properties they were reaching for —
-direction follows the gap, and the booked value reconciles — plus the tests that would have
-caught the defect: the normalizer must be SILENT on a series with no cycle in it, and must
-still fire on a genuine one.
+REWRITTEN 2026-08-12, on James's ruling. The convergence period no longer adjusts value; see the
+header of pipeline/convergence.py and docs/AEG-CONVERGENCE-RETIRED-2026-08-12.md. What is tested
+here is the contract that replaced it:
+
+  1. the published value IS the engine value -- no increment, ever, and nothing outside the tie
+  2. gate A, the terminal condition: abnormal earnings growth must be spent at the stop year
+  3. gate B, the neutral level: EPS at the stop year must sit at a normalized level
+  4. the normalizer itself, which now only feeds gate B and never moves a number
+
+The old suite asserted that a peak "catches down" and a trough "catches up" in VALUE. Those
+assertions described a tool that has been retired and they are gone. What they were reaching for
+-- that a forecast stopped off-trend must not publish quietly -- is now asserted as a refusal.
 """
 import os, sys, statistics, tempfile
-ROOT = os.path.dirname(os.path.abspath(__file__)); PIPE = os.path.join(ROOT, "pipeline")
-for p in (ROOT, PIPE):
-    if p not in sys.path: sys.path.insert(0, p)
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "pipeline"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import convergence as C
+
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+
 
 def _build_aapl():
     import aeg_engine as AE
     from recalc_lo import recalc
     G = os.path.join(ROOT, "tests", "golden", "AAPL"); T = os.path.join(ROOT, "MODEL_TEMPLATE.xlsx")
     files = {"is_csv": f"{G}/REAL_IS.csv", "bs_csv": f"{G}/REAL_BS.csv", "cf_csv": f"{G}/REAL_CF.csv",
-             "prices": f"{G}/REAL_prices.csv", "dividends": f"{G}/REAL_div.csv", "splits": f"{G}/REAL_splits.csv"}
-    cfg = {"company": "Apple Inc.", "ticker": "AAPL", "price": 315.0, "files": files, "fy_end_month": 9,
-    "forecast_horizon_N": 4,   # P2: cfg_N is required and has no default; 4 is the
-                              # horizon these fixtures have always run at.
+             "prices": f"{G}/REAL_prices.csv", "dividends": f"{G}/REAL_div.csv",
+             "splits": f"{G}/REAL_splits.csv"}
+    cfg = {"company": "Apple Inc.", "ticker": "AAPL", "price": 315.0, "files": files,
+           "fy_end_month": 9, "forecast_horizon_N": 4,
            "judgments": {"minority_include": False, "finlease": 0.0, "oi_adj_override": None,
                          "rd_capitalize": True, "rd_life": 5.0, "dps_override": None},
            "cost_of_debt": {"single_ytw": 0.05}}
     out = os.path.join(tempfile.mkdtemp(prefix="convtest_"), "_convtest_aapl.xlsx")
     AE.build_model(cfg, T, out); recalc(out); return out
 
+
 ENG = os.environ.get("AAPL_ENG") or _build_aapl()
 import openpyxl
 _WB = openpyxl.load_workbook(ENG, data_only=True)
-V = _WB["Valuation"]
-fails = 0
+_V = _WB["Valuation"]
+
+_fails = []
 def check(c, m):
-    global fails; print(f"  {'PASS' if c else 'FAIL'}  {m}"); fails += (0 if c else 1)
+    print(("  PASS  " if c else "  FAIL  ") + m)
+    if not c:
+        _fails.append(m)
 
-r0 = C.converge_valuation(ENG, K=3, norm_eps_N=None); eng = r0["eng_intrinsic"]; N = r0["N"]
-epsN = V.cell(7, 2 + N).value
-print("== faithfulness ==")
-check(abs(r0["corrected_intrinsic"] - eng) < 1e-9, f"convergence OFF reproduces engine ({eng:.4f})")
-r1 = C.converge_valuation(ENG, K=3, norm_eps_N=epsN)
-check(abs(r1["corrected_intrinsic"] - eng) < 1e-9, f"on-trend reproduces engine exactly (diff {abs(r1['corrected_intrinsic']-eng):.1e})")
-check(all(abs(s["aeg_eps"]) < 1e-9 for s in r1["schedule"]), "on-trend convergence AEG identically 0")
 
-print("== correction ==")
-rp = C.converge_valuation(ENG, K=3, norm_eps_N=epsN*0.80)
-check(rp["corrected_intrinsic"] < eng and rp["converge_value_ps"] < 0, f"peak catches down: {rp['corrected_intrinsic']:.2f} < {eng:.2f}")
-check(rp["verdict"] == "REVIEW", "large gap flags REVIEW")
-rt = C.converge_valuation(ENG, K=3, norm_eps_N=epsN*1.25)
-check(rt["corrected_intrinsic"] > eng and rt["converge_value_ps"] > 0, f"trough catches up: {rt['corrected_intrinsic']:.2f} > {eng:.2f}")
+# ---------------------------------------------------------------- 1. no adjustment, ever
+print("== the published value is the engine value ==")
+r = C.converge_auto(ENG, K=3)
+N = r["N"]
+check(C.CONVERGENCE_ADJUSTS_VALUE is False, "the convergence increment is retired")
+check(r["converge_value_ps"] == 0.0, f"increment is exactly zero ({r['converge_value_ps']!r})")
+check(r["corrected_intrinsic"] == r["eng_intrinsic"],
+      f"published equals engine ({r['eng_intrinsic']:.4f})")
+check(r["schedule"] == [], "no convergence schedule is produced")
+for _K in (0, 1, 3, 8):
+    _x = C.converge_auto(ENG, K=_K)
+    check(_x["corrected_intrinsic"] == _x["eng_intrinsic"], f"K={_K} moves no value")
 
-print("== HARD RULE: zero AEG in the continuing period ==")
-# James, 2026-08-11: "There is zero AEG in the continuing period. That is a hard rule."
-# The glide must have fully arrived on the normalized line by the last convergence year, so
-# that continuing at the normal rate from there books nothing further. Checked for a gap in
-# each direction, not just the fixture's own.
-_rho = C._series(V, 5); _pi, _ = C._infl(V); _b = C._series(V, 9)[N] / epsN
-for _tag, _r in (("catching down", rp), ("catching up", rt)):
-    _last = _r["schedule"][-1]; _t = _last["t"] + 1
-    _rt = _rho[_t] if _t < len(_rho) and isinstance(_rho[_t], (int, float)) else V["B20"].value
-    _p = _pi(_t)
-    _grown = _last["eps"] * ((1 + _p) + (_rt - _p) * _b)
-    _normal = (1 + _p) * _last["eps"] + (_rt - _p) * _b * _last["eps"]
-    check(abs(_grown - _normal) < 1e-12, f"AEG at the first continuing-period year, {_tag}: {_grown-_normal:.2e}")
-    check(abs(_last["eps"] / _r["schedule"][0]["eps"]) > 0, f"glide completes its transition ({_tag})")
+print("== the whole published number is inside the four-method tie ==")
+_pr = C.period_report(ENG, r)
+_blocks = {b["period"]: b for b in _pr["blocks"]}
+check(_blocks["convergence"]["n_years"] == 0, "convergence block is empty")
+check(abs(_blocks["combined"]["pv_contribution_ps"] -
+          _blocks["explicit"]["pv_contribution_ps"]) < 1e-12,
+      "combined PV equals explicit PV -- nothing sits outside the explicit period")
+for k, v in _pr["identity_checks"].items():
+    if "resid" in k:
+        check(v < C.PERIOD_TIE_TOL, f"{k} = {v:.1e}")
 
-print("== the normal line is derived, not assumed ==")
-# The rate that walks the anchors is re-derived per company from that company's own path.
-# By identity b_{t-1} * RORE_t is the realized growth of the line, normalized by median across
-# the trailing window. Year N is excluded from its own trend estimate.
-g_auto = C._normal_line_growth(C._series(V, 7), N)
-check(isinstance(g_auto, float), f"normal-line growth derived from the engine path: {g_auto:+.4%}")
-_flat = [10.0] * 9
-check(abs(C._normal_line_growth(_flat, 8)) < 1e-15, "flat series -> flat normal line (0.00%)")
-_geo = [10.0 * 1.07 ** i for i in range(9)]
-check(abs(C._normal_line_growth(_geo, 8) - 0.07) < 1e-12, "series on a 7% line -> 7% normal line")
-_spike = [10.0 * 1.07 ** i for i in range(9)]; _spike[8] *= 1.60
-check(abs(C._normal_line_growth(_spike, 8) - 0.07) < 1e-12,
-      "a spike AT year N does not contaminate its own trend estimate (year N excluded)")
-_spike2 = [10.0 * 1.07 ** i for i in range(9)]; _spike2[6] *= 1.60
-check(abs(C._normal_line_growth(_spike2, 8) - 0.07) < 0.02,
-      "a spike inside the window is rejected by the median")
-check(C._normal_line_growth([0.0, 0.0, 0.0], 2) == 0.0, "no usable observation -> flat, never a fabricated drift")
 
-print("== the normalizer is silent when there is no cycle, and fires when there is ==")
-# The defect this replaces: the normalizer reported an identical -7.0% "above normal" at every
-# year of a series with no cycle in it, so it corrected companies that needed no correcting and
-# mis-sized the ones that did. A normalization of a series with no cycle must return that
-# series. Synthetic, so it tests the property rather than the fixture.
+# ---------------------------------------------------------------- 2. gate A, terminal condition
+print("== gate A: abnormal earnings growth must be spent at the stop year ==")
+
+class _Fake:
+    """Minimal stand-in for the Valuation sheet: rows 23 (AEG) and 24 (PV contribution)."""
+    def __init__(self, aeg, con):
+        self._r = {23: [None] + list(aeg), 24: [None] + list(con)}
+        self.max_column = len(aeg) + 1
+    def cell(self, r, c):
+        class _C:
+            pass
+        o = _C(); o.value = self._r.get(r, [])[c - 1] if c - 1 < len(self._r.get(r, [])) else None
+        return o
+
+def _term(aeg, con, N, value=100.0):
+    return C.terminal_aeg_check(_Fake(aeg, con), N, value)
+
+_rising = _term([1.0, 1.1, 1.2, 1.4], [1.0, 1.1, 1.2, 1.4], 3)
+check(_rising["verdict"] == "REVIEW", f"a RISING stream refuses (factor {_rising['decay']:.3f})")
+check(_rising["tail_frac"] is None, "a rising stream has no convergent tail to price")
+check("still GROWING" in _rising["reason"], "the refusal says why")
+
+_flat = _term([1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0], 3)
+check(_flat["verdict"] == "REVIEW", "a FLAT stream refuses -- it never becomes spent")
+
+_fast = _term([8.0, 4.0, 2.0, 0.02], [8.0, 4.0, 2.0, 0.02], 3)
+check(_fast["verdict"] == "PASS",
+      f"a small, fast-decaying residual passes (tail {_fast['tail_frac']:.3%} of value)")
+check(_fast["decay"] < 1.0, "and it is recorded as decaying")
+
+_slow = _term([10.0, 9.5, 9.0, 8.6], [10.0, 9.5, 9.0, 8.6], 3)
+check(_slow["verdict"] == "REVIEW",
+      f"a SLOWLY decaying stream refuses on the tail ({_slow['tail_frac']:.0%} of value)")
+
+# the threshold is on the VALUE discarded, not on the level of AEG: same decay, smaller company
+_big = _term([8.0, 4.0, 2.0, 0.02], [8.0, 4.0, 2.0, 0.02], 3, value=0.005)
+check(_big["verdict"] == "REVIEW",
+      f"the SAME residual refuses against a smaller value ({_big['tail_frac']:.1%}) -- the gate is "
+      "on value discarded, not on the level of AEG")
+
+check(C.TAIL_FRAC_WARN == 0.01, "discarded-tail tolerance is one percent of value")
+
+
+# ---------------------------------------------------------------- 3. gate B, neutral level
+print("== gate B: EPS at the stop year must be at a normalized level ==")
+_epsN = _V.cell(7, 2 + N).value
+_on = C.converge_valuation(ENG, K=3, norm_eps_N=_epsN)
+check(abs(_on["converge_gap_ps"]) < 1e-9, "on-trend stop -> zero gap")
+_off = C.converge_valuation(ENG, K=3, norm_eps_N=_epsN * 0.60)
+check(_off["verdict"] == "REVIEW", "a stop 40% above the normalized level refuses")
+check("NEUTRAL LEVEL" in _off["verdict_reason"], "and names the gate that failed")
+check(_off["corrected_intrinsic"] == _off["eng_intrinsic"],
+      "a refused run still adjusts nothing -- it refuses instead")
+_near = C.converge_valuation(ENG, K=3, norm_eps_N=_epsN * 0.95)
+check("NEUTRAL LEVEL" not in _near["verdict_reason"], "a 5% gap does not trip gate B")
+
+
+# ---------------------------------------------------------------- 4. the normalizer
+print("== the normal line is derived from the company's own path, not assumed ==")
+check(abs(C._normal_line_growth([10 * 1.07 ** t for t in range(9)], 8) - 0.07) < 1e-12,
+      "a series on a 7% line -> a 7% normal line")
+check(abs(C._normal_line_growth([10.0] * 9, 8)) < 1e-15, "a flat series -> a flat normal line")
+check(abs(C._normal_line_growth([None] * 9, 8)) < 1e-15,
+      "no usable observation -> flat, never a fabricated drift")
+
 def _norm(series, t, X=4):
     g = C._normal_line_growth(series, t, X=X)
     return statistics.median([series[t - a] * (1 + g) ** a for a in range(1, X + 1) if t - a >= 0])
-_smooth = [10.0 * 1.053 ** i for i in range(9)]
-check(abs(_norm(_smooth, 8) / _smooth[8] - 1) < 1e-9,
-      f"no cycle -> normalized equals actual ({_norm(_smooth,8):.4f} vs {_smooth[8]:.4f})")
-for _n in (5, 6, 7, 8):
-    if abs(_norm(_smooth, _n) / _smooth[_n] - 1) > 1e-9:
-        check(False, f"no cycle -> zero gap independent of horizon (failed at N={_n})"); break
-else:
-    check(True, "no cycle -> zero gap at every horizon (N=5,6,7,8), so the horizon cannot move it")
-_peak = list(_smooth); _peak[8] *= 1.35
-check(_norm(_peak, 8) < _peak[8] * 0.80, f"a genuine peak normalizes DOWN ({_norm(_peak,8):.3f} vs {_peak[8]:.3f})")
-_trough = list(_smooth); _trough[8] *= 0.65
-check(_norm(_trough, 8) > _trough[8] * 1.20, f"a genuine trough normalizes UP ({_norm(_trough,8):.3f} vs {_trough[8]:.3f})")
+
+_smooth = [10 * 1.06 ** t for t in range(9)]
+check(abs(_norm(_smooth, 8) - _smooth[8]) < 1e-9,
+      "no cycle -> the normalized level IS the actual level, so gate B is silent")
+_spike = list(_smooth); _spike[8] *= 1.35
+check(_norm(_spike, 8) < _spike[8] * 0.80, "a one-year spike at the stop year normalizes DOWN")
+_dip = list(_smooth); _dip[8] *= 0.65
+check(_norm(_dip, 8) > _dip[8] * 1.20, "a one-year dip at the stop year normalizes UP")
+_inside = list(_smooth); _inside[6] *= 1.40
+check(abs(_norm(_inside, 8) - _norm(_smooth, 8)) / _norm(_smooth, 8) < 0.05,
+      "a spike INSIDE the window is rejected by the median")
+
+# By design, and on James's ruling 2026-08-12: a level a company has SUSTAINED for several years
+# is the normal level. The normalizer measures departure from the recent sustained trend, and it
+# is not, and must not become, a judge of the business cycle. Ruling out a cyclical truncation is
+# the forecaster's job and is enforced by gate A, not here.
+_sustained = [10 * 1.05 ** t for t in range(9)]
+for k, w in zip(range(6, 9), (0.35, 0.70, 1.0)):
+    _sustained[k] *= 1 + 0.25 * w
+check(abs(_sustained[8] - _norm(_sustained, 8)) / _sustained[8] < C.GAP_FRAC_WARN,
+      "a level sustained for three years IS normal -- gate B stays silent, by design")
+
+print("== the trend rates are published as information, with no verdict attached ==")
+_d = C.trend_diagnostics([10 * 1.05 ** t for t in range(11)], 10)
+check(set(_d) >= {"g_short", "g_full", "spread"}, "short and whole-path rates are reported")
+check(C.trend_diagnostics([10.0] * 5, 4) is None, "too little path -> None, not a fabricated read")
 
 
-# ---------------------------------------------------------------- the shape that hides
-# Added 2026-08-11. The peak/trough checks above use a ONE-YEAR spike at the terminal year, and
-# every lookback window catches that shape. A real cyclical peak BUILDS over several years, and
-# when it builds across the estimator's own window the growth estimate absorbs it: on a path whose
-# true trend is 5.27%, a peak 25% above trend built over three years makes the short-window
-# estimate read 13.37% and collapses the reported gap from 20.0% to 0.5% -- a PASS on a company
-# whose published value is then about 18% too high.
-#
-# These are CHARACTERIZATION tests. They pin the defect as it currently stands so that it cannot
-# be reintroduced silently and cannot be forgotten. If someone repairs the normalizer so that it
-# sees a multi-year cycle, THE FIRST TWO CHECKS BELOW WILL FAIL. That is intended: the failure is
-# the signal to come here, delete them, and assert detection instead.
-print("== the multi-year cycle: known blind spot, and the diagnostic that makes it visible ==")
-
-def _humped(width, factor, n=10, trend=0.0527, base=10.0):
-    ser = [base * (1 + trend) ** t for t in range(n + 1)]
-    for i, k in enumerate(range(n - width + 1, n + 1)):
-        ser[k] *= 1 + (factor - 1) * ((i + 1) / width)
-    return ser
-
-_clean = [10 * (1.0527) ** t for t in range(11)]
-check(abs(C._normal_line_growth(_clean, 10, X=4) - 0.0527) < 1e-12,
-      "clean path -> short window reads the true trend")
-check(C.trend_diagnostics(_clean, 10)["flag"] == "OK",
-      "clean path -> diagnostic quiet")
-
-_h3 = _humped(3, 1.25)
-_g3 = C._normal_line_growth(_h3, 10, X=4)
-check(_g3 > 0.12,
-      f"KNOWN DEFECT: a 3-year build inflates the short-window trend to {_g3:.2%} (true 5.27%)")
-check(abs(_h3[10] - _norm(_h3, 10)) / _h3[10] < C.GAP_FRAC_WARN,
-      "KNOWN DEFECT: the gap guard therefore PASSES a 25% peak built over 3 years")
-
-for _w in (3, 4, 5):
-    for _f, _dir in ((1.25, "peak"), (0.80, "trough")):
-        _d = C.trend_diagnostics(_humped(_w, _f), 10)
-        check(_d["flag"] == "SUSPECT",
-              f"diagnostic flags the {_w}-year {_dir} (spread {_d['spread']:+.2%})")
-
-check(C.trend_diagnostics(_clean, 4, X=4) is None,
-      "too little path to compare -> None, not a fabricated reading")
-
-print("== auto normalized line (model default: last-4 walked along the normal line, median) ==")
-nl = C.normalized_eps_at_N(ENG, X=4)
-ra = C.converge_auto(ENG, K=3)
-check(abs(ra["norm_eps_N"] - nl) < 1e-9, f"converge_auto uses normalized_eps_at_N ({nl:.4f})")
-# Direction follows the gap, whichever way the gap happens to run for this fixture. gap_ps is
-# actual - normalized, so a positive gap (actual above normal) must remove value.
-_gap = ra["converge_gap_ps"]; _inc = ra["converge_value_ps"]
-check((_gap > 0 and _inc < 0) or (_gap < 0 and _inc > 0) or (abs(_gap) < 1e-12 and abs(_inc) < 1e-9),
-      f"correction moves value in the direction the gap implies (gap {_gap:+.4f} -> {_inc:+.4f})")
-check(abs(ra["corrected_intrinsic"] - (eng + _inc)) < 1e-9,
-      f"corrected = engine + increment ({eng:.4f} {_inc:+.4f} = {ra['corrected_intrinsic']:.4f})")
-_ovr = C.normalized_eps_at_N(ENG, X=4, g=0.0)
-check(_ovr != nl, f"an explicit g overrides the derived rate ({_ovr:.4f} vs {nl:.4f})")
-
-print("== three-period statistics (explicit / convergence / combined) ==")
-# James, 2026-08-09: any figure describing abnormal earnings growth before the continuing
-# period must include the convergence years, so the three blocks have to be produced together
-# and `combined` has to be exactly the sum of the other two.
-rep = C.period_report(ENG, ra)
-blocks = {b["period"]: b for b in rep["blocks"]}
-check(set(blocks) == {"explicit", "convergence", "combined"},
-      f"three period blocks emitted: {sorted(blocks)}")
-check(blocks["explicit"]["n_years"] == N and blocks["convergence"]["n_years"] == 3
-      and blocks["combined"]["n_years"] == N + 3,
-      f"period lengths explicit={blocks['explicit']['n_years']} convergence="
-      f"{blocks['convergence']['n_years']} combined={blocks['combined']['n_years']} (cfg_N={N})")
-_sum = blocks["explicit"]["pv_contribution_ps"] + blocks["convergence"]["pv_contribution_ps"]
-check(abs(_sum - blocks["combined"]["pv_contribution_ps"]) < 1e-9,
-      f"combined PV = explicit + convergence ({blocks['combined']['pv_contribution_ps']:.6f})")
-# the two value identities period_report self-verifies: the explicit block must rebuild the
-# engine's own intrinsic off the no-growth anchor, and the combined block the corrected one.
-_ic = rep["identity_checks"]
-check(_ic and _ic["explicit_identity_residual"] < 1e-6,
-      f"normal value + explicit PV = engine intrinsic (resid {_ic['explicit_identity_residual']:.1e})")
-check(_ic and _ic["combined_identity_residual"] < 1e-6,
-      f"normal value + combined PV = corrected intrinsic (resid {_ic['combined_identity_residual']:.1e})")
-# The arithmetic identity, with no directional claim attached to it: whatever the convergence
-# block is worth, the reported increment must be exactly that and nothing else.
-check(abs(blocks["convergence"]["pv_contribution_ps"] - ra["converge_value_ps"]) < 1e-9,
-      f"convergence block PV equals the reported convergence increment "
-      f"({blocks['convergence']['pv_contribution_ps']:+.6f})")
-
-print("== convergence OFF still produces a well-formed three-period report ==")
-r_off = C.converge_valuation(ENG, K=0, norm_eps_N=None)
-rep0 = C.period_report(ENG, r_off)
-b0 = {b["period"]: b for b in rep0["blocks"]}
-check(b0["convergence"]["n_years"] == 0 and b0["convergence"]["pv_contribution_ps"] == 0.0,
-      "K=0 gives an empty convergence block, not a crash")
-check(abs(b0["combined"]["pv_contribution_ps"] - b0["explicit"]["pv_contribution_ps"]) < 1e-12,
-      "K=0: combined equals explicit")
-
-print(f"\n{'ALL CONVERGENCE TESTS PASSED' if fails==0 else f'{fails} FAILED'}"); sys.exit(1 if fails else 0)
+print()
+if _fails:
+    print(f"{len(_fails)} FAILED")
+    for m in _fails:
+        print("   - " + m)
+    sys.exit(1)
+print("ALL TRUNCATION-GATE TESTS PASSED")

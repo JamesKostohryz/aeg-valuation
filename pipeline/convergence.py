@@ -35,8 +35,37 @@ import os
 # are the reason the escape hatch belongs to the ANALYST and not to whoever is editing this file:
 # a false trip is cleared by a person looking and saying so, never by loosening a threshold here.
 # Do not tune them to make a company pass. Revisit them only with evidence from many names.
-GAP_FRAC_WARN = 0.15      # |actual[N] - norm[N]| / actual[N]  above this => analyst stopped far off-trend
-VALUE_FRAC_WARN = 0.10    # |convergence value| / intrinsic     above this => the glide drives material value
+# ---------------------------------------------------------------------------------------------
+# 2026-08-12, on James's ruling. THE CONVERGENCE INCREMENT NO LONGER MOVES VALUE.
+#
+# What it was: a K-year glide from actual EPS at the forecast end onto a normalized level, whose
+# booked abnormal earnings growth was added to the engine value as the headline number.
+#
+# Why it is gone. The tool was being read as an oracle of the business cycle. It never was one.
+# Deciding whether a forecast stops at a cyclical peak is the FORECASTER'S job, and it is already
+# implied by the rule that defines a legitimate horizon: the explicit forecast runs until there is
+# no projected abnormal earnings growth left. A reversion from a peak back to trend necessarily
+# CREATES abnormal earnings growth, so a forecast truncated at a peak cannot satisfy that rule.
+# The convergence tool was only ever meant to correct a small residual inconsistency in where the
+# forecaster stopped -- and a correction that only matters when it is small is not worth having,
+# while one that is large means the forecast is wrong and belongs back with the forecaster rather
+# than silently patched into a number nobody owns.
+#
+# Deleting it also closes the one hole in the correctness oracle: the increment was the only
+# component of the published value sitting OUTSIDE the four-method tie. The published number is
+# now entirely inside it.
+#
+# The glide arithmetic is preserved in docs/AEG-CONVERGENCE-RETIRED-2026-08-12.md if it is ever
+# needed again. Do not resurrect it here without James.
+CONVERGENCE_ADJUSTS_VALUE = False
+
+# What remains are two GATES on the truncation point. They refuse; they never adjust.
+#   A. the terminal condition -- abnormal earnings growth must be spent at year N
+#   B. the neutral-level condition -- EPS at year N must be at a normalized level
+# Cleared, as ever, only by a human assertion in the company config, never by loosening a number
+# here. Do not tune these to make a company pass.
+GAP_FRAC_WARN = 0.15      # |actual[N] - norm[N]| / actual[N]  above this => stopped off-trend
+TAIL_FRAC_WARN = 0.01     # PV of the discarded AEG stream / value  above this => stopped too early
 
 # Trend-contamination diagnostic (DISPLAY ONLY -- moves no value, refuses nothing).
 # The normal line's growth is estimated from the last X forecast years, and the level it produces
@@ -107,6 +136,46 @@ def _guard_terminal_eps(eps, N):
             "not capitalize this level.")
 
 
+def _gates_only(V, N, K, b, actualN, norm_eps_N, eng_intrinsic):
+    """The post-2026-08-12 behavior: measure the truncation, judge it, adjust nothing.
+
+    Two gates, both refusing rather than correcting:
+      A. terminal condition  -- abnormal earnings growth must be spent at year N
+      B. neutral level       -- EPS at year N must sit at the normalized level
+    A forecast that passes both has been truncated where the framework says it may be truncated,
+    and the engine value publishes unadjusted and wholly inside the four-method tie.
+    """
+    gap_ps = actualN - norm_eps_N
+    gap_frac = abs(gap_ps) / actualN if actualN else 0.0
+    term = terminal_aeg_check(V, N, eng_intrinsic)
+
+    fails = []
+    if term and term["verdict"] == "REVIEW":
+        fails.append("TERMINAL CONDITION -- " + term["reason"])
+    if gap_frac > GAP_FRAC_WARN:
+        fails.append(
+            f"NEUTRAL LEVEL -- EPS at the stop year is {actualN:.4f} against a normalized level of "
+            f"{norm_eps_N:.4f}, a gap of {gap_ps:+.4f} per share ({gap_frac:.0%} of EPS). The "
+            "continuing period must begin from a neutral earnings level. Move the horizon to a "
+            "year that is representative, or fix the forecast drivers.")
+
+    if fails:
+        verdict = "REVIEW"
+        reason = ("the truncation point does not satisfy the rule. " + " | ".join(fails) +
+                  " Both conditions must hold: the explicit forecast does not end until projected "
+                  "abnormal earnings growth is spent AND earnings are at a normalized level.")
+    else:
+        verdict = "PASS"
+        reason = (f"truncation valid: gap {gap_frac:.1%} of EPS" +
+                  (f", discarded AEG tail {term['tail_frac']:.2%} of value" if term and
+                   term.get("tail_frac") is not None else ""))
+
+    return {"N": N, "K": K, "retention": b, "eng_intrinsic": eng_intrinsic,
+            "corrected_intrinsic": eng_intrinsic, "converge_value_ps": 0.0,
+            "converge_gap_ps": gap_ps, "verdict": verdict, "verdict_reason": reason,
+            "terminal": term, "schedule": []}
+
+
 def converge_valuation(engine_path, K=3, norm_eps_N=None, shape="geometric"):
     """Compute the convergence-corrected equity value from a recalc'd engine.
 
@@ -139,6 +208,9 @@ def converge_valuation(engine_path, K=3, norm_eps_N=None, shape="geometric"):
     _guard_terminal_eps(eps, N)
     b = ret[N] / eps[N]
     actualN = eps[N]
+
+    if not CONVERGENCE_ADJUSTS_VALUE:
+        return _gates_only(V, N, K, b, actualN, norm_eps_N, eng_intrinsic)
 
     def rho_at(t):
         return rho[t] if (t < len(rho) and isinstance(rho[t], (int, float))) else rho_LR
@@ -202,16 +274,19 @@ def write_convergence_csv(result, ticker, out_dir):
     fn = os.path.join(out_dir, f"{ticker}_convergence.csv")
     with open(fn, "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["# convergence guard", f"verdict={result['verdict']}",
+        _t = result.get("terminal") or {}
+        w.writerow(["# truncation gates", f"verdict={result['verdict']}",
                     f"gap_ps={result['converge_gap_ps']:.4f}",
-                    f"converge_value_ps={result['converge_value_ps']:.4f}",
-                    f"eng_intrinsic={result['eng_intrinsic']:.4f}",
-                    f"corrected_intrinsic={result['corrected_intrinsic']:.4f}"]
+                    f"aeg_at_N={_t.get('aeg_N', float('nan')):.4f}",
+                    f"aeg_decay={_t.get('decay', float('nan')):.4f}",
+                    ("discarded_tail_frac=DIVERGES" if _t.get("tail_frac") is None else
+                     f"discarded_tail_frac={_t['tail_frac']:.4f}"),
+                    f"value_ps={result['eng_intrinsic']:.4f}",
+                    "convergence_adjustment=RETIRED_2026-08-12"]
                    + ([] if not result.get("trend_diag") else [
                        f"trend_g_short={result['trend_diag']['g_short']:.6f}",
                        f"trend_g_full={result['trend_diag']['g_full']:.6f}",
-                       f"trend_spread={result['trend_diag']['spread']:+.6f}",
-                       f"trend_estimate={result['trend_diag']['flag']}"]))
+                       f"trend_spread={result['trend_diag']['spread']:+.6f}"]))
         w.writerow(["t", "phase", "eps", "normal_eps", "aeg_eps", "contrib_eps", "coe"])
         for row in result["schedule"]:
             w.writerow([row["t"], row["phase"], round(row["eps"], 6), round(row["normal_eps"], 6),
@@ -389,6 +464,46 @@ def _normal_line_growth(eps, N, X=4):
         if isinstance(a, (int, float)) and isinstance(b, (int, float)) and a > 0:
             rates.append(b / a - 1.0)
     return statistics.median(rates) if rates else 0.0
+
+
+def terminal_aeg_check(V, N, intrinsic):
+    """Gate A. Is abnormal earnings growth actually spent at the truncation point?
+
+    The engine forces AEG to zero from year N+1 onward, because that is what the continuing period
+    MEANS -- no further value is created there. That truncation is only legitimate if the forecast
+    had already brought AEG to zero. Forcing a small, declining residual to zero breaks nothing.
+    Forcing a large or a RISING one to zero silently discards value the forecast itself says exists.
+
+    Measured on the engine's own rows: AEG (row 23) and its present-value contribution (row 24).
+    The stream's one-year factor d = AEG[N]/AEG[N-1] says which case we are in. If d >= 1 the
+    stream is still growing at the stop year and the discarded tail does not converge at all --
+    there is no threshold to argue about, the horizon is simply too short. If d < 1 the tail is
+    the geometric continuation, contrib[N] * d/(1-d), and it must be immaterial against the value.
+    """
+    aeg = _series(V, 23)
+    con = _series(V, 24)
+    if N >= len(aeg) or not isinstance(aeg[N], (int, float)) or not isinstance(aeg[N - 1], (int, float)):
+        return None
+    aN, aPrev, cN = float(aeg[N]), float(aeg[N - 1]), float(con[N] or 0.0)
+    d = (aN / aPrev) if aPrev else float("inf")
+    if d >= 1.0:
+        return {"aeg_N": aN, "decay": d, "tail_ps": None, "tail_frac": None, "verdict": "REVIEW",
+                "reason": (f"abnormal earnings growth is still GROWING at the stop year "
+                           f"(AEG {aPrev:.4f} -> {aN:.4f} per share, factor {d:.3f}). The "
+                           "continuing period begins by forcing it to zero, so this truncation "
+                           "discards a stream the forecast says is still building. Extend "
+                           "forecast.horizon_N until it is spent -- up to thirty years is "
+                           "available, and that is what it is for.")}
+    tail = cN * d / (1.0 - d)
+    frac = abs(tail) / abs(intrinsic) if intrinsic else 0.0
+    if frac > TAIL_FRAC_WARN:
+        return {"aeg_N": aN, "decay": d, "tail_ps": tail, "tail_frac": frac, "verdict": "REVIEW",
+                "reason": (f"the abnormal earnings growth discarded at the stop year is worth "
+                           f"{tail:+.2f} per share, {frac:.1%} of value (AEG decaying at a factor "
+                           f"of {d:.3f} a year). The forecast has not run to the point where "
+                           "abnormal growth is spent. Extend forecast.horizon_N.")}
+    return {"aeg_N": aN, "decay": d, "tail_ps": tail, "tail_frac": frac, "verdict": "PASS",
+            "reason": f"AEG spent at the stop year: tail {frac:.2%} of value, decaying at {d:.3f}"}
 
 
 def trend_diagnostics(eps, N, X=4):

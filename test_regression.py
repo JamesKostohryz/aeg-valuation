@@ -63,7 +63,7 @@ def main():
     # SP500 spec 5(2): Mode A reproduces the v4 golden fixture to the penny (~2e-4;
     # penny not bit-exact, per COCKPIT 20260721-0842 addendum).
     run_unit("normalization/tests/test_normalization_fixture.py")
-    # E2 convergence period: faithfulness (on-trend reproduces the engine to the penny) +
+    # E2 truncation gates (was: the convergence period; the increment was retired 2026-08-12) +
     # correction (peak catches down, trough catches up) + the reconciliation guard.
     run_unit("test_convergence.py")
     # Unfunded-distribution guard (2026-08-11). Under the canonical operating closure the
@@ -96,11 +96,16 @@ def main():
     # never subtract leases from a year already on borrowings, and hand back figures in
     # the vendor's own units. All three were got wrong once and are silent if regressed.
     run_unit("test_lease_ruling.py")
-    # Phase 1, Property 8: the continuing period must begin at a NORMALIZED, neutral
-    # earnings level with abnormal growth already zero. This is the machinery behind the
-    # headline convergence-corrected value, and that increment sits OUTSIDE the
-    # four-method tie -- so nothing else in the harness can see it.
-    run_unit("test_convergence_start.py")
+    # Phase 1, Property 8 -- the continuing period must begin at a NORMALIZED, neutral earnings
+    # level with abnormal growth already zero -- is still enforced, but no longer by adjusting
+    # value. test_convergence_start.py was retired on 2026-08-12 along with the convergence
+    # increment it tested; its assertions were that a peak marks value DOWN and a trough UP, and
+    # there is no longer any mark. Property 8 is now two REFUSALS at the truncation point, both
+    # covered by test_convergence.py above: gate A, abnormal earnings growth must be spent at the
+    # stop year, and gate B, EPS there must sit at the normalized level. The published value is
+    # the engine value, so unlike the old increment it is fully inside the four-method tie and
+    # every other check in this harness can see it.
+    # See docs/AEG-CONVERGENCE-RETIRED-2026-08-12.md.
     # Phase 1, Property 4: post-horizon years cannot move value. Measured at exactly
     # 0.0 on N=4 and N=8 under four adversarial perturbations. Drives the engine, so
     # it needs LibreOffice and costs real wall-clock -- full scope only.

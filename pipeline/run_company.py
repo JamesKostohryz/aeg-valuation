@@ -572,19 +572,23 @@ def main():
     #
     #     Beyond the explicit horizon cfg_N the engine hard-gates every AEG contribution to zero,
     #     which capitalizes whatever earnings level the forecast happened to END on. The
-    #     continuing period must instead BEGIN at a normalized (neutral) level. So a K-year glide
-    #     (K = 3) carries actual EPS at cfg_N onto the normalized line, books the reversion
-    #     abnormal earnings growth with the engine's own formulas, and the corrected value is the
-    #     HEADLINE valuation. The uncorrected engine figure is retained as diagnostic output.
+    #     continuing period must instead BEGIN at a normalized (neutral) level with abnormal
+    #     earnings growth already spent.
     #
-    #     THE CAVEAT THAT MUST NOT BE LOST: the increment is computed on the EQUITY (EPS) leg
-    #     only, so it sits OUTSIDE the four-method tie. The tie gate above is unchanged and still
-    #     governs everything through cfg_N; it simply does not cover this increment. Extending
-    #     the operating-income and net-financial-expense legs inside the template is a separate,
-    #     gated spreadsheet change.
+    #     CHANGED 2026-08-12, on James's ruling. This used to glide EPS onto the normalized line
+    #     and ADD the booked reversion to the value. It no longer adjusts anything. Deciding
+    #     whether a forecast stops at a cyclical peak is the forecaster's job, and the horizon
+    #     rule already implies it: the explicit forecast does not end until projected abnormal
+    #     earnings growth is spent, and a reversion from a peak necessarily creates abnormal
+    #     growth. What remains is two GATES on the truncation point -- abnormal growth spent, and
+    #     earnings at a normalized level -- which REFUSE and hand the forecast back rather than
+    #     silently patching a number nobody owns. See docs/AEG-CONVERGENCE-RETIRED-2026-08-12.md.
     #
-    #     FAIL-LOUD: the corrected value IS the valuation, so a convergence failure must not
-    #     degrade quietly into publishing the uncorrected number. It aborts the run.
+    #     A consequence worth stating: the published value is now the engine value, so it is
+    #     entirely INSIDE the four-method tie. The old increment was the one published component
+    #     the tie could not see. That hole is closed by deletion.
+    #
+    #     FAIL-LOUD: a failure here must not degrade quietly into publishing an ungated number.
     import convergence as CV
     try:
         _conv = CV.converge_auto(out_xlsx, K=args.converge_K)
@@ -592,39 +596,25 @@ def main():
         CV.write_convergence_csv(_conv, tk, args.out_dir)
         _periods_fn = CV.write_periods_csv(_periods, tk, args.out_dir)
     except Exception as e:
-        _fail("CONVERGENCE PERIOD FAILED: the continuing period could not be started from a "
-              f"normalized earnings level, so no headline valuation can be produced ({e})")
+        _fail("TRUNCATION GATES FAILED TO RUN: the stop year could not be judged against the "
+              f"terminal and neutral-level conditions, so no valuation can be published ({e})")
 
     #     The idiosyncratic haircut is measured as a SENSITIVITY re-run of the whole engine at a
-    #     higher cost of equity (disclose.py). A convergence increment priced at the base cost of
-    #     equity would therefore escape that haircut entirely and overstate the headline. Price
-    #     the increment on the sensitivity workbook too; the increment that survives the haircut
-    #     is the sensitivity one, and adjusted + sens_increment is algebraically identical to
-    #     re-deriving the whole bridge from corrected base and corrected sensitivity values.
-    _conv_sens_ps = None
-    _sens_path = os.path.join(args.work_dir, f"{tk}_idiosens.xlsx")
-    if disclosure is not None and os.path.exists(_sens_path):
-        try:
-            _conv_sens_ps = CV.converge_auto(_sens_path, K=args.converge_K)["converge_value_ps"]
-        except Exception as e:
-            _fail("CONVERGENCE PERIOD FAILED on the idiosyncratic sensitivity run, so the "
-                  f"headline cannot be priced consistently with the disclosed haircut ({e})")
-
+    #     higher cost of equity (disclose.py). Until 2026-08-12 the convergence increment had to
+    #     be re-priced on that sensitivity workbook as well, or it would have escaped the haircut
+    #     and overstated the headline -- a second full engine recalculation for one number. With
+    #     the increment retired that number is identically zero, so the re-run is gone with it.
+    #     The headline is the disclosure bridge's adjusted equity, or the engine value when there
+    #     is no bridge. Nothing is added to either.
     _adj = (disclosure or {}).get("adjusted_equity_ps")
-    if isinstance(_adj, (int, float)) and _conv_sens_ps is not None:
-        _headline = _adj + _conv_sens_ps
-        _headline_basis = ("adjusted equity (dep + market debt + idiosyncratic) + convergence "
-                           "increment priced at the idiosyncratic-inclusive cost of equity")
-        _pre = _adj
-    elif isinstance(_adj, (int, float)):
-        _headline = _adj + _conv["converge_value_ps"]
-        _headline_basis = ("adjusted equity (dep + market debt + idiosyncratic) + convergence "
-                           "increment at the BASE cost of equity (no sensitivity workbook)")
-        _pre = _adj
+    if isinstance(_adj, (int, float)):
+        _headline = _adj
+        _headline_basis = "adjusted equity (depreciation + market debt + idiosyncratic haircut)"
     else:
-        _headline = _conv["corrected_intrinsic"]
-        _headline_basis = "engine equity value + convergence increment (no disclosure bridge)"
-        _pre = _conv["eng_intrinsic"]
+        _headline = _conv["eng_intrinsic"]
+        _headline_basis = "engine equity value (no disclosure bridge)"
+    _pre = _headline
+    _conv_sens_ps = None
 
     convergence = {
         "cfg_N": _conv["N"], "K": _conv["K"],
@@ -654,17 +644,22 @@ def main():
     print(f"[convergence] K={_conv['K']} after cfg_N={_conv['N']}: actual EPS "
           f"{_periods['actual_eps_N']:.4f} -> normalized {_conv['norm_eps_N']:.4f} "
           f"(gap {_conv['converge_gap_ps']:+.4f}/sh)")
-    print(f"[convergence] engine {_conv['eng_intrinsic']:.4f} + {_conv['converge_value_ps']:+.4f} "
-          f"= {_conv['corrected_intrinsic']:.4f} /sh  |  HEADLINE {_pre:.4f} -> "
-          f"{_headline:.4f} /sh  ({_headline_basis})")
+    _t = _conv.get("terminal") or {}
+    print(f"[truncation] gate A, abnormal growth spent: AEG at cfg_N "
+          f"{_t.get('aeg_N', float('nan')):+.4f}/sh, year-on-year factor "
+          f"{_t.get('decay', float('nan')):.3f}, discarded tail "
+          + ("DIVERGES (still growing)" if _t.get("tail_frac") is None
+             else f"{_t['tail_frac']:.2%} of value"))
+    print(f"[truncation] value {_conv['eng_intrinsic']:.4f}/sh, unadjusted  |  HEADLINE "
+          f"{_headline:.4f}/sh  ({_headline_basis})")
     for _b in _periods["blocks"]:
         print(f"[periods] {_b['period']:<12} yrs {_b['years']:<8} "
               f"PV {_b['pv_contribution_ps']:+9.4f}/sh  "
               f"({(_b['pct_of_corrected_value'] or 0):+.1%} of value)")
     print(f"[convergence] guard {_conv['verdict']}: {_conv['verdict_reason']}"
           + ("  [REVIEWED by analyst]" if convergence["reviewed"] else ""))
-    print("[convergence] NOTE: this increment is the equity (EPS) leg only and is OUTSIDE the "
-          "four-method tie; the tie still gates everything through cfg_N.")
+    print("[truncation] NOTE: the convergence increment was retired 2026-08-12. The published "
+          "value is the engine value and is wholly inside the four-method tie.")
 
     # --- UNFUNDED DISTRIBUTION GATE (James, 2026-08-11).
     #
@@ -735,16 +730,19 @@ def main():
     #     is editing the code that day.
     if _conv["verdict"] == "REVIEW" and not convergence["reviewed"]:
         _fail(
-            "CONVERGENCE REVIEW REQUIRED — no valuation produced for " + tk + ".\n"
+            "TRUNCATION REVIEW REQUIRED — no valuation produced for " + tk + ".\n"
             f"  The explicit forecast ends at earnings per share of {_periods['actual_eps_N']:.4f} "
-            f"in year cfg_N={_conv['N']}, but the normalized (neutral) line for that year is "
-            f"{_conv['norm_eps_N']:.4f} — a gap of {_conv['converge_gap_ps']:+.4f} per share.\n"
-            f"  Guard: {_conv['verdict_reason']}\n"
-            f"  Uncorrected {convergence['headline_value_pre_convergence_ps']:.2f} per share; "
-            f"convergence-corrected {convergence['headline_value_ps']:.2f}.\n"
-            "  The continuing period must begin at a neutral earnings level, so a gap this large "
-            "means the valuation rests on a level no one has vouched for. There are four things "
-            "that cause it, and the review is deciding which:\n"
+            f"in year cfg_N={_conv['N']}, against a normalized (neutral) level of "
+            f"{_conv['norm_eps_N']:.4f} — a gap of {_conv['converge_gap_ps']:+.4f} per share, "
+            f"with abnormal earnings growth of {(_conv.get('terminal') or {}).get('aeg_N', float('nan')):+.4f} "
+            "per share still being created in that final year.\n"
+            f"  Gate: {_conv['verdict_reason']}\n"
+            f"  Engine value {convergence['headline_value_ps']:.2f} per share — NOT published.\n"
+            "  The rule is that the explicit forecast does not end until projected abnormal "
+            "earnings growth is spent AND earnings are at a normalized level. Both must hold. "
+            "Nothing is corrected for you: a truncation that fails this is a forecast that has "
+            "not finished, and the remedy is to extend it. There are four things that cause it, "
+            "and the review is deciding which:\n"
             "    1. The forecast horizon is in the wrong place — it stops while abnormal earnings "
             "growth is still running. Remedy: move forecast.horizon_N.\n"
             "    2. The forecast drivers produce an implausible earnings path. Remedy: fix the "
@@ -792,8 +790,11 @@ def main():
         ("anchor_margin_vs_normal", _re.get("margin_vs_normal")),
         ("inflation_verdict", results.get("inflation_verdict")),
         ("rd_capitalization_wired", False),
-        # Convergence period — the headline the cockpit should display, plus the figure it
-        # replaced and the guard, so the Sheet can show the correction rather than absorb it.
+        # Truncation gates. The convergence increment was RETIRED on 2026-08-12, so
+        # convergence_value_ps is identically zero and headline_value_pre_convergence_ps equals
+        # the headline; both are kept only so existing readers do not break. Do not present them
+        # as live inputs. The published value is the engine value, wholly inside the tie.
+        ("convergence_adjustment", "RETIRED_2026-08-12 (inert)"),
         ("headline_value_ps", convergence["headline_value_ps"]),
         ("headline_value_pre_convergence_ps", convergence["headline_value_pre_convergence_ps"]),
         ("convergence_K", convergence["K"]),

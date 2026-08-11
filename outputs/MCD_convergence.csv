@@ -1,5 +1,2 @@
-# convergence guard,verdict=PASS,gap_ps=0.0476,converge_value_ps=-0.2746,eng_intrinsic=228.9662,corrected_intrinsic=228.6916,trend_g_short=0.042142,trend_g_full=0.042196,trend_spread=-0.000053,trend_estimate=OK
+# truncation gates,verdict=REVIEW,gap_ps=0.0476,aeg_at_N=0.4374,aeg_decay=1.1342,discarded_tail_frac=DIVERGES,value_ps=228.9662,convergence_adjustment=RETIRED_2026-08-12,trend_g_short=0.042142,trend_g_full=0.042196,trend_spread=-0.000053
 t,phase,eps,normal_eps,aeg_eps,contrib_eps,coe
-13,convergence,19.693615,19.709816,-0.01620132,-0.09789637,0.092747
-14,convergence,20.079721,20.09624,-0.01651896,-0.09134922,0.091341
-15,convergence,20.47639,20.493235,-0.01684528,-0.08534768,0.089945

@@ -3,7 +3,7 @@ ticker,MRK
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,1.16415321826935e-09
+max_identity_tie,5.82076609134674e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,22845.2330780363
 anchor_representativeness,PASS
@@ -12,14 +12,18 @@ anchor_normal_margin,0.20688344359207328
 anchor_margin_vs_normal,1.7484961189308403
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
-headline_value_ps,93.47403594995109
-headline_value_pre_convergence_ps,89.25293045950608
+headline_value_ps,121.37232758583475
+headline_value_pre_convergence_ps,121.3822710888554
 convergence_K,3
-convergence_value_ps,4.242833825073491
-convergence_value_idio_adjusted_ps,4.221105490445019
-actual_eps_at_N,11.3517719157065
-normalized_eps_at_N,11.741474047106708
+convergence_value_ps,-0.015186470636965443
+convergence_value_idio_adjusted_ps,-0.009943503020652538
+actual_eps_at_N,11.9747277507342
+normalized_eps_at_N,11.973233399132845
 convergence_guard,PASS
+funding_guard,PASS
+funding_reviewed,False
+funding_review_note,
+funding_min_implied_dps,4.63218553132306
 convergence_reviewed,False
 convergence_review_note,
 convergence_in_four_method_tie,False
@@ -29,4 +33,4 @@ payout_seed,0.450474
 ppe_life_years,9.3
 inputs_on_template_default,0
 config_hash,3fa30d2dfdc7a432
-vintage,2026-08-09T22:38Z
+vintage,2026-08-11T18:12Z

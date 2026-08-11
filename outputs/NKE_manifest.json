@@ -1,18 +1,18 @@
 {
   "ticker": "NKE",
   "config_hash": "696c909df88be1d1",
-  "data_vintage": "2026-08-09T22:38Z",
+  "data_vintage": "2026-08-11T18:12Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 1.38925315695815e-10,
+    "max_identity_tie": 1.14596332423389e-10,
     "mode_tie": 0,
     "tie_scale": 16052.10376072607,
     "tie_scale_known": true,
-    "tie_relative": 8.654648497583043e-15,
+    "tie_relative": 7.139022655944106e-15,
     "tie_rel_tol": 1e-11,
     "tie_abs_rail": 0.001,
     "tie_tol": 0.001,
@@ -27,27 +27,27 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 1.38925315695815e-10,
-  "equity_value": 39.0286083386878,
-  "enterprise_value": 39.0286083386878,
+  "max_identity_tie": 1.14596332423389e-10,
+  "equity_value": 44.0544371887137,
+  "enterprise_value": 44.0544371887137,
   "mode_tie": 0,
   "anchor_year": 2026,
   "disclosure": null,
   "convergence": {
     "cfg_N": 8,
     "K": 3,
-    "actual_eps_N": 3.63549069649837,
-    "normalized_eps_N": 3.460567812025239,
-    "gap_ps": 0.17492288447313076,
-    "engine_intrinsic_ps": 39.0286083386878,
-    "corrected_intrinsic_ps": 37.48107635812271,
-    "convergence_value_ps": -1.5475319805650867,
+    "actual_eps_N": 3.62640707923132,
+    "normalized_eps_N": 3.6481211011139734,
+    "gap_ps": -0.021714021882653256,
+    "engine_intrinsic_ps": 44.0544371887137,
+    "corrected_intrinsic_ps": 44.23807781786832,
+    "convergence_value_ps": 0.18364062915462256,
     "convergence_value_idio_adjusted_ps": null,
-    "headline_value_ps": 37.48107635812271,
-    "headline_value_pre_convergence_ps": 39.0286083386878,
+    "headline_value_ps": 44.23807781786832,
+    "headline_value_pre_convergence_ps": 44.0544371887137,
     "headline_basis": "engine equity value + convergence increment (no disclosure bridge)",
     "guard": "PASS",
-    "guard_reason": "gap 5% of EPS, convergence value 4% of intrinsic",
+    "guard_reason": "gap 1% of EPS, convergence value 0% of intrinsic",
     "in_four_method_tie": false,
     "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
     "periods": [
@@ -56,43 +56,43 @@
         "years": "1..8",
         "n_years": 8,
         "eps_entry": 1.98730957522254,
-        "eps_exit": 3.63549069649837,
-        "eps_growth_annualized": 0.07841815136089436,
-        "aeg_sum_nominal_ps": 0.5194329911087062,
-        "aeg_first_ps": 0.144332644198933,
-        "aeg_last_ps": 0.038948683004024,
-        "pv_contribution_ps": 6.7838902487423285,
-        "pct_of_corrected_value": 0.18099507559291736
+        "eps_exit": 3.62640707923132,
+        "eps_growth_annualized": 0.07808096638383644,
+        "aeg_sum_nominal_ps": 0.939375790920272,
+        "aeg_first_ps": 0.144214245810124,
+        "aeg_last_ps": 0.114346789327776,
+        "pv_contribution_ps": 11.855919414634032,
+        "pct_of_corrected_value": 0.26800258961173207
       },
       {
         "period": "convergence",
         "years": "9..11",
         "n_years": 3,
-        "eps_entry": 3.63549069649837,
-        "eps_exit": 4.047721348879533,
-        "eps_growth_annualized": 0.03645199048770498,
-        "aeg_sum_nominal_ps": -0.1943739467937151,
-        "aeg_first_ps": -0.06250017251578877,
-        "aeg_last_ps": -0.06708276415621928,
-        "pv_contribution_ps": -1.5475319805650867,
-        "pct_of_corrected_value": -0.041288354842822256
+        "eps_entry": 3.62640707923132,
+        "eps_exit": 3.994212306572169,
+        "eps_growth_annualized": 0.032725412337725635,
+        "aeg_sum_nominal_ps": 0.023083819842388387,
+        "aeg_first_ps": 0.007449864658592986,
+        "aeg_last_ps": 0.007940440083006095,
+        "pv_contribution_ps": 0.18364062915462256,
+        "pct_of_corrected_value": 0.004151189161307723
       },
       {
         "period": "combined",
         "years": "1..11",
         "n_years": 11,
         "eps_entry": 1.98730957522254,
-        "eps_exit": 4.047721348879533,
-        "eps_growth_annualized": 0.06680714705502533,
-        "aeg_sum_nominal_ps": 0.3250590443149911,
-        "aeg_first_ps": 0.144332644198933,
-        "aeg_last_ps": -0.06708276415621928,
-        "pv_contribution_ps": 5.236358268177241,
-        "pct_of_corrected_value": 0.1397067207500951
+        "eps_exit": 3.994212306572169,
+        "eps_growth_annualized": 0.06551731355567036,
+        "aeg_sum_nominal_ps": 0.9624596107626604,
+        "aeg_first_ps": 0.144214245810124,
+        "aeg_last_ps": 0.007940440083006095,
+        "pv_contribution_ps": 12.039560043788654,
+        "pct_of_corrected_value": 0.2721537787730398
       }
     ],
     "identity_checks": {
-      "normal_value_ps": 32.2447180899454,
+      "normal_value_ps": 32.1985177740796,
       "explicit_identity_residual": 7.105427357601002e-14,
       "combined_identity_residual": 7.105427357601002e-14
     },
@@ -100,29 +100,29 @@
       {
         "t": 9,
         "phase": "convergence",
-        "eps": 3.771211365287128,
-        "normal_eps": 3.833711537802917,
-        "aeg_eps": -0.06250017251578877,
-        "contrib_eps": -0.5457591068296865,
-        "coe": 0.0983683896358327
+        "eps": 3.747442306797945,
+        "normal_eps": 3.7399924421393522,
+        "aeg_eps": 0.007449864658592986,
+        "contrib_eps": 0.06502457597601351,
+        "coe": 0.0990442017343474
       },
       {
         "t": 10,
         "phase": "convergence",
-        "eps": 3.9094387087922198,
-        "normal_eps": 3.974229718913927,
-        "aeg_eps": -0.06479101012170707,
-        "contrib_eps": -0.5154103103057134,
-        "coe": 0.0975903754320682
+        "eps": 3.8700037246227263,
+        "normal_eps": 3.862310209521937,
+        "aeg_eps": 0.0076935151007893054,
+        "contrib_eps": 0.06113883910599702,
+        "coe": 0.0982543565513945
       },
       {
         "t": 11,
         "phase": "convergence",
-        "eps": 4.047721348879533,
-        "normal_eps": 4.114804113035753,
-        "aeg_eps": -0.06708276415621928,
-        "contrib_eps": -0.4863625634296867,
-        "coe": 0.0949419243784944
+        "eps": 3.994212306572169,
+        "normal_eps": 3.986271866489163,
+        "aeg_eps": 0.007940440083006095,
+        "contrib_eps": 0.05747721407261206,
+        "coe": 0.095578661568025
       }
     ],
     "outputs": [
@@ -216,11 +216,11 @@
       },
       "forecast_fcfe": {
         "cell": "Audit!B57",
-        "residual": 1.70530256582424e-11
+        "residual": 0.0
       },
       "sum_forecast_ties": {
         "cell": "Audit!B58",
-        "residual": 1.70530256582424e-11
+        "residual": 0.0
       },
       "dcf_fcfe_vs_ri": {
         "cell": "Audit!B61",
@@ -244,18 +244,18 @@
       },
       "master_total": {
         "cell": "Audit!B5",
-        "residual": 1.55978341354057e-10
+        "residual": 1.14596332423389e-10
       }
     },
-    "worst_identity": "forecast_fcfe",
-    "worst_abs_residual": 1.70530256582424e-11
+    "worst_identity": "bs_noa_cse_nfo",
+    "worst_abs_residual": 0.0
   },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-09T22:38Z",
+    "as_of": "2026-08-11T18:12Z",
     "flags": []
   }
 }

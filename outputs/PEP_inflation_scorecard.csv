@@ -1,12 +1,12 @@
 field,value
 verdict,NET BENEFICIARY of inflation
-net_inflation_position_annual,64.5358446146771
+net_inflation_position_annual,68.4991919651651
 depreciation_penalty_annual,96.9628790119909
-interest_benefit_annual,161.498723626668
+interest_benefit_annual,165.462070977156
 tax_rate,0.190258
-expected_inflation,0.021026
+expected_inflation,0.021542
 inflation_series,breakeven_fwd1y
-rd_nominal,0.05854743534365592
+rd_nominal,0.05908239770175183
 net_debt,40371
 nominal_interest,1121
 econ_depreciation,4325.895995026863
@@ -14,10 +14,10 @@ reported_ppe_depreciation,3816.2570888468813
 depreciation_shortfall,509.6389061799814
 avg_asset_age_yrs,6.760755571571238
 debt_to_annual_da,10.578689815732117
-breakeven_leverage,7.184141194936501
-interest_tax_shield_pv_fixed_nominal,3642.8447590934575
-interest_tax_shield_pv_constant_real,5684.196674423359
-interest_tax_shield_pv_adopted,5684.196674423359
+breakeven_leverage,7.194889019079351
+interest_tax_shield_pv_fixed_nominal,3609.8605726300125
+interest_tax_shield_pv_constant_real,5681.325480205216
+interest_tax_shield_pv_adopted,5681.325480205216
 debt_policy,constant_real
 shield_treatment,excluded from headline (Miller 1977); disclosure only
 verdict_basis,"net_inflation_position (t*pi*net_debt vs t*shortfall), using the engine's BEA capital-goods deflator for PP&E and the TIPS-breakeven inflation the valuation itself is discounted on (see inflation_series); the breakeven_leverage column is v1.4's general-CPI rule of thumb and can differ when capital-goods prices diverge from general inflation"

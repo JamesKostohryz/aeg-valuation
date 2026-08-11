@@ -3,7 +3,7 @@ ticker,POOL
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,4.51905179943424e-11
+max_identity_tie,1.06865627458319e-11
 anchor_earnings_check,PASS
 anchor_oi_at0,473.914135206623
 anchor_representativeness,PASS
@@ -12,14 +12,18 @@ anchor_normal_margin,0.11704389949080529
 anchor_margin_vs_normal,0.9371861321492544
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
-headline_value_ps,60.429527239873856
-headline_value_pre_convergence_ps,53.197756702279904
+headline_value_ps,106.66041785656839
+headline_value_pre_convergence_ps,106.50972047245551
 convergence_K,3
-convergence_value_ps,13.539689909525633
-convergence_value_idio_adjusted_ps,7.2317705375939525
-actual_eps_at_N,14.0260208922686
-normalized_eps_at_N,15.530343708810705
+convergence_value_ps,0.3955911076708481
+convergence_value_idio_adjusted_ps,0.15069738411287592
+actual_eps_at_N,16.8991727759993
+normalized_eps_at_N,16.94622418902824
 convergence_guard,PASS
+funding_guard,PASS
+funding_reviewed,False
+funding_review_note,
+funding_min_implied_dps,5.1990085103963
 convergence_reviewed,False
 convergence_review_note,
 convergence_in_four_method_tie,False
@@ -29,4 +33,4 @@ payout_seed,0.454168
 ppe_life_years,18.07
 inputs_on_template_default,0
 config_hash,6d7a296dd0afa6e1
-vintage,2026-08-09T22:38Z
+vintage,2026-08-11T18:12Z

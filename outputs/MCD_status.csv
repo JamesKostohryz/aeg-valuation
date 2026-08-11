@@ -3,7 +3,7 @@ ticker,MCD
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,8.65838956087828e-10
+max_identity_tie,2.33285391004756e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,9743.22262547739
 anchor_representativeness,PASS
@@ -12,14 +12,20 @@ anchor_normal_margin,0.42156609266034983
 anchor_margin_vs_normal,1.0934545507699802
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
-headline_value_ps,338.3117349294766
-headline_value_pre_convergence_ps,434.427628579056
+headline_value_ps,192.2060122774769
+headline_value_pre_convergence_ps,192.412524483715
 convergence_K,3
-convergence_value_ps,-127.55965492965818
-convergence_value_idio_adjusted_ps,-96.1158936495794
-actual_eps_at_N,71.4270735168465
-normalized_eps_at_N,50.642538568323744
-convergence_guard,REVIEW
+convergence_value_ps,-0.27459326247506133
+convergence_value_idio_adjusted_ps,-0.20651220623810546
+actual_eps_at_N,19.314393101614
+normalized_eps_at_N,19.266803390072766
+convergence_guard,PASS
+funding_guard,PASS
+funding_reviewed,False
+funding_review_note,
+funding_min_implied_dps,3.76211246508591
+convergence_reviewed,False
+convergence_review_note,
 convergence_in_four_method_tie,False
 cfg_N,12
 cfg_N_reviewed,True
@@ -27,4 +33,4 @@ payout_seed,0.599858
 ppe_life_years,28.61
 inputs_on_template_default,0
 config_hash,937ebf8f3b64bd48
-vintage,2026-08-09T05:52Z
+vintage,2026-08-11T18:12Z

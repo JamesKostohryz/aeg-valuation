@@ -1,16 +1,16 @@
 field,value
-equity_value,39.0286083386878
-enterprise_value,39.0286083386878
-active_value,39.0286083386878
+equity_value,44.0544371887137
+enterprise_value,44.0544371887137
+active_value,44.0544371887137
 mode_tie,0
-max_identity_tie,1.38925315695815e-10
-tie_relative,8.654648497583043e-15
+max_identity_tie,1.14596332423389e-10
+tie_relative,7.139022655944106e-15
 tie_scale,16052.10376072607
 audit_status,PASS — all identities tie
 tie_check,PASS
-headline_value_ps,37.48107635812271
-headline_value_pre_convergence_ps,39.0286083386878
-convergence_value_ps,-1.5475319805650867
+headline_value_ps,44.23807781786832
+headline_value_pre_convergence_ps,44.0544371887137
+convergence_value_ps,0.18364062915462256
 convergence_value_idio_adjusted_ps,
 convergence_K,3
 convergence_guard,PASS

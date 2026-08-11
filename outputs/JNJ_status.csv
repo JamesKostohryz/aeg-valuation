@@ -3,7 +3,7 @@ ticker,JNJ
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,2.02271621674299e-09
+max_identity_tie,5.38420863449574e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,24547.162306216
 anchor_representativeness,PASS
@@ -12,14 +12,18 @@ anchor_normal_margin,0.2560809679326187
 anchor_margin_vs_normal,1.0611485125418247
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
-headline_value_ps,117.17095307121448
-headline_value_pre_convergence_ps,113.26001681924973
+headline_value_ps,154.1333080106796
+headline_value_pre_convergence_ps,153.91125678012844
 convergence_K,3
-convergence_value_ps,4.011716267890588
-convergence_value_idio_adjusted_ps,3.9109362519647615
-actual_eps_at_N,13.6386200982852
-normalized_eps_at_N,14.084843268571015
+convergence_value_ps,0.2762439987892657
+convergence_value_idio_adjusted_ps,0.2220512305511655
+actual_eps_at_N,14.4716413594967
+normalized_eps_at_N,14.50439423186857
 convergence_guard,PASS
+funding_guard,PASS
+funding_reviewed,False
+funding_review_note,
+funding_min_implied_dps,0.992853793991507
 convergence_reviewed,False
 convergence_review_note,
 convergence_in_four_method_tie,False
@@ -29,4 +33,4 @@ payout_seed,0.465868
 ppe_life_years,6.76
 inputs_on_template_default,0
 config_hash,e1383c584bea4d4b
-vintage,2026-08-09T22:38Z
+vintage,2026-08-11T18:12Z

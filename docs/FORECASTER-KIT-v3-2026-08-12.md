@@ -2,8 +2,15 @@
 
 **This is the authoritative kit. Anything older is superseded — see section 9.**
 
-Valid against commit `2c7401a` on `github.com/JamesKostohryz/aeg-valuation`. Regression suite
-forty-two of forty-two green; four-method tie `8.396062e-16`.
+Valid against commit `5069bc8` on `github.com/JamesKostohryz/aeg-valuation`. Regression harness
+green; four-method tie `8.396062e-16`, and as of this version the published value is **wholly
+inside that tie** — there is no longer any component sitting outside it.
+
+**What changed in v3, and it is the most important thing in this document.** The convergence
+period no longer corrects your valuation. It used to glide earnings onto a normalized level and add
+the result. That is retired. Where your forecast is allowed to stop is now *your* judgment, checked
+by two gates that refuse and hand the forecast back to you. Read section 6 before you choose a
+horizon.
 
 The four-round forecasting protocol itself — the qualitative brief, the moat-length judgment, the
 driver build, the review — is unchanged and still lives in
@@ -172,16 +179,30 @@ return on equity exceeds the cost of equity and growth is constant and positive,
 growth persists forever. This is why no payload-free run has ever been quotable, and the gate now
 makes that mechanical rather than a convention someone has to remember.
 
-## 7. Companies currently gated
+## 7. Companies currently gated — all of them
 
-`AAPL`, `COST`, `KO` and `WMT` are refused by the funding gate as of `2c7401a`. **Do not clear them
-with `funding: reviewed: true`.** They are mechanical default overlays carrying a three percent
-buyback the plan cannot fund. They need real forecasts — which is what this kit is for. Clearing
-the gate to make them publish is exactly the failure the gate was built to prevent.
+As of `5069bc8`, **every one of the fourteen companies is refused and none publishes a valuation.**
+Four are refused by the funding gate (`AAPL`, `COST`, `KO`, `WMT`); the other ten are refused by the
+truncation gates described in section 6.
 
-`AZO`, `HD` and `MCD` were refused before this commit and now pass.
+This is the system working, not a fault. Every one of those ten is a mechanical default overlay with
+constant-growth drivers, and a constant-growth forecast can never satisfy the terminal condition:
+if return on equity exceeds the cost of equity and growth is constant and positive, abnormal
+earnings growth persists forever. Eight of the ten have an abnormal earnings stream that is still
+*growing* at their stop year. Nike and Pool are flat, so what their truncation discards is worth
+sixteen and thirty-four times the entire company value. Only AT&T's is decaying.
 
-No payload-free number on this system should be quoted for any company, gated or not.
+**Do not clear any of these with `reviewed: true`.** The four funding refusals carry a three percent
+buyback the plan cannot fund; the ten truncation refusals have not been forecast by anyone. They
+need real forecasts, which is what this kit is for. Clearing a gate to make a company publish is
+exactly the failure the gates were built to prevent.
+
+The practical consequence: the valuation workflow shows a red X and will keep showing one until a
+real forecast exists. That red X means "companies are awaiting human review," which is the signal it
+was built to give. The check that indicates health is the regression harness, and it is green.
+
+No payload-free number on this system should be quoted for any company, gated or not — and now
+the engine enforces that rather than relying on anyone remembering it.
 
 ## 8. Still outstanding for PepsiCo
 
@@ -202,13 +223,22 @@ carrying the thirty-year horizon defect and must be re-run before Round 3 reason
   reasoning, the evidence on persistence — remains current and should still be read in full.**
 - `docs/FORECASTER-KIT-UPDATE-2026-08-11.md` — folded into this document; that file is now just a
   pointer here.
+- **v2 of this kit, section 6 in particular.** It told you the convergence period would make your
+  truncation right for you, gliding earnings onto the normalized line and booking the difference.
+  It no longer does anything of the kind. See `docs/AEG-CONVERGENCE-RETIRED-2026-08-12.md`.
+- **Any claim that the engine detects a cyclical peak.** It does not, and it is not meant to. A
+  level a company has sustained for several years is, as far as the normalizer is concerned, the
+  normal level; it measures departure from the recent sustained trend over a four-year window and
+  looking back further is speculative. Ruling out a cyclical truncation is your job, and section 6
+  is where the rule is stated.
 
 The underlying worry in that struck section was correct and was vindicated. It flagged a return on
 retained earnings distorted by a single anchor year as the most consequential unreviewed number in
 the engine, because it can determine the *sign* of the abnormal earnings stream rather than merely
 its length. That is exactly the defect found on 2026-08-11 in the normalized-earnings benchmark, in
 a second and unrelated location, and it did determine a sign: `+11.7263` to `−6.3403` per share
-with nothing about the company changing. Single-year rates driving permanent lines are a recurring
+with nothing about the company changing. (Those figures are historical: they were convergence
+increments, and increments no longer exist. The lesson stands; the numbers cannot recur.) Single-year rates driving permanent lines are a recurring
 failure mode in this engine and should be treated as a standing suspicion.
 
 ---

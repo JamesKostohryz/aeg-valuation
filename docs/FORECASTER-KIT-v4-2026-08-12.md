@@ -4,7 +4,7 @@
 
 > **Changing this document?** Follow `docs/KIT-CHANGE-PROCEDURE.md` first. A kit change is an end-to-end audit of the whole file plus four other places, not an edit to one section. Editing one section and leaving the rest is how this document went stale three times in a single day on 2026-08-12.
 
-Valid against commit `PENDING-SELF-HASH` on `github.com/JamesKostohryz/aeg-valuation`. Regression harness green; four-method tie `8.396062e-16`, and as of v3 the published value is **wholly inside that tie** — there is no longer any component sitting outside it. v4 adds a gate; it does not touch the tie or move any published number (see section 6).
+Valid against commit `451e33b` on `github.com/JamesKostohryz/aeg-valuation`. Regression harness green; four-method tie `8.396062e-16`, and as of v3 the published value is **wholly inside that tie** — there is no longer any component sitting outside it. v4 adds a gate; it does not touch the tie or move any published number (see section 6).
 
 **What changed in v4.** Two things, both James's, both 2026-08-12, both scoped to the continuing period and its distribution policy — not the tie, not the truncation gates, not any published number.
 

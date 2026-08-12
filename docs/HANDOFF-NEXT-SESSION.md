@@ -17,7 +17,7 @@ always be one.
 
 ## What is true right now
 
-Tip of `main` is `451e33b` (as of 2026-08-12, after landing the terminal-payout gate --
+Tip of `main` is `6c7c2ad` (as of 2026-08-12, after landing the terminal-payout gate --
 see `docs/FORECASTER-KIT-v4-2026-08-12.md`). Prior to that, tip was `8d04369`. **Regression harness
 green.** Four-method tie `8.396062e-16`, and the published value is wholly inside it -- the new gate
 is provably outside anything that could move it (kit v4 section 6).

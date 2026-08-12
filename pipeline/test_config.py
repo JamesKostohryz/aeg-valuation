@@ -161,6 +161,81 @@ finally:
 expect_error("company: A\nticker: A\n" + HORIZON + "convergence: 3\n", "convergence",
              "a non-mapping convergence block aborts")
 
+print("== funding review flag (2026-08-12 fix: this was WRITTEN but never READ) ==")
+# BUG FOUND 2026-08-12: run_company.py has read cfg.get("funding_reviewed") /
+# cfg.get("funding_note") since the funding gate landed on 2026-08-11, but load_config never
+# put those keys in the normalized dict — so `funding: reviewed: true` in a company yaml had
+# NO EFFECT. Silent and inert, never exercised by a published number (AAPL/COST/KO/WMT are
+# deliberately left funding-gated), caught while wiring the terminal-payout gate below.
+# Same shape of test as the convergence flag: absent -> false, explicit true parses, note
+# carried through, toggling does not move the config hash.
+_fu0 = write("company: A\nticker: A\n" + HORIZON)
+_fu1 = write("company: A\nticker: A\n" + HORIZON +
+             "funding:\n  reviewed: true\n  note: buyback exceeds capacity; intended\n")
+try:
+    _c0 = CFG.load_config(_fu0)
+    _c1 = CFG.load_config(_fu1)
+    ok(_c0["funding_reviewed"] is False, "funding.reviewed absent defaults to FALSE")
+    ok(_c0["funding_note"] == "", "funding.note absent defaults to empty")
+    ok(_c1["funding_reviewed"] is True, "funding.reviewed: true now actually parses (was inert)")
+    ok(_c1["funding_note"].startswith("buyback exceeds"), "funding.note is carried through")
+    ok(_c0["config_hash"] == _c1["config_hash"],
+       "reviewing funding does NOT change the config hash")
+finally:
+    os.unlink(_fu0); os.unlink(_fu1)
+expect_error("company: A\nticker: A\n" + HORIZON + "funding: 3\n", "funding",
+             "a non-mapping funding block aborts")
+
+print("== terminal payout ratio (2026-08-12: what the continuing period does) ==")
+# terminal.payout_ratio is OPTIONAL at the config-parse stage (None is a legal value here —
+# the OTHER gates still need to run and write real diagnostics even for a company that has
+# not set this yet). The no-default, no-escape-hatch discipline is enforced downstream in
+# run_company.py / terminal_payout.py, not here. What IS enforced here is the bound: it is a
+# DIVIDENDS-ONLY fraction, so it must sit in [0.0, 1.0], and toggling reviewed/note must not
+# move the config hash, matching convergence and funding above. The ratio ITSELF does belong
+# in the hash (like forecast_horizon_N): it is a first-order judgment, not bookkeeping.
+_tp0 = write("company: A\nticker: A\n" + HORIZON)
+_tp1 = write("company: A\nticker: A\n" + HORIZON +
+             "terminal:\n  payout_ratio: 0.55\n  reviewed: true\n  note: mature payer\n")
+try:
+    _c0 = CFG.load_config(_tp0)
+    _c1 = CFG.load_config(_tp1)
+    ok(_c0["terminal_payout_ratio"] is None, "terminal.payout_ratio absent defaults to None "
+       "(no default, unlike an ordinary 0/false absence)")
+    ok(_c0["terminal_reviewed"] is False, "terminal.reviewed absent defaults to FALSE")
+    ok(_c1["terminal_payout_ratio"] == 0.55, "terminal.payout_ratio parses")
+    ok(_c1["terminal_reviewed"] is True, "terminal.reviewed: true parses")
+    ok(_c1["terminal_note"] == "mature payer", "terminal.note is carried through")
+    ok(_c0["config_hash"] != _c1["config_hash"],
+       "setting the ratio DOES change the config hash — it is a judgment, not bookkeeping")
+    _tp1b = write("company: A\nticker: A\n" + HORIZON +
+                  "terminal:\n  payout_ratio: 0.55\n  reviewed: false\n")
+    ok(CFG.load_config(_tp1b)["config_hash"] == _c1["config_hash"],
+       "but toggling reviewed/note alone does NOT change the hash, same as convergence/funding")
+    os.unlink(_tp1b)
+finally:
+    os.unlink(_tp0); os.unlink(_tp1)
+expect_error("company: A\nticker: A\n" + HORIZON + "terminal:\n  payout_ratio: 1.4\n",
+             "payout_ratio", "a payout ratio above 1.0 aborts (dividends cannot exceed net income)")
+expect_error("company: A\nticker: A\n" + HORIZON + "terminal:\n  payout_ratio: -0.1\n",
+             "payout_ratio", "a negative payout ratio aborts")
+expect_error("company: A\nticker: A\n" + HORIZON + "terminal:\n  payout_ratio: nope\n",
+             "payout_ratio", "a non-numeric payout ratio aborts")
+expect_error("company: A\nticker: A\n" + HORIZON + "terminal: 3\n", "terminal",
+             "a non-mapping terminal block aborts")
+_tpb = write("company: A\nticker: A\n" + HORIZON + "terminal:\n  payout_ratio: 0.0\n")
+try:
+    ok(CFG.load_config(_tpb)["terminal_payout_ratio"] == 0.0,
+       "the boundary 0.0 (retain everything) is legal")
+finally:
+    os.unlink(_tpb)
+_tpc = write("company: A\nticker: A\n" + HORIZON + "terminal:\n  payout_ratio: 1.0\n")
+try:
+    ok(CFG.load_config(_tpc)["terminal_payout_ratio"] == 1.0,
+       "the boundary 1.0 (distribute everything) is legal")
+finally:
+    os.unlink(_tpc)
+
 print("== fail-loud gates ==")
 expect_error("ticker: X\n", "company", "missing company aborts")
 expect_error("company: A\nticker: A\nfy_end_month: 13\n", "fy_end_month", "bad month aborts")

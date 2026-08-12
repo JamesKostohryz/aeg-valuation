@@ -17,8 +17,10 @@ always be one.
 
 ## What is true right now
 
-Tip of `main` is `8d04369`. **Regression harness green.** Four-method tie `8.396062e-16`, and the
-published value is now wholly inside it.
+Tip of `main` is `PENDING-SELF-HASH` (as of 2026-08-12, after landing the terminal-payout gate --
+see `docs/FORECASTER-KIT-v4-2026-08-12.md`). Prior to that, tip was `8d04369`. **Regression harness
+green.** Four-method tie `8.396062e-16`, and the published value is wholly inside it -- the new gate
+is provably outside anything that could move it (kit v4 section 6).
 
 **The convergence increment was retired on 2026-08-12.** It used to glide earnings onto a normalized
 level and add the booked abnormal earnings growth to the value. It is gone, and with it the only
@@ -39,7 +41,7 @@ regression harness.
 
 ## The documents, and which is authoritative
 
-- `docs/FORECASTER-KIT-v3-2026-08-12.md` — **the kit. The repository copy is the source of truth**;
+- `docs/FORECASTER-KIT-v4-2026-08-12.md` — **the kit. The repository copy is the source of truth**;
   the copy in `C:\Users\james\AEG-Project\` is a working copy. Section 6 is the rule that matters.
 - `docs/KIT-CHANGE-PROCEDURE.md` — **read this before changing anything a forecaster relies on.** A
   kit change is an end-to-end audit of the whole file plus four other places, not a section edit.
@@ -61,6 +63,16 @@ regression harness.
   into a period defined to have none, and books $186/share of phantom value on AutoZone.
 - The single-year retention residual: measured, moves the answer by at most $0.0021/share across ten
   companies. Revisit only if a real forecast makes retention swing.
+- **New 2026-08-12: `terminal.payout_ratio`, kit v4 section 6.** A mandatory, dividends-only,
+  no-default input stating what fraction of normalized net income a company distributes once it
+  reaches the continuing period (year cfg_N+1 onward) -- closing the gap where those columns held an
+  unexamined legacy scenario overlay. Provably does not move published value (Valuation row 24 zeros
+  every contribution past cfg_N; test_terminal_payout.py pins bit-identical intrinsic value at ratio
+  0.0/0.5/1.0). Does not change the currently gated set -- every company already refuses at the
+  funding or truncation gate first. No company config carries it yet.
+- **Bug fixed 2026-08-12: `funding.reviewed` was inert from 2026-08-11 until now.** The config loader
+  never parsed the `funding` block, so `funding: reviewed: true` had no effect on any run. No
+  published number was affected. Fixed and pinned in pipeline/test_config.py.
 
 ## What "finished" means. Work only on this list.
 

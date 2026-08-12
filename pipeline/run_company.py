@@ -779,6 +779,65 @@ def main():
             "refreshed — the previous run's numbers stand until this is resolved.\n"
             "  Nothing else clears this gate. That is intended.")
 
+    # --- TERMINAL PAYOUT GATE (James, 2026-08-12).
+    #
+    #     Nothing before this described what the company does once it reaches the continuing
+    #     period, year cfg_N+1 onward. The Forecast tab's own driver cells past cfg_N are never
+    #     written by a real payload -- they hold whatever the legacy scenario overlay says,
+    #     unrelated to the forecaster's judgment, and confirmed on a real forecast (PEP, cfg_N=4,
+    #     2026-08-12) that overlay's buyback assumption implies a deeply negative modeled
+    #     dividend there, worsening every year out to column AJ. None of that reaches the
+    #     published value -- Valuation row 24 zeroes every AEG contribution for t>cfg_N, so the
+    #     four-method tie and the two truncation gates above are unaffected by it -- but nothing
+    #     forecaster-owned governs the transition either, which is its own gap.
+    #
+    #     terminal.payout_ratio closes it: a DIVIDENDS-ONLY fraction of normalized net income
+    #     (the same normalized_eps_N gate B already computes) the forecaster asserts this company
+    #     distributes once it reaches the continuing period. Retention is the residual, exactly
+    #     as "payout" already means dividends only everywhere else in this kit -- buybacks are
+    #     never folded in here.
+    #
+    #     Bounded to [0,1] at the config seam, so unlike the explicit-year funding gate above,
+    #     an implied negative dividend is not a failure mode this gate can produce by
+    #     construction. What it catches is the case beneath that: a normalized earnings level
+    #     that is zero, negative, or unavailable, where no payout ratio is a coherent assertion
+    #     about the continuing period at all -- and, separately and without a reviewed:true
+    #     escape hatch, a ratio nobody ever set. That second case mirrors forecast.horizon_N on
+    #     purpose: an assertion nobody made cannot be reviewed into existence by a stray
+    #     terminal.reviewed: true with no payout_ratio behind it.
+    import terminal_payout as TP
+    _term_rep = TP.terminal_payout_report(cfg.get("terminal_payout_ratio"),
+                                          convergence.get("normalized_eps_N"))
+    if _term_rep["verdict"] == "MISSING":
+        _fail(
+            "NO TERMINAL DISTRIBUTION POLICY — no valuation produced for " + tk + ".\n"
+            f"  {_term_rep['reason']}.\n"
+            "  This is dividends-only, exactly like 'payout' everywhere else in the kit; "
+            "retention (1 - the ratio) is whatever is not paid out as a dividend.\n"
+            "  There is no default, and there is no way around this by setting "
+            "terminal.reviewed alone — the ratio itself must be chosen.\n"
+            "  Add to companies/" + tk + ".yaml:\n"
+            "      terminal:\n"
+            "        payout_ratio: <0.0-1.0, dividends only>\n"
+            "        reviewed: true\n"
+            "        note: <why this ratio>\n"
+            "  Nothing else clears this gate. That is intended.")
+    terminal_payout = dict(_term_rep)
+    terminal_payout["reviewed"] = bool(cfg.get("terminal_reviewed"))
+    terminal_payout["review_note"] = cfg.get("terminal_note") or ""
+    results["terminal_payout"] = terminal_payout
+    print(TP.format_report(_term_rep, reviewed=terminal_payout["reviewed"]))
+    if _term_rep["verdict"] == "REVIEW" and not terminal_payout["reviewed"]:
+        _fail(
+            "TERMINAL PAYOUT REVIEW REQUIRED — no valuation produced for " + tk + ".\n"
+            f"  {_term_rep['reason']}.\n"
+            "  Once you have looked and either fixed the forecast or accepted it, add to "
+            f"companies/{tk}.yaml:\n"
+            "      terminal:\n"
+            "        reviewed: true\n"
+            "        note: <what you concluded>\n"
+            "  Nothing else clears this gate. That is intended.")
+
     # --- extract committed outputs + manifest
     manifest = EX.extract_outputs(out_xlsx, tk, args.out_dir, results=results,
                                   config_hash=cfg["config_hash"], vintage=args.vintage,
@@ -829,6 +888,15 @@ def main():
         ("convergence_reviewed", convergence["reviewed"]),
         ("convergence_review_note", (convergence["review_note"] or "").replace(",", ";")),
         ("convergence_in_four_method_tie", convergence["in_four_method_tie"]),
+        # Terminal payout -- what the company does forever after cfg_N. Never priced (Valuation
+        # row 24 zeroes every contribution for t>cfg_N) -- disclosure and a gate, not a value input.
+        ("terminal_payout_guard", terminal_payout["verdict"]),
+        ("terminal_payout_ratio", terminal_payout["ratio"]),
+        ("terminal_normalized_eps_N", terminal_payout["normalized_eps_N"]),
+        ("terminal_implied_dps", terminal_payout["implied_dps"]),
+        ("terminal_implied_retained_ps", terminal_payout["implied_retained_ps"]),
+        ("terminal_payout_reviewed", terminal_payout["reviewed"]),
+        ("terminal_payout_review_note", (terminal_payout["review_note"] or "").replace(",", ";")),
         # P1/P2/P3 — the first-order judgments, surfaced so the cockpit can show them.
         ("cfg_N", rep["forecast_horizon_N"]),
         ("cfg_N_reviewed", cfg["horizon_reviewed"]),

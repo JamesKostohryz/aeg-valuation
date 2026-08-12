@@ -160,6 +160,63 @@ def load_config(path):
     convergence_reviewed = _opt(cv, "reviewed", bool, False) is True
     convergence_note = _opt(cv, "note", str, "")
 
+    # --- FUNDING REVIEW (James, 2026-08-11). The unfunded-distribution guard
+    # (pipeline/funding_check.py) reports REVIEW when the implied dividend in the explicit
+    # forecast goes negative. That verdict REFUSES the valuation, cleared only by a human
+    # writing funding.reviewed: true here -- in deliberate parallel to convergence.reviewed
+    # above.
+    #
+    # BUG FOUND 2026-08-12: this block did not exist. run_company.py has always read
+    # cfg.get("funding_reviewed") and cfg.get("funding_note"), but load_config never put
+    # those keys in the normalized dict, so a company config carrying `funding: reviewed:
+    # true` had no effect whatsoever -- the escape hatch documented in the kit since
+    # 2026-08-11 could not be exercised by any company. Silent and inert, the same failure
+    # class as the horizon bug: a written assertion that changes nothing. No company has
+    # relied on it yet (AAPL/COST/KO/WMT are deliberately left funding-gated), so no
+    # published number was affected, but the mechanism itself was dead on arrival.
+    fu = raw.get("funding", {}) or {}
+    if not isinstance(fu, dict):
+        raise ConfigError("'funding' must be a mapping")
+    funding_reviewed = _opt(fu, "reviewed", bool, False) is True
+    funding_note = _opt(fu, "note", str, "")
+
+    # --- TERMINAL PAYOUT RATIO (James, 2026-08-12). Nothing previously described what this
+    # company does once it reaches the continuing period (year cfg_N+1 onward). The Forecast
+    # tab's own driver cells past cfg_N are never written by a real payload; they hold
+    # whatever the legacy scenario overlay says, unrelated to the forecaster's judgment, and
+    # that overlay's buyback assumption can imply a deeply negative modeled dividend there
+    # (confirmed on a real forecast, 2026-08-12). None of that reaches the published value --
+    # Valuation row 24 zeroes every contribution for t>cfg_N, so the four-method tie and the
+    # two truncation gates are untouched by it -- but nothing forecaster-owned governs the
+    # transition either.
+    #
+    # terminal.payout_ratio closes that: a DIVIDENDS-ONLY fraction of normalized net income
+    # the forecaster asserts this company distributes once it reaches the continuing period.
+    # Retention is the residual (1 - the ratio), exactly as "payout" already means dividends
+    # only everywhere else in this kit (buybacks are never folded in here). There is no
+    # default. Optional at the config-parse stage -- the run still executes and the OTHER
+    # gates still get their diagnostics -- but pipeline/run_company.py refuses to publish
+    # without it, with no reviewed:true escape hatch for a ratio that was never set at all
+    # (same discipline as forecast.horizon_N: an assertion nobody made cannot be reviewed
+    # into existence).
+    te = raw.get("terminal", {}) or {}
+    if not isinstance(te, dict):
+        raise ConfigError("'terminal' must be a mapping")
+    terminal_payout_ratio = te.get("payout_ratio")
+    if terminal_payout_ratio is not None:
+        try:
+            terminal_payout_ratio = float(terminal_payout_ratio)
+        except (TypeError, ValueError):
+            raise ConfigError(f"terminal.payout_ratio must be a number, "
+                              f"got {te['payout_ratio']!r}")
+        if not 0.0 <= terminal_payout_ratio <= 1.0:
+            raise ConfigError(
+                f"terminal.payout_ratio must be between 0.0 and 1.0 (a DIVIDENDS-ONLY "
+                f"fraction of normalized net income -- retention is 1 minus this), "
+                f"got {terminal_payout_ratio}")
+    terminal_reviewed = _opt(te, "reviewed", bool, False) is True
+    terminal_note = _opt(te, "note", str, "")
+
     sp = raw.get("spinoff", {}) or {}
     spinoff = {"factor": float(_opt(sp, "factor", (int, float), 1.0)),
                "before_year": int(_opt(sp, "before_year", int, 0))}
@@ -201,6 +258,9 @@ def load_config(path):
         "company": company, "ticker": ticker, "fy_end_month": fy_end_month,
         "forecast_horizon_N": horizon_N, "horizon_reviewed": horizon_reviewed,
         "convergence_reviewed": convergence_reviewed, "convergence_note": convergence_note,
+        "funding_reviewed": funding_reviewed, "funding_note": funding_note,
+        "terminal_payout_ratio": terminal_payout_ratio, "terminal_reviewed": terminal_reviewed,
+        "terminal_note": terminal_note,
         "judgments": judgments, "spinoff": spinoff,
         "price_source": price_source, "price_override": price_override,
         "cost_of_debt": cod_norm, "bonded": bonded,
@@ -220,9 +280,14 @@ def config_hash(normalized):
     # a human has looked at the horizon, and toggling it changes no number. convergence_reviewed
     # and convergence_note are excluded for exactly the same reason — they gate whether a number
     # is published, not what the number is.
+    # terminal_payout_ratio belongs here alongside forecast_horizon_N: it is a first-order
+    # judgment about what the company does forever after cfg_N, not bookkeeping about whether
+    # someone looked. terminal_reviewed/terminal_note are excluded for the same reason
+    # horizon_reviewed and convergence_reviewed/note are: they gate whether a number is
+    # published, not what the number is.
     core = {k: normalized[k] for k in
-            ("company", "ticker", "fy_end_month", "forecast_horizon_N", "judgments",
-             "spinoff", "cost_of_debt", "bonded") if k in normalized}
+            ("company", "ticker", "fy_end_month", "forecast_horizon_N", "terminal_payout_ratio",
+             "judgments", "spinoff", "cost_of_debt", "bonded") if k in normalized}
     blob = json.dumps(core, sort_keys=True, default=str)
     return hashlib.sha256(blob.encode()).hexdigest()[:16]
 

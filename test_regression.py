@@ -71,6 +71,10 @@ def main():
     # issuance nobody forecast. Thirteen checks that the guard discriminates rather than
     # merely fires, driving the real engine for each case.
     run_unit("test_funding_check.py")
+    # Terminal (continuing-period) distribution-policy gate (2026-08-12): what the company
+    # does after cfg_N, dividends-only, no default. Discrimination tests plus the property
+    # that matters most -- it cannot move the published value, pinned against the real engine.
+    run_unit("test_terminal_payout.py")
     # The standing WIRING check. test_convergence.py passed here on every run for weeks while
     # convergence.py was imported by nothing except itself, so the feature reached no valuation
     # at all and no check could see it. This fails when any module in pipeline/ has no importer

@@ -22,20 +22,19 @@ Disclosed bridge (per share):
       - idiosyncratic haircut        = base equity - equity(COE + idiosyncratic)
     = adjusted equity (market debt, idiosyncratic-disclosed)
 
-NOTE (V2, SCHEDULED — built and template-verified 2026-08-12, not yet landed): this is the
-tie-preserving disclosure. The FULLER treatment — re-levering the cost of equity on leverage
-(pure Modigliani-Miller Proposition II, no tax adjustment; r_u solved once at the anchor;
-leverage via the anchor market-to-book multiple applied to the model's own driven book equity,
-D(t)/(CSE(t) x E_market,0/CSE_0)) and re-establishing NOA=CSE+NFO on the disclosed
-(market-debt-adjusted) figure — is V2. A working hook (patches/relever_v2.py, in the AEG-Project
-working folder, not this repo) has been built and proven, by a real LibreOffice recalculation of
-the template's own base-company fixture, to leave the four-method tie unaffected hook-off vs.
-hook-on while equity value moves. It has NOT yet been run on a real company or landed in this
-repository. James ruled 2026-08-12: schedule it as the next GATED item in the product plan
-(after D1 in the open defect register), not an indefinite deferral. See
-docs/AEG-V2-Relever-Proposal-2026-08-12.md and docs/AEG-V2-Relever-BUILT-Verification-2026-08-12.md
-in the AEG-Project working folder for the proposal, the build, and the verification/decision
-record.
+NOTE (V2, SCHEDULED — built and template-verified, committed 2026-08-12, not yet fleet-run):
+this is the tie-preserving disclosure. The FULLER treatment — re-levering the cost of equity on
+leverage (pure Modigliani-Miller Proposition II, no tax adjustment; r_u solved once at the
+anchor; leverage via the anchor market-to-book multiple applied to the model's own driven book
+equity, D(t)/(CSE(t) x E_market,0/CSE_0)) and re-establishing NOA=CSE+NFO on the disclosed
+(market-debt-adjusted) figure — is V2. A working hook, `patch_relever_v2.py` (this repository,
+root), has been built and proven, by a real LibreOffice recalculation of the template's own
+base-company fixture, to leave the four-method tie unaffected hook-off vs. hook-on while equity
+value moves. It has NOT yet been run on a real company. James ruled 2026-08-12: schedule it as
+the next GATED item in the product plan (after D1 in the open defect register), not an
+indefinite deferral. See `docs/AEG-V2-Relever-Proposal-2026-08-12.md` and
+`docs/AEG-V2-Relever-BUILT-Verification-2026-08-12.md` (this repository) for the proposal, the
+build, and the verification/decision record.
 """
 import shutil, openpyxl
 import aeg_engine as AE

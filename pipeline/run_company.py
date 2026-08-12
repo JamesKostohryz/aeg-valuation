@@ -341,21 +341,36 @@ def main():
     # --- optional payload overrides parsed early: 'bonded' (gates the rate re-point) and
     #     'erp_override' (cockpit ERP-method selector: COE = model real_rf + erp_override).
     #     Neither edits the committed company config; absent -> committed behaviour (bit-identical).
+    #
+    # FAIL-LOUD 2026-08-12 (AEG-D1-MECHANISM-FOUND): this block used to wrap the whole
+    # peek in a blanket `except Exception: pass`, so a malformed or out-of-bounds
+    # 'erp_override' -- including a stray/leftover Cockpit dropdown value -- was
+    # silently dropped rather than rejected, and the value that DID parse was applied
+    # with zero validation. apply_payload.validate_overrides() now bounds-checks
+    # 'erp_override' and requires a co-supplied 'erp_override_reason' before a run
+    # will honor it; any problem aborts the run instead of silently proceeding.
     _erp_override = None
     _scenarios = None
     if args.payload:
+        import apply_payload as _APB
         try:
-            import apply_payload as _APB
             _peek = _APB.load_payload(args.payload)
-            if isinstance(_peek, dict) and _peek.get("bonded") is not None:
+        except _APB.PayloadError as e:
+            _fail(f"payload is not valid JSON: {e}")
+        if isinstance(_peek, dict):
+            try:
+                _APB.validate_overrides(_peek)
+            except _APB.PayloadError as e:
+                _fail(str(e))
+            if _peek.get("bonded") is not None:
                 cfg["bonded"] = bool(_peek["bonded"])
                 print(f"[payload] bonded override -> {cfg['bonded']}")
-            if isinstance(_peek, dict) and _peek.get("erp_override") is not None:
+            if _peek.get("erp_override") is not None:
                 _erp_override = float(_peek["erp_override"])
-            if isinstance(_peek, dict) and _peek.get("scenarios") is not None:
+                print(f"[payload] erp_override requested = {_erp_override} "
+                      f"(reason: {_peek.get('erp_override_reason')!r})")
+            if _peek.get("scenarios") is not None:
                 _scenarios = _peek["scenarios"]
-        except Exception:
-            pass
 
     # --- optional rate re-point (only if a feed is provided/available)
     disclosure = None
@@ -409,7 +424,10 @@ def main():
             if _erp_override is not None:
                 RP.apply_erp_override(wb, _erp_override)
                 feed["erp_override"] = _erp_override
-                print(f"[erp-override] COE = model real_rf + {_erp_override} (company ERP flat; idio zeroed)")
+                feed["erp_override_reason"] = _peek.get("erp_override_reason") if args.payload else None
+                print(f"[erp-override] *** WARNING: this run does NOT use {tk}'s own ERP curve. ***")
+                print(f"[erp-override] COE = model real_rf + {_erp_override} (company ERP flat; idio zeroed) "
+                      f"reason={feed['erp_override_reason']!r}")
             wb.save(out_xlsx)
             recalc(out_xlsx)
             print(f"[rates] re-pointed from feed (nfo_basis={feed['nfo_basis']})")
@@ -938,7 +956,9 @@ def main():
             _mj["cost_of_debt"] = feed["cod_provenance"]
             if feed.get("erp_override") is not None:
                 _mj["erp_override"] = {"value": feed["erp_override"], "method": "override",
-                                       "note": "COE = model real_rf + erp_override (idio zeroed)"}
+                                       "reason": feed.get("erp_override_reason"),
+                                       "note": "COE = model real_rf + erp_override (idio zeroed); "
+                                               "this run did NOT use the company's own ERP curve"}
             with open(_mp, "w") as _fh:
                 _json.dump(_mj, _fh, indent=2)
             print(f"[cod] provenance -> manifest: {feed['cod_provenance']['cod_source']} "

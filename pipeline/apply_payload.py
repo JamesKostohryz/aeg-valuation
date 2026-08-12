@@ -91,6 +91,52 @@ class PayloadError(Exception):
     """Malformed payload. Raised before anything is written."""
 
 
+# ERP override bounds: a REAL decimal fraction (e.g. 0.0155 for 1.55%). Wide enough for
+# a genuine CAPM/Custom reading, tight enough to catch a unit error (percent typed where
+# a decimal was expected, or a stray leftover value) before it reaches the engine.
+ERP_OVERRIDE_BOUNDS = (-0.02, 0.10)
+
+
+def validate_overrides(p):
+    """Fail-loud validation for the two top-level dispatch fields that bypass the
+    Forecast-tab driver/single schema: 'bonded' (bool) and 'erp_override' (a real
+    decimal ERP that forces the WHOLE company curve flat at every tenor -- see
+    repoint_rates.apply_erp_override()).
+
+    Added 2026-08-12 (AEG-D1-MECHANISM-FOUND). Before this, run_company.py read
+    'erp_override' directly off the raw payload dict with zero bounds-checking and
+    wrapped the whole read in a blanket try/except that silently swallowed any error
+    -- so a stray or carried-over Cockpit dropdown value (Control!C9, not reset
+    between tickers) could flatten a 30-tenor company ERP curve to one number with
+    no warning anywhere. erp_override now REQUIRES a co-supplied non-empty
+    'erp_override_reason' string: a deliberate, labelled choice can still override
+    the curve; an accidental or leftover one cannot."""
+    if not isinstance(p, dict):
+        return
+    errs = []
+    if "bonded" in p and p["bonded"] is not None and not isinstance(p["bonded"], bool):
+        errs.append(f"'bonded' must be true/false, got {p['bonded']!r}")
+    if "erp_override" in p and p["erp_override"] is not None:
+        v = p["erp_override"]
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            errs.append(f"'erp_override' must be numeric, got {v!r}")
+        else:
+            lo, hi = ERP_OVERRIDE_BOUNDS
+            if not (lo <= v <= hi):
+                errs.append(
+                    f"'erp_override'={v} out of range [{lo},{hi}] (real decimal "
+                    f"fraction, e.g. 0.0155 for 1.55% -- is this a percent, not a "
+                    f"decimal?)")
+        reason = p.get("erp_override_reason")
+        if not isinstance(reason, str) or not reason.strip():
+            errs.append(
+                "'erp_override' supplied without a non-empty 'erp_override_reason' "
+                "-- an ERP override must be a deliberate, labelled choice, not a "
+                "carried-over default")
+    if errs:
+        raise PayloadError("PAYLOAD OVERRIDE VALIDATION FAILED:\n  - " + "\n  - ".join(errs))
+
+
 # ------------------------------------------------------------------ validation
 def validate_payload(p):
     """Validate the dispatch payload. Only drivers that are PRESENT are checked —

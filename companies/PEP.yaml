@@ -8,18 +8,56 @@ ticker: PEP
 fy_end_month: 0          # 0 = auto-detect from statement dates
 
 forecast:
-  # P2 — the explicit forecast horizon cfg_N: the competitive-advantage period, i.e. the
-  # number of years abnormal earnings growth is judged to persist for THIS company. There
-  # is deliberately no default; the value below is what this name was already running at
-  # when the horizon became an explicit input, and it has NOT yet been reviewed. Set
-  # reviewed: true once you have deliberately chosen it. Any integer 1..30; 4 is fine.
-  # HORIZON PROVENANCE: not studied. Value selected by Claude and authorized by James
-  # on 2026-08-09 ("You select the numbers. I don't care what they are... If I ever
-  # decide to do a valuation of those companies I will study the matter."). MUST be
-  # revisited before this company is published. See
-  # claude/AEG-DECISIONS-SETTLED-DO-NOT-REASK-2026-08-09.md
+  # P2 — the explicit forecast horizon cfg_N. As of 2026-08-12 this is NOT a competitive-
+  # advantage-period judgment (see below); it is simply the year abnormal earnings growth
+  # is genuinely spent under the reviewed driver path (Gate A) with earnings at a
+  # normalized level (Gate B). N = 4 is where Round 1's qualitative moat-length brief
+  # landed and where Round 2R's driver build was originally submitted; both gates REFUSED
+  # that build at N=4 (AEG -$0.126/sh at year 4, still worsening, factor 1.48 -- confirmed
+  # by the real engine on 2026-08-12, not just the replica). Extending the SAME year-1..4
+  # drivers and holding them flat does not work either -- tested at N=6, 10 and 14, all
+  # REFUSED, because a flat hold leaves a residual turnover drift (revenue growth 3.2%
+  # vs NOA growth 3.1%) that never fully settles and the AEG stream wobbles and reverses
+  # sign around year 12-14 rather than decaying cleanly.
+  #
+  # horizon_N: 12 is the result of an actual years-5..12 forecast, not a placeholder:
+  # gross margin (53.60%), SG&A ratio (40.25%) and the tax rate (21.0%) hold at their
+  # year-4 levels, which Round 2R already describes as the terminal values of its 4-year
+  # compressed glide, not a snapshot. Revenue growth and NOA growth both step to a single
+  # matched terminal rate of 3.1% nominal starting year 5 -- matched exactly (not merely
+  # close) so asset turnover stops drifting once the transition is over, and 3.1% because
+  # it equals rather than exceeds the lower of the two year-4 rates, which is a small
+  # further deceleration from year 4's 3.2% revenue growth, not an acceleration. Confirmed
+  # against the real engine 2026-08-12: AEG at year 12 is -$0.0082/sh (year 11: -$0.0132),
+  # factor 0.378, discarded tail 0.64% of value (gate A PASS); earnings gap at year 12 is
+  # 0.4% of EPS (gate B PASS, threshold 15%). Both gates cleared honestly -- no
+  # convergence.reviewed override was needed or used.
+  #
+  # James's ruling, 2026-08-12: N is not "moat length." It is the year AEG reaches zero,
+  # full stop -- a company can have negative AEG for years with no moat at all, and the
+  # forecaster's job is to extend the forecast until AEG is projected to hit zero in the
+  # first year of the continuing period, not to stop at a competitive-durability judgment.
+  # Round 1's original moat-length framing (three years plus one for international) was
+  # answering a different question than the one horizon_N actually asks.
   horizon_N: 12
   reviewed: true
+
+# The continuing period, year 13 onward: what PepsiCo does with its cash once the
+# explicit forecast ends. Added 2026-08-12 per kit v4 section 6 -- pure disclosure, does
+# not move the published value (confirmed: value is bit-identical across payout_ratio
+# 0.0/0.5/1.0 per test_terminal_payout.py), but its absence refuses the run unconditionally.
+terminal:
+  # Dividends only, per the kit's rule. Set to PepsiCo's own anchor-year dividends-only
+  # payout: $7,721mm of dividends against $9,941mm of nominal FY2025 net income = 77.7%,
+  # rounded. A fifty-three-year consecutive dividend grower with no further growth left to
+  # fund in the continuing period fully distributing at its current rate is the plainest
+  # available assertion, and since the ratio cannot move the headline there is no case for
+  # a more elaborate one.
+  payout_ratio: 0.78
+  reviewed: true
+  note: "PepsiCo's own anchor-year (FY2025) dividends-only payout ratio, held flat.
+    Dividends-only means literally that -- buybacks are not folded in, per kit section 3.
+    Disclosure only; proven not to move the published value."
 judgments:
   minority_include: false      # exclude minority interest from common equity
   finlease: 0.0                # KEEP 0.0. The add-back is NOT wired: in_finlease feeds no engine

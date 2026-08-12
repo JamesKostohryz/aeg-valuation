@@ -61,6 +61,49 @@ jobs:
           raw = os.environ["PAYLOAD"]
           try:
               p = AP.load_payload(raw)
+          except AP.PayloadError as e:
+              print(f"::error::{e}"); sys.exit(1)
+
+          # Multi-scenario dispatch (payload.scenarios present): the machine-file shape
+          # run_scenarios.py / run_company.py already consume in production, gated behind
+          # payload.scenarios exactly as the pipeline is. Added 2026-08-12 because this
+          # pre-flight step was still assuming the single-scenario shape and rejected every
+          # scenarios payload with "mode must be ... got None" before run_company.py ever
+          # got a chance to route it correctly. Mirrors what run_company.py itself does:
+          # validate_overrides() at the top level, then a structural + per-scenario driver
+          # check here so a malformed scenario still fails fast, before LibreOffice spins
+          # up, rather than only failing deep inside the "Run valuation" step.
+          if p.get("scenarios") is not None:
+              import run_scenarios as RS
+              try:
+                  AP.validate_overrides(p)
+                  ticker = p.get("ticker")
+                  if not isinstance(ticker, str) or not ticker.strip():
+                      raise AP.PayloadError("'ticker' must be a non-empty string")
+                  names, total = RS._validate_scenarios(p["scenarios"])
+                  if abs(total - 1.0) > RS.PROB_TOL:
+                      print(f"::warning::scenario probabilities sum to {total}, not 1.0 "
+                            f"(tolerance {RS.PROB_TOL}) -- cockpit-enforced, not blocked here")
+                  for sc in p["scenarios"]:
+                      single = {"ticker": ticker, "mode": sc.get("mode"), "N": sc.get("N"),
+                                "drivers": sc.get("drivers") or {}, "singles": sc.get("singles") or {}}
+                      AP.validate_payload(single)
+              except AP.PayloadError as e:
+                  print(f"::error::{e}"); sys.exit(1)
+              except RS.ScenariosError as e:
+                  print(f"::error::{e}"); sys.exit(1)
+              cfg = os.path.join("companies", f"{ticker}.yaml")
+              if not os.path.exists(cfg):
+                  print(f"::error::no config for {ticker} ({cfg}). Onboard it first.")
+                  sys.exit(1)
+              print(f"payload OK: {ticker} scenarios={names} (probabilities sum to {total})")
+              with open(os.environ["GITHUB_ENV"], "a") as fh:
+                  fh.write(f"TICKER={ticker}\n")
+              with open("payload.json", "w") as fh:
+                  json.dump(p, fh)
+              sys.exit(0)
+
+          try:
               ticker, mode, N = AP.validate_payload(p)
           except AP.PayloadError as e:
               print(f"::error::{e}"); sys.exit(1)

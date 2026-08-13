@@ -33,12 +33,15 @@ forecast:
   # 0.4% of EPS (gate B PASS, threshold 15%). Both gates cleared honestly -- no
   # convergence.reviewed override was needed or used.
   #
-  # James's ruling, 2026-08-12: N is not "moat length." It is the year AEG reaches zero,
-  # full stop -- a company can have negative AEG for years with no moat at all, and the
-  # forecaster's job is to extend the forecast until AEG is projected to hit zero in the
-  # first year of the continuing period, not to stop at a competitive-durability judgment.
-  # Round 1's original moat-length framing (three years plus one for international) was
-  # answering a different question than the one horizon_N actually asks.
+  # James's ruling, confirmed directly 2026-08-12 (previously paraphrased secondhand by a
+  # concurrent session; this is his own wording): "N is not moat length. It is simply the
+  # explicit forecast period. And forecasters must forecast through year 1 of the continuing
+  # period, where AEG must equal zero and the level of EPS must be normalized or neutral."
+  # Both conditions, not one -- a company can run negative AEG for years with no moat at
+  # all, and hitting AEG=0 alone is not sufficient if EPS in that year is not also at a
+  # neutral level (kit v4 section 7, gates A and B). Round 1's original moat-length framing
+  # (three years plus one for international) was answering a different question than the
+  # one horizon_N actually asks.
   horizon_N: 12
   reviewed: true
 

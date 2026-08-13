@@ -42,13 +42,15 @@ Probability-weighted (50/20/30) expected value: $103.11 tied / $108.34 headline,
 price of $144.38 — about 29% (24% headline-basis) overvalued. This matches `00-START-HERE.md` and
 the forecaster's Round 4 document.
 
-**One unresolved item from this verification, not yet answered by James:** `companies/PEP.yaml`
-attributes a ruling to James on 2026-08-12 — that `horizon_N` means "the year AEG reaches zero,"
-not moat length, reframing Round 1's original 3-4 year moat finding. That text was written by a
-different, concurrent session; it was not said in the session that produced this handoff, and it
-has not been independently confirmed as something James actually said. Ask him directly before
-treating it as settled doctrine — it is currently load-bearing on how `horizon_N` gets chosen for
-every future company.
+**Resolved since the first version of this handoff:** `companies/PEP.yaml` attributed a ruling to
+James, written by a different concurrent session, that had not been independently confirmed. Asked
+directly; James confirmed it in his own words, and the config comment was corrected to quote him
+rather than paraphrase a secondhand attribution: *"N is not moat length. It is simply the explicit
+forecast period. And forecasters must forecast through year 1 of the continuing period, where AEG
+must equal zero and the level of EPS must be normalized or neutral."* Both conditions — this maps
+exactly onto gates A and B (kit v4 section 7) and is now settled doctrine, not something to
+re-litigate. `horizon_N` is chosen by extending the forecast until both conditions hold in the
+final year, never by a competitive-durability judgment alone.
 
 ---
 
@@ -150,7 +152,6 @@ just be aware it's coming, scheduled as the next GATED engine item after this pr
 ## Still open, not yet resolved
 
 - `run_scenarios.py`'s gate bypass (Job 1, item 1) — the most important open item.
-- The "James's ruling" attribution in `companies/PEP.yaml` (see above) — needs his confirmation.
 - The vendor-vs-GAAP PepsiCo operating income question (fiscal-2025 $13,491m vendor vs $11,498m
   GAAP, the Rockstar impairment) — flagged in an earlier handoff, not yet independently resolved
   against a primary source this session.

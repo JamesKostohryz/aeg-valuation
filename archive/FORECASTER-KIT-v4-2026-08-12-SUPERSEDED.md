@@ -1,3 +1,13 @@
+# SUPERSEDED — do not use this file
+
+**Superseded 2026-08-13 by `docs/FORECASTER-KIT-v5-2026-08-13.md`.** Kept because forecasts were built
+against it. Its section 8 (gated companies) and section 9 (PepsiCo outstanding) are both stale: PepsiCo
+has since published and cleared every gate, and the thirteen unforecast companies now refuse at the
+horizon gate rather than at the funding or truncation gates. It also lacks the AEG value test, which is
+section 7 of v5.
+
+---
+
 # FORECASTER KIT — CURRENT VERSION (v4, 2026-08-12)
 
 **This is the authoritative kit. Anything older is superseded — see section 10.** The copy in the repository at `docs/` is the source of truth; any other copy is a working copy.

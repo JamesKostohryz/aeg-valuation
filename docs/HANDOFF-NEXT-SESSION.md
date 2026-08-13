@@ -148,6 +148,26 @@ just be aware it's coming, scheduled as the next GATED engine item after this pr
 - The four funding-gated companies (AAPL, COST, KO, WMT) stay gated until they have real forecasts.
 - PepsiCo's base/bull/bear numbers above are independently gate-verified, not merely asserted. Do
   not re-run them from scratch; do use them as the reference values if anything looks different.
+- **N IS NOT MOAT LENGTH** (James, 2026-08-12), verbatim: "N is not moat length. It is simply the
+  explicit forecast period. And forecasters must forecast through year 1 of the continuing period,
+  where AEG must equal zero and the level of EPS must be normalized or neutral." Round 1 of the
+  protocol therefore ends in a qualitative view, not a horizon; N is found mechanically in Round 2
+  by extending the forecast until Gate A and Gate B both hold. Evidence:
+  `docs/FORECASTER-KIT-v5-2026-08-13.md` section 8, and the Coca-Cola Round 1 brief.
+- **The AEG value test is real RoRE against the real cost of equity** — equivalently, real EPS
+  growth against the real cost of equity times the PRIOR year's retention rate. It is NOT nominal
+  `rore` against nominal `coe`; that comparison disagreed with the engine in 8 of Coca-Cola's 12
+  forecast years. Settled 2026-08-13 by reading MODEL_TEMPLATE Valuation rows 22 and 23 directly.
+  Evidence: kit v5 section 7, pinned by `pipeline/test_aeg_schedule.py` check 6.
+- **The thirteen unforecast companies are `forecast.reviewed: false` and stay that way** until each
+  has a real forecast. They now refuse at the horizon gate rather than the funding or truncation
+  gates. This moved no published number. Do not flip any of them back to clear a red build; the
+  fleet-wide test now checks `forecast.reviewed` against the presence of a reviewed forecast file in
+  both directions, so flipping one back will fail the build for the right reason.
+- **The engine does not value a company's "comparable"/adjusted earnings series.** It values
+  reported operating income after replacement-cost depreciation, in real terms, per anchor share.
+  For Coca-Cola the two diverged by about four percentage points a year over a decade. Kit v5
+  section 7.5.
 
 ## Still open, not yet resolved
 
@@ -156,6 +176,17 @@ just be aware it's coming, scheduled as the next GATED engine item after this pr
   GAAP, the Rockstar impairment) — flagged in an earlier handoff, not yet independently resolved
   against a primary source this session.
 - Cockpit Hole B — written, not applied (Job 2, item 2).
+- **Coca-Cola Round 2** — the driver build. Round 1 landed 2026-08-13
+  (`KO-Round1-Qualitative-Brief-2026-08-13.md` in the project folder). Round 2 must set a fundable
+  buyback rate (Coca-Cola's disclosed policy is anti-dilution only, ~0.1% of shares, against the
+  default overlay's 3%), must not treat the 2025 anchor balance sheet as a representative operating
+  base (a $6.1bn contingent-consideration settlement inflates net operating assets by 15.3%), and
+  must find N mechanically rather than inheriting the config's unreviewed 12.
+- **Whether the Cockpit displays `rore` or `coe` in a way that invites the retired comparison.** The
+  kit v5 change corrected the module docstring and pinned the identity, but step 4 of
+  `KIT-CHANGE-PROCEDURE.md` (the Cockpit) was NOT checked this session, because the Cockpit is Apps
+  Script outside the repository. If any tab shows a RoRE-versus-COE comparison, it is showing the
+  wrong test. Check before the next forecaster reads it.
 
 ## How to work
 

@@ -1,2 +1,2 @@
-# truncation gates,verdict=REVIEW,gap_ps=-0.0005,aeg_at_N=0.0816,aeg_decay=1.0815,discarded_tail_frac=DIVERGES,value_ps=44.5063,convergence_adjustment=RETIRED_2026-08-12,trend_g_short=0.050232,trend_g_full=0.054374,trend_spread=-0.004142
+# truncation gates,verdict=REVIEW,gap_ps=-0.0003,aeg_at_N=0.0813,aeg_decay=1.0821,discarded_tail_frac=DIVERGES,value_ps=44.4551,convergence_adjustment=RETIRED_2026-08-12,trend_g_short=0.050161,trend_g_full=0.054326,trend_spread=-0.004165
 t,phase,eps,normal_eps,aeg_eps,contrib_eps,coe

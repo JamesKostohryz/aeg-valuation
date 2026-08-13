@@ -1,6 +1,6 @@
-# AEG by period,cfg_N=12,convergence_K=3,actual_eps_N=30.466063784396,normalized_eps_N=30.466317850471775,engine_intrinsic_ps=320.440670573401,corrected_intrinsic_ps=320.440670573401,guard=REVIEW
+# AEG by period,cfg_N=12,convergence_K=3,actual_eps_N=30.0700647917137,normalized_eps_N=30.065197058295603,engine_intrinsic_ps=316.469267163257,corrected_intrinsic_ps=316.469267163257,guard=REVIEW
 # CAVEAT,the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period
 period,years,n_years,eps_entry,eps_exit,eps_growth_annualized,aeg_sum_nominal_ps,aeg_first_ps,aeg_last_ps,pv_contribution_ps,pct_of_corrected_value
-explicit,1..12,12,16.97497552,30.46606378,0.04994673,4.58082119,0.32973592,0.5994804,61.9088125,0.19319899
-convergence,none,0,30.46606378,30.46606378,,0.0,,,0.0,0.0
-combined,1..12,12,16.97497552,30.46606378,0.04994673,4.58082119,0.32973592,0.5994804,61.9088125,0.19319899
+explicit,1..12,12,16.97497552,30.07006479,0.04880263,4.24522396,0.1996844,0.57759634,57.93740909,0.18307436
+convergence,none,0,30.07006479,30.07006479,,0.0,,,0.0,0.0
+combined,1..12,12,16.97497552,30.07006479,0.04880263,4.24522396,0.1996844,0.57759634,57.93740909,0.18307436

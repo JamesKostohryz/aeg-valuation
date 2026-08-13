@@ -10,7 +10,7 @@ B12,in_oiadj0,company,"Operating income, adjusted (FY2025)",13491.0,analyst,IS '
 B13,anchor_eps0,company,Diluted EPS (FY2025),6.001457,filings,IS 'Diluted EPS' (unscaled)
 B14,in_tax0,company,Effective tax rate (FY2025),0.190258,filings,IS 'Tax Rate for Calcs' = 0.190258  (provision/pretax = 0.19026)
 B15,anchor_dps0,company,"Dividends per share, period-0 (FY2025)",5.624,filings,FY2025 dividends file: 4 ex-date(s) summing to 5.624
-B25,in_price,company,Current price ($/sh)  [LIVE — refresh each session],138.7,analyst,today's market price (external)
+B25,in_price,company,Current price ($/sh)  [LIVE — refresh each session],140.62,analyst,today's market price (external)
 B26,cfg_N,company,Explicit forecast horizon N  (≤ 30),12,analyst,set explicitly for this run
 B27,in_g_terminal,inert,"Terminal growth g (continuing, real)",0,inert,referenced by no formula in the template (dead input)
 B28,in_erp,company,Equity risk premium ERP (real),0.04,late-bound,"template value at build time; superseded on live runs by the rate feed, which rewrites the market equity-risk-premium term structure on Market Data row 25 (repoint_rates). Live on a fixture build."

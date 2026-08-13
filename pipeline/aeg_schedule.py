@@ -14,7 +14,34 @@ Also emits the per-year drivers report §7 asks for (E4.1, display-only, tie-saf
   rore           = ΔEPS_t ÷ retained_{t-1}         (return on retained equity)
 The RoRE definition mirrors the canonical one in pipeline/kit_feeds.py exactly
 (rore = _safe(e_t - e_p, e_p - d_p)); t=1 uses the anchor (column B, t=0) as the prior year.
-Compare rore against coe: reinvestment creates value iff rore > coe (the AEG value test).
+
+DO NOT COMPARE `rore` DIRECTLY AGAINST `coe`. Until 2026-08-13 this docstring said
+"reinvestment creates value iff rore > coe (the AEG value test)". That is the textbook test and
+it is WRONG for the series this file publishes, because `rore` is built on NOMINAL earnings
+while its retained-earnings denominator carries no inflation uplift, and `coe` is the NOMINAL
+cost of equity. Measured on Coca-Cola's own schedule the naive comparison disagreed with the
+engine's own aeg_eps in 8 of 11 checkable years: it reported that reinvestment created value in
+years 5..12 while the engine booked negative AEG in every one of them.
+
+The engine's neutral line is MODEL_TEMPLATE Valuation row 22, and AEG is row 23:
+
+    normal_eps_t = (1 + pi_t) * eps_(t-1)  +  (coe_t - pi_t) * retained_(t-1)
+    aeg_eps_t    = eps_t - normal_eps_t
+
+Last year's earnings are first carried forward at inflation; only then is the REAL cost of
+equity charged on last year's retained earnings. The correct tests, both exactly equivalent to
+aeg_eps_t > 0, and both pinned in test_aeg_schedule.py check 6:
+
+    (a) REAL RoRE > REAL cost of equity
+            real_rore_t = (eps_t/(1+pi_t) - eps_(t-1)) / retained_(t-1)
+            real_coe_t  = (coe_t - pi_t) / (1 + pi_t)
+
+    (b) on the growth rate:
+            real EPS growth > real cost of equity x prior-year retention rate
+
+Stated on the published nominal columns, the bar `rore` has to clear is
+(coe_t - pi_t) + pi_t/retention_(t-1). The second term is what the old wording dropped; it is
+roughly three times inflation for a company retaining a third of its earnings.
 
 SELF-VERIFYING: normal_value + sum(contrib_eps) must equal the intrinsic value V(EPS) the
 headline reports. A mismatch raises (fail-loud) rather than shipping a schedule that does not

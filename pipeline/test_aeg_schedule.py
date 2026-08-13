@@ -28,6 +28,16 @@ Checks:
   5. The self-verify tie guard actually raises ValueError on a workbook whose intrinsic
      value has been deliberately corrupted (not just documented as fail-loud in the
      docstring).
+  6. THE AEG VALUE TEST, pinned against the workbook (added 2026-08-13). Two things:
+     (a) the neutral line recomputes from the CSV's own columns as
+         normal_eps_t = (1+pi_t)*eps_(t-1) + (coe_t - pi_t)*retained_(t-1), i.e.
+         MODEL_TEMPLATE Valuation row 22, and aeg_eps_t = eps_t - normal_eps_t (row 23);
+     (b) sign(aeg_eps_t) == sign(real_rore_t - real_coe_t), which is the comparison the
+         module's docstring now tells a forecaster to make. Exists because the docstring
+         previously said to compare NOMINAL rore against NOMINAL coe, and that test gave
+         the opposite answer to the engine in 8 of Coca-Cola's 11 checkable forecast years.
+         The point of this check is that the documented test cannot drift away from the
+         workbook again without a build going red.
 
 Usage: python3 test_aeg_schedule.py
 """
@@ -125,6 +135,50 @@ for r in continuing_rows:
     check(r["retention_rate"] == "" and r["retained_eps"] == "" and r["coe"] == "" and r["rore"] == "",
           f"t={r['t']}: all four forecast-only drivers are blank in the continuing period (a cross-boundary "
           f"RoRE would be meaningless there, per the module's own docstring)")
+
+print("== check 6: the AEG value test recomputes from the workbook's own definition ==")
+# MODEL_TEMPLATE Valuation r22: normal_eps_t = (1+pi_t)*eps_(t-1) + (coe_t - pi_t)*retained_(t-1)
+#                          r23: aeg_eps_t    = eps_t - normal_eps_t
+# Everything below is rebuilt from the CSV's own columns plus the anchor column, so this is an
+# independent recomputation of the identity rather than a re-read of it.
+_prev_eps, _prev_ret = anchor_eps, anchor_retained
+_sign_ok = _norm_ok = True
+_naive_disagreements = 0
+_checked = 0
+for i, r in enumerate(rows):
+    if r["retention_rate"] == "":
+        continue
+    pi = float(r["pi"])
+    coe = float(r["coe"])
+    eps_nominal = float(r["eps_real"]) * float(r["infl_index"])
+    retained = float(r["retained_eps"])
+    want_normal = (1.0 + pi) * _prev_eps + (coe - pi) * _prev_ret
+    got_normal = float(r["normal_eps"])
+    if abs(want_normal - got_normal) > max(1e-4, 1e-6 * abs(got_normal)):
+        _norm_ok = False
+        print(f"    t={r['t']}: normal_eps {got_normal} != recomputed {want_normal}")
+    got_aeg = float(r["aeg_eps"])
+    if abs((eps_nominal - got_normal) - got_aeg) > max(1e-4, 1e-6 * abs(eps_nominal)):
+        _norm_ok = False
+        print(f"    t={r['t']}: aeg_eps {got_aeg} != eps - normal_eps {eps_nominal - got_normal}")
+    # (b) the documented comparison, in REAL terms, must agree in sign with the engine's own AEG
+    real_rore = (eps_nominal / (1.0 + pi) - _prev_eps) / _prev_ret
+    real_coe = (coe - pi) / (1.0 + pi)
+    if abs(got_aeg) > 1e-9 and (got_aeg > 0) != (real_rore > real_coe):
+        _sign_ok = False
+        print(f"    t={r['t']}: aeg_eps={got_aeg:+.6f} but real_rore={real_rore:.6f} "
+              f"vs real_coe={real_coe:.6f}")
+    # informational only: how often the RETIRED nominal comparison would have been wrong
+    if abs(got_aeg) > 1e-9 and (got_aeg > 0) != (float(r["rore"]) > coe):
+        _naive_disagreements += 1
+    _checked += 1
+    _prev_eps, _prev_ret = eps_nominal, retained
+check(_checked >= 1, f"check 6 examined {_checked} explicit forecast year(s)")
+check(_norm_ok, "normal_eps and aeg_eps recompute from Valuation r22/r23 on the CSV's own columns")
+check(_sign_ok, "sign(aeg_eps) == sign(real RoRE - real COE) in every explicit forecast year "
+                "-- the comparison aeg_schedule.py's docstring tells a forecaster to make")
+print(f"  note  the RETIRED nominal test (rore > coe) would have disagreed with the engine in "
+      f"{_naive_disagreements} of {_checked} year(s) on this fixture; on KO it was 8 of 11")
 
 print("== self-verify tie guard actually fires on a corrupted workbook ==")
 bad = os.path.join(WORK, "AAPL_bad.xlsx")

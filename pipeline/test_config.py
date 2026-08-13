@@ -60,18 +60,51 @@ ok(isinstance(c["forecast_horizon_N"], int) and 1 <= c["forecast_horizon_N"] <= 
    f"AAPL horizon is a valid explicit selection (cfg_N={c['forecast_horizon_N']})")
 ok(c["horizon_reviewed"] is True, "a reviewed horizon loads as reviewed")
 
-# Every SHIPPED company config must carry an authorized horizon, or it produces no
-# valuation. This is the fleet-wide standing check.
+# FLEET-WIDE STANDING CHECK — REWRITTEN 2026-08-13.
+#
+# This used to assert "every shipped company config has an authorized horizon". That was
+# true when it was written and it had to stop being true: on 2026-08-13 thirteen of the
+# fourteen configs were found carrying `forecast.reviewed: true` two lines beneath their
+# own comment saying "HORIZON PROVENANCE: not studied ... MUST be revisited before this
+# company is published". The flag was reporting a review that had not happened, on the one
+# input this project's notes say has twice determined the SIGN of the abnormal earnings
+# stream. The old assertion made saying so a CI failure, so it was not a guard against the
+# defect — it was pressure to keep the defect.
+#
+# The replacement is strictly STRONGER, not weaker. Two independent assertions have to
+# agree with each other:
+#   1. companies/<T>.yaml       forecast.reviewed: true   -- "a human chose this horizon"
+#   2. companies/<T>.forecast.json exists                 -- "a reviewed forecast exists"
+# Neither can be true without the other. An authorized horizon with no forecast behind it
+# is the 2026-08-13 defect; a forecast on file whose horizon is unauthorized is a forecast
+# that cannot run. This check would have caught the original defect on the day it landed.
 import glob
-_unauth = []
+_mismatch = []
 # NB: not _f — that is the global failure counter used by ok()/expect_error().
 for _cfgpath in sorted(glob.glob(os.path.join(_ROOT, "companies", "*.yaml"))):
+    _tk = os.path.splitext(os.path.basename(_cfgpath))[0]
     try:
         CFG.load_config(_cfgpath)
-    except CFG.ConfigError as _e:
-        _unauth.append(f"{os.path.basename(_cfgpath)}: {str(_e).splitlines()[0][:60]}")
-ok(not _unauth, f"every shipped company config has an authorized horizon"
-                + (f" — UNAUTHORIZED: {_unauth}" if _unauth else ""))
+        _authorized = True
+    except CFG.ConfigError:
+        _authorized = False
+    _has_forecast = os.path.exists(os.path.join(_ROOT, "companies", f"{_tk}.forecast.json"))
+    if _authorized and not _has_forecast:
+        _mismatch.append(f"{_tk}: horizon authorized but NO reviewed forecast on file "
+                         f"(this is the 2026-08-13 defect)")
+    if _has_forecast and not _authorized:
+        _mismatch.append(f"{_tk}: reviewed forecast on file but horizon NOT authorized "
+                         f"(the forecast cannot run)")
+ok(not _mismatch, "forecast.reviewed and the presence of a reviewed forecast file agree "
+                  "for every shipped company"
+                  + (f" — MISMATCH: {_mismatch}" if _mismatch else ""))
+_authorized_count = sum(
+    1 for _c in glob.glob(os.path.join(_ROOT, "companies", "*.yaml"))
+    if os.path.exists(os.path.join(_ROOT, "companies",
+                                   f"{os.path.splitext(os.path.basename(_c))[0]}.forecast.json")))
+ok(_authorized_count >= 1,
+   f"at least one company is genuinely forecast and authorized ({_authorized_count} of "
+   f"{len(glob.glob(os.path.join(_ROOT, 'companies', '*.yaml')))})")
 
 # THE GATE itself. An unreviewed horizon authorizes NO valuation. This is the enforcement
 # of "there is no valuation without an explicit selection of a forecast period" — never

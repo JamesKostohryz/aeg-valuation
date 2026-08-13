@@ -151,6 +151,10 @@ def main():
     # powerful judgments in the model can be set at all.
     run_unit("test_apply_payload.py")
     run_unit("test_run_scenarios.py")
+    # The reviewed forecast is a repository artifact (2026-08-13). Offline; no recalc. Guards
+    # the rule that a company with a forecast on file is never valued payload-free -- the
+    # failure that quarantined PepsiCo's published outputs at commit 33a6b5a.
+    run_unit("test_reviewed_forecast.py")
     run_unit("test_kit_feeds.py")
     # The debt-feed guard (2026-08-09). The vendor "Total Debt" row is `in_debt`, which
     # sets net financial obligations and, through the identity that plugs net operating

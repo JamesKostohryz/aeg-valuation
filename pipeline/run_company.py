@@ -199,6 +199,61 @@ def build_cost_of_debt(cfg):
     return {}  # interest_implied -> statement-implied fallback (flagged), may fail if interest≈0
 
 
+class ReviewedForecastError(Exception):
+    """A reviewed forecast file exists but is not usable. Refuse; do not fall back to a
+    payload-free default-overlay run and publish a number nobody forecast."""
+
+
+def reviewed_forecast_path(config_path, ticker):
+    """companies/<TICKER>.forecast.json, beside the company config."""
+    return os.path.join(os.path.dirname(os.path.abspath(config_path)),
+                        f"{ticker}.forecast.json")
+
+
+def load_reviewed_forecast(path, ticker):
+    """Read a reviewed forecast file and return the payload run_company should dispatch.
+
+    Raises ReviewedForecastError with a plain-language reason on anything wrong. The caller
+    must NOT swallow it: a company with a forecast file on disk that cannot be honored is a
+    refusal, not an invitation to run the default overlay. Before 2026-08-13 a reviewed
+    forecast lived only in a Cockpit dispatch, so every automated repository run valued the
+    company payload-free -- which cannot satisfy Gate A, so it refused and quarantined that
+    company's published outputs. PepsiCo lost its published files that way (commit 33a6b5a).
+    """
+    import json as _json
+    try:
+        with open(path) as fh:
+            rf = _json.load(fh)
+    except Exception as e:
+        raise ReviewedForecastError(
+            f"REVIEWED FORECAST UNREADABLE ({path}): {e}\n"
+            f"  {ticker} has a reviewed forecast on file, so this run will NOT fall back to a\n"
+            f"  payload-free default overlay. Fix the file, or delete it deliberately if this\n"
+            f"  company no longer has a reviewed forecast.")
+    if not isinstance(rf, dict):
+        raise ReviewedForecastError(f"REVIEWED FORECAST REJECTED ({path}): not a JSON object.")
+    if rf.get("ticker") != ticker:
+        raise ReviewedForecastError(
+            f"REVIEWED FORECAST REJECTED ({path}): the file is for ticker "
+            f"{rf.get('ticker')!r}, not {ticker!r}.")
+    if rf.get("reviewed") is not True:
+        raise ReviewedForecastError(
+            f"REVIEWED FORECAST REJECTED ({path}): not marked reviewed. A forecast file without "
+            f"an explicit reviewed:true is a draft, and a draft does not get published.")
+    scenarios = rf.get("scenarios")
+    if not isinstance(scenarios, list) or not scenarios:
+        raise ReviewedForecastError(
+            f"REVIEWED FORECAST REJECTED ({path}): no scenarios array.")
+    primary = rf.get("primary") or "base"
+    names = [sc.get("name") for sc in scenarios if isinstance(sc, dict)]
+    if primary not in names:
+        raise ReviewedForecastError(
+            f"REVIEWED FORECAST REJECTED ({path}): primary scenario {primary!r} is not one of "
+            f"{names}. The primary scenario is the one that takes the full gated path and "
+            f"writes the published files, so it has to exist.")
+    return {"ticker": ticker, "primary": primary, "scenarios": scenarios}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("config", help="path to companies/<TICKER>.yaml")
@@ -245,6 +300,33 @@ def main():
     _REFUSAL_CTX["ticker"] = tk        # authoritative, replaces the peeked value
     os.makedirs(args.work_dir, exist_ok=True)
     print(f"[run_company] {tk}  config_hash={cfg['config_hash']}  bonded={cfg['bonded']}")
+
+    # --- REVIEWED FORECAST ON FILE (2026-08-13). Until now a reviewed forecast existed only as
+    #     a one-time Cockpit dispatch, so any push touching companies/**, pipeline/** or *.py
+    #     re-ran the fleet payload-free -- and a payload-free default overlay can never satisfy
+    #     Gate A, so the run REFUSED and quarantined that company's published files to .STALE.
+    #     That is exactly what happened to PepsiCo overnight on 2026-08-13 (commit 33a6b5a): the
+    #     first company on this system to clear every gate lost its published outputs to an
+    #     automated run of its own repository. The forecast is now a repository artifact,
+    #     companies/<TICKER>.forecast.json, sitting beside the company config. If it exists and
+    #     no --payload was supplied, it IS this run's payload. If it exists and cannot be read,
+    #     the run refuses rather than falling through to a default overlay -- "no payload-free
+    #     number on this system should be quoted for any company" is now enforced, not a habit.
+    import json as _json
+    _forecast_path = reviewed_forecast_path(args.config, tk)
+    if os.path.exists(_forecast_path):
+        try:
+            _rf_payload = load_reviewed_forecast(_forecast_path, tk)
+        except ReviewedForecastError as _e:
+            _fail(str(_e))
+        if args.payload:
+            print(f"[forecast] --payload supplied explicitly, so the reviewed forecast on file "
+                  f"({os.path.basename(_forecast_path)}) is NOT used for this run")
+        else:
+            args.payload = _json.dumps(_rf_payload)
+            print(f"[forecast] reviewed forecast on file -> using it as this run's payload "
+                  f"(primary={_rf_payload['primary']}, "
+                  f"scenarios={[sc.get('name') for sc in _rf_payload['scenarios']]})")
 
     # --- unsupported-knob guard: fail fast rather than emit a number that ignores a stated
     #     judgment. oi_adj_override sets in_oiadj0, which feeds ONLY an Audit identity requiring
@@ -351,6 +433,7 @@ def main():
     # will honor it; any problem aborts the run instead of silently proceeding.
     _erp_override = None
     _scenarios = None
+    _primary_name = "base"
     if args.payload:
         import apply_payload as _APB
         try:
@@ -371,6 +454,7 @@ def main():
                       f"(reason: {_peek.get('erp_override_reason')!r})")
             if _peek.get("scenarios") is not None:
                 _scenarios = _peek["scenarios"]
+                _primary_name = _peek.get("primary") or "base"
 
     # --- optional rate re-point (only if a feed is provided/available)
     disclosure = None
@@ -440,16 +524,32 @@ def main():
     #     outputs/<TICKER>_scenarios.csv (one row per scenario + an expected-value row).
     #     Absent -> the single-scenario path below runs unchanged (bit-identical by
     #     construction). Fail-closed PER scenario: any non-tie aborts the whole dispatch.
+    #     RESTRUCTURED 2026-08-13. This block used to value the scenarios HERE and then RETURN,
+    #     which meant two things at once. First, every gate below -- both truncation gates, the
+    #     funding gate and the terminal-payout gate -- was skipped for a scenarios dispatch;
+    #     read_results() checks only completeness/provenance and the tie. Second, none of the
+    #     files the Cockpit actually reads (valuation, summary, fact_sheet, anchors) were written
+    #     at all, so a scenarios run published a scenarios CSV and nothing else. Now the PRIMARY
+    #     scenario -- the forecast's own designated base case -- runs through the ordinary
+    #     single-scenario path below, gates and all, and the full scenario set is valued at the
+    #     end off a PRISTINE copy of this workbook taken before the primary case's drivers are
+    #     written, so no scenario can inherit another scenario's cells.
+    _scenarios_pristine = None
     if _scenarios is not None:
-        import run_scenarios as RS
-        try:
-            srep = RS.run_scenarios(out_xlsx, _scenarios, ticker=tk, price=price,
-                                    out_dir=args.out_dir, recalc=recalc,
-                                    commit_sha=os.environ.get("GITHUB_SHA", ""))
-        except RS.ScenariosError as e:
-            _fail(f"SCENARIOS FAILED: {e}")
-        print(f"[done] {tk}  scenarios={srep['scenarios']} -> {tk}_scenarios.csv")
-        return
+        _primary = next((sc for sc in _scenarios if sc.get("name") == _primary_name), None)
+        if _primary is None:
+            _fail(f"scenarios payload has no scenario named {_primary_name!r} to run as the "
+                  f"gated primary case (names present: "
+                  f"{[sc.get('name') for sc in _scenarios]})")
+        _scenarios_pristine = os.path.join(args.work_dir, f"{tk}_scenarios_pristine.xlsx")
+        shutil.copyfile(out_xlsx, _scenarios_pristine)
+        args.payload = _json.dumps({"ticker": tk,
+                                    "mode": _primary.get("mode"),
+                                    "N": _primary.get("N"),
+                                    "drivers": _primary.get("drivers") or {},
+                                    "singles": _primary.get("singles") or {}})
+        print(f"[scenarios] primary scenario {_primary_name!r} takes the full gated path; the "
+              f"other {len(_scenarios) - 1} are valued after every gate has passed")
 
     # --- optional RUN-button forecast payload (cockpit dispatch contract 20260722-0800).
     # Applied AFTER the rate re-point so nominal growth drivers are deflated with the very
@@ -1033,6 +1133,18 @@ def main():
                   f"{feed['cod_provenance']['audit']} rating={feed['cod_provenance']['rating']}")
         except Exception as _e:
             print(f"[cod] manifest provenance skip ({_e})")
+    # --- the remaining scenarios, valued only now that the primary case has cleared every
+    #     gate. Off the pristine pre-payload workbook, so each scenario is independent.
+    if _scenarios is not None:
+        import run_scenarios as RS
+        try:
+            srep = RS.run_scenarios(_scenarios_pristine, _scenarios, ticker=tk, price=price,
+                                    out_dir=args.out_dir, recalc=recalc,
+                                    commit_sha=os.environ.get("GITHUB_SHA", ""))
+        except RS.ScenariosError as e:
+            _fail(f"SCENARIOS FAILED: {e}")
+        print(f"[scenarios] {tk}  {srep['scenarios']} -> {tk}_scenarios.csv")
+
     # A run that reaches the headline produced a valuation, so any quarantine left by a
     # previous refusal is obsolete: clear the marker and the .STALE files.
     _clear_stale_markers(tk, args.out_dir)

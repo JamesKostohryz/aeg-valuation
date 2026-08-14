@@ -3,7 +3,7 @@ ticker,PEP
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,4.91127138957381e-10
+max_identity_tie,3.38332029059529e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,11293.2355965138
 anchor_representativeness,PASS
@@ -13,26 +13,26 @@ anchor_margin_vs_normal,1.0126354739132681
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 convergence_adjustment,RETIRED_2026-08-12 (inert)
-headline_value_ps,115.75945974197555
-headline_value_pre_convergence_ps,115.75945974197555
+headline_value_ps,121.88976909083972
+headline_value_pre_convergence_ps,121.88976909083972
 convergence_K,3
 convergence_value_ps,0.0
 convergence_value_idio_adjusted_ps,
-actual_eps_at_N,9.32582527908649
-normalized_eps_at_N,9.293821295583333
+actual_eps_at_N,9.3289162374463
+normalized_eps_at_N,9.298529508364886
 convergence_guard,PASS
 funding_guard,PASS
 funding_reviewed,False
 funding_review_note,
-funding_min_implied_dps,6.02007776205509
+funding_min_implied_dps,6.01964479136988
 convergence_reviewed,False
 convergence_review_note,
 convergence_in_four_method_tie,False
 terminal_payout_guard,PASS
 terminal_payout_ratio,0.78
-terminal_normalized_eps_N,9.293821295583333
-terminal_implied_dps,7.249180610555
-terminal_implied_retained_ps,2.044640685028333
+terminal_normalized_eps_N,9.298529508364886
+terminal_implied_dps,7.252853016524612
+terminal_implied_retained_ps,2.0456764918402746
 terminal_payout_reviewed,True
 terminal_payout_review_note,PepsiCo's own anchor-year (FY2025) dividends-only payout ratio; held flat. Dividends-only means literally that -- buybacks are not folded in; per kit section 3. Disclosure only; proven not to move the published value.
 cfg_N,12
@@ -41,4 +41,4 @@ payout_seed,0.937106
 ppe_life_years,15.87
 inputs_on_template_default,0
 config_hash,ead2bf1f854f1d44
-vintage,2026-08-13T23:17Z
+vintage,2026-08-14T17:55Z

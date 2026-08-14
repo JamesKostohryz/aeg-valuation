@@ -3,7 +3,7 @@ ticker,KO
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,2.5465851649642e-10
+max_identity_tie,3.41970007866621e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,10577.3583852653
 anchor_representativeness,PASS
@@ -13,32 +13,32 @@ anchor_margin_vs_normal,1.1033584548356974
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 convergence_adjustment,RETIRED_2026-08-12 (inert)
-headline_value_ps,42.06457082171364
-headline_value_pre_convergence_ps,42.06457082171364
+headline_value_ps,23.30629431852641
+headline_value_pre_convergence_ps,23.30629431852641
 convergence_K,3
 convergence_value_ps,0.0
 convergence_value_idio_adjusted_ps,
-actual_eps_at_N,4.24157579903448
-normalized_eps_at_N,4.2273613578842815
+actual_eps_at_N,1.55016325256321
+normalized_eps_at_N,1.5383299443818106
 convergence_guard,PASS
 funding_guard,PASS
 funding_reviewed,False
 funding_review_note,
-funding_min_implied_dps,2.23113343317719
+funding_min_implied_dps,1.27323685694847
 convergence_reviewed,False
 convergence_review_note,
 convergence_in_four_method_tie,False
 terminal_payout_guard,PASS
 terminal_payout_ratio,0.67
-terminal_normalized_eps_N,4.2273613578842815
-terminal_implied_dps,2.832332109782469
-terminal_implied_retained_ps,1.3950292481018125
+terminal_normalized_eps_N,1.5383299443818106
+terminal_implied_dps,1.0306810627358132
+terminal_implied_retained_ps,0.5076488816459974
 terminal_payout_reviewed,True
 terminal_payout_review_note,Matches KO's own 2025 dividends-only payout (0.670) and disclosed anti-dilution-only buyback policy; no capital needs identified that would justify a lower terminal payout.
-cfg_N,15
+cfg_N,14
 cfg_N_reviewed,True
 payout_seed,0.671284
 ppe_life_years,17.35
 inputs_on_template_default,0
-config_hash,a3c235b2bcb3b05e
-vintage,run-2026-08-14T15:16:36Z
+config_hash,92a9dff16011983e
+vintage,run-2026-08-14T15:24:23Z

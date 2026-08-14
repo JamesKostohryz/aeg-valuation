@@ -560,6 +560,7 @@ instance of this failure took.
 
 ---
 
-*v5, 2026-08-13. Section 7 (the AEG value test) is new; section 9 (gated companies) and section 10*
-*(where the two forecast companies stand) are rewritten; former sections 7-10 are renumbered 8-11 with*
-*no other content change. v4 is superseded and archived. No published number moves in this version.*
+*v6, 2026-08-14. Section 8 gains a subsection on multi-scenario dispatch; section 10 is rewritten*
+*for Coca-Cola Rounds 2-3 and PepsiCo's `bear` scenario. v5 is superseded and archived. No published*
+*number moves by this version's own action — the PepsiCo `bear` change is a rate move the fix*
+*revealed, not something this version caused.*

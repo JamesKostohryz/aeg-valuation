@@ -14,7 +14,7 @@ forecast:
   # Coca-Cola's own history and tied to docs/KO-Round1-Qualitative-Brief-2026-08-13.md and
   # docs/KO-Round2-Base-Case-Drivers-2026-08-13.md (which records the run history: every
   # candidate N tested and the Gate A/B figures at each).
-  horizon_N: 12
+  horizon_N: 20
   reviewed: true
 judgments:
   minority_include: false      # exclude minority interest from common equity

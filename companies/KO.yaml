@@ -69,9 +69,3 @@ terminal:
   reviewed: true
   note: "Matches KO's own 2025 dividends-only payout (0.670) and disclosed anti-dilution-only buyback policy; no capital needs identified that would justify a lower terminal payout."
 
-convergence:
-  # DIAGNOSTIC ESCAPE HATCH -- 2026-08-14, temporary, Round 3 bear-case N search. Lets a
-  # failed-truncation run complete and commit its outputs so the full year-by-year AEG path
-  # can be inspected. NOT an accepted truncation -- removed before any bear N is finalized.
-  reviewed: true
-  note: "DIAGNOSTIC ONLY -- Round 3 bear case N search; this horizon has not been accepted."

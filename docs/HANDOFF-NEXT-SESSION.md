@@ -58,19 +58,23 @@ final year, never by a competitive-durability judgment alone.
 
 PepsiCo passing does not by itself answer this. Three specific gaps to close before answering yes:
 
-**1. `run_scenarios.py` structurally bypasses every substantive gate.** Traced this session: the
-multi-scenario path that produced the published `PEP_scenarios.csv` calls only
-`validate_load.py::validate()` (data completeness/provenance) and the four-method tie check. It
-never calls `convergence.py` (truncation gates A/B), `funding_check.py`, or `terminal_payout.py`.
-PepsiCo's numbers only turned out to be gate-clean because this session manually re-ran each
-scenario one at a time through the single-scenario path (which does call the gates) and checked
-the numbers matched. That is not a repeatable process — it is a manual workaround performed once.
-**Before any second company goes through the scenario path, wire `run_scenarios.py`'s per-scenario
-loop to call the same three gate modules `run_company.py` calls, and fail the scenario (not just
-the batch) on any gate refusal.** This is GATED — propose the change, get James's OK, prove the
-four-method tie is unaffected, before it lands. Until it's fixed, treat every multi-scenario
-`_scenarios.csv` file for any company as unverified until independently spot-checked the way this
-session checked PepsiCo.
+**1. `run_scenarios.py` structurally bypassed every substantive gate — FIXED 2026-08-14, commit
+`90dbdc1`.** The multi-scenario path only ever called `validate_load.py::validate()` (data
+completeness/provenance) and the four-method tie check for a non-primary scenario; it never called
+`convergence.py` (truncation gates A/B), `funding_check.py`, or `terminal_payout.py`. Fixed during
+the Coca-Cola Round 3/4 guest-forecaster work: `run_scenarios.py`'s `_value_one()` now calls the
+same three gate modules `run_company.py`'s primary path calls, per scenario, fail-closed, cleared by
+the same company-level `reviewed: true` escape hatches. Proven inert to value (`test_run_scenarios.py`,
+the AAPL fixture reproduces bit-identical intrinsic values, tie residuals, and expected-value math
+against the unpatched code once properly reviewed). **The fix caught a real problem in production on
+its first live run**: the fleet CI dispatch that followed the push showed PepsiCo's own published
+`bear` scenario (`companies/PEP.forecast.json`, cfg_N=12) now fails Gate A under 2026-08-14's live
+rates — discarded tail 2.0% of value, over the 1% threshold — even though `base` and `bull` still
+pass every gate cleanly. This was previously invisible: the old code would have silently republished
+`bear`'s number on any re-dispatch regardless of whether its horizon was still defensible. **PepsiCo's
+`bear` scenario needs a fresh horizon search before its next dispatch** — see "Still open" below.
+Until then, `companies/PEP.forecast.json`'s cited bear value ($75.7993) should be treated as the
+last value that passed a live check (2026-08-12), not a currently-reproducible one.
 
 **2. The onboarding path has never been proven end-to-end on a company that wasn't already deeply
 studied by hand.** PepsiCo benefited from four rounds of forecaster work. Pick a second company —
@@ -153,7 +157,7 @@ just be aware it's coming, scheduled as the next GATED engine item after this pr
   where AEG must equal zero and the level of EPS must be normalized or neutral." Round 1 of the
   protocol therefore ends in a qualitative view, not a horizon; N is found mechanically in Round 2
   by extending the forecast until Gate A and Gate B both hold. Evidence:
-  `docs/FORECASTER-KIT-v5-2026-08-13.md` section 8, and the Coca-Cola Round 1 brief.
+  `docs/FORECASTER-KIT-v6-2026-08-14.md` section 8 (originally v5 section 8), and the Coca-Cola Round 1 brief.
 - **The AEG value test is real RoRE against the real cost of equity** — equivalently, real EPS
   growth against the real cost of equity times the PRIOR year's retention rate. It is NOT nominal
   `rore` against nominal `coe`; that comparison disagreed with the engine in 8 of Coca-Cola's 12
@@ -168,20 +172,30 @@ just be aware it's coming, scheduled as the next GATED engine item after this pr
   reported operating income after replacement-cost depreciation, in real terms, per anchor share.
   For Coca-Cola the two diverged by about four percentage points a year over a decade. Kit v5
   section 7.5.
+- **Every scenario in a multi-scenario dispatch now gets Gate A, Gate B, the funding gate, and the
+  terminal-payout gate — not just the primary scenario.** Fixed 2026-08-14, commit `90dbdc1`,
+  during the Coca-Cola Round 3/4 work. Proven inert to value on the AAPL fixture
+  (`test_run_scenarios.py`). Do not re-open this as a design question — a non-primary scenario
+  being held to a lower standard than the primary was the defect, not a feature to preserve.
 
 ## Still open, not yet resolved
 
-- `run_scenarios.py`'s gate bypass (Job 1, item 1) — the most important open item.
+- ~~`run_scenarios.py`'s gate bypass~~ — FIXED 2026-08-14, commit `90dbdc1`. See Job 1 item 1 and
+  the closed-rulings entry below. It surfaced a real, still-open follow-on: PepsiCo's `bear`
+  scenario no longer clears Gate A under live rates (see the Coca-Cola/PepsiCo entries below).
 - The vendor-vs-GAAP PepsiCo operating income question (fiscal-2025 $13,491m vendor vs $11,498m
   GAAP, the Rockstar impairment) — flagged in an earlier handoff, not yet independently resolved
   against a primary source this session.
 - Cockpit Hole B — written, not applied (Job 2, item 2).
-- **Coca-Cola Round 2** — the driver build. Round 1 landed 2026-08-13
-  (`KO-Round1-Qualitative-Brief-2026-08-13.md` in the project folder). Round 2 must set a fundable
-  buyback rate (Coca-Cola's disclosed policy is anti-dilution only, ~0.1% of shares, against the
-  default overlay's 3%), must not treat the 2025 anchor balance sheet as a representative operating
-  base (a $6.1bn contingent-consideration settlement inflates net operating assets by 15.3%), and
-  must find N mechanically rather than inheriting the config's unreviewed 12.
+- **Coca-Cola Rounds 2 and 3 are both done** (2026-08-13/14): base case N=14
+  (`KO-Round2-Base-Case-Drivers-2026-08-13.md`), bull N=15 and bear N=14, each found
+  independently on the real engine (`KO-Round3-Bull-Bear-2026-08-14.md`). Round 4 (the combined
+  scenarios/machine file) follows now that item 1 above is fixed.
+- **PepsiCo's `bear` scenario (N=12) no longer clears Gate A under live rates as of 2026-08-14** —
+  found by the fixed `run_scenarios.py` on its first live dispatch (see item 1 above). `base` and
+  `bull` still pass every gate. Needs a fresh horizon search for `bear` before
+  `companies/PEP.forecast.json` is dispatched again; do not assume the committed N=12/drivers are
+  still defensible without re-testing.
 - **Whether the Cockpit displays `rore` or `coe` in a way that invites the retired comparison.** The
   kit v5 change corrected the module docstring and pinned the identity, but step 4 of
   `KIT-CHANGE-PROCEDURE.md` (the Cockpit) was NOT checked this session, because the Cockpit is Apps

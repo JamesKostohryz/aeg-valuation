@@ -1135,12 +1135,16 @@ def main():
             print(f"[cod] manifest provenance skip ({_e})")
     # --- the remaining scenarios, valued only now that the primary case has cleared every
     #     gate. Off the pristine pre-payload workbook, so each scenario is independent.
+    #     cfg and converge_K are threaded through (2026-08-14) so every scenario -- not just
+    #     the primary -- gets the SAME truncation/funding/terminal-payout gates below, via
+    #     run_scenarios._truncation_funding_terminal_gates. See run_scenarios.py's docstring.
     if _scenarios is not None:
         import run_scenarios as RS
         try:
             srep = RS.run_scenarios(_scenarios_pristine, _scenarios, ticker=tk, price=price,
                                     out_dir=args.out_dir, recalc=recalc,
-                                    commit_sha=os.environ.get("GITHUB_SHA", ""))
+                                    commit_sha=os.environ.get("GITHUB_SHA", ""),
+                                    cfg=cfg, converge_K=args.converge_K)
         except RS.ScenariosError as e:
             _fail(f"SCENARIOS FAILED: {e}")
         print(f"[scenarios] {tk}  {srep['scenarios']} -> {tk}_scenarios.csv")

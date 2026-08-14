@@ -21,6 +21,32 @@ Mechanics per scenario: start from a FRESH copy of the rate-repointed formulas w
   if erp_override: repoint_rates.apply_erp_override(wb, erp)
   save -> recalc -> read_results -> gates + tie_check (fail-closed for THIS scenario)
 and read intrinsic / real price / real COE / tie residual for the CSV row.
+
+TRUNCATION/FUNDING/TERMINAL GATES (2026-08-14). Until this date, the ONLY scenario in a
+`payload.scenarios` dispatch to get Gate A (terminal condition), Gate B (neutral level),
+the unfunded-distribution guard, and the terminal-payout guard was the primary scenario —
+because it runs through run_company.py's ordinary single-scenario path before this module
+is ever imported. bull and bear went through _value_one() below, which checked only
+completeness/provenance (AE.read_results) and the four-method tie (CK.tie_check). A
+truncation that discarded real value, a distribution plan that silently issued equity to
+fund a buyback it could not afford, or a continuing period with no forecaster-owned payout
+policy would all publish for a non-primary scenario with every visible check green. Found
+and fixed the same session as the Coca-Cola Round 3/4 guest-forecaster work: see
+docs/KO-Round3-Bull-Bear-2026-08-14.md section 5 for the discovery and
+docs/FORECASTER-KIT-v5-2026-08-13.md for the corrected description of this path. Every
+scenario, primary or not, now goes through the identical four checks run_company.py's
+primary path applies: read_results' completeness/provenance gates, the four-method tie,
+convergence.converge_auto (Gate A + Gate B together), funding_check.funding_report, and
+terminal_payout.terminal_payout_report — fail-closed per scenario, using the SAME
+company-level review escape hatches (companies/<T>.yaml convergence.reviewed /
+funding.reviewed / terminal.reviewed) the primary path already uses. There is no
+per-scenario review flag: a reviewed:true in the company config clears that gate for every
+scenario in the dispatch, exactly as it already did for whichever scenario happened to run
+as primary. test_run_scenarios.py pins that a scenario whose own truncation, funding or
+terminal-payout condition would refuse under run_company.py now also refuses here (the
+"every scenario now gets the truncation/funding/terminal gates" block), and that a properly
+reviewed scenario set still values and ties exactly as before (the gates are already proven
+inert to the tie by test_horizon_gating.py and test_terminal_payout.py).
 """
 import os
 import shutil
@@ -32,6 +58,9 @@ import apply_payload as AP
 import repoint_rates as RP
 import aeg_engine as AE
 import checks as CK
+import convergence as CV
+import funding_check as FCK
+import terminal_payout as TP
 
 
 # CSV column order (COCKPIT scenarios contract). One row per scenario + a summary row.
@@ -41,6 +70,7 @@ CSV_HEADER = [
     "current_real_price_per_share", "upside_downside_pct", "tie_residual",
 ]
 PROB_TOL = 0.001            # cockpit-enforced; we only warn if it drifts
+DEFAULT_CONVERGE_K = 3      # matches run_company.py's --converge-K default
 
 
 class ScenariosError(Exception):
@@ -74,7 +104,54 @@ def _as_single_payload(ticker, sc):
     }
 
 
-def _value_one(base_xlsx, work_dir, ticker, sc, price, recalc):
+def _truncation_funding_terminal_gates(work, cfg, converge_K):
+    """The three checks run_company.py's primary path applies AFTER the tie, mirrored here so
+    a non-primary scenario is held to the identical standard. Returns (conv, fund, term,
+    reasons) — conv/fund/term are the raw reports (None if they could not be evaluated), and
+    reasons is a list of human-readable failure strings, empty if everything passed or was
+    cleared by the company config's reviewed:true escape hatch.
+
+    cfg is the SAME company-level config dict run_company.py loads from companies/<T>.yaml.
+    There is no per-scenario review flag: a reviewed:true in the config clears the gate for
+    EVERY scenario in this dispatch, exactly as it already did for whichever scenario the
+    primary happened to be.
+    """
+    cfg = cfg or {}
+    reasons = []
+
+    try:
+        conv = CV.converge_auto(work, K=converge_K)
+    except Exception as e:
+        return None, None, None, [
+            f"TRUNCATION GATES FAILED TO RUN: the stop year could not be judged against the "
+            f"terminal and neutral-level conditions ({e})"]
+
+    if conv["verdict"] == "REVIEW" and not cfg.get("convergence_reviewed"):
+        reasons.append(
+            f"TRUNCATION REVIEW REQUIRED: {conv['verdict_reason']} (clear with "
+            "convergence.reviewed: true in the company config, exactly as the primary "
+            "scenario's own truncation is cleared)")
+
+    fund = FCK.funding_report(work)
+    if fund["verdict"] == "REVIEW" and not cfg.get("funding_reviewed"):
+        w = fund.get("worst") or {}
+        reasons.append(
+            f"UNFUNDED DISTRIBUTION: {fund['reason']}. Worst year {w.get('year')}: implied "
+            f"dividend {w.get('implied_dps')!r}/sh (clear with funding.reviewed: true)")
+
+    term = TP.terminal_payout_report(cfg.get("terminal_payout_ratio"), conv.get("norm_eps_N"))
+    if term["verdict"] == "MISSING":
+        reasons.append(f"NO TERMINAL DISTRIBUTION POLICY: {term['reason']} (set "
+                        "terminal.payout_ratio in the company config — there is no "
+                        "reviewed:true escape hatch for a ratio nobody set)")
+    elif term["verdict"] == "REVIEW" and not cfg.get("terminal_reviewed"):
+        reasons.append(f"TERMINAL PAYOUT REVIEW REQUIRED: {term['reason']} (clear with "
+                        "terminal.reviewed: true)")
+
+    return conv, fund, term, reasons
+
+
+def _value_one(base_xlsx, work_dir, ticker, sc, price, recalc, cfg=None, converge_K=DEFAULT_CONVERGE_K):
     """Value + tie ONE scenario on a fresh copy of base_xlsx. Returns a result dict with
     ok/reasons and (when ok) the CSV fields. Never raises for a tie/gate failure — the
     caller aggregates and fail-closes; only a hard PayloadError bubbles as a failure."""
@@ -111,6 +188,15 @@ def _value_one(base_xlsx, work_dir, ticker, sc, price, recalc):
     tie_ok, tie_detail = CK.tie_check(results)
     if not tie_ok:
         reasons += tie_detail["reasons"]
+
+    # Truncation (Gate A + Gate B), funding, and terminal-payout — see module docstring.
+    # Only worth judging a scenario that has already tied; a broken workbook has nothing
+    # coherent to judge a stop year against.
+    conv = fund = term = None
+    if not reasons:
+        conv, fund, term, gate_reasons = _truncation_funding_terminal_gates(work, cfg, converge_K)
+        reasons += gate_reasons
+
     if reasons:
         return {"name": name, "ok": False, "reasons": reasons,
                 "audit_ok": tie_detail["audit_ok"], "tie_ok": tie_detail["tie_ok"],
@@ -129,6 +215,11 @@ def _value_one(base_xlsx, work_dir, ticker, sc, price, recalc):
         "intrinsic": intrinsic, "real_price": real_price,
         "upside": upside, "tie_residual": tie_res,
         "audit_ok": True, "tie_ok": True, "mode_ok": True,
+        "gates": {
+            "terminal": conv["verdict"] if conv else None,
+            "funding": fund["verdict"] if fund else None,
+            "terminal_payout": term["verdict"] if term else None,
+        },
     }
 
 
@@ -159,11 +250,17 @@ def _fmt(x):
 
 
 def run_scenarios(base_xlsx, scenarios, *, ticker, price, out_dir, recalc,
-                  commit_sha="", work_dir=None, run_timestamp=None):
+                  commit_sha="", work_dir=None, run_timestamp=None, cfg=None,
+                  converge_K=DEFAULT_CONVERGE_K):
     """Value every scenario independently off base_xlsx and write
     outputs/<TICKER>_scenarios.csv (one row per scenario + an expected-value summary row).
     Fail-closed: raises ScenariosError if ANY scenario fails its gates/tie, so the CI job
-    goes red and no misleading green CSV is committed."""
+    goes red and no misleading green CSV is committed.
+
+    cfg is the company-level config dict (companies/<T>.yaml, as run_company.py loads it) —
+    threaded through so every scenario is held to the SAME truncation/funding/terminal-payout
+    standard the primary scenario already gets via run_company.py's own path, not just the
+    tie. See _truncation_funding_terminal_gates and the module docstring."""
     names, total = _validate_scenarios(scenarios)
     if abs(total - 1.0) > PROB_TOL:
         print(f"[scenarios] WARNING: probabilities sum to {total:.6f}, not 1.0 "
@@ -174,10 +271,14 @@ def run_scenarios(base_xlsx, scenarios, *, ticker, price, out_dir, recalc,
 
     rows, failures = [], []
     for sc in scenarios:
-        r = _value_one(base_xlsx, work_dir, ticker, sc, price, recalc)
+        r = _value_one(base_xlsx, work_dir, ticker, sc, price, recalc, cfg=cfg,
+                       converge_K=converge_K)
         if r["ok"]:
+            g = r.get("gates") or {}
             print(f"[scenarios]   {r['name']}: TIE ok  iv={r['intrinsic']}  "
-                  f"real_coe={r['real_coe']}  tie={r['tie_residual']:.2e}  basis={r['coe_basis']}")
+                  f"real_coe={r['real_coe']}  tie={r['tie_residual']:.2e}  basis={r['coe_basis']}  "
+                  f"gates: terminal={g.get('terminal')} funding={g.get('funding')} "
+                  f"terminal_payout={g.get('terminal_payout')}")
             rows.append(r)
         else:
             print(f"[scenarios]   {r['name']}: FAIL — {'; '.join(r['reasons'])}")

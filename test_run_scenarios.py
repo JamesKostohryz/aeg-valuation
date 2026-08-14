@@ -98,17 +98,50 @@ AE.build_model(CFG, TEMPLATE, BASE)
 recalc(BASE)
 ok(os.path.exists(BASE), "base engine built and recalculated")
 
-print("== two real scenarios: value, tie, and the expected-value row ==")
-# CONTRACT CHANGE 2026-08-10: the payout seed is rejected under the canonical operating
-# closure (distributions are implied there), so scenarios differentiate on a live driver.
-# The tax rate is used because its direction is unambiguous: a lower rate leaves more
-# after-tax operating income, so it must value higher.
+print("== every scenario now gets the truncation/funding/terminal gates, not just tie+completeness ==")
+# 2026-08-14: run_scenarios._value_one() used to check only read_results()'s
+# completeness/provenance gates and the four-method tie for a non-primary scenario. It now
+# applies the SAME truncation (Gate A/B), funding, and terminal-payout checks
+# run_company.py's primary path already applies -- see run_scenarios.py's module docstring.
+# This N=4, tax-rate-only AAPL fixture was never actually gate-clean; the old code just never
+# looked. Proving that is the point of the block immediately below, BEFORE the "good" run,
+# using the SAME scenarios: with no company-level review sign-off, both scenarios must now
+# refuse, on all three new grounds at once (a still-growing AEG stream, a negative implied
+# dividend, and no terminal payout policy) -- exactly the failure class this project keeps
+# finding with every gate green until someone adds the check that was missing.
 SCEN = [{"name": "base", "probability": 0.6, "mode": "Enterprise", "N": 4,
          "drivers": {"tax_rate": [0.15] * 4}},
         {"name": "bear", "probability": 0.4, "mode": "Enterprise", "N": 4,
          "drivers": {"tax_rate": [0.30] * 4}}]
+try:
+    RS.run_scenarios(BASE, SCEN, ticker="AAPL", price=315.0, out_dir=OUT, recalc=recalc,
+                     work_dir=WORK, run_timestamp="2026-08-08T00:00:00Z",
+                     cfg={})   # no review sign-off at all -- the honest default
+    ok(False, "an un-reviewed, gate-failing scenario set aborts the whole run")
+except RS.ScenariosError as e:
+    msg = str(e).lower()
+    ok("truncation review required" in msg, "the new run refuses on the truncation gate")
+    ok("unfunded distribution" in msg, "the new run refuses on the funding gate")
+    ok("no terminal distribution policy" in msg, "the new run refuses on the terminal-payout gate")
+
+print("== two real scenarios, reviewed: value, tie, and the expected-value row ==")
+# CONTRACT CHANGE 2026-08-10: the payout seed is rejected under the canonical operating
+# closure (distributions are implied there), so scenarios differentiate on a live driver.
+# The tax rate is used because its direction is unambiguous: a lower rate leaves more
+# after-tax operating income, so it must value higher.
+#
+# GATE_CFG below is the company-level review sign-off a real forecaster would put in
+# companies/AAPL.yaml -- supplied here only so this synthetic N=4 fixture (never intended
+# to represent a defensible AAPL forecast) can exercise the CSV/expected-value mechanics
+# this test actually targets, now that every scenario is held to the same standard as the
+# primary case.
+GATE_CFG = {"convergence_reviewed": True, "convergence_note": "test fixture, not a real call",
+           "funding_reviewed": True, "funding_note": "test fixture, not a real call",
+           "terminal_payout_ratio": 0.5, "terminal_reviewed": True,
+           "terminal_note": "test fixture, not a real call"}
 rep = RS.run_scenarios(BASE, SCEN, ticker="AAPL", price=315.0, out_dir=OUT,
-                       recalc=recalc, work_dir=WORK, run_timestamp="2026-08-08T00:00:00Z")
+                       recalc=recalc, work_dir=WORK, run_timestamp="2026-08-08T00:00:00Z",
+                       cfg=GATE_CFG)
 ok(rep["rows"] == 2 and rep["scenarios"] == ["base", "bear"], "both scenarios valued")
 _csv_path = os.path.join(OUT, "AAPL_scenarios.csv")
 ok(os.path.exists(_csv_path), "the scenarios CSV was written")

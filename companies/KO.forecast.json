@@ -16,14 +16,14 @@
   "reviewed": true,
   "reviewed_by": "guest forecaster protocol rounds 1-4, approved by James Kostohryz",
   "reviewed_on": "2026-08-14",
-  "source_run": "PENDING - filled in after the confirming dispatch",
+  "source_run": "https://github.com/JamesKostohryz/aeg-valuation/actions/runs/31827121050",
   "primary": "base",
   "expected_values": {
     "_comment": "Tied engine equity per anchor share, real terms. The reproduction check.",
-    "base": null,
-    "bull": null,
-    "bear": null,
-    "expected_value": null,
+    "base": 39.2290690327056,
+    "bull": 48.1357819903222,
+    "bear": 24.5075365126723,
+    "expected_value": 35.85787524221727,
     "tolerance_ps": 0.01
   },
   "scenarios": [

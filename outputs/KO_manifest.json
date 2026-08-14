@@ -1,18 +1,18 @@
 {
   "ticker": "KO",
-  "config_hash": "92a9dff16011983e",
-  "data_vintage": "run-2026-08-14T02:54:30Z",
+  "config_hash": "394b845c1633c7fc",
+  "data_vintage": "run-2026-08-14T15:01:58Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 3.85625753551722e-10,
+    "max_identity_tie": 3.41970007866621e-10,
     "mode_tie": 0,
     "tie_scale": 80112.3289735523,
     "tie_scale_known": true,
-    "tie_relative": 4.8135631368179255e-15,
+    "tie_relative": 4.268631460951741e-15,
     "tie_rel_tol": 1e-11,
     "tie_abs_rail": 0.001,
     "tie_tol": 0.001,
@@ -27,55 +27,55 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 3.85625753551722e-10,
-  "equity_value": 36.2656168984824,
-  "enterprise_value": 36.2656168984824,
+  "max_identity_tie": 3.41970007866621e-10,
+  "equity_value": 48.6586914265148,
+  "enterprise_value": 48.6586914265148,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 36.2656168984824,
-    "adjusted_equity_ps": 32.710799665285855,
-    "depreciation_anchor_penalty_ps": -0.01014793673375819,
+    "base_equity_ps": 48.6586914265148,
+    "adjusted_equity_ps": 42.21523502744299,
+    "depreciation_anchor_penalty_ps": 0.006198516463802672,
     "debt_capital_gain_ps": 2.565896553906794,
-    "idiosyncratic_haircut_ps": 6.1308617238371
+    "idiosyncratic_haircut_ps": 9.003154436514798
   },
   "convergence": {
-    "cfg_N": 14,
+    "cfg_N": 18,
     "K": 3,
-    "actual_eps_N": 3.23447503546894,
-    "normalized_eps_N": 3.220100241347084,
-    "gap_ps": 0.014374794121855938,
-    "engine_intrinsic_ps": 36.2656168984824,
-    "corrected_intrinsic_ps": 36.2656168984824,
+    "actual_eps_N": 4.56427854787481,
+    "normalized_eps_N": 4.554837479925316,
+    "gap_ps": 0.009441067949493842,
+    "engine_intrinsic_ps": 48.6586914265148,
+    "corrected_intrinsic_ps": 48.6586914265148,
     "convergence_value_ps": 0.0,
     "convergence_value_idio_adjusted_ps": null,
-    "headline_value_ps": 32.710799665285855,
-    "headline_value_pre_convergence_ps": 32.710799665285855,
+    "headline_value_ps": 42.21523502744299,
+    "headline_value_pre_convergence_ps": 42.21523502744299,
     "headline_basis": "adjusted equity (depreciation + market debt + idiosyncratic haircut)",
-    "guard": "PASS",
-    "guard_reason": "truncation valid: gap 0.4% of EPS, discarded AEG tail 0.76% of value",
+    "guard": "REVIEW",
+    "guard_reason": "the truncation point does not satisfy the rule. TERMINAL CONDITION -- abnormal earnings growth is still GROWING at the stop year (AEG 0.0046 -> 0.0069 per share, factor 1.495). The continuing period begins by forcing it to zero, so this truncation discards a stream the forecast says is still building. Extend forecast.horizon_N until it is spent -- up to thirty years is available, and that is what it is for. Both conditions must hold: the explicit forecast does not end until projected abnormal earnings growth is spent AND earnings are at a normalized level.",
     "in_four_method_tie": false,
     "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
     "periods": [
       {
         "period": "explicit",
-        "years": "1..14",
-        "n_years": 14,
+        "years": "1..18",
+        "n_years": 18,
         "eps_entry": 2.12463434867608,
-        "eps_exit": 3.23447503546894,
-        "eps_growth_annualized": 0.030474180633035974,
-        "aeg_sum_nominal_ps": 0.15363320637949715,
-        "aeg_first_ps": 0.237149563486577,
-        "aeg_last_ps": -0.002605191523255,
-        "pv_contribution_ps": 5.362735249604989,
-        "pct_of_corrected_value": 0.147873818460521
+        "eps_exit": 4.56427854787481,
+        "eps_growth_annualized": 0.043396390792394435,
+        "aeg_sum_nominal_ps": 0.7844433355436513,
+        "aeg_first_ps": 0.390139819383692,
+        "aeg_last_ps": 0.00693523979090305,
+        "pv_contribution_ps": 17.367711410151617,
+        "pct_of_corrected_value": 0.3569292741129432
       },
       {
         "period": "convergence",
         "years": "none",
         "n_years": 0,
-        "eps_entry": 3.23447503546894,
-        "eps_exit": 3.23447503546894,
+        "eps_entry": 4.56427854787481,
+        "eps_exit": 4.56427854787481,
         "eps_growth_annualized": null,
         "aeg_sum_nominal_ps": 0.0,
         "aeg_first_ps": null,
@@ -85,30 +85,30 @@
       },
       {
         "period": "combined",
-        "years": "1..14",
-        "n_years": 14,
+        "years": "1..18",
+        "n_years": 18,
         "eps_entry": 2.12463434867608,
-        "eps_exit": 3.23447503546894,
-        "eps_growth_annualized": 0.030474180633035974,
-        "aeg_sum_nominal_ps": 0.15363320637949715,
-        "aeg_first_ps": 0.237149563486577,
-        "aeg_last_ps": -0.002605191523255,
-        "pv_contribution_ps": 5.362735249604989,
-        "pct_of_corrected_value": 0.147873818460521
+        "eps_exit": 4.56427854787481,
+        "eps_growth_annualized": 0.043396390792394435,
+        "aeg_sum_nominal_ps": 0.7844433355436513,
+        "aeg_first_ps": 0.390139819383692,
+        "aeg_last_ps": 0.00693523979090305,
+        "pv_contribution_ps": 17.367711410151617,
+        "pct_of_corrected_value": 0.3569292741129432
       }
     ],
     "identity_checks": {
-      "normal_value_ps": 30.9028816488774,
-      "explicit_identity_residual": 7.105427357601002e-15,
-      "combined_identity_residual": 7.105427357601002e-15
+      "normal_value_ps": 31.2909800163632,
+      "explicit_identity_residual": 2.1316282072803006e-14,
+      "combined_identity_residual": 2.1316282072803006e-14
     },
     "schedule": [],
     "outputs": [
       "KO_convergence.csv",
       "KO_periods.csv"
     ],
-    "reviewed": false,
-    "review_note": ""
+    "reviewed": true,
+    "review_note": "DIAGNOSTIC ONLY -- Round 3 bull case N search; this horizon has not been accepted."
   },
   "outputs": [
     "KO_anchors.csv",
@@ -194,11 +194,11 @@
       },
       "forecast_fcfe": {
         "cell": "Audit!B57",
-        "residual": 9.09494701772928e-12
+        "residual": 1.00044417195022e-11
       },
       "sum_forecast_ties": {
         "cell": "Audit!B58",
-        "residual": 9.09494701772928e-12
+        "residual": 1.00044417195022e-11
       },
       "dcf_fcfe_vs_ri": {
         "cell": "Audit!B61",
@@ -222,18 +222,18 @@
       },
       "master_total": {
         "cell": "Audit!B5",
-        "residual": 3.94720700569451e-10
+        "residual": 3.51974449586123e-10
       }
     },
     "worst_identity": "forecast_fcfe",
-    "worst_abs_residual": 9.09494701772928e-12
+    "worst_abs_residual": 1.00044417195022e-11
   },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "A",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "run-2026-08-14T02:54:30Z",
+    "as_of": "run-2026-08-14T15:01:58Z",
     "flags": []
   }
 }

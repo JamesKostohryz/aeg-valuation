@@ -1,0 +1,10 @@
+field,value
+ticker,KO
+verdict,REFUSED — no valuation was produced by this run
+reason,"UNFUNDED DISTRIBUTION -- no valuation produced for KO. implied dividend is NEGATIVE in 20 of 20 forecast year(s); worst -1.2016/sh in year 20 — the plan implies issuing equity to fund a buyback. Worst year 20: the operating plan and financing structure permit distributions of 16004.751466 (net income less the increase in common equity), but the plan calls for repurchases of 18823.059105 -- a shortfall of -2818.307639, leaving an implied dividend of -1.2016 per share. A negative implied dividend is a capital RAISE. The forecast is buying back stock with money it has not got. This is the two-of-three rule biting: you have set the operating plan AND the distribution policy AND, through the target leverage, the financing structure. The balance sheet has to balance, so something had to give, and it was the dividend. There are three things that cause it, and the review is deciding which: 1. The buyback rate is too high for the operating plan. This is the default Consensus overlay's case -- three percent of shares against 2.5 percent asset growth is not fundable for a company at this price-to-book. Remedy: set a buyback rate the plan can pay for. 2. Net-operating-asset growth is too low, so the business throws off more cash than the plan reinvests and the buyback overshoots what is left. Remedy: revisit the operating plan. 3. The target leverage is doing the work. Remedy: let financing absorb, which is what the canonical closure is for. Once you have looked and either fixed it or accepted it, add to companies/KO.yaml: funding: reviewed: true note: <which of the three it was, and why the capital raise is intended> Nothing else clears this gate. That is intended."
+stale_files_quarantined,4
+KO_valuation.csv,KO_valuation.STALE.csv
+KO_summary.csv,KO_summary.STALE.csv
+KO_manifest.json,KO_manifest.STALE.json
+KO_fact_sheet.csv,KO_fact_sheet.STALE.csv
+note,The .STALE files hold the PREVIOUS run's numbers. They are not current and must not be published or quoted.

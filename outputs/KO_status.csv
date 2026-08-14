@@ -3,7 +3,7 @@ ticker,KO
 run_status,OK
 anchor_year,2025
 tie_check,PASS
-max_identity_tie,4.43833414465189e-10
+max_identity_tie,4.00177668780088e-10
 anchor_earnings_check,PASS
 anchor_oi_at0,10577.3583852653
 anchor_representativeness,PASS
@@ -13,26 +13,26 @@ anchor_margin_vs_normal,1.1033584548356974
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 convergence_adjustment,RETIRED_2026-08-12 (inert)
-headline_value_ps,34.89595755537561
-headline_value_pre_convergence_ps,34.89595755537561
+headline_value_ps,32.9735650870373
+headline_value_pre_convergence_ps,32.9735650870373
 convergence_K,3
 convergence_value_ps,0.0
 convergence_value_idio_adjusted_ps,
-actual_eps_at_N,3.50704488594498
-normalized_eps_at_N,3.501717031564217
+actual_eps_at_N,3.09714491044469
+normalized_eps_at_N,3.0912421361941655
 convergence_guard,REVIEW
 funding_guard,PASS
 funding_reviewed,False
 funding_review_note,
-funding_min_implied_dps,2.08407332134919
+funding_min_implied_dps,2.09800091801718
 convergence_reviewed,True
 convergence_review_note,DIAGNOSTIC ONLY -- inspecting the AEG path to re-tune drivers/N; this horizon has not been accepted.
 convergence_in_four_method_tie,False
 terminal_payout_guard,PASS
 terminal_payout_ratio,0.67
-terminal_normalized_eps_N,3.501717031564217
-terminal_implied_dps,2.3461504111480256
-terminal_implied_retained_ps,1.1555666204161916
+terminal_normalized_eps_N,3.0912421361941655
+terminal_implied_dps,2.071132231250091
+terminal_implied_retained_ps,1.0201099049440745
 terminal_payout_reviewed,True
 terminal_payout_review_note,Matches KO's own 2025 dividends-only payout (0.670) and disclosed anti-dilution-only buyback policy; no capital needs identified that would justify a lower terminal payout.
 cfg_N,12
@@ -41,4 +41,4 @@ payout_seed,0.671284
 ppe_life_years,17.35
 inputs_on_template_default,0
 config_hash,f4fbf997e61c17a7
-vintage,run-2026-08-14T02:36:20Z
+vintage,run-2026-08-14T02:40:40Z

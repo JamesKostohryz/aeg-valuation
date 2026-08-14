@@ -68,3 +68,12 @@ terminal:
   payout_ratio: 0.67
   reviewed: true
   note: "Matches KO's own 2025 dividends-only payout (0.670) and disclosed anti-dilution-only buyback policy; no capital needs identified that would justify a lower terminal payout."
+
+convergence:
+  # DIAGNOSTIC ESCAPE HATCH -- 2026-08-13, temporary. Used only to let a failed-truncation run
+  # complete and commit its outputs/KO_aeg_schedule.csv and KO_periods.csv so the full year-by-year
+  # AEG path can be inspected (failed runs do not commit outputs). NOT an accepted truncation --
+  # removed before Round 2 is finalized. Do not treat this as James's or the analyst's acceptance
+  # of N=12.
+  reviewed: true
+  note: "DIAGNOSTIC ONLY -- inspecting the AEG path to re-tune drivers/N; this horizon has not been accepted."

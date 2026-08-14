@@ -1,7 +1,7 @@
 {
   "ticker": "KO",
   "config_hash": "92a9dff16011983e",
-  "data_vintage": "run-2026-08-14T15:31:49Z",
+  "data_vintage": "2026-08-14T18:07Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -233,7 +233,7 @@
     "rating": "A",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "run-2026-08-14T15:31:49Z",
+    "as_of": "2026-08-14T18:07Z",
     "flags": []
   }
 }

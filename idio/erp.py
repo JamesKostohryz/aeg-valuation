@@ -175,10 +175,22 @@ M_PASSTHROUGH = 1.5
 #
 # THE ARGUMENT FOR 1.0 is conservatism: this term is charged to all 499 names with no company
 # evidence behind it, and the smaller of two defensible numbers is the right place to start a
-# term nobody has yet seen move a valuation. 1.0 ships. The question is flagged for James and
-# the direction of the remaining uncertainty is known and it is UPWARD -- the same shape as
-# OBSOLESCENCE_STEP_PP.
+# term nobody has yet seen move a valuation.
+#
+# JAMES APPROVED 1.5 ON 2026-08-19 AND THE CONSTANT IS STILL 1.0. That is not an oversight, it
+# is the gate. Raising it adds 18.7bp to every company's collapsed real cost of equity, which
+# makes it a GATED change, and no cloud session can prove the four-method tie. It is recorded
+# here rather than in a chat so the approval cannot be lost, and it is item 1 of
+# docs/HANDOFF-Region2-Next-2026-08-19.md: change this line to 1.5 in a session that can run
+# the tie locally, then delete M_COMMON_IS_PROVISIONAL.
+#
+# WHAT THE APPROVAL ACTUALLY IS, because it reads like a new number and is not. M = 1.5 is
+# James's own long-standing formulation and has never been edited -- one line in the whole
+# history of this file. COMMON(t) was added on 2026-08-19 and the SPEC wrote it with no
+# multiplier in front of it; the pass-through was never discussed there at all. Nobody chose
+# 1.0. Setting Mc = 1.5 applies James's existing constant to a term that arrived without one.
 M_COMMON = 1.0
+M_COMMON_APPROVED_VALUE = 1.5        # James, 2026-08-19; awaiting a local four-method tie run
 M_COMMON_IS_PROVISIONAL = True
 M_COMMON_ALTERNATIVE = M_PASSTHROUGH          # the consistency-argument value, not adopted
 

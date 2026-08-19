@@ -102,7 +102,8 @@ def build():
     row(21, "Economic NOA", "economic_noa", "$A:$B", "0.000")
     section(23, "DISCLOSURES (V1-Plus)")
     row(24, "Debt capital gain /sh", "debt_capital_gain_ps", "$D:$E", "0.00")
-    row(25, "Idiosyncratic haircut /sh", "idiosyncratic_haircut_ps", "$D:$E", "0.00")
+    # Row 25 held "Idiosyncratic haircut /sh" until 2026-08-19. Deleted with the term itself
+    # (James's ruling, 2026-08-18). Row numbers here are explicit, so nothing below shifts.
     s.column_dimensions["B"].width = 40
     s.column_dimensions["C"].width = 18
     s["B27"] = "Live from the latest gated pipeline run (IMPORTDATA). Green tie-check = the four"

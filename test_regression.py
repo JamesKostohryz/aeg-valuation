@@ -224,11 +224,11 @@ def main():
         wb = openpyxl.load_workbook(dp); RP.repoint(wb, feed); wb.save(dp)
         res = D.disclose(dp, feed, price=315.0, recalc=recalc,
                          sens_path=os.path.join(WORK, "AAPL_disc_sens.xlsx"))
-        check(res["base_tie"] < 1e-9 and res["sens_tie"] < 1e-9,
-              f"disclosure ties (base {res['base_tie']:.0e}, sens {res['sens_tie']:.0e})")
+        check(res["base_tie"] < 1e-9, f"disclosure tie (base {res['base_tie']:.0e})")
+        check("idiosyncratic_haircut_ps" not in res,
+              "the deleted idiosyncratic haircut is absent from the disclosure")
         recon = (res["base_equity_ps"] + res["debt_capital_gain_ps"]
-                 - res["idiosyncratic_haircut_ps"]
-                 - (res.get("depreciation_anchor_penalty_ps") or 0.0))  # Increment 1: 4th bridge term
+                 - (res.get("depreciation_anchor_penalty_ps") or 0.0))  # Increment 1 term
         check(abs(recon - res["adjusted_equity_ps"]) < 1e-9, "bridge sums to adjusted equity")
     except Exception as e:
         check(False, f"disclosure stage errored: {e}")

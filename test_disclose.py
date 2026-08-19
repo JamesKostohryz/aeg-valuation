@@ -70,35 +70,31 @@ d = D.disclose(ENG, feed, price=315.0, recalc=recalc,
 print("== disclosure bridge integrity ==")
 ok("PASS" in d["base_audit"], f"base audit passes ({d['base_audit']!r})")
 ok(d["base_tie"] < 1e-9, f"base tie at machine precision ({d['base_tie']:.1e})")
-ok(d["sens_tie"] < 1e-9, f"sensitivity tie at machine precision ({d['sens_tie']:.1e})")
-ok(d["idiosyncratic_haircut_ps"] > 0, "the idiosyncratic premium is a positive drag on value")
+# The sensitivity tie and the idiosyncratic-drag assertion were deleted 2026-08-19 with the
+# term itself. There is no second recalculation left to tie.
+ok("idiosyncratic_haircut_ps" not in d,
+   "the deleted idiosyncratic haircut is GONE from the disclosure, not merely zeroed")
 ok(0.3 <= d["market_debt_engine"] / d["book_debt"] <= 1.3,
    f"market/book debt inside the plausibility band "
    f"({d['market_debt_engine'] / d['book_debt']:.4f})")
 
-print("== the bridge sums, with all FOUR terms ==")
-# Increment 1 added the depreciation-anchor penalty as a fourth term. A three-term
-# reconciliation would silently pass on a name where that term happens to be zero, so it
-# is asserted present and then included.
+print("== the bridge sums, with all THREE remaining terms ==")
+# Increment 1 added the depreciation-anchor penalty. A two-term reconciliation would silently
+# pass on a name where that term happens to be zero, so it is asserted present and then included.
 ok("depreciation_anchor_penalty_ps" in d,
    "the Increment 1 depreciation-anchor penalty is present in the bridge")
 _dep = d.get("depreciation_anchor_penalty_ps") or 0.0
-recon = (d["base_equity_ps"] + d["debt_capital_gain_ps"]
-         - d["idiosyncratic_haircut_ps"] - _dep)
+recon = d["base_equity_ps"] + d["debt_capital_gain_ps"] - _dep
 ok(abs(recon - d["adjusted_equity_ps"]) < 1e-9,
    f"bridge sums exactly to adjusted equity (residual {abs(recon - d['adjusted_equity_ps']):.2e})")
 # each term must actually be doing something, or the sum proves nothing
-ok(abs(d["idiosyncratic_haircut_ps"]) > 1e-6, "the idiosyncratic term is non-trivial")
 ok(abs(d["debt_capital_gain_ps"]) > 1e-9, "the debt capital-gain term is non-trivial")
 
 print("== what the bridge does NOT prove ==")
-# Stated as a test so it is not forgotten: the sum being right says nothing about whether
-# any single term is the right number. debt_capital_gain_ps is checked only by the
-# plausibility band above; idiosyncratic_haircut_ps arrives from the rate feed with no
-# cross-check inside this repository at all.
-ok(d["idiosyncratic_haircut_ps"] == d["idiosyncratic_haircut_ps"],
-   "idiosyncratic_haircut_ps is taken from the rate feed on trust — no independent check "
-   "exists in this repo (documented limit, not an assertion of correctness)")
+# Stated as a test so it is not forgotten: the sum being right says nothing about whether any
+# single term is the right number. debt_capital_gain_ps is checked only by the plausibility
+# band above. The one term that had NO cross-check anywhere in this repository was the
+# idiosyncratic haircut, and it is now deleted rather than trusted.
 
 print("== fail-loud unit gate ==")
 try:

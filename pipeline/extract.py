@@ -160,7 +160,6 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
             ("adjusted_equity_ps", disclosure.get("adjusted_equity_ps")),
             ("depreciation_anchor_penalty_ps", disclosure.get("depreciation_anchor_penalty_ps")),
             ("debt_capital_gain_ps", disclosure.get("debt_capital_gain_ps")),
-            ("idiosyncratic_haircut_ps", disclosure.get("idiosyncratic_haircut_ps")),
         ]
     if convergence:
         # equity_value / adjusted_equity_ps above are PRE-convergence and stay that way: they
@@ -289,7 +288,6 @@ def extract_outputs(engine_path, ticker, out_dir, *, results, config_hash,
             "adjusted_equity_ps": disclosure.get("adjusted_equity_ps"),
             "depreciation_anchor_penalty_ps": disclosure.get("depreciation_anchor_penalty_ps"),
             "debt_capital_gain_ps": disclosure.get("debt_capital_gain_ps"),
-            "idiosyncratic_haircut_ps": disclosure.get("idiosyncratic_haircut_ps"),
         }),
         "convergence": convergence,
         "outputs": [f"{ticker}_anchors.csv", f"{ticker}_valuation.csv",

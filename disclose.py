@@ -10,17 +10,29 @@ explicit, disclosed lines that never disturb that tie:
      MARKET value of debt, equity picks up (book NFO - market NFO). A one-time, anchor
      level adjustment, added straight to equity value.
 
-  2. Idiosyncratic premium (disclosed haircut). The rate feed's option-implied,
-     firm-specific premium raises the cost of equity by `idiosyncratic` per tenor. Its
-     value impact is measured by a SENSITIVITY run — the engine's COE bumped by the
-     idiosyncratic series (finrate_idio) — reading the equity-value difference. The
-     sensitivity run still ties internally; the base/headline stays idiosyncratic-free.
+REMOVED 2026-08-19 - THE OLD IDIOSYNCRATIC HAIRCUT. A second disclosed line used to sit here:
+an option-implied, variance-based firm-specific premium, measured by bumping the engine's cost
+of equity by a `finrate_idio` series and reading the equity-value difference. It is DELETED, on
+James's explicit ruling of 2026-08-18 ("Get rid of that and implement what we decided").
+
+Three reasons, and the third settles it:
+  * It is not part of the company-premium design that was actually approved. That design is a
+    downside-volatility level fading on a measured half-life, a de-meaned credit-curve
+    steepening term, and an obsolescence shelf. None of it is this.
+  * James did not recognise it. A line that removes 17% of Coca-Cola's value - $6.80 a share -
+    and that the author of the methodology cannot account for, is not a disclosure.
+  * It moved the disclosed figure while the tied base carried none of it. A number that changes
+    one published total and not the other is indefensible whichever way round it runs, because
+    the two are meant to be the same valuation seen from two angles.
+
+It was NOT unified with the new construction and NOT kept as a diagnostic; both were considered
+and both rejected in the same ruling. `repoint_rates.set_idio` survives only because
+`apply_erp_override` uses it to ZERO the hook, which is now that hook's sole purpose.
 
 Disclosed bridge (per share):
     base equity (book debt, tied)
       + debt capital gain            = (book NFO - market NFO) / shares
-      - idiosyncratic haircut        = base equity - equity(COE + idiosyncratic)
-    = adjusted equity (market debt, idiosyncratic-disclosed)
+    = adjusted equity (market debt)
 
 NOTE (V2, SCHEDULED — built and template-verified, committed 2026-08-12, not yet fleet-run):
 this is the tie-preserving disclosure. The FULLER treatment — re-levering the cost of equity on
@@ -101,7 +113,10 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
     Returns a dict."""
     if recalc is None:
         from recalc_lo import recalc as recalc
-    sens_path = sens_path or engine_path.replace(".xlsx", "_idiosens.xlsx")
+    # `sens_path` is retained in the signature so existing callers do not break, but it is
+    # UNUSED since the idiosyncratic sensitivity run was deleted (2026-08-19). Nothing writes a
+    # _idiosens workbook any more.
+    _ = sens_path
 
     # --- base (idiosyncratic = 0): the tied headline
     recalc(engine_path)
@@ -120,14 +135,9 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
     debt_gain_ps = debt_gain_agg / float(base["shares"])
     market_nfo = market_debt_engine - float(base["cash"]) - float(base["sti"])
 
-    # --- 2) idiosyncratic premium (disclosed haircut) via a COE-bump sensitivity run
-    shutil.copy(engine_path, sens_path)
-    wb = openpyxl.load_workbook(sens_path)
-    RP.set_idio(wb, feed["idiosyncratic"])
-    wb.save(sens_path)
-    recalc(sens_path)
-    sens = _read_engine(sens_path, price)
-    idio_haircut_ps = base["equity"] - sens["equity"]
+    # --- 2) DELETED 2026-08-19: the idiosyncratic-haircut sensitivity run. See the header.
+    #   The entire second workbook recalculation goes with it, so this function now recalculates
+    #   once rather than twice.
 
     # --- 3) depreciation penalty to the anchor (Increment 1: the measurement defect).
     #   Historical-cost depreciation understates the real cost of maintaining capacity, so
@@ -157,7 +167,7 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
         dep_anchor_penalty_ps = (penalty_annual / float(base["shares"])) / c
         dep_basis = "flat perpetuity at anchor (pre-Stage-B1 engine)"
 
-    adjusted = base["equity"] + debt_gain_ps - idio_haircut_ps - (dep_anchor_penalty_ps or 0.0)
+    adjusted = base["equity"] + debt_gain_ps - (dep_anchor_penalty_ps or 0.0)
     return {
         "ticker": feed.get("ticker"),
         "base_equity_ps": base["equity"],
@@ -172,9 +182,6 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
         "debt_scale_inferred": inferred,
         "debt_capital_gain_ps": debt_gain_ps,
         "debt_capital_gain_agg": debt_gain_agg,
-        "sens_equity_ps": sens["equity"],
-        "sens_tie": sens["tie"],
-        "idiosyncratic_haircut_ps": idio_haircut_ps,
         "depreciation_penalty_annual": penalty_annual,
         "depreciation_anchor_penalty_ps": dep_anchor_penalty_ps,
         "depreciation_basis": dep_basis,
@@ -186,8 +193,7 @@ def disclose(engine_path, feed, price=None, recalc=None, sens_path=None, debt_sc
             ("base equity (book debt, tied)", round(base["equity"], 4)),
             (f"- depreciation penalty [{dep_basis or 'n/a'}]", round(-(dep_anchor_penalty_ps or 0.0), 4)),
             ("+ debt capital gain (MV debt)", round(debt_gain_ps, 4)),
-            ("- idiosyncratic haircut", round(-idio_haircut_ps, 4)),
-            ("= adjusted equity (design basis: dep+debt+idio)", round(adjusted, 4)),
+            ("= adjusted equity (design basis: dep+debt)", round(adjusted, 4)),
         ],
     }
 
@@ -196,7 +202,7 @@ def format_bridge(d):
     lines = [f"Disclosed valuation bridge — {d['ticker']} ($/share):"]
     for label, val in d["bridge"]:
         lines.append(f"  {val:>10.4f}   {label}")
-    lines.append(f"  (base tie {d['base_tie']:.1e}, sensitivity tie {d['sens_tie']:.1e}; "
+    lines.append(f"  (base tie {d['base_tie']:.1e}; "
                  f"engine units: book debt {d['book_debt']:.4f}, market debt {d['market_debt_engine']:.4f}, "
                  f"scale {d['debt_scale']:g}{' inferred' if d['debt_scale_inferred'] else ''})")
     return "\n".join(lines)

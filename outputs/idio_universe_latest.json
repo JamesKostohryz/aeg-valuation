@@ -1,12 +1,14 @@
 {
   "asof": "2026-08-19",
-  "coverage": 0.9912280701754386,
-  "no_price": [
-    "COF",
-    "COO"
+  "coverage": 0.9920477137176938,
+  "no_price": [],
+  "no_semidev": [
+    "FDXF",
+    "HONA",
+    "Q",
+    "SNDK"
   ],
-  "no_semidev": [],
   "no_shares": [],
   "market_asof": "2026-08-18",
-  "n_capped": 226
+  "n_capped": 499
 }

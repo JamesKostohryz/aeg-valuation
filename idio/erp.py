@@ -17,13 +17,16 @@ THE CONSTRUCTION
 ================================================================================
 
     idio_i(t) = D(t) x [ ERP_i(front) - market_ERP(front) ]              Region 1
-              + M x [ widen_i(t) - capw_mean_widen(t) ]                  Region 2, de-meaned
+              + Mc x COMMON(t)                                           Region 2a, EVERY company
+              + M  x [ widen_i(t) - capw_mean_widen(t) ]                  Region 2b, de-meaned
               + STEP x 1{ t > obsolescence_year_i }                      Region 3, NOT de-meaned
 
     ERP_i(t)  = market_ERP(t) + idio_i(t)
     D(t)      = lam + (1 - lam) exp(-(t-1)/tau)
     widen_i(t)= spread_i(t) - spread_i(1)                                own curve, self-referenced
-    M         = 1.5                                                      Region 2 pass-through
+    COMMON(t) = ig_index_spread(t) - ig_index_spread(1)                  aggregate IG, observed
+    M         = 1.5                                                      Region 2b pass-through
+    Mc        = 1.0                                                      Region 2a pass-through
     STEP      = 1.0 pp, PROVISIONAL                                      pending the calibration
 
 REGION 3 WAS REBUILT ON 2026-08-18 AND THE REBUILD MADE IT SHORTER. The previous version was a
@@ -53,25 +56,49 @@ enters no calculation is not free: it invites the reader to believe a number is 
 something it is not, which is this project's standing suspicion #1 wearing a different hat.
 The reduced form above is the whole of Region 1.
 
-REGION 2 IS DE-MEANED; REGION 3 IS NOT. An upward-sloping credit curve is mostly a common,
-market-wide term effect: the index's constituents have upward-sloping curves too, so the
-AVERAGE widening is already inside market_ERP(t) and adding it again double-counts. Only the
-DIFFERENTIAL widening is idiosyncratic. Obsolescence is the opposite case -- the index survives
-by replacement and an individual company does not, and that asymmetry is the entire reason an
-obsolescence premium exists. De-meaning Region 3 would delete the thing Region 3 was built to
-capture.
+REGION 2 WAS FULLY DE-MEANED UNTIL 2026-08-19 AND THAT WAS WRONG. The argument for it ran:
+an upward-sloping credit curve is mostly a common, market-wide term effect; the index's
+constituents have upward-sloping curves too, so the AVERAGE widening is already inside
+market_ERP(t) and adding it again double-counts.
 
-WHAT THAT BUYS: T4 BECOMES A TEST AGAIN. With Region 1's decay preserving zero (the
-cap-weighted average of D(t) x 0 is 0) and Region 2 de-meaned to zero, the ONLY term lifting
-the cap-weighted average above the market ERP at long tenors is Region 3. The collapsed
-cap-weighted average therefore sits above the market's collapsed effective ERP by exactly the
-average obsolescence lift -- a quantity nothing was fitted to. T4 is:
+IT IS NOT DOUBLE-COUNTING, AND THE REASON IS THE ONE THIS DESIGN ALREADY ACCEPTS FOR REGION 3.
+The market ERP term structure is measured from INDEX options. The index is a diversified
+portfolio: idiosyncratic risk cancels inside it and does not cancel inside a single company,
+and idiosyncratic risk COMPOUNDS WITH HORIZON -- which is why credit curves slope up at all.
+So the cap-weighted average COMPANY premium must sit ABOVE the INDEX premium, and the gap must
+WIDEN WITH TENOR. That gap is the diversification benefit. Full de-meaning asserted it was
+exactly zero at every tenor. Region 3's own comment block makes the identical argument for
+obsolescence and was correctly exempted; Region 2 was not, and James caught it.
 
-    RETIRED at the front tenor, where the cap-weighted average equals the market ERP by
-      construction and reporting it green would be standing suspicion #1 in its cleanest form;
-    RESTORED on the collapsed number, where it asks whether the obsolescence wedge is
-      plausible. `universe_wedge()` computes it and `t4_front_is_an_identity()` proves the
-      front half is an identity rather than asserting it.
+SO REGION 2 SPLITS IN TWO (James's ruling, 2026-08-19; SPEC-Region2-Credit-Term-Structure):
+
+    Region 2_i(t) = Mc x COMMON(t)  +  M x [ widen_i(t) - capw_mean_widen(t) ]
+                    ^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    charged to         unchanged: de-meaned, so relative ranking
+                    EVERY name         between companies is exactly preserved
+
+COMMON(t) is an OBSERVED quantity, not a parameter: the widening of the aggregate
+investment-grade credit curve from one year to tenor t, read off the ICE BofA maturity buckets
+that `real-yields/asfp/credit.py` already publishes every weekday. A forced zero is replaced by
+a measurement, not by a different assumption.
+
+WHAT THIS DOES TO T4. The identity changes SHAPE, and it is stated rather than discovered:
+
+    capw avg company ERP(t) = market ERP(t) + Mc x COMMON(t) + capw avg obsolescence lift(t)
+
+Region 1 still contributes exactly zero (cap-weighted average of D(t) x 0). Region 2's
+DIFFERENTIAL still contributes exactly zero. What survives is two positive, named,
+diversification terms instead of one. `t4_identity()` proves this holds at every tenor to
+machine precision, and it is a PROOF of the construction rather than evidence about the world.
+Any test asserting the cap-weighted average equals the market ERP beyond the front tenor is now
+WRONG and must be updated, not worked around.
+
+    RETIRED at the front tenor, where COMMON(1) = 0 exactly and widen(1) = 0 exactly, so the
+      cap-weighted average equals the market ERP by construction and reporting it green would
+      be standing suspicion #1 in its cleanest form. That half is UNCHANGED.
+    RESTORED on the collapsed number, where `universe_wedge()` now returns the wedge SPLIT into
+      its common-credit and obsolescence halves, because a single blended wedge would hide
+      which of the two moved.
 
 ================================================================================
 DERIVED CONSTANTS AND THE CHANGE LOG
@@ -79,6 +106,10 @@ DERIVED CONSTANTS AND THE CHANGE LOG
 Same discipline as `real-yields/vol_scale_v3.py`: constants that depend on each other are
 DERIVED or ASSERTED at import, never typed twice and hoped to agree.
 
+  2026-08-19  v2. Region 2 gains COMMON(t) (James's ruling; see above). Mc = 1.0 as decided.
+              `region2()` now REQUIRES its `common` argument -- there is no default, because a
+              default would let a caller silently reproduce the v1 behaviour and no test could
+              see it. `t4_identity()` and `influence_check()` added.
   2026-08-18  v1. lam/tau adopted from tools/idio_mean_reversion.py. M = 1.5 reused from
               asfp/elevator.py::DEFAULT_MULTIPLE rather than re-invented. Front normalization
               target moved from the collapsed effective ERP (3.369) to the market ERP at the
@@ -125,6 +156,31 @@ TAU_ADOPTED = TAU_MEASURED
 # Bond-to-equity pass-through. NOT a new number: asfp/elevator.py::DEFAULT_MULTIPLE, reused so
 # the Region 2 -> Region 3 handoff at ORY is continuous rather than a jump.
 M_PASSTHROUGH = 1.5
+
+# THE COMMON-CREDIT PASS-THROUGH, AND THE ONE OPEN QUESTION IN THIS CHANGE.
+#
+# James's ruling of 2026-08-19 writes the construction as
+#     Region 2_i(t) = COMMON(t) + 1.5 x [ widen_i(t) - capw_mean_widen(t) ]
+# i.e. the common half enters at 1.0 and the differential half at 1.5. That is implemented
+# exactly as decided, and it is named rather than left implicit so it is one line to revisit.
+#
+# THE ARGUMENT AGAINST 1.0, RECORDED BECAUSE IT IS NOT OBVIOUSLY WRONG. M = 1.5 is not a
+# statement about idiosyncratic risk specifically; it is the bond-to-equity conversion --
+# equity is junior, so a given widening of credit spread shows up about half again as large in
+# the equity premium. COMMON(t) and widen_i(t) are the SAME physical quantity in the SAME units
+# (percentage points of credit spread). Translating one at 1.5 and the other at 1.0 makes the
+# conversion factor depend on whether the risk happens to be common or specific, which the
+# leverage argument does not support. On that reading Mc should be 1.5, and COMMON(30) would be
+# worth 0.80pp rather than 0.53pp on today's curve.
+#
+# THE ARGUMENT FOR 1.0 is conservatism: this term is charged to all 499 names with no company
+# evidence behind it, and the smaller of two defensible numbers is the right place to start a
+# term nobody has yet seen move a valuation. 1.0 ships. The question is flagged for James and
+# the direction of the remaining uncertainty is known and it is UPWARD -- the same shape as
+# OBSOLESCENCE_STEP_PP.
+M_COMMON = 1.0
+M_COMMON_IS_PROVISIONAL = True
+M_COMMON_ALTERNATIVE = M_PASSTHROUGH          # the consistency-argument value, not adopted
 
 # The front is where the semi-deviation statistic actually lives (1y/2y trailing blend), so it
 # is where the level attaches and where the normalization target is read.
@@ -317,14 +373,144 @@ def widening(spread_pct, grid=None):
             for t in grid}
 
 
-def region2(widen_by_ticker, cap, grid=None):
-    """De-meaned credit widening, x M. Names with no issuer curve are assigned the cap-weighted
-    average widening -- the honest no-information default -- so their de-meaned contribution is
-    exactly zero rather than a fabricated number.
+def common_widening(ig_spread_pct, grid=None):
+    """COMMON(t) = ig_index_spread(t) - ig_index_spread(front), the AGGREGATE investment-grade
+    credit curve's own widening. Charged to every company (see the header).
+
+    This is a MEASUREMENT and it is read live, never typed. `market_erp_live.fetch_market_credit`
+    supplies `ig_spread_pct` from real-yields `outputs/market_credit_latest_annual.csv`, which
+    the weekday close rewrites, and refuses rather than falling back if that stops.
+
+    COMMON(front) = 0 EXACTLY, by construction and by assertion, which is what preserves the
+    front-tenor T4 identity unchanged through this change.
+    """
+    grid = grid or GRID
+    base = ig_spread_pct.get(FRONT_TENOR)
+    if base is None:
+        raise ValueError("the aggregate credit curve has no tenor %d" % FRONT_TENOR)
+    out = {}
+    for h in grid:
+        v = ig_spread_pct.get(h)
+        if v is None:
+            keys = [k for k in ig_spread_pct if k <= h]
+            if not keys:
+                raise ValueError("the aggregate credit curve starts after tenor %d" % h)
+            v = ig_spread_pct[max(keys)]
+        out[h] = v - base
+    if abs(out[FRONT_TENOR]) > 1e-12:
+        raise AssertionError("COMMON(front) must be exactly zero; got %r" % out[FRONT_TENOR])
+    neg = [h for h in grid if out[h] < -1e-9]
+    if neg:
+        print("  WARNING: the aggregate IG credit curve INVERTS at tenors %s. COMMON(t) is "
+              "negative there, so the average company is being charged LESS than the index at "
+              "those horizons. That is what the curve says; it is reported, not clipped."
+              % neg[:6])
+    return out
+
+
+def zero_common(grid=None):
+    """An explicitly zero COMMON(t), for tests and for reproducing the pre-2026-08-19 v1.
+
+    IT EXISTS SO THAT SWITCHING THE TERM OFF HAS TO BE TYPED. `region2()` deliberately has no
+    default for `common`: a default would let a caller drop the term and reproduce the old
+    behaviour with every gate still green, which is this project's standing failure mode.
+    """
+    return {h: 0.0 for h in (grid or GRID)}
+
+
+ISSUER_WIDEN_MAX_AGE_DAYS = 45      # bond curves move slowly, but not for ever
+
+
+def load_issuer_widen(root=None, grid=None, asof=None, log=print):
+    """widen_i(t) for EVERY name, from the fitted issuer credit curves.
+
+    Reads `outputs/2026-08-19-region2-coverage/issuer_widen.csv`, produced by
+    AEG-Project `tools/region2_issuer_curves_2026-08-19.py` to the plan pre-registered in
+    `docs/PREREG-Region2-Issuer-Curves-and-Tier3-2026-08-19.md`.
+
+    WHAT CHANGED, AND WHY IT IS NOT THE SAME THING AS THE OLD `fetch_issuer_credit` PATH. The
+    nine curves in production are the AGGREGATE investment-grade shape scaled by one number per
+    issuer -- verified 2026-08-19 by dividing cod_<T>_annual.csv by ig_index_spread and finding
+    the ratio constant to about one percent across all thirty tenors. Every company had the same
+    shape and only the height differed. These curves are fitted to each issuer's OWN bonds, so
+    the shape is the issuer's, which is what James asked for.
+
+    Returns (widen_by_ticker, meta) or (None, reason) if the file is absent or stale. It does
+    NOT fall back silently: a caller that gets None must decide, in the open, what to do.
+    """
+    grid = grid or GRID
+    home = os.path.dirname(ROOT)
+    bases = ([root] if root else []) + [
+        os.path.join(ROOT, "outputs"),
+        os.path.join(home, "AEG-Project", "outputs", "2026-08-19-region2-coverage"),
+        os.path.join(home, "outputs", "2026-08-19-region2-coverage"),
+    ]
+    path = meta = None
+    for b in bases:
+        for name in ("issuer_widen.csv", "issuer_widen_latest.csv"):
+            q = os.path.join(b, name)
+            if os.path.exists(q):
+                path = q
+                break
+        if path:
+            mp = os.path.join(os.path.dirname(path), "tier3_fit.json")
+            if os.path.exists(mp):
+                try:
+                    meta = json.load(open(mp))
+                except ValueError:
+                    meta = None
+            break
+    if path is None:
+        return None, "no issuer_widen.csv found under %s" % bases
+
+    gen = (meta or {}).get("generated")
+    if gen:
+        age = (_as_date(asof) if asof else _today()) - _as_date(gen)
+        if age.days > ISSUER_WIDEN_MAX_AGE_DAYS:
+            return None, ("issuer_widen.csv was generated %s, %d days ago (limit %d). The bond "
+                          "pull and curve fit have not been re-run." % (gen, age.days,
+                                                                        ISSUER_WIDEN_MAX_AGE_DAYS))
+    out, tiers = {}, {}
+    for r in csv.DictReader(open(path)):
+        t = r["ticker"].strip()
+        try:
+            out[t] = {h: float(r["widen_%d" % h]) for h in grid}
+            tiers[t] = int(r["tier"])
+        except (KeyError, TypeError, ValueError):
+            continue
+    if not out:
+        return None, "issuer_widen.csv parsed to zero names (%s)" % path
+    m = dict(path=path, generated=gen, n=len(out),
+             tier_counts={k: sum(1 for v in tiers.values() if v == k) for k in (1, 2, 3, 4)},
+             tier3_adopted=(meta or {}).get("adopted"),
+             mean_slope_fallback=(meta or {}).get("mean_slope_fallback"))
+    if log:
+        log("  issuer widening: %d names, generated %s, tiers %s"
+            % (m["n"], gen or "unknown", m["tier_counts"]))
+    return out, m
+
+
+def region2(widen_by_ticker, cap, common, grid=None):
+    """Mc x COMMON(t), charged to everyone, PLUS the de-meaned differential widening x M.
+
+    `common` is REQUIRED and has no default -- see zero_common() for why.
+
+    Names with no issuer curve are assigned the cap-weighted average widening -- the honest
+    no-information default -- so their DIFFERENTIAL contribution is exactly zero rather than a
+    fabricated number. They still carry COMMON(t), which is the whole point of the change: a
+    company with no bond data is no longer assumed to be flat-credit relative to the index.
 
     Returns (contribution_by_ticker, mean_widen_by_tenor).
     """
     grid = grid or GRID
+    if common is None:
+        raise ValueError(
+            "region2() requires COMMON(t). Pass common_widening(...) for the live aggregate "
+            "credit curve, or zero_common() if you explicitly want the retired v1 behaviour. "
+            "There is no default because a default would silently restore the defect.")
+    missing = [h for h in grid if h not in common]
+    if missing:
+        raise ValueError("COMMON(t) is missing tenors %s" % missing[:6])
     have = [t for t in widen_by_ticker if t in cap and widen_by_ticker[t]]
     mean = {}
     for h in grid:
@@ -335,10 +521,11 @@ def region2(widen_by_ticker, cap, grid=None):
             mean[h] = 0.0
     out = {}
     for t, w in widen_by_ticker.items():
+        base = {h: M_COMMON * common[h] for h in grid}
         if not w:
-            out[t] = {h: 0.0 for h in grid}
+            out[t] = base
         else:
-            out[t] = {h: M_PASSTHROUGH * (w[h] - mean[h]) for h in grid}
+            out[t] = {h: base[h] + M_PASSTHROUGH * (w[h] - mean[h]) for h in grid}
     return out, mean
 
 
@@ -515,11 +702,22 @@ def t4_front_is_an_identity(inc, cap, tol=1e-9):
     return abs(m) < tol, m
 
 
-def universe_wedge(inc, r2_all, r3_all, cap, market_erp_curve, grid=None, growth=2.0):
-    """T4, RESTORED. The collapsed cap-weighted average assigned ERP minus the collapsed market
-    ERP. Region 1 contributes zero (D(t) x 0) and Region 2 contributes zero (de-meaned), so this
-    wedge IS the average obsolescence lift -- the index's rebalancing advantage. Nothing was
-    fitted to it, so asking whether it is plausible is a real test with a real answer.
+def universe_wedge(inc, r2_all, r3_all, cap, market_erp_curve, grid=None, growth=2.0,
+                   common=None):
+    """T4, RESTORED, AND NOW SPLIT IN TWO. The collapsed cap-weighted average assigned ERP minus
+    the collapsed market ERP.
+
+    Region 1 contributes exactly zero (D(t) x 0) and Region 2's DIFFERENTIAL contributes exactly
+    zero (de-meaned). What is left is two named, positive diversification terms:
+
+        wedge = collapsed[ Mc x COMMON(t) ]  +  collapsed[ average obsolescence lift(t) ]
+
+    BOTH HALVES ARE REPORTED SEPARATELY ON PURPOSE. A single blended wedge would move when
+    either half moved and say nothing about which, and "a number that changed for a reason
+    nobody can name" is how this engine has been bitten before. Pass `common` to get the split;
+    without it only the total is returned.
+
+    Neither half was fitted to anything, so asking whether each is plausible is a real test.
     """
     grid = grid or GRID
     covered = [t for t in inc if t in cap]
@@ -532,9 +730,48 @@ def universe_wedge(inc, r2_all, r3_all, cap, market_erp_curve, grid=None, growth
     mkt = [market_erp_curve[h] for h in grid]
     c_all = collapse_rate(grid, avg, growth=growth)
     c_mkt = collapse_rate(grid, mkt, growth=growth)
-    return dict(collapsed_universe_erp=c_all, collapsed_market_erp=c_mkt,
-                wedge_pp=c_all - c_mkt,
-                front_check=avg[0] - mkt[0])
+    out = dict(collapsed_universe_erp=c_all, collapsed_market_erp=c_mkt,
+               wedge_pp=c_all - c_mkt,
+               front_check=avg[0] - mkt[0])
+    if common is not None:
+        c_com = collapse_rate(grid, [market_erp_curve[h] + M_COMMON * common[h] for h in grid],
+                              growth=growth) - c_mkt
+        avg_r3 = {h: sum(cap[t] * r3_all.get(t, {}).get(h, 0.0) for t in covered) / tot
+                  for h in grid}
+        c_obs = collapse_rate(grid, [market_erp_curve[h] + avg_r3[h] for h in grid],
+                              growth=growth) - c_mkt
+        out.update(common_wedge_pp=c_com, obsolescence_wedge_pp=c_obs,
+                   split_residual_pp=(c_all - c_mkt) - c_com - c_obs)
+    return out
+
+
+def t4_identity(inc, r2_all, r3_all, cap, market_erp_curve, common, grid=None, tol=1e-9):
+    """PROOF, at every tenor, that
+
+        capw avg company ERP(t) = market ERP(t) + Mc x COMMON(t) + capw avg obsolescence(t)
+
+    This is the new shape of T4 and it is an IDENTITY OF THE CONSTRUCTION, not evidence about
+    the world -- exactly like `t4_front_is_an_identity()`, and it must be read the same way. It
+    is asserted because the two things it can catch are real: a COMMON(t) that failed to reach
+    every name (a company silently missing from `r2_all`), and a differential that stopped
+    de-meaning (which would tilt the average and be invisible in any single company's number).
+
+    Returns (ok, worst_abs_error_pp, worst_tenor).
+    """
+    grid = grid or GRID
+    covered = [t for t in inc if t in cap]
+    tot = sum(cap[t] for t in covered)
+    worst, worst_h = 0.0, None
+    for h in grid:
+        lhs = market_erp_curve[h] + sum(
+            cap[t] * (decay(h) * inc[t] + r2_all.get(t, {}).get(h, 0.0)
+                      + r3_all.get(t, {}).get(h, 0.0)) for t in covered) / tot
+        rhs = (market_erp_curve[h] + M_COMMON * common[h]
+               + sum(cap[t] * r3_all.get(t, {}).get(h, 0.0) for t in covered) / tot)
+        e = abs(lhs - rhs)
+        if e > worst:
+            worst, worst_h = e, h
+    return worst < tol, worst, worst_h
 
 
 # ------------------------------------------------------------------ (8) self-test
@@ -604,14 +841,49 @@ def selftest(verbose=True):
         assert abs(c - flat) < 1e-6, "flat %r collapsed to %r" % (flat, c)
     say("  collapse_rate: flat curves reprice to themselves to 1e-6")
 
-    # Region 2 de-meaning must be exactly zero on cap-weighted average
+    # REGION 2, NEW SHAPE (2026-08-19). The cap-weighted mean is no longer zero -- it is
+    # exactly Mc x COMMON(t). Asserting the old zero is now asserting the DEFECT, so the test
+    # is rewritten rather than relaxed.
     cap = {"A": 3.0, "B": 1.0}
     w = {"A": {h: 0.01 * h for h in GRID}, "B": {h: 0.03 * h for h in GRID}}
-    r2, mean = region2(w, cap)
+    common = {h: 0.02 * (h - 1) for h in GRID}
+    r2, mean = region2(w, cap, common)
     for h in GRID:
         m = (cap["A"] * r2["A"][h] + cap["B"] * r2["B"][h]) / 4.0
-        assert abs(m) < 1e-12, "region2 not de-meaned at t=%d: %r" % (h, m)
-    say("  region2: cap-weighted mean is exactly zero at every tenor")
+        assert abs(m - M_COMMON * common[h]) < 1e-12, (
+            "region2's cap-weighted mean must equal Mc x COMMON(t); at t=%d it is %r, expected %r"
+            % (h, m, M_COMMON * common[h]))
+    say("  region2: cap-weighted mean is exactly Mc x COMMON(t) at every tenor")
+
+    # THE DIFFERENTIAL MUST STILL DE-MEAN EXACTLY. Same test, run with COMMON switched off, so
+    # that a bug in the differential cannot hide inside a nonzero common term.
+    r2z, _ = region2(w, cap, zero_common())
+    for h in GRID:
+        m = (cap["A"] * r2z["A"][h] + cap["B"] * r2z["B"][h]) / 4.0
+        assert abs(m) < 1e-12, "the differential is not de-meaned at t=%d: %r" % (h, m)
+    say("  region2: with COMMON off, the differential still de-means to exactly zero")
+
+    # RELATIVE RANKING IS PRESERVED. COMMON(t) is a level shift common to every name, so no
+    # pair of companies may change order because of it. This is the property James was
+    # protecting when he kept the de-meaning on the differential.
+    for h in GRID:
+        assert abs((r2["A"][h] - r2["B"][h]) - (r2z["A"][h] - r2z["B"][h])) < 1e-12, \
+            "COMMON(t) altered the SPREAD between two companies at t=%d -- it must not" % h
+    say("  region2: COMMON(t) shifts every name equally; no pair changes order")
+
+    # region2 must REFUSE a missing COMMON rather than defaulting it to zero.
+    try:
+        region2(w, cap, None)
+        raise AssertionError("region2 accepted a missing COMMON(t)")
+    except ValueError:
+        pass
+    say("  region2: refuses a missing COMMON(t); switching it off has to be typed")
+
+    # COMMON(front) is zero exactly, whatever the aggregate curve looks like.
+    c = common_widening({1: 0.49, 5: 0.77, 10: 0.98, 20: 1.02, 30: 1.02})
+    assert c[1] == 0.0 and abs(c[30] - 0.53) < 1e-12
+    say("  common_widening: COMMON(front)=0 exactly, COMMON(30)=%.4fpp on the sample curve"
+        % c[30])
 
     # Region 3 must REFUSE an undeclared obsolescence year. No default exists to fall back to.
     try:
@@ -663,10 +935,74 @@ def selftest(verbose=True):
         "obsolescence_is_visible() detects it rather than letting the zero pass as a result")
 
     # T10, correctly scoped: the INCREMENT is monotone where it should be, the TOTAL need not be
-    idio, _tot = build_curve(2.0, {h: 0.0 for h in GRID}, e, {h: 3.0 for h in GRID})
+    idio, _tot = build_curve(2.0, zero_common(), e, {h: 3.0 for h in GRID})
     assert idio[1] > idio[5], "a positive front differential must decay"
     say("  T10 scoping: monotonicity is asserted on the increment, never on the total")
+
+    # THE NEW T4 IDENTITY, ON A TOY UNIVERSE. Proven, not asserted: the cap-weighted average
+    # must equal market + Mc x COMMON + average obsolescence, at every tenor.
+    mkt3 = {h: 3.0 for h in GRID}
+    inc3 = {"A": -0.5, "B": 1.5}                       # cap-weighted mean zero at 3:1
+    r3_all = {"A": region3(10, grid=GRID), "B": region3(20, grid=GRID)}
+    ok, worst, wh = t4_identity(inc3, r2, r3_all, cap, mkt3, common)
+    assert ok, "T4 identity broken by %.3e pp at tenor %r" % (worst, wh)
+    say("  T4 identity: capw avg = market + Mc x COMMON + avg obsolescence, worst error %.2e pp"
+        % worst)
+
+    # INFLUENCE. The standing suspicion is a term that is arithmetically perfect and inert.
+    ok_i, det = influence_check(inc3, w, cap, mkt3, r3_all, grid=GRID)
+    assert ok_i, "COMMON(t) is INERT: %r" % (det,)
+    say("  influence: +%.2fpp on COMMON moves the collapsed universe ERP by %.4fpp and every "
+        "single name by %.4fpp" % (det["bump_pp"], det["universe_move_pp"], det["min_name_move_pp"]))
     return True
+
+
+# ------------------------------------------------------------------ (8b) the influence guard
+
+def influence_check(inc, widen_by_ticker, cap, market_erp_curve, r3_all=None, grid=None,
+                    bump_pp=0.10, growth=2.0, min_move_pp=1e-4):
+    """PERTURB COMMON(t) AND DEMAND THAT A PUBLISHED NUMBER MOVES.
+
+    WHY THIS EXISTS AND WHY IT IS NOT A UNIT TEST. Twice in the last session this engine landed
+    a term that was arithmetically correct and completely inert -- a volatility term structure
+    that was never adopted, and a seed reported as live while nothing read it. Every identity
+    check passed both times, because an inert term is internally consistent. Identity checks
+    cannot see influence; only a perturbation can.
+
+    Region 2 is the same shape of risk. It has been ZERO for 490 of 499 names, and no test in
+    this module could have detected that, because zero is a perfectly consistent value.
+
+    The check: raise COMMON(t) by `bump_pp` at every tenor past the front, and require BOTH
+      (a) the collapsed cap-weighted universe ERP to move, and
+      (b) EVERY individual company's collapsed ERP to move -- not just the ones with bonds,
+          which is the specific failure this whole workstream exists to fix.
+
+    Returns (ok, detail). Callers should assert on `ok` rather than reading the detail.
+    """
+    grid = grid or GRID
+    r3_all = r3_all or {}
+    base_c = zero_common(grid)
+    bump_c = {h: (0.0 if h == FRONT_TENOR else float(bump_pp)) for h in grid}
+
+    def _run(common):
+        r2, _ = region2({t: widen_by_ticker.get(t) for t in inc}, cap, common, grid)
+        per = {}
+        for t in inc:
+            _idio, erp_i = build_curve(inc[t], r2.get(t, {}), r3_all.get(t, {}),
+                                       market_erp_curve, grid)
+            per[t] = collapse_rate(grid, [erp_i[h] for h in grid], growth=growth)
+        u = universe_wedge(inc, r2, r3_all, cap, market_erp_curve, grid, growth=growth)
+        return per, u["collapsed_universe_erp"]
+
+    per0, u0 = _run(base_c)
+    per1, u1 = _run(bump_c)
+    moves = {t: abs(per1[t] - per0[t]) for t in per0}
+    detail = dict(bump_pp=float(bump_pp), universe_move_pp=u1 - u0,
+                  min_name_move_pp=min(moves.values()) if moves else 0.0,
+                  max_name_move_pp=max(moves.values()) if moves else 0.0,
+                  inert_names=sorted(t for t, m in moves.items() if m < min_move_pp))
+    ok = (abs(detail["universe_move_pp"]) >= min_move_pp and not detail["inert_names"])
+    return ok, detail
 
 
 # ------------------------------------------------------------------ (9) run
@@ -695,20 +1031,43 @@ def main():
     print("  T4 AT THE FRONT: cap-weighted mean increment = %.3e -- an IDENTITY, %s" %
           (mval, "retired as evidence" if ok else "BROKEN"))
 
-    # Region 2 for every name with a published issuer curve
-    widen = {}
-    pool = ["AAPL", "HD", "JNJ", "KO", "MRK", "PEP", "T", "WMT"]
-    for t in pool:
-        c = mel.fetch_issuer_credit(t)
-        if c and c["has_real_fit"]:
-            widen[t] = widening(c["spread_pct"])
-    r2, mean_w = region2({t: widen.get(t) for t in semidev}, cap)
+    # Region 2 for EVERY name. Primary: the per-issuer fits over each company's own bonds.
+    widen, wmeta = load_issuer_widen()
+    if widen is None:
+        print("  ** no fitted issuer curves (%s)" % wmeta)
+        print("  ** falling back to the retired nine rating-shaped cod_<T> curves. Those are the")
+        print("  ** aggregate IG shape scaled by one number each, NOT issuer shapes.")
+        widen = {}
+        for t in ["AAPL", "HD", "JNJ", "KO", "MRK", "PEP", "T", "WMT"]:
+            c = mel.fetch_issuer_credit(t)
+            if c and c["has_real_fit"]:
+                widen[t] = widening(c["spread_pct"])
+    else:
+        widen = {t: widen[t] for t in semidev if t in widen}
+    cred = mel.fetch_market_credit(log=print)
+    common = common_widening(cred["spread_pct"])
+    r2, mean_w = region2({t: widen.get(t) for t in semidev}, cap, common)
     print()
-    print("REGION 2 -- de-meaned, %d issuer curves with a real fit" % len(widen))
-    print("  cap-weighted mean widening   1y %.4f  10y %.4f  30y %.4f (pp)"
+    tc = (wmeta or {}).get("tier_counts") if isinstance(wmeta, dict) else None
+    print("REGION 2 -- COMMON(t) for everyone + the de-meaned differential over %d curves%s"
+          % (len(widen), ("   tiers %s" % tc) if tc else ""))
+    print("  COMMON(t), aggregate IG widening   1y %.4f  10y %.4f  30y %.4f (pp)   [%s, %s]"
+          % (common[1], common[10], common[30], cred["source"], cred["vintage"] or "no vintage"))
+    print("  x%.1f -> EVERY name now carries a credit term structure. Before 2026-08-19, 490 of"
+          % M_COMMON)
+    print("     499 carried exactly zero. Tier 1 is the issuer's OWN fitted shape; tiers 2-4 take")
+    print("     the cross-sectional slope, which is a declared fallback and not a per-name fit.")
+    print("  cap-weighted mean differential widening   1y %.4f  10y %.4f  30y %.4f (pp)"
           % (mean_w[1], mean_w[10], mean_w[30]))
-    print("  x%.1f -> the average name's Region 2 contribution is zero BY CONSTRUCTION; only "
-          "differential steepness survives" % M_PASSTHROUGH)
+    print("  x%.1f -> de-meaned, so relative ranking between companies is unchanged"
+          % M_PASSTHROUGH)
+
+    ok_i, det = influence_check(inc, widen, cap, mkt, grid=GRID)
+    print("  INFLUENCE GUARD: +%.2fpp on COMMON moves the collapsed universe ERP by %+.4fpp; "
+          "%s" % (det["bump_pp"], det["universe_move_pp"],
+                  "no name is inert" if ok_i else "INERT NAMES: %s" % det["inert_names"][:8]))
+    if not ok_i:
+        raise SystemExit("COMMON(t) is inert -- refusing to report a term that moves nothing")
 
     print()
     print("REGION 3 -- OBSOLESCENCE. Rebuilt 2026-08-18: one declared year, one flat step, and")

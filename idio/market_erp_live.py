@@ -231,6 +231,99 @@ def fetch_issuer_credit(ticker, allow_network=True, log=None):
     return out
 
 
+
+# --------------------------------------------------------------- aggregate IG credit curve
+
+MARKET_CREDIT_PATH = "outputs/market_credit_latest_annual.csv"
+COMMITS_API = ("https://api.github.com/repos/JamesKostohryz/real-yields/commits"
+               "?path=%s&per_page=1" % MARKET_CREDIT_PATH)
+
+# How stale the aggregate credit curve may be before it is refused outright. It is rewritten
+# every weekday by erp-daily-close, so a fortnight's silence means the job has stopped.
+MAX_CREDIT_AGE_DAYS = 14
+
+
+def fetch_market_credit(allow_network=True, log=None, asof=None):
+    """The AGGREGATE investment-grade credit curve, 1..30y, in percent.
+
+    Source: real-yields `outputs/market_credit_latest_annual.csv`, column `ig_index_spread`.
+    That column is the ICE BofA IG option-adjusted spread interpolated across the maturity
+    buckets 1-3 / 3-5 / 5-7 / 7-10 / 10-15 / 15+ (asfp/credit.py::IG_MATURITY), held flat
+    outside the end knots. It is rewritten every weekday, so it is a live series rather than a
+    constant.
+
+    THERE IS DELIBERATELY NO DATED FALLBACK. Every other reader in this module degrades to a
+    dated constant because a stale market ERP is merely imprecise. A stale or absent aggregate
+    credit curve is different in kind: `idio.erp.COMMON(t)` is charged to EVERY company at every
+    tenor, so a frozen one would move all 499 published premiums in lockstep and no identity
+    check could see it. It raises instead.
+
+    Returns dict(spread_pct={tenor: pct}, source=str, vintage=str|None, age_days=int|None).
+    """
+    errors = []
+    text = src = vintage = None
+
+    if allow_network:
+        try:
+            text = _http_get(RAW_BASE + MARKET_CREDIT_PATH)
+            src = "github-raw"
+        except Exception as e:                     # noqa: BLE001
+            errors.append("github-raw: %s" % e)
+        if text is not None:
+            try:
+                import json as _json
+                j = _json.loads(_http_get(COMMITS_API))
+                vintage = j[0]["commit"]["committer"]["date"][:10]
+            except Exception as e:                 # noqa: BLE001
+                errors.append("commits-api (vintage only): %s" % e)
+
+    if text is None:
+        for p in _local_paths(MARKET_CREDIT_PATH):
+            try:
+                raw = open(p).read()
+            except Exception as e:                 # noqa: BLE001
+                errors.append("%s: %s" % (p, e))
+                continue
+            # A local checkout carries no vintage column, so the file's own mtime is the only
+            # honest age available. It is used to REFUSE, never to reassure.
+            v = dt.date.fromtimestamp(os.path.getmtime(p)).isoformat()
+            age = _age_days(v, asof)
+            if age > MAX_CREDIT_AGE_DAYS:
+                errors.append("%s: file is %d days old (limit %d)" % (p, age, MAX_CREDIT_AGE_DAYS))
+                continue
+            text, src, vintage = raw, "local:%s" % p, v
+            break
+
+    if text is None:
+        raise RuntimeError(
+            "no aggregate IG credit curve available, and there is no fallback by design. "
+            "COMMON(t) is charged to every company at every tenor; substituting a constant "
+            "would move 499 premiums in lockstep with nothing able to detect it. Tried:\n  %s"
+            % "\n  ".join(errors))
+
+    spread = {}
+    for r in csv.DictReader(io.StringIO(text)):
+        try:
+            spread[int(round(float(r["tenor"])))] = float(r["ig_index_spread"])
+        except (KeyError, TypeError, ValueError):
+            continue
+    if len(spread) < 30:
+        raise RuntimeError("aggregate IG credit curve has %d tenors, expected at least 30 (%s)"
+                           % (len(spread), src))
+
+    age = _age_days(vintage, asof) if vintage else None
+    if age is not None and age > MAX_CREDIT_AGE_DAYS:
+        raise RuntimeError(
+            "aggregate IG credit curve is %d days old (vintage %s, limit %d). The weekday "
+            "erp-daily-close job that rewrites it has stopped. Refusing rather than charging "
+            "every company a frozen COMMON(t)." % (age, vintage, MAX_CREDIT_AGE_DAYS))
+    out = dict(spread_pct=spread, source=src, vintage=vintage, age_days=age)
+    if log:
+        log("  aggregate IG credit: 1y %.4f%%  10y %.4f%%  30y %.4f%%  (%s, vintage %s)"
+            % (spread[1], spread[10], spread[30], src, vintage or "unknown"))
+    return out
+
+
 if __name__ == "__main__":
     m = fetch_market_erp()
     print(m)

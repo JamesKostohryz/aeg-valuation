@@ -1,0 +1,242 @@
+"""
+market_erp_live.py — read the PUBLISHED market ERP instead of typing it.
+
+WHY THIS EXISTS. `tools/idio_erp_anchor_calibration.py` carried `MARKET_ERP_PCT = 3.3654`
+as a typed literal. That figure is not arbitrary and it is not wrong -- it is exactly the
+effective ERP published on 2026-08-13 (verified against `real-yields` commit `9ee3222`).
+It is a frozen snapshot of a number that republishes every weekday at 12:30 UTC. On
+2026-08-18 the published figure is 3.3690, so the drift was 0.4bp and harmless. It will
+not stay harmless: the August re-anchor moves the effective ERP by roughly 7bp on the
+landed vs(T) work alone, and the calibration would have gone on solving against a
+five-days-stale constant with nothing anywhere reporting the mismatch.
+
+Same defect class as the held-state pointer fixed in `real-yields` the same day, and the
+same remedy: derive it, never type it, and make the fallback announce itself.
+
+THE SOURCE ORDER, AND WHY THE OBVIOUS ONE IS LAST.
+
+  1. `AEG_REAL_YIELDS` env var, if set, pointing at a checkout.
+  2. The published file on GitHub raw. This is the primary source. The daily job commits
+     `history/ERP_effective_latest.csv` to a PUBLIC repository, so no token is needed and
+     what comes back is by definition the number the engine actually published.
+  3. A local `real-yields` checkout, if one is present and its own `vintage` column is
+     fresh. LAST, not first, and conditionally -- because it goes stale silently. Checked
+     on 2026-08-18: `C:\\Users\\james\\Documents\\GitHub\\real-yields` was sitting at
+     vintage 2026-07-28 and commit `8a4eab9`, three weeks and many commits behind the
+     remote. A resolution order that preferred the local checkout would have quietly
+     substituted a July number for an August one. The project's own CLAUDE.md warns that
+     this checkout goes stale; this module is what happens when that warning is obeyed.
+  4. A dated fallback constant, which RAISES if it is older than `MAX_FALLBACK_AGE_DAYS`.
+     A fallback that never expires is just a hardcode with better manners.
+
+Every return says which source answered and how old it is. Nothing here decides anything;
+it only reports what the market ERP engine published.
+"""
+from __future__ import annotations
+
+import csv
+import datetime as dt
+import io
+import os
+
+RAW_BASE = "https://raw.githubusercontent.com/JamesKostohryz/real-yields/main/"
+EFFECTIVE_PATH = "history/ERP_effective_latest.csv"
+FORWARD_PATH = "history/TODAY_forward_curve_latest.csv"
+
+LOCAL_CANDIDATES = [
+    os.environ.get("AEG_REAL_YIELDS", ""),
+    r"C:\Users\james\Documents\GitHub\real-yields",
+    "/sessions/vigilant-modest-dijkstra/mnt/GitHub/real-yields",
+    os.path.expanduser("~/Documents/GitHub/real-yields"),
+]
+
+# Last-resort values. Dated on purpose: this expires rather than rotting.
+FALLBACK = dict(date="2026-08-18", eff_tips_ry=2.5457, eff_erp=3.3690,
+                eff_coe=5.9146, duration=25.0)
+MAX_FALLBACK_AGE_DAYS = 21
+
+# How stale a LOCAL checkout may be before it is skipped in favour of the network.
+MAX_LOCAL_AGE_DAYS = 5
+
+# The value this module replaces, kept only so the change is auditable.
+# 3.3654 == the effective ERP published 2026-08-13 (real-yields commit 9ee3222).
+SUPERSEDED_HARDCODE = 3.3654
+SUPERSEDED_HARDCODE_DATE = "2026-08-13"
+
+
+def _age_days(iso, asof=None):
+    a = dt.date.fromisoformat(asof) if asof else dt.datetime.now(dt.timezone.utc).date()
+    return (a - dt.date.fromisoformat(iso)).days
+
+
+def _http_get(url, timeout=20):
+    import urllib.request
+    req = urllib.request.Request(url, headers={"User-Agent": "aeg-market-erp-live"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read().decode("utf-8")
+
+
+def _parse_effective(text):
+    rows = list(csv.DictReader(io.StringIO(text)))
+    if not rows:
+        raise ValueError("ERP_effective_latest.csv is empty")
+    r = rows[-1]
+    return dict(date=r["date"],
+                eff_tips_ry=float(r["eff_tips_ry"]),
+                eff_erp=float(r["eff_erp"]),
+                eff_coe=float(r["eff_coe"]),
+                duration=float(r["duration"]))
+
+
+def _local_paths(relpath):
+    for base in LOCAL_CANDIDATES:
+        if base and os.path.isdir(base):
+            p = os.path.join(base, *relpath.split("/"))
+            if os.path.exists(p):
+                yield p
+
+
+def fetch_market_erp(asof=None, allow_network=True, log=print):
+    """Return the published effective market ERP as a dict with a `source` key.
+
+    Raises RuntimeError if every source fails and the dated fallback has expired.
+    """
+    errors = []
+
+    if allow_network:
+        try:
+            out = _parse_effective(_http_get(RAW_BASE + EFFECTIVE_PATH))
+            out["source"] = "github-raw"
+            out["age_days"] = _age_days(out["date"], asof)
+            log("  market ERP: %.4f%% published %s (github raw, %d days old)"
+                % (out["eff_erp"], out["date"], out["age_days"]))
+            return out
+        except Exception as e:                     # noqa: BLE001 -- any failure falls through
+            errors.append("github-raw: %s" % e)
+
+    for p in _local_paths(EFFECTIVE_PATH):
+        try:
+            out = _parse_effective(open(p).read())
+        except Exception as e:                     # noqa: BLE001
+            errors.append("%s: %s" % (p, e))
+            continue
+        age = _age_days(out["date"], asof)
+        if age > MAX_LOCAL_AGE_DAYS:
+            errors.append("%s: vintage %s is %d days old (limit %d) -- local checkouts in "
+                          "this project go stale silently, so it is skipped rather than used"
+                          % (p, out["date"], age, MAX_LOCAL_AGE_DAYS))
+            continue
+        out["source"] = "local:%s" % p
+        out["age_days"] = age
+        log("  market ERP: %.4f%% published %s (local checkout, %d days old)"
+            % (out["eff_erp"], out["date"], age))
+        return out
+
+    age = _age_days(FALLBACK["date"], asof)
+    if age > MAX_FALLBACK_AGE_DAYS:
+        raise RuntimeError(
+            "no live market ERP available and the dated fallback (%s) is %d days old, past "
+            "the %d-day limit. Refusing to calibrate against a stale market ERP -- that is "
+            "the defect this module was written to remove. Tried:\n  %s"
+            % (FALLBACK["date"], age, MAX_FALLBACK_AGE_DAYS, "\n  ".join(errors)))
+    out = dict(FALLBACK)
+    out["source"] = "dated-fallback"
+    out["age_days"] = age
+    log("  ** market ERP: FALLING BACK to the dated constant %.4f%% (%s, %d days old). "
+        "Live sources all failed: %s" % (out["eff_erp"], out["date"], age, "; ".join(errors)))
+    return out
+
+
+def fetch_forward_curve(asof=None, allow_network=True, log=print):
+    """The 30-tenor published curve. Needed by any construction that attaches a premium at
+    a specific tenor rather than to the collapsed effective number.
+
+    Returns (rows, meta) where rows is a list of dicts keyed tenor/fwd_erp/spot_erp/etc.
+    """
+    errors = []
+    text = None
+    src = None
+    if allow_network:
+        try:
+            text = _http_get(RAW_BASE + FORWARD_PATH)
+            src = "github-raw"
+        except Exception as e:                     # noqa: BLE001
+            errors.append("github-raw: %s" % e)
+    if text is None:
+        for p in _local_paths(FORWARD_PATH):
+            try:
+                text = open(p).read()
+                src = "local:%s" % p
+                break
+            except Exception as e:                 # noqa: BLE001
+                errors.append("%s: %s" % (p, e))
+    if text is None:
+        raise RuntimeError("no forward curve available. Tried:\n  %s" % "\n  ".join(errors))
+
+    rows = []
+    for r in csv.DictReader(io.StringIO(text)):
+        rows.append({k: (int(v) if k == "tenor" else float(v)) for k, v in r.items()})
+    if len(rows) != 30:
+        raise RuntimeError("forward curve has %d tenors, expected 30" % len(rows))
+    log("  forward curve: %d tenors, fwd_erp 1y=%.4f 30y=%.4f (%s)"
+        % (len(rows), rows[0]["fwd_erp"], rows[-1]["fwd_erp"], src))
+    return rows, dict(source=src)
+
+
+def fetch_issuer_credit(ticker, allow_network=True, log=None):
+    """The issuer's own fitted real credit curve, from real-yields outputs/cod_<T>_annual.csv.
+
+    Returns dict(tenor -> spread_pct), plus `offset`, `rating` and `has_real_fit`.
+
+    `has_real_fit` is the load-bearing field. `asfp/idio_ts.fit_offset()` returns an offset
+    of EXACTLY 1.0 when no bonds were fit at all, in which case the "issuer spread" is a
+    generic rating-curve number wearing the ticker's name. Five of the sixteen tickers with
+    cost-of-debt data are in that state (AZO, COST, MCD, NKE, POOL). Any construction that
+    uses an issuer spread as a LEVEL must filter on this rather than assume it.
+    """
+    rel = "outputs/cod_%s_annual.csv" % ticker
+    text = None
+    if allow_network:
+        try:
+            text = _http_get(RAW_BASE + rel)
+        except Exception:                          # noqa: BLE001
+            text = None
+    if text is None:
+        for p in _local_paths(rel):
+            try:
+                text = open(p).read()
+                break
+            except Exception:                      # noqa: BLE001
+                continue
+    if text is None:
+        return None
+
+    spread, offset, rating = {}, None, None
+    for r in csv.DictReader(io.StringIO(text)):
+        try:
+            spread[int(round(float(r["tenor"])))] = 100.0 * float(r["spread"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        offset = float(r.get("offset", "nan") or "nan")
+        rating = r.get("rating")
+    if not spread:
+        return None
+    has_real_fit = offset is not None and abs(offset - 1.0) > 1e-9
+    out = dict(ticker=ticker, spread_pct=spread, offset=offset, rating=rating,
+               has_real_fit=has_real_fit)
+    if log:
+        log("  %s: 1y %.4f%%  30y %.4f%%  offset %.4f  rating %s  real_fit=%s"
+            % (ticker, spread.get(1, float("nan")), spread.get(30, float("nan")),
+               offset, rating, has_real_fit))
+    return out
+
+
+if __name__ == "__main__":
+    m = fetch_market_erp()
+    print(m)
+    drift = m["eff_erp"] - SUPERSEDED_HARDCODE
+    print("drift vs the superseded hardcode %.4f (%s): %+.4fpp"
+          % (SUPERSEDED_HARDCODE, SUPERSEDED_HARDCODE_DATE, drift))
+    rows, meta = fetch_forward_curve()
+    print("fwd_erp at 1/2/5/10/30y: %s"
+          % [rows[i - 1]["fwd_erp"] for i in (1, 2, 5, 10, 30)])

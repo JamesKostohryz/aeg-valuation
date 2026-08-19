@@ -1,0 +1,71 @@
+name: idio-universe-refresh
+
+# Rebuilds the company-premium universe: blended residual downside semi-deviation and cap
+# weights for the 228 declared names, from EODHD.
+#
+# WHY IT EXISTS. idio/erp.py used to read three DATED ONE-SHOT research outputs from a working
+# folder that is not a repository -- rank_residual_scored.csv of 2026-08-17 and two price-test
+# files of 2026-08-16. Nothing recomputed them. Wired into the pricing engine as it stood, every
+# company premium would have been pinned to mid-August 2026 permanently, with every test green,
+# because a frozen number is arithmetically perfect.
+#
+# MONTHLY IS AMPLE. The statistic blends one- and two-year windows on a sixty-trading-day lag,
+# so it cannot move quickly by construction. Runs the day after the ERP re-anchor.
+#
+# FAIL-CLOSED. Below 90% coverage of the declared universe the build REFUSES and leaves the
+# previous file in place: the cap-weighted average semi-deviation is the denominator of every
+# company's premium, so a partial universe gives wrong premiums for every name, including the
+# ones that resolved.
+
+on:
+  schedule:
+    - cron: "0 14 2 * *"     # 2nd of the month, 14:00 UTC
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "First N names only (smoke run; leave blank for the full universe)."
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: idio-universe-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pytest
+
+      # Hermetic, no network. Pins the ported statistic to the values the 2026-08-17 research
+      # run produced, so a change to the code is distinguishable from a change to the market.
+      - name: Hermetic self-test
+        run: python -m pytest tests/test_idio_feed.py -q
+
+      - name: Rebuild the universe
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+        run: |
+          python idio/feed.py --outdir outputs \
+            ${{ inputs.limit != '' && format('--limit {0}', inputs.limit) || '' }}
+
+      - name: Commit + push
+        run: |
+          git config user.name "asfp-bot"
+          git config user.email "asfp-bot@users.noreply.github.com"
+          git add outputs/idio_universe_latest.csv outputs/idio_universe_latest.json \
+                  outputs/idio_universe_*.csv
+          git commit -m "idio: refresh company-premium universe $(date -u +%F)" || { echo "no changes"; exit 0; }
+          git pull --rebase --autostash origin main || true
+          git push

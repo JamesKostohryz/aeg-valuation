@@ -1,7 +1,7 @@
 field,value
 ticker,PEP
 verdict,REFUSED — no valuation was produced by this run
-reason,"SCENARIOS FAILED: fail-closed: bear (TRUNCATION REVIEW REQUIRED: the truncation point does not satisfy the rule. TERMINAL CONDITION -- the abnormal earnings growth discarded at the stop year is worth +1.58 per share, 2.0% of value (AEG decaying at a factor of 0.899 a year). The forecast has not run to the point where abnormal growth is spent. Extend forecast.horizon_N. Both conditions must hold: the explicit forecast does not end until projected abnormal earnings growth is spent AND earnings are at a normalized level. (clear with convergence.reviewed: true in the company config, exactly as the primary scenario's own truncation is cleared))"
+reason,"SCENARIOS FAILED: fail-closed: bear (TRUNCATION REVIEW REQUIRED: the truncation point does not satisfy the rule. TERMINAL CONDITION -- the abnormal earnings growth discarded at the stop year is worth +1.67 per share, 2.1% of value (AEG decaying at a factor of 0.906 a year). The forecast has not run to the point where abnormal growth is spent. Extend forecast.horizon_N. Both conditions must hold: the explicit forecast does not end until projected abnormal earnings growth is spent AND earnings are at a normalized level. (clear with convergence.reviewed: true in the company config, exactly as the primary scenario's own truncation is cleared))"
 stale_files_quarantined,4
 PEP_valuation.csv,PEP_valuation.STALE.csv
 PEP_summary.csv,PEP_summary.STALE.csv

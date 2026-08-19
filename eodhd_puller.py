@@ -18,7 +18,7 @@ Format rules are per INPUT_CONTRACT.md:
   * CF capped to last 37 yrs, IS/BS to last 41, all sharing the same FY0 year.
 """
 
-import csv, io, json, os, re, urllib.parse, urllib.request
+import csv, gzip, io, json, os, re, urllib.parse, urllib.request, zlib
 
 # ------------------------------------------------------------------ mappings
 # model label -> EODHD Income_Statement field (or ('CALC', how))
@@ -450,6 +450,55 @@ def _edgar_pension(ticker, timeout=60):
         return {}
 
 
+MARKET_DATA_DIR = os.environ.get("MARKET_DATA_DIR")  # set by the workflow's checkout step
+
+
+def _read_gz_json(path):
+    with gzip.open(path, "rb") as f:
+        return json.loads(f.read().decode())
+
+
+def _market_data_fundamentals(base, md_dir):
+    p = os.path.join(md_dir, "data", "fundamentals", f"{base}.json.gz")
+    return _read_gz_json(p) if os.path.exists(p) else None
+
+
+def _market_data_dividends(base, md_dir):
+    p = os.path.join(md_dir, "data", "dividends", f"{base}.json.gz")
+    return _read_gz_json(p) if os.path.exists(p) else None
+
+
+def _market_data_prices(base, md_dir):
+    """Read this ticker's rows out of its price shard (part-<crc32(ticker) % 16>.parquet) and
+    reshape to the same list-of-dict-per-day shape the live /api/eod/ call returns. Open/High/
+    Low are not carried in the panel (see market-data's README: only close, adjusted_close and
+    volume are stored) and come back as None here. This is safe: `run_company.py`'s
+    resolve_price() is the only reader of REAL_prices.csv anywhere in this repository, and it
+    reads only the Close column of the most recent row -- verified by inspection, not assumed,
+    before this function was written. If a future consumer needs true OHLC, it must go back to
+    a live pull; do not assume this function covers that case.
+    """
+    import pyarrow.parquet as pq
+    shard = zlib.crc32(base.encode()) % 16
+    path = os.path.join(md_dir, "data", "prices_adj_close", f"part-{shard:02d}.parquet")
+    if not os.path.exists(path):
+        return None
+    table = pq.read_table(path, filters=[("ticker", "=", base)])
+    if table.num_rows == 0:
+        return None
+    cols = table.to_pydict()
+    rows = []
+    for i in range(len(cols["date"])):
+        rows.append({
+            "date": str(cols["date"][i]),
+            "open": None, "high": None, "low": None,
+            "close": cols["close"][i],
+            "adjusted_close": cols["adjusted_close"][i],
+            "volume": cols["volume"][i],
+        })
+    return rows
+
+
 def pull_to_csvs(ticker, api_key, work_dir):
     """Fetch EODHD fundamentals + prices + dividends (and the SEC EDGAR pension line) for
     `ticker`, build the six loader CSVs with the builders above, write them into `work_dir`,
@@ -462,27 +511,53 @@ def pull_to_csvs(ticker, api_key, work_dir):
         params.setdefault("fmt", "json")
         return _http_json(f"{EODHD_BASE}/{path}?{urllib.parse.urlencode(params)}")
 
-    # --- fetch ---
-    try:
-        fund = _eodhd(f"fundamentals/{sym}")
-    except Exception as e:
-        raise RuntimeError(f"EODHD fundamentals pull failed for {sym}: {e}")
+    # --- fetch: the market-data store first, a live EODHD call only for what it does not
+    # have. This is the ONE place this repository reads company fundamentals from now --
+    # previously this function always hit the vendor live, a second, independent path from the
+    # one outputs/eodhd_store.py and market-data built and verified. A name outside the S&P 500
+    # coverage universe (or one market-data has not backfilled yet) still works: it just falls
+    # through to the same live call this function always made, so nothing that worked before
+    # stops working.
+    base = sym.split(".")[0]
+    fund = eod = divs = None
+    source = {"fund": "live", "eod": "live", "divs": "live"}
+
+    if MARKET_DATA_DIR:
+        fund = _market_data_fundamentals(base, MARKET_DATA_DIR)
+        if fund is not None:
+            source["fund"] = "market-data"
+        eod = _market_data_prices(base, MARKET_DATA_DIR)
+        if eod is not None:
+            source["eod"] = "market-data"
+        divs = _market_data_dividends(base, MARKET_DATA_DIR)
+        if divs is not None:
+            source["divs"] = "market-data"
+
+    if fund is None:
+        try:
+            fund = _eodhd(f"fundamentals/{sym}")
+        except Exception as e:
+            raise RuntimeError(f"EODHD fundamentals pull failed for {sym}: {e}")
     if not isinstance(fund, dict) or "Financials" not in fund:
         got = list(fund)[:8] if isinstance(fund, dict) else type(fund).__name__
         raise RuntimeError(f"EODHD fundamentals for {sym} has no 'Financials' node "
                            f"(check the ticker symbol and that your plan includes fundamentals); got: {got}")
-    try:
-        eod = _eodhd(f"eod/{sym}", period="d")
-    except Exception as e:
-        raise RuntimeError(f"EODHD price pull failed for {sym}: {e}")
-    try:
-        divs = _eodhd(f"div/{sym}")
-    except Exception:
-        divs = []                       # non-fatal: a name with no dividends
+    if eod is None:
+        try:
+            eod = _eodhd(f"eod/{sym}", period="d")
+        except Exception as e:
+            raise RuntimeError(f"EODHD price pull failed for {sym}: {e}")
+    if divs is None:
+        try:
+            divs = _eodhd(f"div/{sym}")
+        except Exception:
+            divs = []                       # non-fatal: a name with no dividends
     if not isinstance(eod, list):
         eod = []
     if not isinstance(divs, list):
         divs = []
+    print(f"  data source for {sym}: fundamentals={source['fund']}  "
+         f"prices={source['eod']}  dividends={source['divs']}")
 
     pension = _edgar_pension(ticker)    # {} if unavailable (non-fatal)
 

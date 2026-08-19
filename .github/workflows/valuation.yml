@@ -33,6 +33,13 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Checkout market-data (canonical company data store)
+        uses: actions/checkout@v4
+        with:
+          repository: JamesKostohryz/market-data
+          token: ${{ secrets.CROSS_REPO_TOKEN }}
+          path: market-data-checkout
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -64,6 +71,7 @@ jobs:
         env:
           EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          MARKET_DATA_DIR: ${{ github.workspace }}/market-data-checkout
         run: |
           set -euo pipefail
           VINTAGE=$(date -u +%Y-%m-%dT%H:%MZ)

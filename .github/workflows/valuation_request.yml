@@ -26,6 +26,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Checkout market-data (canonical company data store)
+        uses: actions/checkout@v4
+        with:
+          repository: JamesKostohryz/market-data
+          token: ${{ secrets.CROSS_REPO_TOKEN }}
+          path: market-data-checkout
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -50,6 +57,7 @@ jobs:
         env:
           EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          MARKET_DATA_DIR: ${{ github.workspace }}/market-data-checkout
           TICKER: ${{ steps.req.outputs.ticker }}
         run: |
           set -euo pipefail

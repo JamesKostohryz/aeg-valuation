@@ -1,9 +1,12 @@
 {
   "asof": "2026-08-19",
-  "coverage": 1.0,
-  "no_price": [],
+  "coverage": 0.9912280701754386,
+  "no_price": [
+    "COF",
+    "COO"
+  ],
   "no_semidev": [],
   "no_shares": [],
   "market_asof": "2026-08-18",
-  "n_capped": 12
+  "n_capped": 226
 }

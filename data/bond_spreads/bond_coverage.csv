@@ -1,0 +1,500 @@
+ticker,sample,company,equity_cusip6,n_equity_cusip6_block,n_name_prefix_hits,extra_cusip6_blocks,used_alias,n_bonds_total,n_bonds_echo_named
+A,universe,Agilent Technologies Inc,00846U,4,3,,0,4,1
+AAPL,universe,Apple Inc.,037833,37,37,,0,37,0
+ABBV,universe,AbbVie Inc,00287Y,15,14,,0,15,1
+ABNB,universe,Airbnb Inc,009066,0,0,,0,0,0
+ABT,universe,Abbott Laboratories,002824,8,1,002819,0,9,3
+ACGL,universe,Arch Capital Group Ltd.,03937L,1,1,03939A,0,2,0
+ACN,universe,Accenture plc,G1150G,0,0,,1,0,0
+ADBE,universe,Adobe Systems Incorporated,00724F,0,0,,0,0,0
+ADI,universe,Analog Devices Inc,032654,6,6,,0,6,0
+ADM,universe,Archer-Daniels-Midland Company,039483,7,7,039482,0,10,3
+ADP,universe,Automatic Data Processing Inc,053015,2,2,,0,2,0
+ADSK,universe,Autodesk Inc,052769,3,2,,0,3,1
+AEE,universe,Ameren Corp,023608,3,11,02361D,1,15,4
+AEP,universe,American Electric Power Co Inc,025537,8,30,00108W;0010EP;00115A;744533,1,34,2
+AES,universe,The AES Corporation,00130H,2,4,00109A;455434;P0608A,0,5,1
+AFL,universe,Aflac Incorporated,001055,6,5,,0,6,1
+AIG,universe,American International Group Inc,026874,10,3,,0,10,2
+AIZ,universe,"Assurant, Inc.",04621X,5,4,,0,5,1
+AJG,universe,Arthur J Gallagher & Co,363576,1,5,04316J,0,5,0
+AKAM,universe,Akamai Technologies Inc,00971T,0,0,,0,0,0
+ALB,universe,Albemarle Corp,012653,2,3,012725,0,3,0
+ALGN,universe,Align Technology Inc,016255,0,0,,0,0,0
+ALL,universe,The Allstate Corporation,020002,11,6,,0,11,5
+ALLE,universe,Allegion PLC,G0176J,0,3,01748N;01748T,0,3,0
+AMAT,universe,Applied Materials Inc,038222,6,2,,0,6,0
+AMCR,universe,Amcor PLC,G0250X,0,3,02343U;02344A;081437,0,3,0
+AMD,universe,Advanced Micro Devices Inc,007903,2,2,,0,2,0
+AME,universe,Ametek Inc,031100,0,0,,1,0,0
+AMGN,universe,Amgen Inc,031162,33,33,,0,33,0
+AMP,universe,Ameriprise Financial Inc,03076C,3,2,,0,3,0
+AMT,universe,American Tower Corp,029912,0,17,03027X,0,21,4
+AMZN,universe,Amazon.com Inc,023135,23,23,,0,23,0
+ANET,universe,Arista Networks,040413,0,0,,1,0,0
+AON,universe,Aon PLC,G0403H,0,15,00185A;037389;03740L,1,15,0
+AOS,universe,Smith AO Corporation,831865,0,0,,0,0,0
+APA,universe,APA Corporation,037411,6,1,03746A,0,7,0
+APD,universe,Air Products and Chemicals Inc,009158,5,4,,0,5,1
+APH,universe,Amphenol Corporation,032094,0,2,032095,0,4,2
+APO,universe,Apollo Global Management LLC Class A,03768E,0,0,,0,0,0
+APP,universe,Applovin Corp,03831W,0,0,,0,0,0
+APTV,universe,Aptiv PLC,G27823,0,3,00217G;03835V,0,4,1
+ARE,universe,Alexandria Real Estate Equities Inc,015271,15,11,,0,15,4
+ARES,universe,Ares Management LP,03990B,0,2,039936,0,2,0
+ATO,universe,Atmos Energy Corporation,049560,12,7,,1,12,5
+AVGO,universe,Broadcom Inc,Y0486S,0,11,11134L;11135F,0,11,0
+AVY,universe,Avery Dennison Corp,053611,4,3,,0,4,1
+AWK,universe,American Water Works,030420,0,3,,1,3,0
+AXON,universe,Axon Enterprise Inc.,05464C,0,0,,0,0,0
+AXP,universe,American Express Company,025816,11,12,0258M0,0,12,0
+AZO,universe,AutoZone Inc,053332,7,5,,0,7,2
+BA,universe,The Boeing Company,097023,33,30,,0,33,2
+BAC,universe,Bank of America Corp,638585,1,40,06050X;06055H;338915,0,40,0
+BALL,universe,Ball Corporation,058498,2,1,,0,2,1
+BAX,universe,Baxter International Inc,071813,9,6,,0,9,1
+BBY,universe,Best Buy Co. Inc,08651F,0,1,08652B,0,2,1
+BDX,universe,Becton Dickinson and Company,075887,9,5,,0,9,4
+BEN,universe,Franklin Resources Inc,354613,1,0,,0,1,1
+BF-B,universe,Brown-Forman Corporation,115637,1,1,,0,1,0
+BG,universe,Bunge Global SA,G16962,0,0,,0,0,0
+BIIB,universe,Biogen Inc,449370,0,4,09062X,0,4,0
+BKNG,universe,Booking Holdings Inc,741503,1,0,,0,1,0
+BKR,universe,Baker Hughes Co,05722G,0,2,05723K,0,3,1
+BLDR,universe,Builders FirstSource Inc,12008R,3,2,,0,3,1
+BLK,universe,BlackRock Inc,09247X,5,3,,0,5,2
+BMY,universe,Bristol-Myers Squibb Company,110122,21,19,,0,21,2
+BNY,universe,The Bank of New York Mellon Corporation,,0,6,06406F;06406G;06406Y,0,6,0
+BR,universe,Broadridge Financial Solutions Inc,11133T,2,2,,0,2,0
+BRK-B,universe,Berkshire Hathaway Inc,084670,1,16,,0,16,0
+BRO,universe,Brown & Brown Inc,730444,0,2,115236,1,4,2
+BSX,universe,Boston Scientific Corp,101137,7,6,,0,7,1
+BX,universe,Blackstone Group Inc,09260D,0,0,,0,0,0
+BXP,universe,"BXP, Inc.",101121,0,2,,0,2,0
+C,universe,Citigroup Inc.,172967,44,26,17308C,0,45,7
+CAH,universe,Cardinal Health Inc,14149Y,5,5,,0,5,0
+CARR,universe,Carrier Global Corp,14448C,5,5,,0,5,0
+CASY,universe,Caseys General Stores Inc,147528,0,0,,0,0,0
+CAT,universe,Caterpillar Inc,149123,11,15,14912L;14913R,0,16,1
+CB,universe,Chubb Ltd,G0070K,0,6,00440E;171232,1,6,0
+CBOE,universe,Cboe Global Markets Inc,12503M,3,2,,0,3,1
+CBRE,universe,CBRE Group Inc Class A,12497T,0,0,,0,0,0
+CCI,universe,Crown Castle,22822V,16,12,,0,16,4
+CCL,universe,Carnival Corporation,143658,2,2,P2121V,0,3,1
+CDNS,universe,Cadence Design Systems Inc,127387,0,0,,1,0,0
+CDW,universe,CDW Corp,12514G,0,2,12513G,1,5,3
+CEG,universe,Constellation Energy Corp,21037T,0,4,210371;210385;314382,0,4,0
+CF,universe,CF Industries Holdings Inc,125269,0,2,,0,2,0
+CFG,universe,"Citizens Financial Group, Inc.",174610,8,6,75524K,0,9,3
+CHD,universe,Church & Dwight Company Inc,171340,2,5,17136M,0,5,0
+CHRW,universe,CH Robinson Worldwide Inc,12541W,1,0,,0,1,0
+CHTR,universe,Charter Communications Inc,16119P,0,27,161175;U12501,1,28,1
+CI,universe,Cigna Corp,125523,16,13,125509,0,18,4
+CIEN,universe,Ciena Corp,171779,1,0,,0,1,1
+CINF,universe,Cincinnati Financial Corporation,172062,2,0,,0,2,0
+CL,universe,Colgate-Palmolive Company,194162,3,2,19416Q,0,5,0
+CLX,universe,The Clorox Company,189054,5,4,,0,5,1
+CMCSA,universe,Comcast Corp,200300,0,49,11778B;20030N,0,49,0
+CME,universe,CME Group Inc,167760,0,4,12572Q,1,4,0
+CMG,universe,Chipotle Mexican Grill Inc,169656,0,0,,1,0,0
+CMI,universe,Cummins Inc,125761,0,4,231021,0,6,2
+CMS,universe,CMS Energy Corporation,125896,6,11,210518,1,17,6
+CNC,universe,Centene Corp,15135B,7,4,,0,7,3
+CNP,universe,CenterPoint Energy Inc,442161,0,17,15189T;15189W;15189X;15189Y,0,21,4
+COF,universe,Capital One Financial Corporation,14040H,13,11,,0,13,0
+COHR,universe,Coherent Inc,192479,0,1,U45064,0,1,0
+COIN,universe,Coinbase Global Inc,19260Q,2,2,U19328,0,4,2
+COO,universe,"The Cooper Companies, Inc",216640,0,0,,1,0,0
+COP,universe,ConocoPhillips,208251,1,11,20825C;20825V;20826F,0,12,0
+COR,universe,Cencora Inc.,03071P,0,4,03073E,1,5,1
+COST,universe,Costco Wholesale Corp,74143W,0,4,22160K,0,4,0
+CPAY,universe,Corpay Inc,219948,0,0,,0,0,0
+CPRT,universe,Copart Inc,217204,0,0,,0,0,0
+CPT,universe,Camden Property Trust,133131,4,0,,0,4,3
+CRH,universe,CRH PLC ADR,12626K,0,0,,0,0,0
+CRL,universe,Charles River Laboratories,159864,3,1,,0,3,2
+CRM,universe,Salesforce.com Inc,79466L,6,6,,0,6,0
+CRWD,universe,Crowdstrike Holdings Inc,22788C,1,0,,0,1,1
+CSCO,universe,Cisco Systems Inc,17275R,3,0,,0,3,0
+CSGP,universe,CoStar Group Inc,75612B,0,0,,0,0,0
+CSX,universe,CSX Corporation,126408,25,19,,0,25,6
+CTAS,universe,Cintas Corporation,172908,0,3,17252M,0,3,0
+CTSH,universe,Cognizant Technology Solutions Corp Class A,192446,0,0,,1,0,0
+CTVA,universe,Corteva Inc,22052L,0,0,,0,0,0
+CVNA,universe,Carvana Co,146869,0,0,,0,0,0
+CVS,universe,CVS Health Corp,585745,0,22,126650,0,24,2
+CVX,universe,Chevron Corp,166751,0,10,166756;166764,0,12,2
+D,universe,Dominion Energy Inc,257469,1,11,257375,0,14,2
+DAL,universe,Delta Air Lines Inc,247361,3,2,,0,3,1
+DASH,universe,"DoorDash, Inc. Class A Common Stock",25809K,0,0,,0,0,0
+DD,universe,Dupont De Nemours Inc,26614N,0,0,,0,0,0
+DDOG,universe,Datadog Inc,23804L,0,0,,0,0,0
+DE,universe,Deere & Company,244199,8,8,,0,10,2
+DECK,universe,Deckers Outdoor Corporation,243537,0,0,,0,0,0
+DELL,universe,Dell Technologies Inc,24703L,0,11,247025;24702R;24703D;24703T,0,11,0
+DG,universe,Dollar General Corporation,256677,5,1,,0,5,1
+DGX,universe,Quest Diagnostics Incorporated,74834L,3,1,,0,3,2
+DHI,universe,DR Horton Inc,23331A,2,1,,0,2,1
+DHR,universe,Danaher Corporation,235851,3,3,,0,3,0
+DIS,universe,Walt Disney Company,254687,30,16,,0,30,14
+DLR,universe,Digital Realty Trust Inc,253868,0,2,,0,2,0
+DLTR,universe,Dollar Tree Inc,256747,0,3,256746,0,3,0
+DOC,universe,Healthpeak Properties Inc,421915,0,2,,0,2,0
+DOV,universe,Dover Corporation,260003,1,0,,0,1,1
+DOW,universe,Dow Inc,260557,0,11,260543,0,13,2
+DPZ,universe,Domino's Pizza Inc Common Stock,25754A,0,0,,1,0,0
+DRI,universe,Darden Restaurants Inc,237194,3,2,,0,3,1
+DTE,universe,DTE Energy Company,233331,4,12,23338V,1,19,7
+DUK,universe,Duke Energy Corporation,264399,2,63,263901;26441C;26442C;26442E;26442R;26442U;26443T;26444H;743263,1,76,11
+DVA,universe,DaVita HealthCare Partners Inc,89151A,0,2,U23888,0,2,0
+DVN,universe,Devon Energy Corporation,25179M,5,3,251799,0,6,3
+DXCM,universe,DexCom Inc,252131,0,0,,1,0,0
+EBAY,universe,eBay Inc,278642,7,7,,0,7,0
+ECHO,universe,EchoStar Corporation,,0,0,,0,0,0
+ECL,universe,Ecolab Inc,278865,11,9,,0,11,2
+ED,universe,Consolidated Edison Inc,209111,34,27,,1,34,4
+EFX,universe,Equifax Inc,294429,5,4,,0,5,1
+EG,universe,Everest Group Ltd,G3223R,0,0,,0,0,0
+EIX,universe,Edison International,783882,0,11,,0,11,0
+EL,universe,Estee Lauder Companies Inc,518439,0,4,,0,4,0
+ELV,universe,Elevance Health Inc,03674B,0,6,28622H,0,6,0
+EME,universe,EMCOR Group Inc,29084Q,0,0,,1,0,0
+EMR,universe,Emerson Electric Company,291011,7,4,,0,7,3
+EOG,universe,EOG Resources Inc,293562,0,3,26875P,0,3,0
+EQIX,universe,Equinix Inc,29444U,11,6,,0,11,5
+EQR,universe,Equity Residential,29476L,0,1,,0,1,0
+EQT,universe,EQT Corporation,294549,0,2,26884L,0,4,2
+ERIE,universe,Erie Indemnity Company,29530P,0,0,,0,0,0
+ES,universe,Eversource Energy,664397,0,3,,0,3,0
+ESS,universe,Essex Property Trust Inc,297178,0,1,,0,1,0
+ETN,universe,Eaton Corporation PLC,278058,2,6,278062,1,7,1
+ETR,universe,Entergy Corporation,29364G,5,22,29364D;29364N;29364W;29365T;29366M;29366W,0,35,13
+EVRG,universe,"Evergy, Inc.",30034W,1,3,30036F;30037F,0,4,1
+EW,universe,Edwards Lifesciences Corp,28176E,1,1,,0,1,0
+EXC,universe,Exelon Corporation,30161N,11,26,30161M,0,26,0
+EXE,universe,Expand Energy Corporation,,0,0,,0,0,0
+EXPD,universe,"Expeditors International of Washington, Inc.",302130,0,0,,1,0,0
+EXPE,universe,Expedia Group Inc.,30212P,4,4,,0,4,0
+EXR,universe,Extra Space Storage Inc,30225T,0,3,30225V,0,3,0
+F,universe,Ford Motor Company,345370,16,5,,0,19,1
+FANG,universe,Diamondback Energy Inc,25278X,5,5,,0,5,0
+FAST,universe,Fastenal Company,311900,0,0,,1,0,0
+FCX,universe,Freeport-McMoran Copper & Gold Inc,35671D,8,1,717265,0,11,2
+FDS,universe,FactSet Research Systems Inc,303075,2,2,,0,2,0
+FDX,universe,FedEx Corporation,31304N,0,20,31428X;314353,1,20,0
+FE,universe,FirstEnergy Corporation,337932,5,2,677347,1,7,5
+FERG,universe,Ferguson Plc,,0,0,,0,0,0
+FFIV,universe,F5 Networks Inc,315616,0,0,,0,0,0
+FICO,universe,Fair Isaac Corporation,303250,1,1,,0,1,0
+FIS,universe,Fidelity National Information Services Inc,156880,0,2,,0,2,0
+FISV,universe,"Fiserv, Inc.",,0,7,337738,0,7,0
+FITB,universe,Fifth Third Bancorp,316773,10,10,,0,10,0
+FIX,universe,Comfort Systems USA Inc,199908,0,0,,0,0,0
+FLEX,universe,Flex Ltd,Y2573F,0,1,33938X,0,3,2
+FOX,universe,Fox Corp Class B,35137L,4,3,,0,4,1
+FOXA,universe,Fox Corp Class A,35137L,4,0,,0,4,1
+FRT,universe,Federal Realty Investment Trust,313747,4,0,,0,4,2
+FSLR,universe,First Solar Inc,336433,0,0,,0,0,0
+FTNT,universe,Fortinet Inc,34959E,1,1,,0,1,0
+FTV,universe,Fortive Corp,34959J,1,1,,0,1,0
+GD,universe,General Dynamics Corporation,369550,8,7,,0,8,0
+GDDY,universe,Godaddy Inc,380237,0,0,,0,0,0
+GE,universe,GE Aerospace,369604,5,0,,0,5,0
+GEHC,universe,GE HealthCare Technologies Inc.,36266G,0,0,,0,0,0
+GEN,universe,Gen Digital Inc.,668771,2,2,,0,2,0
+GEV,universe,GE Vernova LLC,36828A,0,0,,0,0,0
+GILD,universe,Gilead Sciences Inc,375558,12,12,,0,12,0
+GIS,universe,General Mills Inc,370334,6,3,,0,6,0
+GL,universe,Globe Life Inc,37959E,2,0,,0,2,1
+GLW,universe,Corning Incorporated,219319,0,6,219350,0,9,3
+GM,universe,General Motors Company,37045V,13,7,,0,19,0
+GNRC,universe,Generac Holdings Inc,368736,0,0,,0,0,0
+GOOG,universe,Alphabet Inc Class C,02079K,6,6,,0,6,0
+GOOGL,universe,Alphabet Inc Class A,38259P,0,6,02079K,0,6,0
+GPC,universe,Genuine Parts Co,372460,2,1,,0,2,1
+GPN,universe,Global Payments Inc,37940X,9,9,,0,9,0
+GRMN,universe,Garmin Ltd,G37260,0,0,,1,0,0
+GS,universe,Goldman Sachs Group Inc,38141G,31,78,38141E;38143C;38143V;38143Y;38145G;38148L,0,105,17
+GWW,universe,WW Grainger Inc,384802,3,0,,0,3,0
+HAL,universe,Halliburton Company,406216,7,7,,0,7,0
+HAS,universe,Hasbro Inc,418056,6,5,,0,6,1
+HBAN,universe,Huntington Bancshares Incorporated,446150,5,6,44644M,0,7,1
+HCA,universe,"HCA Healthcare, Inc.",435758,0,13,197677;404119;404121,1,13,0
+HD,universe,The Home Depot Inc,437076,30,21,,0,30,0
+HIG,universe,Hartford Financial Services Group,45068H,0,1,416518,0,1,0
+HII,universe,Huntington Ingalls Industries Inc,446413,3,2,,0,3,0
+HLT,universe,Hilton Worldwide Holdings Inc,43300A,0,3,432833;432891;U4328R,1,6,3
+HON,universe,Honeywell International Inc,019512,0,6,,0,6,0
+HOOD,universe,Robinhood Markets Inc,770700,0,0,,0,0,0
+HPE,universe,Hewlett Packard Enterprise Co,42824C,2,2,,0,2,0
+HPQ,universe,HP Inc,428236,1,4,,0,5,0
+HRL,universe,Hormel Foods Corporation,440452,3,3,,0,3,0
+HSIC,universe,Henry Schein Inc,806407,0,0,,0,0,0
+HST,universe,Host Hotels & Resorts Inc,44107P,0,1,44107T,0,3,2
+HSY,universe,Hershey Co,427866,7,1,,0,7,6
+HUBB,universe,Hubbell Inc,443510,2,2,,0,2,0
+HUM,universe,Humana Inc,444859,14,10,,0,14,4
+HWM,universe,Howmet Aerospace Inc,013817,1,2,022249,0,2,0
+IBKR,universe,Interactive Brokers Group Inc,45841N,0,0,,0,0,0
+IBM,universe,International Business Machines,459200,24,15,,0,24,1
+ICE,universe,Intercontinental Exchange Inc,45865V,0,13,45866F,0,13,0
+IDXX,universe,IDEXX Laboratories Inc,45168D,0,0,,1,0,0
+IEX,universe,IDEX Corporation,45167R,2,1,,0,2,1
+IFF,universe,International Flavors & Fragrances Inc,459506,7,6,,0,7,1
+INCY,universe,Incyte Corporation,45337C,0,0,,0,0,0
+INTC,universe,Intel Corporation,458140,32,32,,0,32,0
+INTU,universe,Intuit Inc,461202,0,0,,0,0,0
+INVH,universe,Invitation Homes Inc,46187W,0,4,46188B,0,4,0
+IP,universe,International Paper,460146,8,6,,0,8,2
+IQV,universe,IQVIA Holdings Inc,46266C,0,3,449934;46266T;U46093,1,3,0
+IR,universe,Ingersoll Rand Inc,36555P,0,5,456873;45687A,0,6,1
+IRM,universe,Iron Mountain Incorporated,720722,0,8,U46009,0,9,1
+ISRG,universe,Intuitive Surgical Inc,46120E,0,0,,0,0,0
+IT,universe,Gartner Inc,366651,3,2,,0,3,1
+ITW,universe,Illinois Tool Works Inc,452308,3,0,,0,3,0
+IVZ,universe,Invesco Plc,G491BT,0,1,46132F,0,1,0
+J,universe,Jacobs Solutions Inc.,46982L,0,0,,1,0,0
+JBHT,universe,JB Hunt Transport Services Inc,445658,0,0,,1,0,0
+JBL,universe,Jabil Circuit Inc,466313,4,1,,0,4,3
+JCI,universe,Johnson Controls International PLC,000915,0,2,47837R,1,3,1
+JKHY,universe,Jack Henry & Associates Inc,426281,0,0,,0,0,0
+JNJ,universe,Johnson & Johnson,478160,21,21,,0,21,0
+JPM,universe,JPMorgan Chase & Co,16161A,0,37,46625H;46647P;48128B,0,51,14
+KDP,universe,Keurig Dr Pepper Inc,49271V,8,8,,0,8,0
+KEY,universe,KeyCorp,493263,0,8,493267;49326E;49327M;49327V,0,9,1
+KEYS,universe,Keysight Technologies Inc,49338L,2,1,,0,2,1
+KHC,universe,Kraft Heinz Co,50075N,1,5,50077L,0,12,6
+KIM,universe,Kimco Realty Corporation,49446R,11,3,,0,11,4
+KKR,universe,KKR & Co. Inc.,48251W,0,2,48255B;48255G,0,2,0
+KLAC,universe,KLA Corporation,482480,7,3,,0,7,1
+KMB,universe,Kimberly-Clark Corporation,494368,11,8,,0,11,3
+KMI,universe,Kinder Morgan Inc,49455P,0,25,196522;494550;49456B,0,27,2
+KO,universe,The Coca-Cola Company,191216,20,17,,1,20,2
+KR,universe,Kroger Company,501044,17,14,,0,17,2
+KVUE,universe,Kenvue Inc.,49177J,0,0,,0,0,0
+L,universe,Loews Corp,540424,3,2,,0,3,1
+LDOS,universe,Leidos Holdings Inc,78390X,1,4,52532X;808626,0,6,2
+LEN,universe,Lennar Corporation,694351,0,2,526057,0,2,0
+LH,universe,Laboratory Corporation of America Holdings,50540R,4,0,,0,4,1
+LHX,universe,L3Harris Technologies Inc,502431,4,1,,0,4,3
+LII,universe,Lennox International Inc,526107,1,0,,0,1,1
+LIN,universe,Linde plc Ordinary Shares,G5494J,0,1,74005P,1,3,2
+LITE,universe,Lumentum Holdings Inc,55024U,0,0,,0,0,0
+LLY,universe,Eli Lilly and Company,532457,11,8,,0,11,1
+LMT,universe,Lockheed Martin Corporation,539830,17,16,,0,17,1
+LNT,universe,Alliant Energy Corp,929305,0,2,01882Y,0,2,0
+LOW,universe,Lowe's Companies Inc,548661,30,27,,0,30,3
+LRCX,universe,Lam Research Corp,512807,5,4,,0,5,1
+LULU,universe,Lululemon Athletica Inc.,550021,0,0,,0,0,0
+LUV,universe,Southwest Airlines Company,844741,5,1,,0,5,1
+LVS,universe,Las Vegas Sands Corp,517834,1,1,,0,1,0
+LYB,universe,LyondellBasell Industries NV,N53745,0,9,50247V;50247W;50249A,0,9,0
+LYV,universe,Live Nation Entertainment Inc,14985W,0,4,538034;U53897,0,5,1
+MA,universe,Mastercard Inc,57636Q,14,9,,0,14,0
+MAA,universe,Mid-America Apartment Communities Inc,59522J,0,2,,0,2,0
+MAR,universe,Marriott International Inc,571900,0,5,,0,5,0
+MAS,universe,Masco Corporation,574599,8,7,,0,8,1
+MCD,universe,McDonald’s Corporation,580135,1,22,58013M,0,22,0
+MCHP,universe,Microchip Technology Inc,595017,0,0,,0,0,0
+MCK,universe,McKesson Corporation,581557,4,3,,0,4,1
+MCO,universe,Moodys Corporation,615369,11,8,,0,11,3
+MDLZ,universe,Mondelez International Inc,609207,7,5,60920L,0,8,2
+MDT,universe,Medtronic PLC,585055,2,2,,0,2,0
+MET,universe,MetLife Inc,59156R,16,20,58989V;592179;59217G,0,28,8
+META,universe,Meta Platforms Inc.,30303M,4,4,,0,4,0
+MGM,universe,MGM Resorts International,552953,3,4,55303X,0,4,0
+MKC,universe,McCormick & Company Incorporated,579780,3,2,,0,3,1
+MLM,universe,Martin Marietta Materials Inc,573284,7,2,,0,7,1
+MMM,universe,3M Company,88579Y,11,0,,1,11,1
+MNST,universe,Monster Beverage Corp,61174X,0,0,,0,0,0
+MO,universe,Altria Group,718154,1,14,02209S,0,17,2
+MOS,universe,The Mosaic Company,449669,1,4,61945C,0,5,0
+MPC,universe,Marathon Petroleum Corp,56585A,7,0,,0,7,3
+MPWR,universe,Monolithic Power Systems Inc,609839,0,0,,0,0,0
+MRK,universe,Merck & Company Inc,589339,0,16,589331;58933Y,1,16,0
+MRNA,universe,Moderna Inc,60770K,0,0,,0,0,0
+MRSH,universe,"Marsh & McLennan Companies, Inc.",,0,7,,0,7,0
+MRVL,universe,Marvell Technology Group Ltd,G5876H,0,4,57385L;573874,0,4,0
+MS,universe,Morgan Stanley,24240V,0,22,617446;61744Y;61746B;617482;61761J;61772B,0,22,0
+MSCI,universe,MSCI Inc,55354G,5,5,U5521T,0,7,2
+MSFT,universe,Microsoft Corporation,594918,23,26,00507V,1,27,1
+MSI,universe,Motorola Solutions Inc,620076,8,8,,0,8,0
+MTB,universe,M&T Bank Corporation,320076,0,5,55261F;55279H,1,6,1
+MTD,universe,Mettler-Toledo International Inc,592688,0,0,,1,0,0
+MU,universe,Micron Technology Inc,595112,4,0,,0,4,0
+NCLH,universe,Norwegian Cruise Line Holdings Ltd,G66721,0,0,,0,0,0
+NDAQ,universe,Nasdaq Inc,631103,1,1,,0,1,0
+NDSN,universe,Nordson Corporation,655663,0,0,,0,0,0
+NEE,universe,Nextera Energy Inc,65339B,0,23,302570;65339K;65342Q,1,26,3
+NEM,universe,Newmont Goldcorp Corp,651639,8,1,,0,8,3
+NFLX,universe,Netflix Inc,64110L,6,8,U74079,0,8,0
+NI,universe,NiSource Inc,65473P,4,10,65473Q,0,11,0
+NKE,universe,Nike Inc,654106,8,0,,0,8,0
+NOC,universe,Northrop Grumman Corporation,666807,12,11,,0,12,1
+NOW,universe,ServiceNow Inc,81762P,1,0,,0,1,1
+NRG,universe,NRG Energy Inc.,629377,9,6,U66962,0,11,5
+NSC,universe,Norfolk Southern Corporation,655844,22,10,,0,22,3
+NTAP,universe,NetApp Inc,64120L,0,0,,1,0,0
+NTRS,universe,Northern Trust Corporation,665859,7,4,,0,7,2
+NUE,universe,Nucor Corp,670346,9,8,,0,9,1
+NVDA,universe,NVIDIA Corporation,67066G,7,6,,0,7,1
+NVR,universe,NVR Inc,62944T,1,0,,0,1,1
+NWS,universe,News Corp B,65249B,2,0,,0,2,2
+NWSA,universe,News Corp A,652487,0,1,U9598Q,0,1,0
+NXPI,universe,NXP Semiconductors NV,N6596X,0,8,62954H,1,8,0
+O,universe,Realty Income Corporation,756109,14,5,,0,14,3
+ODFL,universe,Old Dominion Freight Line Inc,679580,0,0,,1,0,0
+OKE,universe,ONEOK Inc,682680,14,12,68268N,0,18,6
+OMC,universe,Omnicom Group Inc,681919,3,1,,0,3,2
+ON,universe,ON Semiconductor Corporation,682189,1,1,,0,1,0
+ORCL,universe,Oracle Corporation,68389X,31,31,,0,31,0
+ORLY,universe,O’Reilly Automotive Inc,686091,0,1,,0,1,0
+OTIS,universe,Otis Worldwide Corp,68902V,4,2,,0,4,2
+OXY,universe,Occidental Petroleum Corporation,674599,23,15,,0,23,1
+PANW,universe,Palo Alto Networks Inc,697435,0,0,,1,0,0
+PAYX,universe,Paychex Inc,704326,0,0,,1,0,0
+PCAR,universe,PACCAR Inc,693718,0,2,69371R,1,2,0
+PCG,universe,PG&E Corp,69331C,2,11,693342,0,11,0
+PEG,universe,Public Service Enterprise Group Inc,744573,4,7,,1,8,1
+PEP,universe,PepsiCo Inc,713448,29,26,,0,29,3
+PFE,universe,Pfizer Inc,717081,18,17,,0,18,1
+PFG,universe,Principal Financial Group Inc,74251V,9,4,74256L,0,11,2
+PG,universe,Procter & Gamble Company,742718,17,9,,0,17,4
+PGR,universe,Progressive Corp,743315,12,10,,0,12,2
+PH,universe,Parker-Hannifin Corporation,701094,6,7,70109H,0,9,0
+PHM,universe,PulteGroup Inc,745867,3,3,,0,3,0
+PKG,universe,Packaging Corp of America,695156,4,1,,0,4,2
+PLD,universe,Prologis Inc,74340W,0,12,74340X,0,18,6
+PLTR,universe,Palantir Technologies Inc.,69608A,0,0,,0,0,0
+PM,universe,Philip Morris International Inc,718172,19,3,,0,19,1
+PNC,universe,PNC Financial Services Group Inc,693475,15,17,69349L;69353R,0,19,2
+PNR,universe,Pentair PLC,709631,0,2,709629,0,2,0
+PNW,universe,Pinnacle West Capital Corp,723484,0,2,,0,2,0
+PODD,universe,Insulet Corporation,45784P,0,0,,0,0,0
+PPG,universe,PPG Industries Inc,693506,4,1,,0,4,3
+PPL,universe,PPL Corporation,693499,0,10,546676;69351U;69352P,1,13,3
+PRU,universe,"Prudential Financial, Inc.",744320,7,7,33830G;33835P;74153W,0,12,3
+PSA,universe,Public Storage,74460D,5,5,74460W,0,7,2
+PSKY,universe,Paramount Skydance Corporation Class B Common Stock,,0,0,,0,0,0
+PSX,universe,Phillips 66,743627,0,8,718546;718549,0,9,1
+PTC,universe,PTC Inc,699173,0,1,69370C,1,1,0
+PWR,universe,Quanta Services Inc,74762E,3,2,,0,3,1
+PYPL,universe,PayPal Holdings Inc,70450Y,8,8,,0,8,0
+QCOM,universe,Qualcomm Incorporated,747525,12,12,,0,12,0
+RCL,universe,Royal Caribbean Cruises Ltd,V7780T,1,3,780153,0,5,2
+RDDT,universe,"Reddit, Inc.",75734B,0,0,,0,0,0
+REG,universe,Regency Centers Corporation,758939,0,0,,0,0,0
+REGN,universe,Regeneron Pharmaceuticals Inc,75886F,2,2,,0,2,0
+RF,universe,Regions Financial Corporation,7591EP,2,0,,0,2,0
+RJF,universe,Raymond James Financial Inc.,754730,3,1,,0,3,1
+RL,universe,Ralph Lauren Corp Class A,731572,1,0,,0,1,1
+RMD,universe,ResMed Inc,761152,0,0,,1,0,0
+ROK,universe,Rockwell Automation Inc,774347,0,2,773903,1,4,2
+ROL,universe,Rollins Inc,775711,0,0,,0,0,0
+ROP,universe,Roper Technologies Inc,776696,0,3,776743,0,6,3
+ROST,universe,Ross Stores Inc,778296,4,3,,0,4,1
+RSG,universe,Republic Services Inc,760759,8,2,,0,8,4
+RTX,universe,RTX Corporation,75513E,16,5,,0,16,5
+RVTY,universe,Revvity Inc.,714046,5,0,,0,5,1
+SBAC,universe,SBA Communications Corp,78410G,2,0,,0,2,2
+SBUX,universe,Starbucks Corporation,855244,15,12,,0,15,3
+SCHW,universe,Charles Schwab Corp,808513,17,12,,0,17,2
+SHW,universe,Sherwin-Williams Co,824348,10,7,,0,10,3
+SJM,universe,The J. M. Smucker Company,832696,5,1,,0,5,1
+SLB,universe,Schlumberger NV,806857,0,2,806854;U8066L,0,2,0
+SMCI,universe,Super Micro Computer Inc,86800U,0,0,,0,0,0
+SNA,universe,Snap-On Inc,833034,3,2,,0,3,1
+SNPS,universe,Synopsys Inc,871607,0,0,,1,0,0
+SO,universe,Southern Company,842587,7,3,,1,10,0
+SOLV,universe,Solventum Corp.,83444M,0,0,,0,0,0
+SPG,universe,Simon Property Group Inc,828806,0,11,,0,11,0
+SPGI,universe,S&P Global Inc,580645,0,6,78409V,0,10,4
+SRE,universe,Sempra Energy,816851,7,23,797440;81685V;842434,1,28,5
+STE,universe,STERIS plc,G8473T,0,2,85917P,1,2,0
+STLD,universe,Steel Dynamics Inc,858119,4,0,,0,4,4
+STT,universe,State Street Corp,857473,0,10,857477,0,13,3
+STX,universe,Seagate Technology PLC,G7945J,0,1,81180W,0,4,3
+STZ,universe,Constellation Brands Inc Class A,137219,0,10,21036P,0,12,2
+SW,universe,Smurfit WestRock plc,,0,0,,0,0,0
+SWK,universe,Stanley Black & Decker Inc,854502,8,7,,0,8,1
+SWKS,universe,Skyworks Solutions Inc,020753,0,1,83088M,0,1,0
+SYF,universe,Synchrony Financial,87165B,4,3,87166F,0,5,0
+SYK,universe,Stryker Corporation,863667,6,5,,0,6,1
+SYY,universe,Sysco Corporation,871829,12,9,,0,12,3
+T,universe,AT&T Inc.,78387G,2,44,04650N,0,46,0
+TAP,universe,Molson Coors Brewing Co Class B,217016,0,2,60871R,0,2,0
+TDG,universe,Transdigm Group Incorporated,893641,0,1,893647,1,3,2
+TDY,universe,Teledyne Technologies Incorporated,879360,2,2,,0,2,0
+TECH,universe,Bio-Techne Corp,878377,0,0,,0,0,0
+TEL,universe,TE Connectivity Ltd,H8912P,0,3,902133,1,3,0
+TER,universe,Teradyne Inc,880770,0,0,,0,0,0
+TFC,universe,Truist Financial Corp,89832Q,2,9,89788M,0,9,0
+TGT,universe,Target Corporation,87612E,15,13,,0,15,2
+TJX,universe,The TJX Companies Inc,872540,5,1,,0,5,4
+TKO,universe,"TKO Group Holdings, Inc.",87256C,0,0,,0,0,0
+TMO,universe,Thermo Fisher Scientific Inc,883556,8,8,,0,8,0
+TMUS,universe,T-Mobile US Inc,872590,0,6,,0,6,0
+TPL,universe,Texas Pacific Land Corporation,882610,0,0,,0,0,0
+TPR,universe,Tapestry Inc,876030,1,1,,0,1,0
+TRGP,universe,Targa Resources Inc,87612G,4,7,87612K,0,7,0
+TRMB,universe,Trimble Inc,896239,2,1,,0,2,1
+TROW,universe,T. Rowe Price Group Inc,741477,0,0,,0,0,0
+TRV,universe,The Travelers Companies Inc,792856,0,9,89417E;89420G,0,11,2
+TSCO,universe,Tractor Supply Company,892356,1,0,,0,1,1
+TSLA,universe,Tesla Inc,88160R,0,0,,1,0,0
+TSN,universe,Tyson Foods Inc,902494,6,6,,0,6,0
+TT,universe,Trane Technologies plc,456866,0,5,456873;45687A,1,6,1
+TTD,universe,Trade Desk Inc,88339J,0,0,,0,0,0
+TTWO,universe,Take-Two Interactive Software Inc,874054,2,2,,0,2,0
+TXN,universe,Texas Instruments Incorporated,882508,10,8,,0,10,0
+TXT,universe,Textron Inc,883203,5,2,,0,5,3
+TYL,universe,Tyler Technologies Inc,902184,0,0,,1,0,0
+UAL,universe,United Airlines Holdings Inc,902549,0,2,90932D;U9094L,1,2,0
+UBER,universe,Uber Technologies Inc,90353T,1,0,,0,1,1
+UDR,universe,UDR Inc,910197,0,5,90265E,0,9,4
+UHS,universe,Universal Health Services Inc,913903,2,2,,0,2,0
+ULTA,universe,Ulta Beauty Inc,90384S,0,0,,0,0,0
+UNH,universe,UnitedHealth Group Incorporated,910581,0,43,91324P,0,43,0
+UNP,universe,Union Pacific Corporation,907818,38,20,,0,38,3
+UPS,universe,United Parcel Service Inc,911312,16,6,,0,16,3
+URI,universe,United Rentals Inc,911363,1,6,911365,0,7,1
+USB,universe,U.S. Bancorp,319279,0,14,902973;91731K,0,14,0
+V,universe,Visa Inc. Class A,92826C,10,0,,0,10,1
+VEEV,universe,Veeva Systems Inc Class A,922475,0,0,,0,0,0
+VICI,universe,VICI Properties Inc,925652,0,12,92564R;925650,0,12,0
+VLO,universe,Valero Energy Corporation,91913Y,12,13,91914J,0,14,1
+VLTO,universe,Veralto Corporation,92338C,0,0,,0,0,0
+VMC,universe,Vulcan Materials Company,929160,4,1,,0,4,0
+VRSK,universe,Verisk Analytics Inc,92345Y,1,1,,0,1,0
+VRSN,universe,VeriSign Inc,92343E,1,1,,0,1,0
+VRT,universe,Vertiv Holdings Co,36255F,0,1,U9222U,0,1,0
+VRTX,universe,Vertex Pharmaceuticals Inc,92532F,0,0,,0,0,0
+VST,universe,Vistra Corp.,92840M,2,6,92840V;U9226V,0,8,2
+VTR,universe,Ventas Inc,922602,0,5,92277G,0,9,4
+VTRS,universe,Viatris Inc,92556V,1,1,,0,1,0
+VZ,universe,Verizon Communications Inc,077853,0,51,92346M,0,61,10
+WAB,universe,Westinghouse Air Brake Technologies Corp,960386,1,1,,0,1,0
+WAT,universe,Waters Corporation,941848,0,0,,1,0,0
+WBD,universe,Warner Bros Discovery Inc,934423,0,0,,0,0,0
+WDAY,universe,Workday Inc,98138H,2,2,,0,2,0
+WDC,universe,Western Digital Corporation,958102,0,0,,0,0,0
+WEC,universe,WEC Energy Group Inc,92939U,3,3,976843,1,6,3
+WELL,universe,Welltower Inc,42217K,2,6,95040Q,0,11,3
+WFC,universe,Wells Fargo & Company,668231,0,20,949746;94974B;94980V;95000U,0,23,3
+WM,universe,Waste Management Inc,902917,0,1,,0,1,0
+WMB,universe,Williams Companies Inc,969457,9,18,88339W;96949L;96950F;96950G,0,18,0
+WMT,universe,Walmart Inc.,931142,24,22,,0,24,2
+WRB,universe,W. R. Berkley Corp,084423,4,2,,0,4,1
+WSM,universe,Williams-Sonoma Inc,969904,0,0,,1,0,0
+WST,universe,West Pharmaceutical Services Inc,953348,0,0,,1,0,0
+WTW,universe,Willis Towers Watson PLC,G96666,0,5,970648,1,5,0
+WY,universe,Weyerhaeuser Company,962166,7,5,,0,7,0
+WYNN,universe,Wynn Resorts Limited,983134,0,2,983130;983133,1,2,0
+XEL,universe,Xcel Energy Inc,98389B,5,16,665772;98388M,1,20,4
+XOM,universe,Exxon Mobil Corp,302290,0,12,30231G,0,12,0
+XYL,universe,Xylem Inc,98419M,2,1,,0,2,1
+XYZ,universe,"Block, Inc",852234,1,0,,0,1,0
+YUM,universe,Yum! Brands Inc,895953,0,6,988498;U4866D;U9T71R,0,8,2
+ZBH,universe,Zimmer Biomet Holdings Inc,98956P,5,4,,0,5,1
+ZBRA,universe,Zebra Technologies Corporation,989207,0,0,,1,0,0
+ZTS,universe,Zoetis Inc,98978V,8,7,,0,8,1

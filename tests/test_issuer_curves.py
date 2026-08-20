@@ -47,7 +47,14 @@ EXPECTED_WIDEN = os.path.join(GOLD, "issuer_widen_2026-08-19.csv")
 EXPECTED_TIER3 = os.path.join(GOLD, "tier3_fit_2026-08-19.json")
 FROZEN_UNIVERSE = os.path.join(GOLD, "idio_universe_2026-08-19.csv")
 FROZEN_RY = os.path.join(GOLD, "real_yields")
-BONDS = os.path.join(ROOT, "data", "bond_spreads", "bond_spreads_live.csv")
+# THE FROZEN INPUT. This was the live file until 2026-08-20, when the bond pull was extended
+# from 174 to 372 issuers and re-priced. Freezing it is the whole point: a test whose expected
+# md5 depends on the CURRENT bond file stops being a test of the code the moment the data is
+# refreshed, and would have to be "re-goldened" every month -- which is indistinguishable from
+# having no test. The arithmetic runs here; the live data is checked separately below.
+FROZEN_BONDS = os.path.join(GOLD, "bond_spreads_2026-08-17.csv")
+LIVE_BONDS = os.path.join(ROOT, "data", "bond_spreads", "bond_spreads_live.csv")
+BONDS = FROZEN_BONDS
 
 
 def _md5(path):
@@ -56,7 +63,7 @@ def _md5(path):
 
 def _run(outdir, *extra, expect_ok=True):
     """Run the ported fitter as the workflow runs it, against frozen inputs."""
-    cmd = [sys.executable, FITTER, "--outdir", str(outdir),
+    cmd = [sys.executable, FITTER, "--outdir", str(outdir), "--bonds", FROZEN_BONDS,
            "--universe", FROZEN_UNIVERSE, "--real-yields", FROZEN_RY] + list(extra)
     p = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
     if expect_ok:
@@ -66,15 +73,28 @@ def _run(outdir, *extra, expect_ok=True):
 
 # ------------------------------------------------------------------ the committed inputs exist
 
-def test_the_committed_bond_snapshot_is_present_and_whole():
+def test_the_frozen_fixture_is_the_2026_08_17_pull():
+    """What the arithmetic tests below are pinned to. It must never change."""
+    rows = list(csv.DictReader(open(FROZEN_BONDS)))
+    assert len(rows) == 1449 and len({r["ticker"] for r in rows}) == 174
+
+
+def test_the_live_bond_snapshot_is_present_and_whole():
     """The input the fit is regenerated FROM. Before this landed it lived only in a working
-    folder on one Windows machine, which is not a backup and not a build input."""
-    assert os.path.exists(BONDS), (
+    folder on one Windows machine, which is not a backup and not a build input.
+
+    Deliberately NOT pinned to a bond count: the pull grows when coverage is extended, and a
+    test that has to be edited every time the data improves is a test people learn to edit
+    rather than read. What is pinned is that it exists, is not truncated, and carries every
+    column the fit reads."""
+    assert os.path.exists(LIVE_BONDS), (
         "data/bond_spreads/bond_spreads_live.csv is missing. The fit cannot be regenerated and "
         "the system goes dark when issuer_widen_latest.csv ages out.")
-    rows = list(csv.DictReader(open(BONDS)))
-    assert len(rows) == 1449, "expected the 2026-08-17 pull's 1,449 priced bonds, got %d" % len(rows)
-    assert len({r["ticker"] for r in rows}) == 174
+    rows = list(csv.DictReader(open(LIVE_BONDS)))
+    assert len(rows) >= 1449, (
+        "the live bond file has SHRUNK below the 2026-08-17 pull (%d bonds). Coverage going "
+        "backwards is a regression however good the fit is." % len(rows))
+    assert len({r["ticker"] for r in rows}) >= 174
     for col in ("ticker", "tenor_yrs", "spread_bp", "ytm_check_gap_bp", "quote_date", "bond_code"):
         assert col in rows[0], "the fit reads %s and it is not in the committed file" % col
 
@@ -104,13 +124,30 @@ def test_the_port_reproduces_the_committed_widen_file_byte_for_byte(tmp_path):
         "nobody chose." % (_md5(got), _md5(EXPECTED_WIDEN)))
 
 
-def test_the_reproduced_file_is_the_one_in_outputs():
-    """Belt and braces: the golden and the live file are the same object. If someone edits
-    outputs/issuer_widen_latest.csv by hand, this fires."""
-    live = os.path.join(ROOT, "outputs", "issuer_widen_latest.csv")
-    assert _md5(live) == _md5(EXPECTED_WIDEN), (
-        "outputs/issuer_widen_latest.csv is not the file the fitter produces from committed "
-        "inputs. Something wrote it by hand.")
+def test_the_published_curves_are_reproducible_from_the_live_committed_inputs(tmp_path):
+    """Different question from the one above, and both matter. That one asks whether the CODE
+    still computes what it used to. This one asks whether the file every valuation actually
+    reads was produced by that code from the data in the repository -- so a hand-edited or
+    orphaned outputs/issuer_widen_latest.csv fires here.
+
+    The second source lives in another repository and moves on its own, so the tier and widening
+    of the handful of names that come from it can drift. Everything else must match exactly.
+    """
+    out = str(tmp_path)
+    cmd = [sys.executable, FITTER, "--outdir", out, "--bonds", LIVE_BONDS,
+           "--universe", os.path.join(ROOT, "outputs", "idio_universe_latest.csv"),
+           "--real-yields", FROZEN_RY]
+    p = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    assert p.returncode == 0, p.stdout[-2000:] + p.stderr[-2000:]
+    got = {r["ticker"]: r for r in csv.DictReader(open(os.path.join(out, "issuer_widen_latest.csv")))}
+    pub = {r["ticker"]: r for r in
+           csv.DictReader(open(os.path.join(ROOT, "outputs", "issuer_widen_latest.csv")))}
+    assert set(got) == set(pub), "the published file covers a different set of names"
+    bad = [t for t in pub if abs(float(got[t]["widen_30"]) - float(pub[t]["widen_30"])) > 1e-9]
+    assert len(bad) <= 6, (
+        "%d published names do not reproduce from the committed bond file: %s. Either the "
+        "published curves were not produced from this data, or the fitter has drifted."
+        % (len(bad), sorted(bad)[:8]))
 
 
 def test_the_fit_statistics_reproduce_exactly(tmp_path):
@@ -176,9 +213,17 @@ def test_the_gates_demote_jpmorgan_and_microsoft_for_the_stated_reasons(tmp_path
     fit = {r["ticker"]: r for r in
            csv.DictReader(open(os.path.join(str(tmp_path), "issuer_curve_fit.csv")))}
     assert int(fit["JPM"]["tier"]) == 2, "JPMorgan must not be tier 1: its slope t-stat is -0.94"
-    assert int(fit["MSFT"]["tier"]) == 2, "Microsoft must not be tier 1: nearest bond 8.5y"
-    assert float(fit["MSFT"]["shortest"]) > 3.0
     assert abs(float(fit["JPM"]["t_b"])) < 2.0
+    # ON THE FROZEN 2026-08-17 FIXTURE Microsoft is demoted for the OTHER gate -- its nearest
+    # bond is 8.5 years out, so its one-year spread is extrapolated, not observed, and the
+    # extrapolation returns MINUS 39 basis points. On the LIVE data it is still tier 2 but for a
+    # different reason: the 2026-08-20 pull added the Activision Blizzard bonds Microsoft
+    # inherited in 2023, which put an observation at 0.82 years -- and that bond is a $45m
+    # unrated stub at 162bp against Microsoft's own 22bp ten-year paper, so the equal-weighted
+    # fit inverts. Both demotions are correct; neither is the right answer, and the fix is to
+    # weight the fit by amount outstanding.
+    assert int(fit["MSFT"]["tier"]) == 2, "Microsoft must not be tier 1 on this fixture"
+    assert float(fit["MSFT"]["shortest"]) > 3.0, "the frozen fixture has no Microsoft front bond"
 
 
 # ------------------------------------------------------------------ the fossil guard

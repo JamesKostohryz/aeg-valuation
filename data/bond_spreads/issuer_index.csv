@@ -1,0 +1,500 @@
+ticker,company,cusip
+A,Agilent Technologies Inc,00846U101
+AAPL,Apple Inc.,037833100
+ABBV,AbbVie Inc,00287Y109
+ABNB,Airbnb Inc,009066101
+ABT,Abbott Laboratories,002824100
+ACGL,Arch Capital Group Ltd.,03937L105
+ACN,Accenture plc,G1150G111
+ADBE,Adobe Systems Incorporated,00724F101
+ADI,Analog Devices Inc,032654105
+ADM,Archer-Daniels-Midland Company,039483102
+ADP,Automatic Data Processing Inc,053015103
+ADSK,Autodesk Inc,052769106
+AEE,Ameren Corp,023608102
+AEP,American Electric Power Co Inc,025537101
+AES,The AES Corporation,00130H105
+AFL,Aflac Incorporated,001055102
+AIG,American International Group Inc,026874107
+AIZ,"Assurant, Inc.",04621X108
+AJG,Arthur J Gallagher & Co,363576109
+AKAM,Akamai Technologies Inc,00971T101
+ALB,Albemarle Corp,012653101
+ALGN,Align Technology Inc,016255101
+ALL,The Allstate Corporation,020002101
+ALLE,Allegion PLC,G0176J109
+AMAT,Applied Materials Inc,038222105
+AMCR,Amcor PLC,G0250X107
+AMD,Advanced Micro Devices Inc,007903107
+AME,Ametek Inc,031100100
+AMGN,Amgen Inc,031162100
+AMP,Ameriprise Financial Inc,03076C106
+AMT,American Tower Corp,029912201
+AMZN,Amazon.com Inc,023135106
+ANET,Arista Networks,040413106
+AON,Aon PLC,G0403H108
+AOS,Smith AO Corporation,831865100
+APA,APA Corporation,037411600
+APD,Air Products and Chemicals Inc,009158403
+APH,Amphenol Corporation,032094203
+APO,Apollo Global Management LLC Class A,03768E105
+APP,Applovin Corp,03831W108
+APTV,Aptiv PLC,G27823106
+ARE,Alexandria Real Estate Equities Inc,015271109
+ARES,Ares Management LP,03990B101
+ATO,Atmos Energy Corporation,049560105
+AVGO,Broadcom Inc,Y0486S104
+AVY,Avery Dennison Corp,053611109
+AWK,American Water Works,030420103
+AXON,Axon Enterprise Inc.,05464C101
+AXP,American Express Company,025816109
+AZO,AutoZone Inc,053332102
+BA,The Boeing Company,097023105
+BAC,Bank of America Corp,638585109
+BALL,Ball Corporation,058498106
+BAX,Baxter International Inc,071813141
+BBY,Best Buy Co. Inc,08651F200
+BDX,Becton Dickinson and Company,075887109
+BEN,Franklin Resources Inc,354613101
+BF-B,Brown-Forman Corporation,115637209
+BG,Bunge Global SA,G16962105
+BIIB,Biogen Inc,449370105
+BKNG,Booking Holdings Inc,741503106
+BKR,Baker Hughes Co,05722G100
+BLDR,Builders FirstSource Inc,12008R107
+BLK,BlackRock Inc,09247X101
+BMY,Bristol-Myers Squibb Company,110122108
+BNY,The Bank of New York Mellon Corporation,
+BR,Broadridge Financial Solutions Inc,11133T103
+BRK-B,Berkshire Hathaway Inc,084670207
+BRO,Brown & Brown Inc,730444106
+BSX,Boston Scientific Corp,101137107
+BX,Blackstone Group Inc,09260D107
+BXP,"BXP, Inc.",101121101
+C,Citigroup Inc.,172967101
+CAH,Cardinal Health Inc,14149Y108
+CARR,Carrier Global Corp,14448C104
+CASY,Caseys General Stores Inc,147528103
+CAT,Caterpillar Inc,149123101
+CB,Chubb Ltd,G0070K103
+CBOE,Cboe Global Markets Inc,12503M108
+CBRE,CBRE Group Inc Class A,12497T101
+CCI,Crown Castle,22822V101
+CCL,Carnival Corporation,143658102
+CDNS,Cadence Design Systems Inc,127387108
+CDW,CDW Corp,12514G108
+CEG,Constellation Energy Corp,21037T109
+CF,CF Industries Holdings Inc,125269100
+CFG,"Citizens Financial Group, Inc.",174610105
+CHD,Church & Dwight Company Inc,171340102
+CHRW,CH Robinson Worldwide Inc,12541W100
+CHTR,Charter Communications Inc,16119P108
+CI,Cigna Corp,125523100
+CIEN,Ciena Corp,171779101
+CINF,Cincinnati Financial Corporation,172062101
+CL,Colgate-Palmolive Company,194162103
+CLX,The Clorox Company,189054109
+CMCSA,Comcast Corp,200300200
+CME,CME Group Inc,167760107
+CMG,Chipotle Mexican Grill Inc,169656204
+CMI,Cummins Inc,125761304
+CMS,CMS Energy Corporation,125896308
+CNC,Centene Corp,15135B101
+CNP,CenterPoint Energy Inc,442161105
+COF,Capital One Financial Corporation,14040H105
+COHR,Coherent Inc,192479103
+COIN,Coinbase Global Inc,19260Q107
+COO,"The Cooper Companies, Inc",216640102
+COP,ConocoPhillips,208251504
+COR,Cencora Inc.,03071P102
+COST,Costco Wholesale Corp,74143W102
+CPAY,Corpay Inc,219948106
+CPRT,Copart Inc,217204106
+CPT,Camden Property Trust,133131102
+CRH,CRH PLC ADR,12626K203
+CRL,Charles River Laboratories,159864107
+CRM,Salesforce.com Inc,79466L302
+CRWD,Crowdstrike Holdings Inc,22788C105
+CSCO,Cisco Systems Inc,17275R102
+CSGP,CoStar Group Inc,75612B107
+CSX,CSX Corporation,126408103
+CTAS,Cintas Corporation,172908105
+CTSH,Cognizant Technology Solutions Corp Class A,192446102
+CTVA,Corteva Inc,22052L104
+CVNA,Carvana Co,146869102
+CVS,CVS Health Corp,585745102
+CVX,Chevron Corp,166751107
+D,Dominion Energy Inc,257469205
+DAL,Delta Air Lines Inc,247361702
+DASH,"DoorDash, Inc. Class A Common Stock",25809K105
+DD,Dupont De Nemours Inc,26614N102
+DDOG,Datadog Inc,23804L103
+DE,Deere & Company,244199105
+DECK,Deckers Outdoor Corporation,243537107
+DELL,Dell Technologies Inc,24703L202
+DG,Dollar General Corporation,256677105
+DGX,Quest Diagnostics Incorporated,74834L100
+DHI,DR Horton Inc,23331A109
+DHR,Danaher Corporation,235851110
+DIS,Walt Disney Company,254687205
+DLR,Digital Realty Trust Inc,253868301
+DLTR,Dollar Tree Inc,256747106
+DOC,Healthpeak Properties Inc,421915109
+DOV,Dover Corporation,260003108
+DOW,Dow Inc,260557103
+DPZ,Domino's Pizza Inc Common Stock,25754A201
+DRI,Darden Restaurants Inc,237194105
+DTE,DTE Energy Company,233331107
+DUK,Duke Energy Corporation,264399585
+DVA,DaVita HealthCare Partners Inc,89151A107
+DVN,Devon Energy Corporation,25179M103
+DXCM,DexCom Inc,252131107
+EBAY,eBay Inc,278642103
+ECHO,EchoStar Corporation,
+ECL,Ecolab Inc,278865100
+ED,Consolidated Edison Inc,209111103
+EFX,Equifax Inc,294429105
+EG,Everest Group Ltd,G3223R108
+EIX,Edison International,783882103
+EL,Estee Lauder Companies Inc,518439104
+ELV,Elevance Health Inc,03674B203
+EME,EMCOR Group Inc,29084Q100
+EMR,Emerson Electric Company,291011104
+EOG,EOG Resources Inc,293562104
+EQIX,Equinix Inc,29444U106
+EQR,Equity Residential,29476L784
+EQT,EQT Corporation,294549100
+ERIE,Erie Indemnity Company,29530P102
+ES,Eversource Energy,664397106
+ESS,Essex Property Trust Inc,297178105
+ETN,Eaton Corporation PLC,278058102
+ETR,Entergy Corporation,29364G103
+EVRG,"Evergy, Inc.",30034W106
+EW,Edwards Lifesciences Corp,28176E108
+EXC,Exelon Corporation,30161N101
+EXE,Expand Energy Corporation,
+EXPD,"Expeditors International of Washington, Inc.",302130109
+EXPE,Expedia Group Inc.,30212P105
+EXR,Extra Space Storage Inc,30225T102
+F,Ford Motor Company,345370100
+FANG,Diamondback Energy Inc,25278X109
+FAST,Fastenal Company,311900104
+FCX,Freeport-McMoran Copper & Gold Inc,35671D865
+FDS,FactSet Research Systems Inc,303075105
+FDX,FedEx Corporation,31304N107
+FE,FirstEnergy Corporation,337932107
+FERG,Ferguson Plc,
+FFIV,F5 Networks Inc,315616102
+FICO,Fair Isaac Corporation,303250104
+FIS,Fidelity National Information Services Inc,156880106
+FISV,"Fiserv, Inc.",
+FITB,Fifth Third Bancorp,316773100
+FIX,Comfort Systems USA Inc,199908104
+FLEX,Flex Ltd,Y2573F102
+FOX,Fox Corp Class B,35137L204
+FOXA,Fox Corp Class A,35137L105
+FRT,Federal Realty Investment Trust,313747404
+FSLR,First Solar Inc,336433107
+FTNT,Fortinet Inc,34959E109
+FTV,Fortive Corp,34959J108
+GD,General Dynamics Corporation,369550108
+GDDY,Godaddy Inc,380237107
+GE,GE Aerospace,369604103
+GEHC,GE HealthCare Technologies Inc.,36266G107
+GEN,Gen Digital Inc.,668771108
+GEV,GE Vernova LLC,36828A101
+GILD,Gilead Sciences Inc,375558103
+GIS,General Mills Inc,370334104
+GL,Globe Life Inc,37959E102
+GLW,Corning Incorporated,219319209
+GM,General Motors Company,37045V100
+GNRC,Generac Holdings Inc,368736104
+GOOG,Alphabet Inc Class C,02079K107
+GOOGL,Alphabet Inc Class A,38259P706
+GPC,Genuine Parts Co,372460105
+GPN,Global Payments Inc,37940X102
+GRMN,Garmin Ltd,G37260109
+GS,Goldman Sachs Group Inc,38141G104
+GWW,WW Grainger Inc,384802104
+HAL,Halliburton Company,406216101
+HAS,Hasbro Inc,418056107
+HBAN,Huntington Bancshares Incorporated,446150104
+HCA,"HCA Healthcare, Inc.",435758305
+HD,The Home Depot Inc,437076102
+HIG,Hartford Financial Services Group,45068H106
+HII,Huntington Ingalls Industries Inc,446413106
+HLT,Hilton Worldwide Holdings Inc,43300A104
+HON,Honeywell International Inc,019512102
+HOOD,Robinhood Markets Inc,770700102
+HPE,Hewlett Packard Enterprise Co,42824C109
+HPQ,HP Inc,428236103
+HRL,Hormel Foods Corporation,440452100
+HSIC,Henry Schein Inc,806407102
+HST,Host Hotels & Resorts Inc,44107P104
+HSY,Hershey Co,427866108
+HUBB,Hubbell Inc,443510102
+HUM,Humana Inc,444859102
+HWM,Howmet Aerospace Inc,013817507
+IBKR,Interactive Brokers Group Inc,45841N107
+IBM,International Business Machines,459200101
+ICE,Intercontinental Exchange Inc,45865V100
+IDXX,IDEXX Laboratories Inc,45168D104
+IEX,IDEX Corporation,45167R104
+IFF,International Flavors & Fragrances Inc,459506101
+INCY,Incyte Corporation,45337C102
+INTC,Intel Corporation,458140100
+INTU,Intuit Inc,461202103
+INVH,Invitation Homes Inc,46187W107
+IP,International Paper,460146103
+IQV,IQVIA Holdings Inc,46266C105
+IR,Ingersoll Rand Inc,36555P107
+IRM,Iron Mountain Incorporated,720722107
+ISRG,Intuitive Surgical Inc,46120E107
+IT,Gartner Inc,366651206
+ITW,Illinois Tool Works Inc,452308109
+IVZ,Invesco Plc,G491BT108
+J,Jacobs Solutions Inc.,46982L108
+JBHT,JB Hunt Transport Services Inc,445658107
+JBL,Jabil Circuit Inc,466313103
+JCI,Johnson Controls International PLC,000915306
+JKHY,Jack Henry & Associates Inc,426281101
+JNJ,Johnson & Johnson,478160104
+JPM,JPMorgan Chase & Co,16161A108
+KDP,Keurig Dr Pepper Inc,49271V100
+KEY,KeyCorp,493263107
+KEYS,Keysight Technologies Inc,49338L103
+KHC,Kraft Heinz Co,50075N104
+KIM,Kimco Realty Corporation,49446R109
+KKR,KKR & Co. Inc.,48251W104
+KLAC,KLA Corporation,482480100
+KMB,Kimberly-Clark Corporation,494368129
+KMI,Kinder Morgan Inc,49455P101
+KO,The Coca-Cola Company,191216100
+KR,Kroger Company,501044101
+KVUE,Kenvue Inc.,49177J102
+L,Loews Corp,540424207
+LDOS,Leidos Holdings Inc,78390X101
+LEN,Lennar Corporation,694351107
+LH,Laboratory Corporation of America Holdings,50540R102
+LHX,L3Harris Technologies Inc,502431109
+LII,Lennox International Inc,526107107
+LIN,Linde plc Ordinary Shares,G5494J103
+LITE,Lumentum Holdings Inc,55024U109
+LLY,Eli Lilly and Company,532457108
+LMT,Lockheed Martin Corporation,539830109
+LNT,Alliant Energy Corp,929305100
+LOW,Lowe's Companies Inc,548661107
+LRCX,Lam Research Corp,512807108
+LULU,Lululemon Athletica Inc.,550021109
+LUV,Southwest Airlines Company,844741108
+LVS,Las Vegas Sands Corp,517834107
+LYB,LyondellBasell Industries NV,N53745118
+LYV,Live Nation Entertainment Inc,14985W109
+MA,Mastercard Inc,57636Q104
+MAA,Mid-America Apartment Communities Inc,59522J103
+MAR,Marriott International Inc,571900109
+MAS,Masco Corporation,574599114
+MCD,McDonald’s Corporation,580135101
+MCHP,Microchip Technology Inc,595017104
+MCK,McKesson Corporation,581557105
+MCO,Moodys Corporation,615369105
+MDLZ,Mondelez International Inc,609207105
+MDT,Medtronic PLC,585055106
+MET,MetLife Inc,59156R116
+META,Meta Platforms Inc.,30303M102
+MGM,MGM Resorts International,552953101
+MKC,McCormick & Company Incorporated,579780206
+MLM,Martin Marietta Materials Inc,573284106
+MMM,3M Company,88579Y101
+MNST,Monster Beverage Corp,61174X109
+MO,Altria Group,718154107
+MOS,The Mosaic Company,449669100
+MPC,Marathon Petroleum Corp,56585A102
+MPWR,Monolithic Power Systems Inc,609839105
+MRK,Merck & Company Inc,589339209
+MRNA,Moderna Inc,60770K107
+MRSH,"Marsh & McLennan Companies, Inc.",
+MRVL,Marvell Technology Group Ltd,G5876H105
+MS,Morgan Stanley,24240V101
+MSCI,MSCI Inc,55354G100
+MSFT,Microsoft Corporation,594918104
+MSI,Motorola Solutions Inc,620076125
+MTB,M&T Bank Corporation,320076102
+MTD,Mettler-Toledo International Inc,592688105
+MU,Micron Technology Inc,595112103
+NCLH,Norwegian Cruise Line Holdings Ltd,G66721104
+NDAQ,Nasdaq Inc,631103108
+NDSN,Nordson Corporation,655663102
+NEE,Nextera Energy Inc,65339B100
+NEM,Newmont Goldcorp Corp,651639106
+NFLX,Netflix Inc,64110L106
+NI,NiSource Inc,65473P113
+NKE,Nike Inc,654106103
+NOC,Northrop Grumman Corporation,666807102
+NOW,ServiceNow Inc,81762P102
+NRG,NRG Energy Inc.,629377508
+NSC,Norfolk Southern Corporation,655844108
+NTAP,NetApp Inc,64120L104
+NTRS,Northern Trust Corporation,665859104
+NUE,Nucor Corp,670346105
+NVDA,NVIDIA Corporation,67066G104
+NVR,NVR Inc,62944T105
+NWS,News Corp B,65249B208
+NWSA,News Corp A,652487703
+NXPI,NXP Semiconductors NV,N6596X109
+O,Realty Income Corporation,756109104
+ODFL,Old Dominion Freight Line Inc,679580100
+OKE,ONEOK Inc,682680103
+OMC,Omnicom Group Inc,681919106
+ON,ON Semiconductor Corporation,682189105
+ORCL,Oracle Corporation,68389X105
+ORLY,O’Reilly Automotive Inc,686091109
+OTIS,Otis Worldwide Corp,68902V107
+OXY,Occidental Petroleum Corporation,674599790
+PANW,Palo Alto Networks Inc,697435105
+PAYX,Paychex Inc,704326107
+PCAR,PACCAR Inc,693718108
+PCG,PG&E Corp,69331C108
+PEG,Public Service Enterprise Group Inc,744573106
+PEP,PepsiCo Inc,713448108
+PFE,Pfizer Inc,717081103
+PFG,Principal Financial Group Inc,74251V102
+PG,Procter & Gamble Company,742718109
+PGR,Progressive Corp,743315103
+PH,Parker-Hannifin Corporation,701094104
+PHM,PulteGroup Inc,745867200
+PKG,Packaging Corp of America,695156109
+PLD,Prologis Inc,74340W103
+PLTR,Palantir Technologies Inc.,69608A108
+PM,Philip Morris International Inc,718172109
+PNC,PNC Financial Services Group Inc,693475105
+PNR,Pentair PLC,709631105
+PNW,Pinnacle West Capital Corp,723484101
+PODD,Insulet Corporation,45784P101
+PPG,PPG Industries Inc,693506107
+PPL,PPL Corporation,693499105
+PRU,"Prudential Financial, Inc.",744320AG7
+PSA,Public Storage,74460D729
+PSKY,Paramount Skydance Corporation Class B Common Stock,
+PSX,Phillips 66,743627101
+PTC,PTC Inc,699173100
+PWR,Quanta Services Inc,74762E102
+PYPL,PayPal Holdings Inc,70450Y103
+QCOM,Qualcomm Incorporated,747525103
+RCL,Royal Caribbean Cruises Ltd,V7780T103
+RDDT,"Reddit, Inc.",75734B100
+REG,Regency Centers Corporation,758939102
+REGN,Regeneron Pharmaceuticals Inc,75886F107
+RF,Regions Financial Corporation,7591EP100
+RJF,Raymond James Financial Inc.,754730109
+RL,Ralph Lauren Corp Class A,731572103
+RMD,ResMed Inc,761152107
+ROK,Rockwell Automation Inc,774347108
+ROL,Rollins Inc,775711104
+ROP,Roper Technologies Inc,776696106
+ROST,Ross Stores Inc,778296103
+RSG,Republic Services Inc,760759100
+RTX,RTX Corporation,75513E101
+RVTY,Revvity Inc.,714046109
+SBAC,SBA Communications Corp,78410G104
+SBUX,Starbucks Corporation,855244109
+SCHW,Charles Schwab Corp,808513105
+SHW,Sherwin-Williams Co,824348106
+SJM,The J. M. Smucker Company,832696108
+SLB,Schlumberger NV,806857108
+SMCI,Super Micro Computer Inc,86800U104
+SNA,Snap-On Inc,833034101
+SNPS,Synopsys Inc,871607107
+SO,Southern Company,842587107
+SOLV,Solventum Corp.,83444M101
+SPG,Simon Property Group Inc,828806802
+SPGI,S&P Global Inc,580645109
+SRE,Sempra Energy,816851208
+STE,STERIS plc,G8473T100
+STLD,Steel Dynamics Inc,858119100
+STT,State Street Corp,857473102
+STX,Seagate Technology PLC,G7945J104
+STZ,Constellation Brands Inc Class A,137219101
+SW,Smurfit WestRock plc,
+SWK,Stanley Black & Decker Inc,854502101
+SWKS,Skyworks Solutions Inc,020753109
+SYF,Synchrony Financial,87165B103
+SYK,Stryker Corporation,863667101
+SYY,Sysco Corporation,871829107
+T,AT&T Inc.,78387G202
+TAP,Molson Coors Brewing Co Class B,217016104
+TDG,Transdigm Group Incorporated,893641100
+TDY,Teledyne Technologies Incorporated,879360105
+TECH,Bio-Techne Corp,878377100
+TEL,TE Connectivity Ltd,H8912P106
+TER,Teradyne Inc,880770102
+TFC,Truist Financial Corp,89832Q109
+TGT,Target Corporation,87612E106
+TJX,The TJX Companies Inc,872540307
+TKO,"TKO Group Holdings, Inc.",87256C101
+TMO,Thermo Fisher Scientific Inc,883556201
+TMUS,T-Mobile US Inc,872590104
+TPL,Texas Pacific Land Corporation,882610108
+TPR,Tapestry Inc,876030107
+TRGP,Targa Resources Inc,87612G101
+TRMB,Trimble Inc,896239100
+TROW,T. Rowe Price Group Inc,741477103
+TRV,The Travelers Companies Inc,792856205
+TSCO,Tractor Supply Company,892356106
+TSLA,Tesla Inc,88160R101
+TSN,Tyson Foods Inc,902494103
+TT,Trane Technologies plc,456866102
+TTD,Trade Desk Inc,88339J105
+TTWO,Take-Two Interactive Software Inc,874054109
+TXN,Texas Instruments Incorporated,882508104
+TXT,Textron Inc,883203101
+TYL,Tyler Technologies Inc,902184100
+UAL,United Airlines Holdings Inc,902549104
+UBER,Uber Technologies Inc,90353T100
+UDR,UDR Inc,910197102
+UHS,Universal Health Services Inc,913903100
+ULTA,Ulta Beauty Inc,90384S303
+UNH,UnitedHealth Group Incorporated,910581107
+UNP,Union Pacific Corporation,907818108
+UPS,United Parcel Service Inc,911312106
+URI,United Rentals Inc,911363109
+USB,U.S. Bancorp,319279501
+V,Visa Inc. Class A,92826C839
+VEEV,Veeva Systems Inc Class A,922475108
+VICI,VICI Properties Inc,925652109
+VLO,Valero Energy Corporation,91913Y100
+VLTO,Veralto Corporation,92338C103
+VMC,Vulcan Materials Company,929160109
+VRSK,Verisk Analytics Inc,92345Y106
+VRSN,VeriSign Inc,92343E102
+VRT,Vertiv Holdings Co,36255F201
+VRTX,Vertex Pharmaceuticals Inc,92532F100
+VST,Vistra Corp.,92840M102
+VTR,Ventas Inc,922602107
+VTRS,Viatris Inc,92556V106
+VZ,Verizon Communications Inc,077853109
+WAB,Westinghouse Air Brake Technologies Corp,960386100
+WAT,Waters Corporation,941848103
+WBD,Warner Bros Discovery Inc,934423104
+WDAY,Workday Inc,98138H101
+WDC,Western Digital Corporation,958102105
+WEC,WEC Energy Group Inc,92939U106
+WELL,Welltower Inc,42217K106
+WFC,Wells Fargo & Company,668231103
+WM,Waste Management Inc,902917103
+WMB,Williams Companies Inc,969457142
+WMT,Walmart Inc.,931142103
+WRB,W. R. Berkley Corp,084423102
+WSM,Williams-Sonoma Inc,969904101
+WST,West Pharmaceutical Services Inc,953348109
+WTW,Willis Towers Watson PLC,G96666105
+WY,Weyerhaeuser Company,962166104
+WYNN,Wynn Resorts Limited,983134107
+XEL,Xcel Energy Inc,98389B308
+XOM,Exxon Mobil Corp,302290101
+XYL,Xylem Inc,98419M100
+XYZ,"Block, Inc",852234103
+YUM,Yum! Brands Inc,895953107
+ZBH,Zimmer Biomet Holdings Inc,98956P102
+ZBRA,Zebra Technologies Corporation,989207105
+ZTS,Zoetis Inc,98978V103

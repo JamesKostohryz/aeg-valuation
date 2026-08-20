@@ -31,6 +31,7 @@ pinning the vintage is what makes this test about the code.
 """
 import csv
 import os
+import re
 import subprocess
 import sys
 
@@ -47,6 +48,9 @@ FRED = os.path.join(GOLD, "fred")
 
 LIVE_REF = os.path.join(ROOT, "data", "bond_spreads", "bond_reference.csv")
 LIVE_BONDS = os.path.join(ROOT, "data", "bond_spreads", "bond_spreads_live.csv")
+# the coupon may come from the vendor field OR be parsed out of the catalog name;
+# either way the 50bp yield cross-check can run, which is what the assertion is about.
+_CPN = re.compile(r"(\d+(?:\.\d+)?)\s*%")
 
 
 def _rows(path):
@@ -68,10 +72,16 @@ def test_the_static_reference_is_committed_and_complete():
     """Issuer, name and coupon are facts that do not change before maturity. Committing them is
     what lets a monthly refresh pull ONLY the price, instead of carrying 6.4MB of vendor JSON."""
     ref = _rows(LIVE_REF)
-    assert len(ref) == 1615, "expected the 1,615 named reachable bonds, got %d" % len(ref)
+    # NOT pinned to an exact count. The reference GROWS when coverage is extended -- it went from
+    # 1,615 to 3,182 on 2026-08-20 when the matcher's apostrophe bug and the acquired-issuer gap
+    # were fixed. A test that must be edited every time the data improves is one people learn to
+    # edit rather than read. What is pinned is that it never SHRINKS.
+    assert len(ref) >= 1615, (
+        "the bond reference has shrunk below the 2026-08-17 pull (%d rows). Coverage going "
+        "backwards is a regression." % len(ref))
     for col in ("bond_code", "ticker", "sample", "catalog_name", "vendor_name", "coupon"):
         assert col in ref[0]
-    assert sum(1 for r in ref if r["coupon"]) >= 1088, (
+    assert sum(1 for r in ref if r["coupon"] or _CPN.search(r["catalog_name"] or "")) >= 1088, (
         "the coupon column has lost rows. Without a coupon the 50bp vendor-disagreement check "
         "cannot run and the bond is waved through unchecked.")
 

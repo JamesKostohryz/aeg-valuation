@@ -216,10 +216,17 @@ def pull_prices(ref):
     os.makedirs(CACHE, exist_ok=True)
     todo = [r["bond_code"] for r in ref
             if not os.path.exists(os.path.join(CACHE, r["bond_code"] + ".json"))]
+    # --limit exists because a sandbox session cannot hold a process open long enough to pull
+    # three thousand bonds in one call. The pull is resumable by construction (an existing cache
+    # file is skipped), so chunking is safe; a partial run leaves a smaller `todo` for the next.
+    missing = len(todo)
+    limit = int(_arg("--limit", "0") or 0)
+    if limit > 0:
+        todo = todo[:limit]
     units = len(todo) * API_UNITS_PER_BOND
-    print("EODHD PULL: %d bonds already cached, %d to pull = %s API units "
+    print("EODHD PULL: %d bonds already cached, %d missing, %d to pull this call = %s API units "
           "(%.1f%% of a 100,000-unit daily allowance, which resets daily)"
-          % (len(ref) - len(todo), len(todo), "{:,}".format(units), units / 1000.0))
+          % (len(ref) - missing, missing, len(todo), "{:,}".format(units), units / 1000.0))
     if "--dry-run" in sys.argv:
         print("  --dry-run: nothing spent, nothing written.")
         return False

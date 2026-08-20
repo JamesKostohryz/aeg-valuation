@@ -1,0 +1,306 @@
+[
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1987-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 71878000.0,
+  "old_eodhd_value": null,
+  "year": "1987"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1988-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 123908000.0,
+  "old_eodhd_value": null,
+  "year": "1988"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1989-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 170538000.0,
+  "old_eodhd_value": null,
+  "year": "1989"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1990-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 279186000.00000006,
+  "old_eodhd_value": null,
+  "year": "1990"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1991-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 462743000.00000006,
+  "old_eodhd_value": null,
+  "year": "1991"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1992-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 708060000.0,
+  "old_eodhd_value": null,
+  "year": "1992"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1993-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 953000000.0,
+  "old_eodhd_value": null,
+  "year": "1993"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1994-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 1146000000.0,
+  "old_eodhd_value": null,
+  "year": "1994"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1995-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 1453000000.0,
+  "old_eodhd_value": null,
+  "year": "1995"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "1996-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 2195000000.0,
+  "old_eodhd_value": null,
+  "year": "1996"
+ },
+ {
+  "compustat_source": "niq-less_dvpy",
+  "fy_end_date": "1997-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 3439000000.0,
+  "old_eodhd_value": null,
+  "year": "1997"
+ },
+ {
+  "compustat_source": "niq-less_dvpy",
+  "fy_end_date": "1998-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 4462000000.0,
+  "old_eodhd_value": null,
+  "year": "1998"
+ },
+ {
+  "compustat_source": "niq-less_dvpy",
+  "fy_end_date": "1999-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 7757000000.0,
+  "old_eodhd_value": null,
+  "year": "1999"
+ },
+ {
+  "compustat_source": "niq-less_dvpy",
+  "fy_end_date": "2000-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 9408000000.0,
+  "old_eodhd_value": "9408000000.00",
+  "year": "2000"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2001-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 7346000000.0,
+  "old_eodhd_value": "7721000000.00",
+  "year": "2001"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2002-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 7829000000.0,
+  "old_eodhd_value": "7829000000.00",
+  "year": "2002"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2003-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 7531000000.0,
+  "old_eodhd_value": "9993000000.00",
+  "year": "2003"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2004-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 8168000000.0,
+  "old_eodhd_value": "8168000000.00",
+  "year": "2004"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2005-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 12254000000.0,
+  "old_eodhd_value": "12254000000.00",
+  "year": "2005"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2006-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 12599000000.0,
+  "old_eodhd_value": "12599000000.00",
+  "year": "2006"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2007-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 14065000000.0,
+  "old_eodhd_value": "14065000000.00",
+  "year": "2007"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2008-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 17681000000.0,
+  "old_eodhd_value": "17681000000.00",
+  "year": "2008"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2009-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 14569000000.0,
+  "old_eodhd_value": "14569000000.00",
+  "year": "2009"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2010-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 18760000000.0,
+  "old_eodhd_value": "18760000000.00",
+  "year": "2010"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2011-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 23150000000.0,
+  "old_eodhd_value": "23150000000.00",
+  "year": "2011"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2012-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 16978000000.0,
+  "old_eodhd_value": "16978000000.00",
+  "year": "2012"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2013-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 21863000000.0,
+  "old_eodhd_value": "21863000000.00",
+  "year": "2013"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2014-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 22074000000.0,
+  "old_eodhd_value": "22074000000.00",
+  "year": "2014"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2015-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 12193000000.0,
+  "old_eodhd_value": "12193000000.00",
+  "year": "2015"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2016-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 16798000000.0,
+  "old_eodhd_value": "16798000000.00",
+  "year": "2016"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2017-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 25489000000.0,
+  "old_eodhd_value": "21204000000.00",
+  "year": "2017"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2018-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 16571000000.0,
+  "old_eodhd_value": "16571000000.00",
+  "year": "2018"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2019-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 39240000000.0,
+  "old_eodhd_value": "39240000000.00",
+  "year": "2019"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2020-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 44281000000.0,
+  "old_eodhd_value": "44281000000.00",
+  "year": "2020"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2021-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 61271000000.0,
+  "old_eodhd_value": "61271000000.00",
+  "year": "2021"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2022-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 72738000000.0,
+  "old_eodhd_value": "72738000000.00",
+  "year": "2022"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2023-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 72361000000.0,
+  "old_eodhd_value": "72361000000.00",
+  "year": "2023"
+ },
+ {
+  "compustat_source": "niq",
+  "fy_end_date": "2024-06-30",
+  "match_distance_days": 0,
+  "new_compustat_value": 88136000000.0,
+  "old_eodhd_value": "88136000000.00",
+  "year": "2024"
+ }
+]

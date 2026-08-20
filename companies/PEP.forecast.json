@@ -21,7 +21,7 @@
     "bull": 124.4046458159,
     "bear": 75.7993443470992,
     "expected_value": 103.11095853141927,
-    "tolerance_ps": 0.01
+    "_tolerance": "Retired 2026-08-19: tolerance_ps was an ABSOLUTE per-share band and it was 0.01, a penny, which required the market to stand still between the reviewed run and the next scheduled refresh. The reconciliation is now a RELATIVE band, tolerance_pct, defaulting to 2% in pipeline/test_reviewed_forecast.py. Set tolerance_pct here only to TIGHTEN it."
   },
   "scenarios": [
     {

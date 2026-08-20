@@ -149,6 +149,10 @@ csv_path = os.path.join(_ROOT, "outputs", "PEP_scenarios.csv")
 if os.path.exists(csv_path):
     rows = [r.split(",") for r in open(csv_path).read().strip().splitlines()[1:]]
     published = {r[3]: float(r[7]) for r in rows if r[7]}
+    # The retired key must be GONE, not merely ignored. A dead knob that still reads like a
+    # live one is how somebody sets a tolerance in good faith and nothing happens.
+    check("tolerance_ps" not in doc["expected_values"],
+          "the retired absolute tolerance_ps is not left lying in the forecast file")
     tol_pct = float(doc["expected_values"].get("tolerance_pct", TOLERANCE_PCT_DEFAULT))
     check(tol_pct <= TOLERANCE_PCT_DEFAULT,
           f"the forecast file's tolerance_pct {tol_pct:.4f} tightens rather than loosens the "

@@ -92,16 +92,75 @@ for sc in doc["scenarios"]:
 
 # The stored forecast must be the one that produced the published CSV. If someone edits a
 # driver without re-proving it, this is the check that says so.
+#
+# WHY THIS IS A BAND AND NOT AN EQUALITY, RULED BY JAMES 2026-08-19. It was written as a
+# penny-exact comparison and it turned the regression harness red for five days, from
+# 2026-08-13 to 2026-08-19, across four sessions and the entire Region 2 build, while three
+# handoff documents described the state of this repository without mentioning it.
+#
+# Nothing was wrong with the valuation. Commit ecf6a58, an automated `pipeline: refresh
+# valuation outputs [skip ci]` run, re-priced PepsiCo sixteen hours after the reviewed run
+# against a market that had moved -- real cost of equity 5.4877% to 5.5279%, price 144.38 to
+# 146.38 -- and the published figures moved about 0.4%. They were supposed to. The scheduled
+# refresh re-prices against live rates BY DESIGN; the reviewed number is a fixed record of a
+# human judgment BY DESIGN. Requiring them to be equal to a penny is requiring the market to
+# stand still, so the check could only ever be red, and a check that is always red stops being
+# read. That is the same failure as a gate reporting success over a wrong number, reached from
+# the other side.
+#
+# WHAT THE CHECK IS ACTUALLY FOR, and what the band preserves. It exists to catch a driver
+# edited without being re-proven -- somebody changing the forecast and not re-running it. That
+# is a change in the FORECAST, and a forecast change that matters moves value by far more than
+# rates drift between two runs of the same week. The band is therefore wide enough to absorb
+# repricing and nowhere near wide enough to absorb a forecast edit: PepsiCo's own bull and bear
+# cases sit 12% above and 32% below its base, so a driver change worth noticing clears 2% by an
+# order of magnitude.
+#
+# The tolerance is RELATIVE, because an absolute per-share band means something different for a
+# $30 stock and a $600 one. A company may TIGHTEN it in its own forecast file; the default is
+# the ceiling, not a suggestion.
+TOLERANCE_PCT_DEFAULT = 0.02
+
+
+def _within_band(got, exp, tol_pct):
+    """True if a published figure is close enough to its reviewed one to be the same forecast
+    priced on a different day."""
+    return got is not None and exp and abs(got - exp) <= abs(exp) * tol_pct
+
+
+# THE BAND HAS TO DISCRIMINATE, NOT MERELY EXIST. A tolerance loose enough to pass everything
+# is not a check. These pin both edges against the real reviewed base value, so the band cannot
+# be widened later without one of them failing.
+_b = doc["expected_values"]["base"]
+check(_within_band(_b * 1.004, _b, TOLERANCE_PCT_DEFAULT),
+      "the band ABSORBS a 0.4% repricing — the drift that turned the harness red")
+check(_within_band(_b * 0.985, _b, TOLERANCE_PCT_DEFAULT),
+      "the band absorbs a 1.5% repricing, a hard week in rates")
+check(not _within_band(_b * 1.03, _b, TOLERANCE_PCT_DEFAULT),
+      "the band REFUSES a 3% move — beyond anything two runs of the same week can drift")
+check(not _within_band(doc["expected_values"]["bull"], _b, TOLERANCE_PCT_DEFAULT),
+      "the band refuses the BULL case as the base — a real forecast change clears it easily")
+check(not _within_band(doc["expected_values"]["bear"], _b, TOLERANCE_PCT_DEFAULT),
+      "the band refuses the BEAR case as the base")
+check(not _within_band(None, _b, TOLERANCE_PCT_DEFAULT),
+      "a missing published figure is a failure, not a pass")
+
 csv_path = os.path.join(_ROOT, "outputs", "PEP_scenarios.csv")
 if os.path.exists(csv_path):
     rows = [r.split(",") for r in open(csv_path).read().strip().splitlines()[1:]]
     published = {r[3]: float(r[7]) for r in rows if r[7]}
-    tol = float(doc["expected_values"].get("tolerance_ps", 0.01))
+    tol_pct = float(doc["expected_values"].get("tolerance_pct", TOLERANCE_PCT_DEFAULT))
+    check(tol_pct <= TOLERANCE_PCT_DEFAULT,
+          f"the forecast file's tolerance_pct {tol_pct:.4f} tightens rather than loosens the "
+          f"{TOLERANCE_PCT_DEFAULT:.0%} default")
     for key in ("base", "bull", "bear", "expected_value"):
         exp = doc["expected_values"][key]
         got = published.get(key)
-        check(got is not None and abs(got - exp) <= tol,
-              f"published {key} {got} matches the forecast file's expected {exp} (tol {tol})")
+        drift = (abs(got - exp) / abs(exp)) if (got is not None and exp) else None
+        check(_within_band(got, exp, tol_pct),
+              f"published {key} {got} is within {tol_pct:.0%} of the reviewed {exp} "
+              f"(drift {drift:.2%})" if drift is not None else
+              f"published {key} is missing")
 else:                                                     # pragma: no cover
     check(False, "outputs/PEP_scenarios.csv is missing — nothing to reconcile against")
 

@@ -122,6 +122,13 @@ def _peek_ticker(config_path):
         return None
 
 
+# Exit codes. 1 is "this refused or broke and somebody has to look at it"; 3 is "this company
+# has no authorized forecast, so there was never going to be a number". Kept distinct because a
+# workflow that cannot tell them apart is red forever and stops being read.
+EXIT_REFUSED = 1
+EXIT_AWAITING_REVIEW = 3
+
+
 def _fail(msg, code=1):
     sys.stderr.write(f"\n[run_company] ABORT: {msg}\n")
     t, o = _REFUSAL_CTX["ticker"], _REFUSAL_CTX["out_dir"]
@@ -294,6 +301,15 @@ def main():
     # refusal rather than a Python traceback. The horizon gate lands here most often.
     try:
         cfg = CFG.load_config(args.config)
+    except CFG.AwaitingReview as e:
+        # NOT A FAILURE, AND NOT A WEAKENED GATE. No valuation is produced, exactly as before;
+        # the difference is only that the caller can now tell "nobody has forecast this company
+        # yet" from "a company somebody authorized will not value". Rule D1 makes the first one
+        # permanent and expected -- see config.AwaitingReview. Exit code 3 is the signal; the
+        # fleet workflow buckets on it and lists these names every run so they cannot be
+        # forgotten, which is more attention than a permanently red check was giving them.
+        _fail(f"AWAITING FORECAST ({args.config}) — no valuation produced\n{e}",
+              code=EXIT_AWAITING_REVIEW)
     except CFG.ConfigError as e:
         _fail(f"CONFIG REJECTED ({args.config})\n{e}")
     tk = cfg["ticker"]

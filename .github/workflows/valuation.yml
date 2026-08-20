@@ -75,20 +75,50 @@ jobs:
         run: |
           set -euo pipefail
           VINTAGE=$(date -u +%Y-%m-%dT%H:%MZ)
-          # Collect refusals instead of aborting on the first one. Every gate in
+          # Collect outcomes instead of aborting on the first one. Every gate in
           # run_company.py exits non-zero by design, and under a bare set -e loop the first
           # refusal stopped every company after it alphabetically, so one company awaiting a
-          # human review silently froze the outputs of all the others. The step still FAILS
-          # if anything refused; it just runs the whole fleet first and names every offender.
+          # human review silently froze the outputs of all the others.
+          #
+          # TWO BUCKETS, NOT ONE (2026-08-19, James). Exit 3 is AWAITING FORECAST: nobody has
+          # forecast that company yet. Rule D1 makes forecasting permanently human-in-the-loop,
+          # so there was never going to be a number and there is nothing to fix. Fourteen of the
+          # sixteen configs on file are in that state, which meant this workflow was red on
+          # every run and could not have been anything else -- and a check that is always red
+          # stops being read. It hid a real crash for a day: pyarrow was missing from
+          # requirements, and the only two companies that COULD publish were failing inside the
+          # noise of twelve intended refusals.
+          #
+          # Every other non-zero exit is a genuine refusal or a break and still fails the run.
+          # The awaiting list is printed every time as a notice, so those names get more
+          # attention than a permanently red X was giving them, not less.
           REFUSED=""
+          AWAITING=""
           for cfg in ${{ steps.pick.outputs.list }}; do
             echo "::group::$cfg"
+            set +e
             python pipeline/run_company.py "$cfg" \
               --rate-feed-live \
               --out-dir outputs \
-              --vintage "$VINTAGE" || REFUSED="$REFUSED $cfg"
+              --vintage "$VINTAGE"
+            RC=$?
+            set -e
+            if [ "$RC" -eq 3 ]; then
+              AWAITING="$AWAITING $cfg"
+            elif [ "$RC" -ne 0 ]; then
+              REFUSED="$REFUSED $cfg"
+            fi
             echo "::endgroup::"
           done
+          if [ -n "$AWAITING" ]; then
+            echo "::notice::awaiting a reviewed forecast (no valuation, as intended):$AWAITING"
+          fi
+          {
+            echo "### AEG fleet"
+            echo ""
+            echo "- awaiting a reviewed forecast:${AWAITING:- none}"
+            echo "- refused or failed:${REFUSED:- none}"
+          } >> "$GITHUB_STEP_SUMMARY"
           if [ -n "$REFUSED" ]; then
             echo "::error::refused or failed:$REFUSED"
             exit 1

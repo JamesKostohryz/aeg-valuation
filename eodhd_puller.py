@@ -478,7 +478,30 @@ def _market_data_prices(base, md_dir):
     before this function was written. If a future consumer needs true OHLC, it must go back to
     a live pull; do not assume this function covers that case.
     """
-    import pyarrow.parquet as pq
+    # THE FALLBACK BELOW IS FOR A TICKER THE STORE HAS NOT BACKFILLED. IT IS NOT FOR A BROKEN
+    # READER, AND THE DIFFERENCE COST THE PIPELINE FIVE DAYS.
+    #
+    # pyarrow was not in requirements.txt when the market-data consolidation landed on
+    # 2026-08-19, so this import raised ModuleNotFoundError, the exception escaped
+    # pull_to_csvs() entirely, and the two companies that HAVE a reviewed forecast -- the only
+    # two that could publish anything -- crashed on every run.
+    #
+    # Raising is deliberate, and it is the safer of the two failures. `return None` here would
+    # have looked kinder: every ticker would have fallen through to the live vendor call and
+    # the fleet would have gone green. It would also have moved every company back onto a
+    # second, independently-fetched vintage of the same data -- silently, with the manifest
+    # recording "live" and nobody reading it -- which is the exact thing consolidating onto the
+    # store was meant to end. A missing ticker is a coverage gap; a missing reader is an
+    # environment defect, and it must not be able to change where the numbers come from.
+    try:
+        import pyarrow.parquet as pq
+    except ImportError as e:
+        raise RuntimeError(
+            f"MARKET_DATA_DIR is set ({md_dir}) but pyarrow is not installed, so the price "
+            f"panel cannot be read: {e}. Refusing rather than falling through to a live "
+            f"vendor pull, which would put every company on a second data vintage with only "
+            f"the manifest to say so. Install pyarrow (it is in requirements.txt) or unset "
+            f"MARKET_DATA_DIR to pull live deliberately.")
     shard = zlib.crc32(base.encode()) % 16
     path = os.path.join(md_dir, "data", "prices_adj_close", f"part-{shard:02d}.parquet")
     if not os.path.exists(path):

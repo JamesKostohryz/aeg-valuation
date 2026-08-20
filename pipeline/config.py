@@ -22,6 +22,25 @@ class ConfigError(Exception):
     """Raised on any config-contract violation. Fail loud; never guess a judgment."""
 
 
+class AwaitingReview(ConfigError):
+    """The company has no AUTHORIZED forecast horizon, so no valuation is produced.
+
+    A SUBCLASS, so every existing `except ConfigError` still catches it and the gate is exactly
+    as hard as it was. It exists only so a caller that wants to can tell two different things
+    apart, because they are not the same event:
+
+        AwaitingReview   nobody has forecast this company yet. Under rule D1 forecasting is
+                         permanently human-in-the-loop, so this is the system WORKING. There
+                         was never going to be a number, and there is nothing to fix.
+        ConfigError      a company somebody DID authorize will not value. Something is broken.
+
+    Before 2026-08-19 the fleet workflow treated both as failure. Fourteen of sixteen companies
+    on file have never been forecast, so the AEG valuation pipeline was red on every run and
+    could not have been anything else -- which is how it came to be red for six days with a
+    real crash (pyarrow) hiding inside the noise, on the only two companies that could publish.
+    """
+
+
 def _req(d, key, types, where):
     if key not in d:
         raise ConfigError(f"[{where}] missing required key '{key}'")
@@ -127,7 +146,7 @@ def load_config(path):
     # horizon, so an unreviewed config produces NO VALUATION. This is a hard gate, not a
     # warning; see the block above for why.
     if _opt(fc, "reviewed", bool, False) is not True:
-        raise ConfigError(
+        raise AwaitingReview(
             f"forecast.reviewed is not true — this company has NO AUTHORIZED FORECAST "
             f"HORIZON, so no valuation will be produced.\n"
             f"  The config currently carries horizon_N: {horizon_N}. If that value was "

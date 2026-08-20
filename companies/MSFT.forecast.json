@@ -1,0 +1,140 @@
+{
+ "_comment": [
+  "REVIEWED FORECAST - Microsoft Corporation. The machine file, byte-for-byte as dispatched to",
+  "run_valuation.yml on 2026-08-20, which produced outputs/MSFT_valuation.csv.",
+  "",
+  "THE CONSTRAINT THIS SATISFIES, and it is the only one there is (James Kostohryz, 2026-08-20):",
+  "abnormal earnings growth must be ZERO in the first year of the continuing period, and",
+  "earnings must be at a normalized level. Everything else -- leverage, buybacks, revenue,",
+  "margins, tax, the investment path -- is a free forecaster choice.",
+  "",
+  "It is met at AEG(cfg_N) = -0.0188 per share, a discarded tail of 0.49% of value against a 1%",
+  "limit, and a normalization gap of 0.3% of EPS against 15%. Solved on the ENGINE, by running",
+  "it, not derived: at a terminal net-operating-asset growth of 8.9% the tail is 1.09% and",
+  "refuses; at 9.7% AEG overshoots to -0.0733 and diverges; 9.3% lands it.",
+  "",
+  "THE ECONOMIC STORY. Revenue growth fades 14.0% to 4.4% and gross margin 67.9% to 65.9% as",
+  "infrastructure dilutes software. Net operating assets keep growing at 9.8% at the horizon,",
+  "well above revenue -- so Microsoft is still investing about $80bn a year in year 12, and that",
+  "marginal dollar has stopped earning anything above its cost of capital. AVERAGE return on net",
+  "operating assets remains high and that is correct and not the test: the legacy book keeps its",
+  "rent, which is capitalised in the anchor. It is the incremental dollar that must stop earning",
+  "an excess.",
+  "",
+  "AN EQUALLY VALID ALTERNATIVE, NOT CHOSEN: holding the investment path and instead fading",
+  "terminal revenue growth to 2.2% also lands AEG at zero, and values Microsoft at 262.10 rather",
+  "than 276.30. That version says Microsoft's growth itself decays below inflation; this one says",
+  "the growth continues but stops being profitable at the margin."
+ ],
+ "ticker": "MSFT",
+ "reviewed": true,
+ "reviewed_by": "James Kostohryz",
+ "reviewed_on": "2026-08-20",
+ "primary": "base",
+ "expected_values": {
+  "_comment": "Tied engine equity per anchor share, real terms. The reproduction check.",
+  "base": 276.3042,
+  "expected_value": 276.3042,
+  "_basis": "adjusted equity (depreciation + market debt); base equity book-debt tied is 269.4969",
+  "_gates": "tie 4.83e-09 (relative 9.77e-15); truncation PASS; funding PASS; terminal payout PASS",
+  "_premium": "company premium -0.8104pp at 1y, +0.5354 at 30y, +0.1379 collapsed; Region 2 own fitted curve",
+  "_aeg_value": "the abnormal-earnings-growth stream is worth +3.99/share, 1.5% of value; the rest is neutral value"
+ },
+ "scenarios": [
+  {
+   "name": "base",
+   "probability": 1.0,
+   "mode": "Enterprise",
+   "N": 12,
+   "drivers": {
+    "revenue_growth": [
+     0.14,
+     0.115,
+     0.09625,
+     0.08219,
+     0.07164,
+     0.06373,
+     0.0578,
+     0.05335,
+     0.05001,
+     0.04751,
+     0.04563,
+     0.04422
+    ],
+    "gross_margin": [
+     0.679,
+     0.6714,
+     0.66669,
+     0.66377,
+     0.66196,
+     0.66083,
+     0.66014,
+     0.6597,
+     0.65944,
+     0.65927,
+     0.65917,
+     0.6591
+    ],
+    "sga_ratio": [
+     0.212,
+     0.212,
+     0.212,
+     0.212,
+     0.212,
+     0.212,
+     0.212,
+     0.212,
+     0.212,
+     0.212,
+     0.212,
+     0.212
+    ],
+    "tax_rate": [
+     0.195,
+     0.195,
+     0.195,
+     0.195,
+     0.195,
+     0.195,
+     0.195,
+     0.195,
+     0.195,
+     0.195,
+     0.195,
+     0.195
+    ],
+    "noa_growth": [
+     0.23,
+     0.19438,
+     0.16802,
+     0.14852,
+     0.13408,
+     0.1234,
+     0.1155,
+     0.10965,
+     0.10532,
+     0.10212,
+     0.09975,
+     0.09799
+    ],
+    "buyback_rate": [
+     0.01,
+     0.01,
+     0.01,
+     0.01,
+     0.01,
+     0.01,
+     0.01,
+     0.01,
+     0.01,
+     0.01,
+     0.01,
+     0.01
+    ]
+   },
+   "singles": {
+    "target_flev": 0.35
+   }
+  }
+ ]
+}

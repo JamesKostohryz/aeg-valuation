@@ -126,11 +126,19 @@ def _truncation_funding_terminal_gates(work, cfg, converge_K):
             f"TRUNCATION GATES FAILED TO RUN: the stop year could not be judged against the "
             f"terminal and neutral-level conditions ({e})"]
 
+    # A gate that fires must say whether its escape hatch was even available. On 2026-08-20
+    # this fired on PepsiCo's bear case with convergence.reviewed: true sitting in the config,
+    # and the message gave no way to tell whether the flag had not been read or had been read
+    # and was False -- so the next hour went into reading code instead of the one fact that
+    # settles it. The flags are now in the reason.
+    _hatches = {k: bool(cfg.get(k)) for k in
+                ("convergence_reviewed", "funding_reviewed", "terminal_reviewed")}
     if conv["verdict"] == "REVIEW" and not cfg.get("convergence_reviewed"):
         reasons.append(
             f"TRUNCATION REVIEW REQUIRED: {conv['verdict_reason']} (clear with "
             "convergence.reviewed: true in the company config, exactly as the primary "
-            "scenario's own truncation is cleared)")
+            f"scenario's own truncation is cleared. Escape hatches as this run read them: "
+            f"{_hatches}; cfg carried {len(cfg)} keys)")
 
     fund = FCK.funding_report(work)
     if fund["verdict"] == "REVIEW" and not cfg.get("funding_reviewed"):

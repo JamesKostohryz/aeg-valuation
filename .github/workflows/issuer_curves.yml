@@ -34,15 +34,13 @@ name: issuer-credit-curves-refresh
 # company side are rebuilt in dependency order rather than racing.
 
 on:
-  # THE MONTHLY SCHEDULE IS COMMENTED OUT ON PURPOSE, AND TURNING IT ON IS JAMES'S DECISION.
-  # A live cron here re-prices 1,615 bonds (16,150 EODHD units) and REFITS the credit curves,
+  # ARMED 2026-08-20 ON JAMES'S EXPLICIT APPROVAL, gated as the standing rule requires: this
+  # cron re-prices 1,615 bonds (16,150 EODHD units, ~16% of one day's 100,000-unit allowance,
+  # which resets daily, at no incremental dollar cost) and REFITS the issuer credit curves,
   # which moves every company's Region 2 premium and therefore every company's discount rate.
-  # That is GATED work by the standing rule, so it does not start itself. Everything below has
-  # been proven byte-for-byte against the committed 2026-08-19 outputs and can be run by hand
-  # from the Actions tab today; uncomment these two lines to arm the monthly refresh.
-  #
-  # schedule:
-  #   - cron: "0 18 2 * *"    # 2nd of the month, 18:00 UTC — after idio-universe-refresh
+  # First run 2026-09-02. To stop it, comment out the two lines below.
+  schedule:
+    - cron: "0 18 2 * *"      # 2nd of the month, 18:00 UTC — after idio-universe-refresh
   workflow_dispatch:
     inputs:
       skip_reprice:

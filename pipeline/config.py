@@ -147,12 +147,21 @@ def load_config(path, require_forecast=True):
         horizon_N, horizon_reviewed = None, False
     else:
         if fc.get("horizon_N") is None:
-            raise ConfigError(
-                "missing required 'forecast.horizon_N' — the explicit forecast horizon "
-                "(cfg_N), i.e. the number of years YOU judge abnormal earnings growth to "
-                "persist for this company. There is no default and there never will be. "
-                "Any integer from 1 upward is accepted. Set it deliberately, then set "
-                "'forecast.reviewed: true' to confirm you chose it.")
+            # AwaitingReview, not a bare ConfigError. "No horizon at all" and "a horizon nobody
+            # confirmed" are the SAME EVENT -- nobody has forecast this company -- and a freshly
+            # onboarded config is the first case by construction. Classifying it as a hard
+            # refusal turned every newly onboarded company into a red fleet run, which is the
+            # problem the AwaitingReview bucket was created to end, arriving from the other side.
+            # A horizon that is present but MALFORMED stays a hard ConfigError below: that is a
+            # broken config, not an unforecast company.
+            raise AwaitingReview(
+                "missing 'forecast.horizon_N' — this company has NO FORECAST HORIZON AT ALL, "
+                "so no valuation will be produced. It is AWAITING FORECAST.\n"
+                "  cfg_N is the competitive-advantage period: the number of years YOU judge "
+                "abnormal earnings growth to persist for this company. There is no default "
+                "and there never will be. Any integer from 1 upward is accepted.\n"
+                "  To authorize a valuation, add:\n"
+                "      forecast:\n        horizon_N: <your judgment>\n        reviewed: true")
         try:
             horizon_N = int(fc["horizon_N"])
         except (TypeError, ValueError):

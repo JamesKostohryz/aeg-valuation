@@ -315,9 +315,31 @@ if _ok:
 try:
     CFG.load_config(_p3)
     ok(False, "the SAME config must still be refused on the valuation path")
-except CFG.ConfigError as _e:
+except CFG.AwaitingReview as _e:
     ok("horizon_N" in str(_e),
        "the same config is still refused on the valuation path (require_forecast defaults True)")
+    ok(isinstance(_e, CFG.ConfigError),
+       "AwaitingReview is still a ConfigError, so every existing handler catches it")
+
+# A MISSING horizon is AWAITING FORECAST; a MALFORMED one is a broken config. Classifying the
+# first as a hard refusal made every freshly onboarded company turn the fleet red.
+open(_p3, "w").write(_BARE + "forecast:\n  horizon_N: banana\n  reviewed: true\n")
+try:
+    CFG.load_config(_p3)
+    ok(False, "a malformed horizon must be refused")
+except CFG.AwaitingReview:
+    ok(False, "a MALFORMED horizon must be a hard ConfigError, not AWAITING FORECAST")
+except CFG.ConfigError:
+    ok(True, "a malformed horizon is a hard ConfigError, not AWAITING FORECAST")
+
+open(_p3, "w").write(_BARE + "forecast:\n  horizon_N: 12\n")
+try:
+    CFG.load_config(_p3)
+    ok(False, "an unconfirmed horizon must be refused")
+except CFG.AwaitingReview:
+    ok(True, "an unconfirmed horizon is AWAITING FORECAST, same bucket as a missing one")
+
+open(_p3, "w").write(_BARE)
 
 # And the relaxation must not swallow a real config error.
 open(_p3, "w").write(_BARE.replace('fy_end_month: 12', 'fy_end_month: 99'))

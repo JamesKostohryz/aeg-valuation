@@ -1,6 +1,12 @@
 # AEG valuation — Python dependency source of truth (all workflows: run_valuation.yml,
 # valuation.yml, regression.yml). The run_company / apply_payload valuation path needs
 # openpyxl + PyYAML; the normalization engine (company setup / onboarding) needs numpy.
+#
+# pytest was added 2026-08-19. The regression harness runs the three hermetic idio suites as a
+# pytest invocation, and on its first CI run that step failed with "<no output>" purely because
+# pytest was absent from the runner -- a green suite reported as a red check, which is the same
+# class of uninformative gate as a red suite reported green.
 openpyxl==3.1.5
 PyYAML
 numpy
+pytest

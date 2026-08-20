@@ -45,7 +45,12 @@ def run_unit(name):
     cwd = _PIPE if (not name.startswith("-m ")
                     and os.path.exists(os.path.join(_PIPE, name))) else _ROOT
     r = subprocess.run([sys.executable] + argv, cwd=cwd, capture_output=True, text=True)
-    tail = (r.stdout.strip().splitlines() or ["<no output>"])[-1]
+    # Fall back to stderr when a suite dies before printing anything. A failing check whose
+    # reason reads "<no output>" tells the reader nothing and trains them to skip it; the first
+    # CI run of the idio block failed exactly that way, and the reason (pytest not installed on
+    # the runner) was sitting in stderr the whole time.
+    tail = (r.stdout.strip().splitlines()
+            or r.stderr.strip().splitlines() or ["<no output>"])[-1]
     check(r.returncode == 0, f"{name}  ({tail})")
 
 

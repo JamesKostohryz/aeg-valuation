@@ -14,6 +14,10 @@ on:
       # consequential edit anyone makes here -- ran no harness at all. Caught by ci_drift.py
       # on its first run, on the commit that changed PepsiCo's bear case.
       - "companies/**"
+      # data/** joined the filters on 2026-08-20 with the committed bond snapshot. The issuer
+      # credit curves are FITTED from data/bond_spreads/*, so an edit there moves every
+      # company's Region 2 premium while touching no .py file at all.
+      - "data/**"
       - "MODEL_TEMPLATE.xlsx"
       - "tests/**"
       - ".github/workflows/regression.yml"
@@ -29,6 +33,10 @@ on:
       # consequential edit anyone makes here -- ran no harness at all. Caught by ci_drift.py
       # on its first run, on the commit that changed PepsiCo's bear case.
       - "companies/**"
+      # data/** joined the filters on 2026-08-20 with the committed bond snapshot. The issuer
+      # credit curves are FITTED from data/bond_spreads/*, so an edit there moves every
+      # company's Region 2 premium while touching no .py file at all.
+      - "data/**"
       - "MODEL_TEMPLATE.xlsx"
       - "tests/**"
       - ".github/workflows/regression.yml"

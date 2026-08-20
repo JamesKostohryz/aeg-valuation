@@ -78,7 +78,12 @@ def main():
     # 2. THE CONTENT. Every third-party package the repository imports at module scope has to be
     #    in the list. Scanned from the source rather than asserted, so a new import cannot be
     #    added without either declaring it or failing here.
+    # `concurrent` (concurrent.futures) added 2026-08-20 with idio/bond_reprice.py. It is
+    # standard library and always has been; the list was simply incomplete. Widening the list is
+    # correct here -- the guard's job is to catch an UNDECLARED THIRD-PARTY import, and a false
+    # positive on a stdlib module is how a guard trains people to ignore it.
     STDLIB_OK = {"os", "sys", "csv", "json", "math", "re", "gzip", "zlib", "shutil", "time",
+                 "concurrent",
                  "datetime", "argparse", "subprocess", "itertools", "tempfile", "hashlib",
                  "urllib", "collections", "typing", "glob", "textwrap", "copy", "random",
                  "statistics", "functools", "dataclasses", "pathlib", "warnings", "traceback",

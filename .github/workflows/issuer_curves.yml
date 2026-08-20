@@ -1,0 +1,198 @@
+name: issuer-credit-curves-refresh
+
+# WHY THIS EXISTS. `outputs/issuer_widen_latest.csv` carries a `generated` date and
+# `idio/erp.py::ISSUER_WIDEN_MAX_AGE_DAYS = 45`. Past that limit `load_issuer_widen` returns
+# `(None, reason)`, `idio/company_curve.build()` raises `PremiumRefused`, and EVERY VALUATION ON
+# THIS SYSTEM STOPS. The 2026-08-19 vintage expires 2026-10-03. Region 2 became load-bearing on
+# 2026-08-20 -- before that day every company discounted at the market rate -- so a file with a
+# hard expiry and nothing regenerating it stopped being a tidiness item and became a scheduled
+# outage with a date on it.
+#
+# IT RE-PRICES BEFORE IT REFITS, AND THAT ORDER IS THE WHOLE POINT. Re-running the fit on the
+# frozen 2026-08-17 bond snapshot would write a fresh `generated` date onto prices that never
+# moved and buy the system another 45 days for data that is a month older each time. The refit
+# would be green, the reader would be satisfied, and every company premium would be pinned to
+# mid-August 2026 permanently. That is this project's standing failure mode -- a number silently
+# inert while every gate reports success -- and it is exactly what a naive "just schedule the
+# fitter" workflow would have built. So:
+#
+#   step 1  re-pull 1,615 bond prices from EODHD          <- makes the data new
+#   step 2  refit the issuer curves, REFUSING if the      <- makes the curves new
+#           newest quote is older than MAX_BOND_AGE
+#   step 3  prove the output actually MOVED               <- makes the claim checkable
+#
+# Step 3 is not ceremony. An identical file after 1,449 re-priced bonds is not a quiet month, it
+# is evidence the pull did nothing, and it fails the run rather than committing.
+#
+# THE SPEND. 1,615 bonds x 10 API units (MEASURED 2026-08-17, not estimated) = 16,150 units
+# against a 100,000-unit allowance that RESETS DAILY. About 16% of one day, once a month, at no
+# incremental dollar cost. Approved by James 2026-08-20.
+#
+# MONTHLY IS AMPLE, AND THE DAY MATTERS. The fit reads `outputs/idio_universe_latest.csv`, which
+# idio-universe-refresh rebuilds on the 2nd at 14:00 UTC. This runs after it, and before the
+# rate-side refresh on the 3rd at 15:00, so the market side, then the credit side, then the
+# company side are rebuilt in dependency order rather than racing.
+
+on:
+  # THE MONTHLY SCHEDULE IS COMMENTED OUT ON PURPOSE, AND TURNING IT ON IS JAMES'S DECISION.
+  # A live cron here re-prices 1,615 bonds (16,150 EODHD units) and REFITS the credit curves,
+  # which moves every company's Region 2 premium and therefore every company's discount rate.
+  # That is GATED work by the standing rule, so it does not start itself. Everything below has
+  # been proven byte-for-byte against the committed 2026-08-19 outputs and can be run by hand
+  # from the Actions tab today; uncomment these two lines to arm the monthly refresh.
+  #
+  # schedule:
+  #   - cron: "0 18 2 * *"    # 2nd of the month, 18:00 UTC — after idio-universe-refresh
+  workflow_dispatch:
+    inputs:
+      skip_reprice:
+        description: "Refit on the committed bond snapshot WITHOUT re-pulling prices. Diagnostic only — it produces a fossil with a fresh timestamp. Leave off."
+        type: boolean
+        default: false
+      max_bond_age_days:
+        description: "Refuse to refit if the newest bond quote is older than this many days."
+        type: string
+        default: "21"
+      dry_run:
+        description: "Print the API bill and stop. Spends nothing, commits nothing."
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: issuer-credit-curves-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # The SECOND bond source. Five issuers that already had curves in production -- AAPL, PG,
+      # T, WMT and GOOG -- are not in the August pull's two research samples at all; real-yields
+      # has held their bonds all along in outputs/bonds_used_<T>.csv, and rate_refresh.yml now
+      # re-runs company-data monthly for every onboarded company, so they are fresh by
+      # construction. Losing coverage that already existed would be a regression however good
+      # the new fit is. Public repository, so no token.
+      - name: Check out real-yields (second bond source + the Treasury leg)
+        uses: actions/checkout@v4
+        with:
+          repository: JamesKostohryz/real-yields
+          path: _real_yields
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # HERMETIC, NO NETWORK, NO API UNITS. Both ports are proven against frozen fixtures
+      # BEFORE anything is pulled or written:
+      #   test_bond_reprice   — 113 real bonds rebuilt from cached price series, every field
+      #                          equal to the committed file, and 25 that must still be dropped.
+      #   test_issuer_curves  — the fit reproduces outputs/issuer_widen_latest.csv byte for
+      #                          byte, and the freshness guard is shown to DISCRIMINATE.
+      # A port that has drifted fails here, before it can spend money or move a discount rate.
+      - name: Hermetic self-test (proves both ports are still faithful)
+        run: python -m pytest tests/test_bond_reprice.py tests/test_issuer_curves.py -q
+
+      - name: Price the pull before spending it
+        run: python idio/bond_reprice.py --cache "$RUNNER_TEMP/px" --dry-run
+
+      - name: Stop here on a dry run
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "dry_run requested — nothing pulled, nothing fitted, nothing committed." \
+            >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+
+      # $RUNNER_TEMP is empty on every run, so nothing is silently reused. The pull is
+      # resumable within a run and skips nothing between runs, which is the opposite of the
+      # working-folder tool's behaviour and is deliberate: a cache that survives is a fossil.
+      - name: Re-price the bonds (EODHD)
+        if: ${{ !inputs.skip_reprice }}
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+        run: |
+          python idio/bond_reprice.py \
+            --cache "$RUNNER_TEMP/px" \
+            --out data/bond_spreads/bond_spreads_live.csv
+
+      - name: Refit the issuer credit curves
+        run: |
+          cp outputs/issuer_widen_latest.csv "$RUNNER_TEMP/widen_before.csv"
+          cp outputs/tier3_fit.json "$RUNNER_TEMP/tier3_before.json"
+          python idio/issuer_curves.py \
+            --outdir outputs \
+            --real-yields _real_yields \
+            --max-bond-age-days "${{ inputs.max_bond_age_days || '21' }}" \
+            | tee "$RUNNER_TEMP/fit.log"
+
+      # THE ANTI-FOSSIL ASSERTION. A refit that reproduces last month's file exactly, after
+      # 1,449 bonds were re-priced, means the prices did not change -- which means the pull
+      # failed silently. Failing the run leaves the OLD file in place with its OLD date, so the
+      # system ages out honestly instead of being handed 45 more days it did not earn.
+      - name: Prove the curves actually moved, and say by how much
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import csv, hashlib, json, os
+          rt = os.environ["RUNNER_TEMP"]
+          before, after = os.path.join(rt, "widen_before.csv"), "outputs/issuer_widen_latest.csv"
+          h = lambda p: hashlib.md5(open(p, "rb").read()).hexdigest()
+          skipped = os.environ.get("SKIP_REPRICE") == "true"
+          print("## Issuer credit curves refreshed\n")
+          j = json.load(open("outputs/tier3_fit.json"))
+          print("* generated **%s**, tier 1 %d / tier 2 %d, tier-3 slope adopted: %s"
+                % (j["generated"], j["n_tier1"], j["tier_counts"]["2"], j["adopted"]))
+          b = {r["ticker"]: float(r["widen_30"]) for r in csv.DictReader(open(before))}
+          a = {r["ticker"]: float(r["widen_30"]) for r in csv.DictReader(open(after))}
+          both = sorted(set(a) & set(b))
+          d = sorted(abs(a[t] - b[t]) for t in both)
+          print("* names %d -> %d; 30-year widening moved by a median of **%.4f pp**, "
+                "p90 %.4f, max %.4f" % (len(b), len(a), d[len(d)//2], d[int(.9*len(d))], d[-1]))
+          moved = [t for t in both if a[t] != b[t]]
+          print("* %d of %d names changed" % (len(moved), len(both)))
+          if h(before) == h(after) and not skipped:
+              raise SystemExit(
+                  "\nREFUSED: the refit reproduced last month's file BYTE FOR BYTE after "
+                  "re-pricing 1,615 bonds. Bond prices do not stand still for a month, so the "
+                  "pull did nothing and this refresh would have bought 45 more days of life "
+                  "for frozen data. The old file is left in place, with its old date, so the "
+                  "staleness guard can do its job honestly.")
+          PY
+        env:
+          SKIP_REPRICE: ${{ inputs.skip_reprice }}
+
+      # The reader is the only consumer that matters. If it cannot load what the fit just wrote,
+      # committing it would take the system down on the next valuation rather than now.
+      - name: Prove idio/erp.py can read the file that was just written
+        run: |
+          python - <<'PY'
+          import sys; sys.path.insert(0, "idio")
+          import erp as IE
+          widen, meta = IE.load_issuer_widen()
+          if widen is None:
+              raise SystemExit("REFUSED: the production reader rejects the file just written: %s" % (meta,))
+          assert len(widen) > 400, "only %d names" % len(widen)
+          bad = [t for t, c in widen.items() if len(c) != 30]
+          assert not bad, "names without a 30-tenor curve: %s" % bad[:5]
+          print("reader OK: %d names, generated %s, tiers %s" % (len(widen), meta["generated"], meta["tier_counts"]))
+          PY
+
+      - name: Commit + push
+        run: |
+          git config user.name "asfp-bot"
+          git config user.email "asfp-bot@users.noreply.github.com"
+          git add data/bond_spreads/bond_spreads_live.csv \
+                  outputs/issuer_widen_latest.csv \
+                  outputs/issuer_curve_fit.csv \
+                  outputs/tier3_fit.json
+          git commit -m "idio: re-price issuer bonds and refit the credit curves $(date -u +%F)" \
+            || { echo "no changes"; exit 0; }
+          git pull --rebase --autostash origin main || true
+          git push

@@ -8,3 +8,8 @@ _regwork/
 _curvework/
 _termwork/
 _anchor_timing_work/
+
+# Bond price pull cache. Regenerated on every refresh; committing it would make the
+# monthly re-price a no-op, which is the fossil this whole workflow exists to prevent.
+outputs/.bond_px_cache/
+outputs/.fred_cache/

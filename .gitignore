@@ -1,1 +1,10 @@
 __pycache__/
+
+# Scratch work directories written by the test suites and the regression harness. They hold
+# recalculated copies of the sealed template and must never be committed: a stale engine
+# workbook sitting in the repository is a valuation nobody built and nobody can trace. I
+# committed seven of them by accident in 4be8245 on 2026-08-19 with a bare `git add -A`.
+_regwork/
+_curvework/
+_termwork/
+_anchor_timing_work/

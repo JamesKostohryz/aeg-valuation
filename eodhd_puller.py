@@ -20,6 +20,130 @@ Format rules are per INPUT_CONTRACT.md:
 
 import csv, gzip, io, json, os, re, urllib.parse, urllib.request, zlib
 
+# ------------------------------------------------------------------ Compustat net-income overlay
+# GATED FIX, 2026-08-20. EODHD's netIncomeApplicableToCommonShares -> netIncome fallback chain
+# (see INCOME_MAP's "Net Income Common Stockholders" row and _calc('eps', ...) below) is
+# confirmed WRONG, not just missing, for a material share of company-years:
+# netIncomeApplicableToCommonShares is null 100% of the time in EODHD data through the 1990s,
+# 5-6% in the 2000s-2010s, and ~26% even in the 2020s (sampled 200 tickers, 2026-08-19 session).
+# When it falls through to netIncome, that field can be a non-GAAP or pre-special-item figure --
+# demonstrated directly on IBM, cross-checked against Compustat's real GAAP net income (niq),
+# annual figures: FY1991 EODHD netIncome -$564M vs Compustat -$2.86B (EODHD understates IBM's
+# real loss by ~5x); FY1992 EODHD -$6.87B vs Compustat -$4.97B (EODHD overstates the loss by
+# ~40%); FY1993 the two agree closely (-$7.99B vs -$8.10B). At the QUARTERLY level the divergence
+# is worse -- Q1 1991 EODHD's netIncome fallback reads +$532M positive against a real, documented
+# GAAP net loss of roughly -$1.7B (Compustat, ibq) that same quarter, a sign flip. Direction and
+# magnitude both vary unpredictably year to year, which is exactly what "silently wrong while
+# every gate reports success" looks like -- not a one-off, a real feed-quality issue for this
+# whole era. This reaches the live model input (this file builds the actual <T>_income.csv the
+# sealed AEG model consumes), not just the sector_aggregates.py research toolkit ("NOT A
+# VALUATION") where the same defect was first found -- confirmed no Compustat cross-check existed
+# anywhere in this repo before this fix.
+#
+# FIX, James's explicit instruction 2026-08-20: Compustat-primary, EODHD-fallback, logged.
+# `data/compustat_ni_overlay.json` (built by AEG-Project/tools/build_compustat_ni_overlay.py from
+# James's WRDS Compustat pull, matching sector_aggregates._load_compustat_company's own established
+# convention: net income to common = niq, falling back to ibq): 475 tickers, 18,566 ticker-years,
+# 1962-2024, wherever a fiscal year has a full 4 quarters of niq/ibq in Compustat. Applied to the
+# raw `fund` payload ONCE, before build_income/build_balance/build_cashflow each independently
+# parse it -- so all three statements' _fy0() completeness checks see the same corrected value and
+# keep agreeing on one shared FY0 year, per this file's own contract. FAIL-OPEN by design: any
+# ticker or year not in the overlay (uncovered names, or a missing/unreadable overlay file) falls
+# straight through to the untouched EODHD fallback chain -- never worse than before this fix, only
+# better where Compustat covers it. Refresh by re-running the AEG-Project builder and copying its
+# output here; not automated cross-repo (the Compustat store is local-only, 183MB, not in git).
+_COMPUSTAT_OVERLAY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                       "data", "compustat_ni_overlay.json")
+_COMPUSTAT_OVERLAY = None
+
+def _compustat_overlay():
+    global _COMPUSTAT_OVERLAY
+    if _COMPUSTAT_OVERLAY is None:
+        try:
+            with open(_COMPUSTAT_OVERLAY_PATH) as f:
+                _COMPUSTAT_OVERLAY = json.load(f)
+        except Exception:
+            _COMPUSTAT_OVERLAY = {}
+    return _COMPUSTAT_OVERLAY
+
+
+_FY_MATCH_TOLERANCE_DAYS = 20  # see docstring below
+
+
+def _days_between(d1, d2):
+    """Calendar-day distance between two 'YYYY-MM-DD' strings. No datetime import needed for
+    this precision -- a plain Julian-ish day count via each date's ordinal is overkill; using
+    Python's date type directly is simplest and exact."""
+    import datetime as _dt
+    try:
+        a = _dt.date.fromisoformat(d1[:10])
+        b = _dt.date.fromisoformat(d2[:10])
+    except ValueError:
+        return None
+    return abs((a - b).days)
+
+
+def _apply_compustat_ni_overlay(ticker, fund):
+    """Mutates fund['Financials']['Income_Statement']['yearly'][*]['netIncomeApplicableToCommonShares']
+    IN PLACE, per fiscal year, with Compustat's real GAAP net-income-to-common figure wherever the
+    overlay covers this ticker/year. Returns a log list of {year, old_eodhd_value,
+    new_compustat_value, compustat_source, fy_end_date} for every year actually changed -- this
+    fix responds to exactly the standing risk "a number that is silently wrong while every gate
+    reports success", so it does not get to be silent either. Must be called once, on the shared
+    `fund` payload, BEFORE build_income/build_balance/build_cashflow each call _yearly() on it --
+    see the note above _COMPUSTAT_OVERLAY_PATH for why that ordering matters.
+
+    MATCHES BY DATE PROXIMITY, NOT BY CALENDAR-YEAR-STRING EQUALITY -- a real bug found and fixed
+    while validating this overlay, 2026-08-20, before it ever shipped. The overlay's top-level key
+    per ticker is a calendar-year string (e.g. "2000"), but EODHD's own annual "date" field and
+    Compustat's real fiscal-year-end date (`fy_end_date` in the overlay record) can both fall in
+    the same calendar year while being MONTHS apart for a company with a non-December fiscal year
+    -- caught directly on ADM (June fiscal year-end through FY2013; EODHD's own annual entries are
+    nonetheless all dated December for that same era). Matching on the year string alone silently
+    paired the wrong six-month-shifted fiscal period together. This function instead looks at the
+    overlay's candidate year AND its two neighbors (year-1, year+1 -- a fiscal year label can
+    legitimately fall either side of a calendar-year boundary), picks whichever candidate's
+    fy_end_date is CLOSEST to this EODHD entry's own date, and only applies it if that distance is
+    within _FY_MATCH_TOLERANCE_DAYS. Anything that doesn't clear the bar is left untouched, falling
+    through to the existing (unfixed but unchanged) EODHD fallback for that one year -- fail-open,
+    same principle as the rest of this fix."""
+    if not ticker:
+        return []
+    base = ticker.split(".")[0].upper()
+    years_for_ticker = _compustat_overlay().get(base)
+    if not years_for_ticker:
+        return []
+    node = (((fund or {}).get("Financials") or {}).get("Income_Statement") or {}).get("yearly") or {}
+    log = []
+    for datestr, obj in node.items():
+        d = str(obj.get("date", datestr))[:10]
+        if len(d) < 4:
+            continue
+        try:
+            y = int(d[:4])
+        except ValueError:
+            continue
+        best_ov, best_dist = None, None
+        for cand_year in (str(y - 1), str(y), str(y + 1)):
+            ov = years_for_ticker.get(cand_year)
+            if not ov or not ov.get("fy_end_date"):
+                continue
+            dist = _days_between(d, ov["fy_end_date"])
+            if dist is None:
+                continue
+            if best_dist is None or dist < best_dist:
+                best_ov, best_dist = ov, dist
+        if best_ov is None or best_dist > _FY_MATCH_TOLERANCE_DAYS:
+            continue
+        old = obj.get("netIncomeApplicableToCommonShares")
+        new = best_ov["net_income_common"]
+        obj["netIncomeApplicableToCommonShares"] = new
+        log.append({"year": d[:4], "old_eodhd_value": old, "new_compustat_value": new,
+                    "compustat_source": best_ov.get("source"),
+                    "fy_end_date": best_ov.get("fy_end_date"), "match_distance_days": best_dist})
+    return log
+
+
 # ------------------------------------------------------------------ mappings
 # model label -> EODHD Income_Statement field (or ('CALC', how))
 INCOME_MAP = [
@@ -584,6 +708,15 @@ def pull_to_csvs(ticker, api_key, work_dir):
 
     pension = _edgar_pension(ticker)    # {} if unavailable (non-fatal)
 
+    # --- Compustat net-income overlay, GATED FIX 2026-08-20 (see the note above
+    # _COMPUSTAT_OVERLAY_PATH). Mutates `fund` in place, ONCE, before any of the three builders
+    # below parse it -- see that note for why this must happen before build_income, not inside it.
+    ni_overlay_log = _apply_compustat_ni_overlay(ticker, fund)
+    if ni_overlay_log:
+        print(f"  Compustat net-income overlay: {len(ni_overlay_log)} fiscal year(s) of "
+             f"'Net Income Common Stockholders' replaced with Compustat GAAP figures for {sym} "
+             f"(years: {', '.join(sorted(e['year'] for e in ni_overlay_log))})")
+
     # --- build the six CSVs from the fetched payloads ---
     ih, ir, _ = build_income(fund)
     bh, br, _ = build_balance(fund, pension)
@@ -595,6 +728,12 @@ def pull_to_csvs(ticker, api_key, work_dir):
         "prices":    ("REAL_prices.csv", build_prices_csv(eod)),
         "dividends": ("REAL_div.csv",    build_dividends_csv(divs)),
         "splits":    ("REAL_splits.csv", build_empty_splits_csv()),
+        # Not part of the loader's six-file contract -- an audit trail only, so it is always
+        # possible to see exactly which fiscal years' net income came from Compustat instead of
+        # EODHD for this company. `pipeline/run_company.py`'s stage_raw() ignores unrecognized
+        # keys in the returned dict (it only reads the RAW_FILES keys), so this is safe to add.
+        "ni_overlay_log": ("REAL_ni_overlay_log.json",
+                          json.dumps(ni_overlay_log, indent=1, sort_keys=True)),
     }
 
     # --- write into work_dir and return the path contract ---

@@ -30,6 +30,12 @@ STANDALONE = {
     "diagnose_tie": "diagnostic tool run by hand when a tie residual needs investigating",
     "validate_load": "diagnostic tool run by hand against a built workbook",
     "run_scenarios": "imported lazily inside run_company's scenario branch (grep-visible there)",
+    # 2026-08-20. Three operator/automation entry points, each invoked as a script by a named
+    # workflow and each with its own tests. They are declared rather than wired because wiring
+    # them into the valuation path would be worse: none of them may run during a valuation.
+    "rate_refresh": "monthly rate-side refresh; invoked as a script by rate_refresh.yml",
+    "add_company": "step 1 of adding a company; invoked as a script by add_company.yml",
+    "ci_drift": "asks GitHub whether CI actually ran; invoked as a script by ci_drift.yml",
 }
 
 # A statement-form import must start a line; a dynamic __import__("name") can appear anywhere

@@ -9,6 +9,11 @@ on:
       - "idio/**"
       - "requirements.txt"
       - ".github/workflows/**"
+      # companies/** was missing until 2026-08-20, and test_reviewed_forecast.py reads
+      # companies/PEP.forecast.json. So editing a forecast -- a horizon, a driver, the most
+      # consequential edit anyone makes here -- ran no harness at all. Caught by ci_drift.py
+      # on its first run, on the commit that changed PepsiCo's bear case.
+      - "companies/**"
       - "MODEL_TEMPLATE.xlsx"
       - "tests/**"
       - ".github/workflows/regression.yml"
@@ -19,6 +24,11 @@ on:
       - "idio/**"
       - "requirements.txt"
       - ".github/workflows/**"
+      # companies/** was missing until 2026-08-20, and test_reviewed_forecast.py reads
+      # companies/PEP.forecast.json. So editing a forecast -- a horizon, a driver, the most
+      # consequential edit anyone makes here -- ran no harness at all. Caught by ci_drift.py
+      # on its first run, on the commit that changed PepsiCo's bear case.
+      - "companies/**"
       - "MODEL_TEMPLATE.xlsx"
       - "tests/**"
       - ".github/workflows/regression.yml"

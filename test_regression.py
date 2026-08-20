@@ -174,6 +174,11 @@ def main():
     # dependency always hides -- is declared. No imports of its own beyond the standard
     # library, so it can never be the test that fails for want of a package.
     run_unit("test_workflow_deps.py")
+    # The rate-side refresh dispatcher. Offline; every cross-repository call is intercepted, so
+    # what it proves is WHAT it would send -- above all that it sends obs_category=KEEP. Sending
+    # a concrete category would silently re-decide every company's durability judgment, which
+    # lands in the published cost-of-equity curve, on every scheduled run.
+    run_unit("test_rate_refresh.py")
     # THE COMPANY-PREMIUM PACKAGE. Until 2026-08-19 nothing ran these on a push: they live in
     # tests/, but this harness never listed them, and idio-universe-refresh -- the only workflow
     # that did run them -- fires on a monthly cron and on manual dispatch. So a change to

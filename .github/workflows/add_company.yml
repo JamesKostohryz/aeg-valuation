@@ -1,0 +1,111 @@
+name: add company (one button)
+
+# ONE DISPATCH INSTEAD OF TWO ACROSS TWO REPOSITORIES.
+#
+# Adding a company used to be: dispatch real-yields' company-data for the ticker, wait, notice
+# it had finished, then come here and dispatch onboard. Two repositories, two buttons, and if
+# you did them in the wrong order onboard refused with a cross-repo message that reads like a
+# defect. This does both, in order, and waits.
+#
+# WHAT IT STILL CANNOT DO, AND NEVER WILL. It cannot forecast the company. horizon_N is the
+# competitive-advantage period and rule D1 makes it permanently human, so the company lands in
+# AWAITING FORECAST and is named on every fleet run until you set it. That is step 3 of 3, and
+# it is the only one left.
+#
+#   1. this workflow      rate side + config
+#   2. you                horizon_N + reviewed: true + the driver payload
+#   3. run-valuation      the RUN button, with the payload
+
+on:
+  workflow_dispatch:
+    inputs:
+      ticker:
+        description: "Ticker to add (e.g. LIN)"
+        required: true
+        type: string
+      obs_category:
+        description: "Obsolescence durability: A=durable, B=moderate, C=exposed. Your judgment — it lands in the published cost-of-equity curve. KEEP reuses a category already recorded for this ticker."
+        type: choice
+        default: "KEEP"
+        options: ["KEEP", "A", "B", "C"]
+      force:
+        description: "Overwrite an existing companies/<TICKER>.yaml"
+        type: boolean
+        default: false
+      skip_rate_side:
+        description: "Skip step 1 — only do this if the rate side is already published and current"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: add-company-${{ github.event.inputs.ticker }}
+  cancel-in-progress: false
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # STEP 1. real-yields builds the rate side: coe_v2_<T>, cod_<T>, company_<T>, and the
+      # issuer's bonds. Dispatched and then WAITED ON, because onboarding refuses without it and
+      # a race here would look exactly like the cross-repo failure this workflow exists to end.
+      - name: Build the rate side (real-yields company-data)
+        if: ${{ !inputs.skip_rate_side }}
+        env:
+          CROSS_REPO_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+          TICKER: ${{ inputs.ticker }}
+          OBS: ${{ inputs.obs_category }}
+        run: python pipeline/add_company.py "$TICKER" --obs-category "$OBS" --wait
+
+      # STEP 2. This repository writes companies/<TICKER>.yaml. It refuses loudly if step 1 did
+      # not actually publish, rather than writing a config that cannot price.
+      - name: Onboard the ticker
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+          TICKER: ${{ inputs.ticker }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          FLAG=""; [ "$FORCE" = "true" ] && FLAG="--force"
+          python pipeline/onboard.py "$TICKER" $FLAG
+
+      - name: Commit config
+        env:
+          TICKER: ${{ inputs.ticker }}
+        run: |
+          T=$(echo "$TICKER" | tr '[:lower:]' '[:upper:]')
+          git config user.name "aeg-bot"
+          git config user.email "aeg-bot@users.noreply.github.com"
+          git add "companies/${T}.yaml"
+          git commit -m "onboard: ${T} config" || { echo "no change to commit"; exit 0; }
+          git pull --rebase --autostash origin main || true
+          git push
+
+      - name: What is left to do
+        env:
+          TICKER: ${{ inputs.ticker }}
+        run: |
+          T=$(echo "$TICKER" | tr '[:lower:]' '[:upper:]')
+          {
+            echo "### ${T} is added and AWAITING FORECAST"
+            echo ""
+            echo "The rate side is published and \`companies/${T}.yaml\` is committed."
+            echo "No valuation exists yet, and none will until you make the one judgment"
+            echo "this system will never make for you:"
+            echo ""
+            echo '```yaml'
+            echo "forecast:"
+            echo "  horizon_N: <the years you judge abnormal earnings growth to persist>"
+            echo "  reviewed: true"
+            echo '```'
+            echo ""
+            echo "Then dispatch **run-valuation** with the driver payload."
+          } >> "$GITHUB_STEP_SUMMARY"

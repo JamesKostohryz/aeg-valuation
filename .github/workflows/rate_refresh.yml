@@ -1,0 +1,68 @@
+name: rate-side refresh (per-company COE/COD)
+
+# WHY THIS EXISTS. A company's cost of equity and cost of debt come from three files published
+# by real-yields: coe_v2_<T>_latest_annual.csv, cod_<T>_annual.csv and company_<T>.csv. The
+# GLOBAL curve is rebuilt daily. Those three are not -- they are written only when somebody
+# dispatches real-yields' company-data workflow FOR THAT TICKER, and until 2026-08-20 nothing
+# scheduled it.
+#
+# Measured on 2026-08-19: AAPL's rate side was 36 days old, T's 31, POOL's 22, KO's and PEP's
+# 17. The Coca-Cola valuation published that day discounted at a cost of equity built on
+# 3 August and said nothing, because the four-method tie is an internal-consistency proof and
+# ties exactly as well on a frozen curve. rate_feed.py now warns past 30 days and refuses past
+# 90; this stops it happening.
+#
+# IT DOES NOT RE-DECIDE THE DURABILITY CATEGORY. OBS_CATEGORY picks the obsolescence elevator
+# preset and lands in the published cost-of-equity curve, so a refresh that re-chose it would
+# move every company's discount rate with no diff to see. It dispatches obs_category=KEEP,
+# which reuses what run_stamp_<T>.csv records for that ticker.
+#
+# MONTHLY, three days after the ERP re-anchor and the day after idio-universe-refresh, so the
+# market side is settled before the company side is rebuilt on top of it.
+
+on:
+  schedule:
+    - cron: "0 15 3 * *"      # 3rd of the month, 15:00 UTC
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Comma-separated tickers (blank = every onboarded company)"
+        required: false
+        default: ""
+      dry_run:
+        description: "List what would be dispatched and stop"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rate-side-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Proves the dispatcher reads the company list and builds the payload before any
+      # cross-repository call is made. Offline, no token, no side effect.
+      - name: Self-test (offline)
+        run: python pipeline/test_rate_refresh.py
+
+      - name: Dispatch real-yields company-data for every onboarded company
+        env:
+          # Needs actions:write on real-yields. The default GITHUB_TOKEN cannot reach another
+          # repository, so this fails loudly rather than silently doing nothing.
+          CROSS_REPO_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+        run: |
+          python pipeline/rate_refresh.py \
+            ${{ inputs.only != '' && format('--only {0}', inputs.only) || '' }} \
+            ${{ inputs.dry_run && '--dry-run' || '' }}

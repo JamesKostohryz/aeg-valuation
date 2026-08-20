@@ -34,13 +34,21 @@ name: issuer-credit-curves-refresh
 # company side are rebuilt in dependency order rather than racing.
 
 on:
-  # ARMED 2026-08-20 ON JAMES'S EXPLICIT APPROVAL, gated as the standing rule requires: this
-  # cron re-prices 1,615 bonds (16,150 EODHD units, ~16% of one day's 100,000-unit allowance,
-  # which resets daily, at no incremental dollar cost) and REFITS the issuer credit curves,
-  # which moves every company's Region 2 premium and therefore every company's discount rate.
-  # First run 2026-09-02. To stop it, comment out the two lines below.
-  schedule:
-    - cron: "0 18 2 * *"      # 2nd of the month, 18:00 UTC — after idio-universe-refresh
+  # DISPATCH-ONLY, AND THE ABSENT CRON IS THE POINT. It was armed monthly for four hours on
+  # 2026-08-20 and James asked the right question: what is a monthly refresh FOR? Nothing reads
+  # these curves except `idio/company_curve.build()`, and that is called by `run_company` only
+  # while a valuation is actually running. The market ERP and the real risk-free are separate
+  # and daily; the universe and the semi-deviation are separate and monthly. The bond data
+  # feeds nothing except a valuation in progress.
+  #
+  # So a monthly cron was solving a SYMPTOM -- `ISSUER_WIDEN_MAX_AGE_DAYS = 45` makes the file
+  # expire, and a scheduled refresh stops it expiring -- which is circular, and it would have
+  # re-priced 3,182 bonds every month in months when nothing was valued at all. The refresh now
+  # runs from `run_valuation.yml` when the curves are stale AND a valuation is being asked for,
+  # so the curves are fresh AS OF THE VALUATION rather than as of the 2nd of the month, which
+  # is strictly better as well as cheaper.
+  #
+  # Run it by hand any time from the Actions tab.
   workflow_dispatch:
     inputs:
       skip_reprice:

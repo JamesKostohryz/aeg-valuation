@@ -55,6 +55,51 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # The second bond source, and the Treasury leg the issuer curves are stripped against.
+      - name: Checkout real-yields
+        uses: actions/checkout@v4
+        with:
+          repository: JamesKostohryz/real-yields
+          path: _real_yields
+
+      # ------------------------------------------------------------------ ON-DEMAND CREDIT
+      # WHY THIS IS HERE AND NOT ON A CRON. `outputs/issuer_widen_latest.csv` expires at
+      # `idio/erp.py::ISSUER_WIDEN_MAX_AGE_DAYS`, and past that EVERY valuation refuses with
+      # PremiumRefused. A monthly cron would stop that -- by re-pricing three thousand bonds
+      # in months when nothing is valued, and by making the curves fresh as of the 2nd of the
+      # month rather than as of the valuation. Nothing reads these curves except a valuation
+      # in progress, so the honest place to refresh them is immediately before one.
+      #
+      # It only fires when the curves are actually stale, so valuing three companies in a week
+      # re-prices once, not three times. REFRESH_MARGIN_DAYS refreshes a little before the
+      # cliff rather than exactly on it, so a valuation never lands on the boundary.
+      - name: Refresh the issuer credit curves if they are stale
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+        run: |
+          python - <<'EOF'
+          import datetime as dt, json, os, subprocess, sys
+          MARGIN = 5
+          meta = json.load(open("outputs/tier3_fit.json"))
+          sys.path.insert(0, "idio"); import erp as IE
+          gen = dt.date.fromisoformat(meta["generated"])
+          age = (dt.date.today() - gen).days
+          limit = IE.ISSUER_WIDEN_MAX_AGE_DAYS - MARGIN
+          print("issuer credit curves generated %s, %d days ago (refresh at %d, refuse at %d)"
+                % (gen, age, limit, IE.ISSUER_WIDEN_MAX_AGE_DAYS))
+          if age <= limit:
+              print("fresh enough -- no bonds pulled, no API units spent.")
+              raise SystemExit(0)
+          print("STALE. Re-pricing the bonds and refitting before this valuation runs.")
+          subprocess.run([sys.executable, "idio/bond_reprice.py",
+                          "--cache", os.environ["RUNNER_TEMP"] + "/px"], check=True)
+          subprocess.run([sys.executable, "idio/issuer_curves.py", "--outdir", "outputs",
+                          "--real-yields", "_real_yields",
+                          "--max-bond-age-days", "7"], check=True)
+          with open(os.environ["GITHUB_ENV"], "a") as fh:
+              fh.write("CURVES_REFRESHED=1\n")
+          EOF
+
       # Fail fast on a malformed payload BEFORE building anything, so a bad button press
       # costs seconds and produces a readable error instead of a mid-pipeline traceback.
       - name: Validate payload

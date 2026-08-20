@@ -126,6 +126,19 @@ T1_MAX_SHORTEST_YRS = 3.0
 # ----------------------------------------------------------------- pre-registered adoption (S4)
 TIER3_MIN_T = 2.0             # beta must clear this, one-sided, with beta > 0
 
+# ----------------------------------------------------------------- DEFECT #10 FIX, 2026-08-20
+# The pre-registration (section 2) defines tier 3 as "exactly 1 bond ... that bond places the
+# issuer in the cross-section." `tier_of()` has always had a `return 3` branch for it. It was
+# unreachable: `fit_issuer()` returned None for any issuer with fewer than two points in the
+# fit window, and `tier_of()` sent every None straight to tier 4 before the n_all check that
+# would have chosen tier 3. Found and fixed in the AEG-Project working copy 2026-08-20 (see
+# AEG-Project docs/RESULTS-Full-Universe-Bond-Pull-2026-08-20.md section 4b/5b), ported here
+# verbatim per the standing rule that this file may never become a second fitter.
+#
+# `--pre-fix-tier3` reproduces the OLD, broken routing exactly, so the cost of this fix is
+# measurable rather than asserted -- the same pattern `--no-quality-gates` already uses.
+PRE_FIX_TIER3 = "--pre-fix-tier3" in sys.argv
+
 
 # ================================================================= tiny stats, no dependencies
 
@@ -279,34 +292,56 @@ def iter_bonds_used():
 
 def fit_issuer(bonds):
     """Pre-registered primary: spread(t) = a + b ln(t), OLS, equal weights, tenors <= 50y.
-    Returns a dict, or None if the issuer has too few usable points."""
+
+    Returns a dict for every issuer that has at least one bond. Coverage fields (n_all,
+    longest, shortest, longest_fit, span) are ALWAYS populated so tier_of() can route
+    correctly even when too few points fall in the fit window to measure a slope -- that is
+    the defect #10 fix: the pre-2026-08-20 version returned None in that case, which sent the
+    issuer to tier 4 before tier_of() ever got to look at n_all.
+
+    a_pp/b_pp are populated here when >=2 points allow a slope to be measured. For exactly one
+    usable point they are left as None -- a placeholder, not a silent zero -- and resolved in
+    main() once the tier-1-derived common slope is known, from that single bond's own spread.
+    `--pre-fix-tier3` restores the old None-on-too-few-points behavior exactly, for the control
+    diff that measures what this fix changed."""
     pts = [b for b in bonds if b["tenor"] <= MAX_FIT_TENOR_YRS]
-    if len(pts) < 2:
+    if PRE_FIX_TIER3 and len(pts) < 2:
         return None
-    x = [math.log(b["tenor"]) for b in pts]
-    y = [b["spread_pp"] for b in pts]
+    if not bonds:
+        return None
     out = dict(n_fit=len(pts), n_all=len(bonds),
                longest=max(b["tenor"] for b in bonds),
-               longest_fit=max(b["tenor"] for b in pts),
+               longest_fit=(max(b["tenor"] for b in pts) if pts else 0.0),
                shortest=min(b["tenor"] for b in bonds))
     out["span"] = out["longest_fit"] - out["shortest"]
     if len(pts) >= 3:
+        x = [math.log(b["tenor"]) for b in pts]
+        y = [b["spread_pp"] for b in pts]
         f = ols(x, y)
-        if f is None:
-            return None
-        a, b, t_b, r2, n = f
-    else:
-        # exactly two points: the line through them. No standard error exists.
-        if abs(x[1] - x[0]) < 1e-12:
-            return None
-        b = (y[1] - y[0]) / (x[1] - x[0])
-        a = y[0] - b * x[0]
-        t_b, r2 = float("nan"), float("nan")
-    out.update(a_pp=a, b_pp=b, t_b=t_b, r2=r2)
-    # robustness form, reported and NOT adopted
-    xs = [math.sqrt(b_["tenor"]) for b_ in pts]
-    fr = ols(xs, y) if len(pts) >= 3 else None
-    out["b_sqrt_pp"] = fr[1] if fr else float("nan")
+        if f is not None:
+            a, b, t_b, r2, n = f
+            out.update(a_pp=a, b_pp=b, t_b=t_b, r2=r2)
+            xs = [math.sqrt(b_["tenor"]) for b_ in pts]
+            fr = ols(xs, y)
+            out["b_sqrt_pp"] = fr[1] if fr else float("nan")
+            return out
+    elif len(pts) == 2:
+        x = [math.log(b["tenor"]) for b in pts]
+        y = [b["spread_pp"] for b in pts]
+        if abs(x[1] - x[0]) >= 1e-12:
+            # exactly two points: the line through them. No standard error exists.
+            b = (y[1] - y[0]) / (x[1] - x[0])
+            a = y[0] - b * x[0]
+            out.update(a_pp=a, b_pp=b, t_b=float("nan"), r2=float("nan"),
+                       b_sqrt_pp=float("nan"))
+            return out
+    # Fewer than two usable fit-window points (typically exactly one bond -- tier 3). No
+    # slope is observable from this issuer's own bonds, so a_pp/b_pp stay unresolved here.
+    # The longest bond overall (fit-window or not; F4 excludes a century bond from the FIT,
+    # never from coverage) is kept as the single-point anchor.
+    longest_bond = max(bonds, key=lambda b: b["tenor"])
+    out.update(a_pp=None, b_pp=None, t_b=float("nan"), r2=float("nan"), b_sqrt_pp=float("nan"),
+               single_tenor=longest_bond["tenor"], single_spread=longest_bond["spread_pp"])
     return out
 
 
@@ -443,6 +478,37 @@ def main():
         print("     Tiers 2-4 fall back to the equal-weighted mean slope %.5f, and the fact "
               "that the conditioning failed is reported rather than buried." % mean_b)
     print()
+
+    # ---- DEFECT #10 FIX: resolve the one-bond (tier-3) issuers' one-year level now that the
+    # common slope (alpha/beta/mean_b/adopted) is known. spread_obs = a + b*ln(tenor_obs).
+    # If the tier-3 conditioning is NOT adopted, b = mean_b is a constant and a solves
+    # directly. If it IS adopted, b = alpha + beta*a is itself a function of the unknown a,
+    # so the two equations are solved together as a fixed point:
+    #     a + beta*ln(t)*a = spread - alpha*ln(t)  =>  a = (spread - alpha*ln(t)) / (1 + beta*ln(t))
+    def solve_single_point_a(tenor, spread):
+        lt = math.log(tenor)
+        if abs(lt) < 1e-12:               # the one bond matures at ~1y: b is unidentified
+            return spread, (alpha + beta * spread) if adopted else mean_b
+        if not adopted:
+            return spread - mean_b * lt, mean_b
+        denom = 1.0 + beta * lt
+        if abs(denom) < 1e-9:              # degenerate fixed point; fall back rather than blow up
+            return spread - mean_b * lt, mean_b
+        a = (spread - alpha * lt) / denom
+        return a, alpha + beta * a
+
+    resolved = []
+    for t, f in fits.items():
+        if f is not None and f.get("a_pp") is None and "single_tenor" in f:
+            a, b = solve_single_point_a(f["single_tenor"], f["single_spread"])
+            f["a_pp"], f["b_pp"] = a, b
+            resolved.append(t)
+    if resolved:
+        print("TIER-3 REPAIR (defect #10): %d one-bond issuers given a level from their own "
+              "bond instead of falling through to tier 4: %s"
+              % (len(resolved), ", ".join(sorted(resolved)[:14])
+                 + (" ..." if len(resolved) > 14 else "")))
+        print()
 
     # ---- tier 4: impute s1 from the equity semi-deviation
     semidev, cap = load_universe()

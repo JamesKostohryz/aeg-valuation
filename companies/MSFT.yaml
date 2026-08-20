@@ -49,6 +49,25 @@ forecast:
   # diluting software) are James's judgments of the business; the NOA path is arithmetic given
   # them and the rule above.
 
+# The continuing period, year 13 onward: what Microsoft does with its cash once it no longer
+# earns anything above its cost of capital on new investment.
+terminal:
+  payout_ratio: 0.40         # James Kostohryz, 2026-08-20. DIVIDENDS ONLY; retention is the rest.
+  reviewed: true
+  # WHY NOT MICROSOFT'S OWN ANCHOR-YEAR PAYOUT, which is the convention used for Coca-Cola
+  # (0.670) and PepsiCo (0.777). Microsoft's dividends-only payout is 19.8% and FALLING --
+  # 34.2% in FY2020, 24.7% in FY2024, 19.8% in FY2026 ($26.4bn of dividends on $133.7bn of net
+  # income) -- because earnings have outrun the dividend during the buildout. For Coca-Cola and
+  # PepsiCo the anchor-year ratio happened to be a mature one; for Microsoft it is not, and
+  # carrying 19.8% into perpetuity would assert that Microsoft retains four-fifths of its
+  # earnings forever while earning only its cost of capital on them.
+  #
+  # 0.40 is roughly double the current dividend without going all the way to a Coca-Cola
+  # profile: it says the payout rises materially once profitable growth is exhausted, but that
+  # Microsoft keeps a reinvestment culture and a large buyback. NOTE that buybacks are NOT
+  # counted here -- this gate is dividends only, so a company distributing heavily by
+  # repurchase still shows a low ratio.
+
 judgments:
   minority_include: false      # exclude minority interest from common equity
   finlease: 0.0                # KEEP 0.0. The add-back is NOT wired: in_finlease feeds no engine

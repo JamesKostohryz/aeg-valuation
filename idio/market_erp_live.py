@@ -69,9 +69,20 @@ def _age_days(iso, asof=None):
     return (a - dt.date.fromisoformat(iso)).days
 
 
-def _http_get(url, timeout=20):
+def _http_get(url, timeout=20, auth=False):
+    """`auth` adds a bearer token when one is in the environment. GitHub's REST API allows 60
+    unauthenticated requests an hour PER IP -- a shared runner or sandbox burns that in minutes
+    and then returns 403. That is how the vintage of the aggregate credit curve came back None
+    with no error surfaced. Authenticated it is 1,000/hour and 5,000 for a personal token."""
+    import os as _os
     import urllib.request
-    req = urllib.request.Request(url, headers={"User-Agent": "aeg-market-erp-live"})
+    headers = {"User-Agent": "aeg-market-erp-live"}
+    if auth:
+        tok = (_os.environ.get("GITHUB_TOKEN") or _os.environ.get("GH_TOKEN")
+               or _os.environ.get("CROSS_REPO_TOKEN") or "")
+        if tok:
+            headers["Authorization"] = "Bearer %s" % tok
+    req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8")
 
@@ -272,10 +283,27 @@ def fetch_market_credit(allow_network=True, log=None, asof=None):
         if text is not None:
             try:
                 import json as _json
-                j = _json.loads(_http_get(COMMITS_API))
+                j = _json.loads(_http_get(COMMITS_API, auth=True))
                 vintage = j[0]["commit"]["committer"]["date"][:10]
             except Exception as e:                 # noqa: BLE001
-                errors.append("commits-api (vintage only): %s" % e)
+                errors.append("commits-api: %s" % e)
+        # A CURVE WITH NO VINTAGE IS NOT AN ACCEPTABLE CURVE, and it used to be accepted.
+        # Until 2026-08-20 the raw fetch succeeding while the commits API 403'd left
+        # vintage=None and age_days=None, and the network path then applied NO AGE CHECK AT ALL
+        # -- unlike the local path four lines below, which refuses past MAX_CREDIT_AGE_DAYS.
+        # COMMON(t) is charged to EVERY company at EVERY tenor, so an unbounded-age aggregate
+        # credit curve is a silent input to every discount rate on the system. The comment on
+        # the local branch already said the age "is used to REFUSE, never to reassure"; the
+        # network branch simply had no age to use.
+        #
+        # Discarding the text here does not fail the run: it falls through to the local
+        # checkout, which HAS a real age check. It only refuses if there is no local copy
+        # either -- which is the honest outcome, because at that point nothing in reach can
+        # say how old the number is.
+        if text is not None and not vintage:
+            errors.append("github-raw: fetched, but the vintage could not be established, so "
+                          "its age cannot be checked. Falling back to a local checkout.")
+            text = src = None
 
     if text is None:
         for p in _local_paths(MARKET_CREDIT_PATH):
@@ -311,7 +339,19 @@ def fetch_market_credit(allow_network=True, log=None, asof=None):
         raise RuntimeError("aggregate IG credit curve has %d tenors, expected at least 30 (%s)"
                            % (len(spread), src))
 
-    age = _age_days(vintage, asof) if vintage else None
+    # STRUCTURAL, not defensive. Every path above now establishes a vintage -- the network
+    # branch discards its text if it cannot, and the local branch derives one from the mtime --
+    # so reaching here without one means a new source was added without an age. Refuse, because
+    # the guard six lines below is skipped whenever `age` is None, and that skip is exactly the
+    # hole this closes: for as long as GitHub's commits API returned 403 the freshness check on
+    # COMMON(t) silently did not run at all.
+    if not vintage:
+        raise RuntimeError(
+            "the aggregate IG credit curve was obtained from %s but its vintage could not be "
+            "established, so its age cannot be checked. COMMON(t) is charged to every company "
+            "at every tenor; a curve of unknown age is a silent input to every discount rate "
+            "on the system. Refusing. Tried:\n  %s" % (src, "\n  ".join(errors) or "(nothing)"))
+    age = _age_days(vintage, asof)
     if age is not None and age > MAX_CREDIT_AGE_DAYS:
         raise RuntimeError(
             "aggregate IG credit curve is %d days old (vintage %s, limit %d). The weekday "

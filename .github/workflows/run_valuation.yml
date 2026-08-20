@@ -33,6 +33,13 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
+    # GITHUB_TOKEN raises the GitHub REST rate limit from 60 requests an hour PER IP to 1,000,
+    # which is what lets idio/market_erp_live.py establish the VINTAGE of the aggregate credit
+    # curve. Unauthenticated, a shared runner burns 60 in minutes and gets 403 -- and until
+    # 2026-08-20 that silently disabled the freshness check on COMMON(t), which is charged to
+    # every company at every tenor. It now REFUSES instead, so without this the run stops.
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
 

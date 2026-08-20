@@ -22,7 +22,10 @@ decimals — so there is zero conversion and zero convention risk on our side.
 Global (market-wide) series, by tenor 1..30:
   curve_latest_annual.csv      cols: tenor, real, real_fwd1y, exp_inflation,
                                       exp_inflation_fwd1y, breakeven, breakeven_fwd1y
-  erp_market_latest_annual.csv cols: tenor, market_erp
+  erp_market_latest_annual.csv  *** DEAD -- NOT PART OF THE CONTRACT AND NOT CONSUMED.
+                           Published daily by real-yields, read by nothing. See
+                           load_market_erp(), which now refuses. It is ~180bp below
+                           the curve the engine actually discounts at.
 
 Per-company series (V2 feed), tenor grid 1..N (N may exceed 30; we slice 1..30):
   coe_v2_<TICKER>_latest_annual.csv
@@ -210,13 +213,54 @@ def load_curve(*, base_url=BASE_URL, local_dir=None):
     return _tenor_series(rows, need, fname)
 
 
+class DeadFeedError(RuntimeError):
+    """A published file that must NOT be wired to a valuation. See load_market_erp."""
+
+
 def load_market_erp(*, base_url=BASE_URL, local_dir=None):
-    """Global market ERP term structure (annual decimal, by tenor)."""
-    fname = "erp_market_latest_annual.csv"
-    need = ["tenor", "market_erp"]
-    fields, rows = _read_rows(_fetch_text(fname, base_url=base_url, local_dir=local_dir), fname)
-    _require_cols(fields, need, fname)
-    return _tenor_series(rows, need, fname)["market_erp"]
+    """DO NOT USE. Kept as a loud refusal, deliberately, instead of being deleted.
+
+    THIS IS A LOADED GUN AND IT WAS LEFT COCKED FOR MONTHS. `erp_market_latest_annual.csv` is
+    rebuilt and committed by real-yields EVERY WEEKDAY, it was listed in the LOCKED CSV contract
+    at the top of this module, and this loader sat here looking production-ready. It has never
+    had a single caller -- `load_all()` does not invoke it, and git history shows it never did.
+
+    WHAT WOULD HAPPEN IF SOMEBODY WIRED IT UP, which is the most natural thing in the world for
+    a reader of this file to do. Measured 2026-08-20:
+
+        published erp_market_latest_annual.csv   2.31% at 1y, 1.62% at 10y, 1.14% at 30y
+        what the engine ACTUALLY consumes        4.13% at 1y, 3.01% at 10y, 2.04% at 30y
+
+    Every discount rate on the system would fall by roughly 180 basis points, and every company
+    premium by about 44% -- because `idio/erp.py` scales the premium off the market ERP front
+    tenor. **The four-method tie would hold perfectly throughout.** An identity check cannot see
+    which ERP curve it was handed.
+
+    AND IT IS NOT WHAT ITS NAME SAYS. At thirty years its value is `floor + 10bp`, where `floor`
+    is by construction (asfp/erp.py) the INVESTMENT-GRADE CORPORATE BOND risk premium: the IG
+    index spread, less expected loss, less a liquidity deduction, plus a tail constant. A 1.14%
+    real thirty-year EQUITY premium would put equities barely above corporate credit.
+
+    WHAT THE ENGINE USES INSTEAD, and it is deliberate. `load_coe()` reads the `market_erp`
+    column of `coe_v2_<TICKER>_latest_annual.csv`, which `apply_erp_overlay.py` overwrites with
+    the `fwd_erp` column of `history/TODAY_forward_curve_latest.csv` -- James's own ERP engine,
+    under his documented "Decision B: the VALUATION basis is ERP's term structure". Verified
+    2026-08-20: the two agree to 0.000000000000 percentage points across all thirty tenors.
+
+    This was first found on 2026-08-15 and written down correctly in
+    AEG-Project/docs/HANDOFF-Idio-ERP-Normalized-Earnings-2026-08-15.md ("dead -- no caller
+    anywhere"). Nothing was done and the loader stayed. Hence the refusal.
+    """
+    raise DeadFeedError(
+        "load_market_erp() is dead and must not be wired to a valuation. "
+        "erp_market_latest_annual.csv is published daily but NOTHING reads it, and it is not "
+        "the curve this engine discounts at: it is ~180bp below the one in use (2.31% vs 4.13% "
+        "at 1y) and at 30 years it is an investment-grade CREDIT premium plus 10bp, not an "
+        "equity premium. Wiring it up would cut every discount rate and every company premium "
+        "on the system, and the four-method tie would stay green throughout. The market ERP the "
+        "engine consumes comes from load_coe() -- the coe_v2 file's market_erp column, which "
+        "carries the ERP engine's fwd_erp under Decision B. If you are here because you wanted "
+        "a market ERP, that is the one.")
 
 
 def load_coe(ticker, *, base_url=BASE_URL, local_dir=None):

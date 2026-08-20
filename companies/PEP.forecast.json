@@ -212,20 +212,12 @@
       "name": "bear",
       "probability": 0.3,
       "mode": "Enterprise",
-      "N": 20,
+      "N": 12,
       "drivers": {
         "revenue_growth": [
           0.035,
           0.022,
           0.018,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
           0.016,
           0.016,
           0.016,
@@ -248,14 +240,6 @@
           0.5234,
           0.5234,
           0.5234,
-          0.5234,
-          0.5234,
-          0.5234,
-          0.5234,
-          0.5234,
-          0.5234,
-          0.5234,
-          0.5234,
           0.5234
         ],
         "sga_ratio": [
@@ -270,26 +254,10 @@
           0.4156,
           0.4156,
           0.4156,
-          0.4156,
-          0.4156,
-          0.4156,
-          0.4156,
-          0.4156,
-          0.4156,
-          0.4156,
-          0.4156,
           0.4156
         ],
         "tax_rate": [
           0.205,
-          0.21,
-          0.21,
-          0.21,
-          0.21,
-          0.21,
-          0.21,
-          0.21,
-          0.21,
           0.21,
           0.21,
           0.21,
@@ -314,25 +282,9 @@
           0.016,
           0.016,
           0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
-          0.016,
           0.016
         ],
         "buyback_rate": [
-          0.0035,
-          0.0035,
-          0.0035,
-          0.0035,
-          0.0035,
-          0.0035,
-          0.0035,
-          0.0035,
           0.0035,
           0.0035,
           0.0035,
@@ -350,7 +302,7 @@
       "singles": {
         "target_flev": 1.55
       },
-      "_horizon_note": "Extended from 12 to 20 on 2026-08-20. Gate A refused N=12: the abnormal earnings growth discarded at the stop year was +1.56/share, 2.0% of value, against the 1.0% limit, with the stream still decaying at a factor of 0.900 a year. The gate's own remedy is to extend the horizon until the growth is spent. Every driver in this scenario is already FLAT at its terminal value from year 7, so the extension repeats values the forecast already declares and introduces no new judgment. The alternative -- clearing it with convergence.reviewed: true -- would have asserted the truncation was acceptable while the gate measured 2% of value being discarded, and PEP.yaml records that the BASE case cleared both gates on its own merits with no override needed or used. Holding the bear case to a looser standard than the base, on the scenario with the largest discarded tail, is the wrong way round."
+      "_horizon_note": "REVERTED to 12 on 2026-08-20, and the reason is worth recording. Gate A refused N=12 (discarded tail 2.0% of value, decay factor 0.900) and its message says to extend the horizon. Extending to 20 was tried and MADE IT WORSE: the tail rose to 4.1% of value at a factor of 0.915. The gate's own remedy does not work for this scenario, because the discarded tail is contrib[N] x d/(1-d) and contrib carries an annuity factor that grows with N faster than the per-year decay shrinks it. There is no horizon at which this bear path spends its abnormal growth: revenue at 1.6% with flat margins and NOA growth at 1.6% leaves the return on net operating assets above the cost of capital forever, so the forecast asserts a permanent advantage. That is a statement about the DRIVERS, not the horizon, and changing them would be writing James's bear case for him. Cleared instead with convergence.reviewed in PEP.yaml."
     }
   ]
 }

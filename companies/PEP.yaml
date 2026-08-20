@@ -45,6 +45,35 @@ forecast:
   horizon_N: 12
   reviewed: true
 
+# ---------------------------------------------------------------------------------------
+# CONVERGENCE OVERRIDE — set 2026-08-20 on James's instruction ("make whatever call is
+# needed"), and it is set for the BEAR SCENARIO ALONE, on evidence.
+#
+# WHAT IT DOES NOT MEAN. The base case does not need it and never did: measured 2026-08-12
+# and again 2026-08-20, base clears gate A on its own merits (AEG at year 12 -0.0066/sh,
+# factor 0.326, discarded tail 0.56% of value) and gate B at 0.4% of EPS against a 15%
+# threshold. Bull clears both too. Nothing about the published headline rests on this line.
+#
+# WHAT IT DOES MEAN. The bear scenario's truncation discards an abnormal-growth tail worth
+# about 2% of its value, above the 1% limit, and a human is asserting in writing that this
+# is acceptable rather than letting it block the fleet.
+#
+# WHY NOT EXTEND THE HORIZON, WHICH IS WHAT THE GATE'S OWN MESSAGE TELLS YOU TO DO. It was
+# tried. It makes it worse. At N=12 the discarded tail is +1.56/share, 2.0% of value, decay
+# factor 0.900. At N=20 it is +3.24/share, 4.1% of value, factor 0.915. The tail is
+# contrib[N] x d/(1-d) and contrib carries an annuity factor that grows with N faster than
+# the per-year decay shrinks it, so on this path a longer forecast discards MORE, not less.
+#
+# THE REAL CAUSE, AND IT IS A FORECASTING QUESTION, NOT A PLUMBING ONE. There is no horizon
+# at which this bear path spends its abnormal growth. Revenue growing 1.6% forever with
+# margins and NOA growth flat leaves the return on net operating assets above the cost of
+# capital permanently, so the drivers assert a permanent competitive advantage -- in the
+# BEAR case. If that is not what was meant, the fix is in the drivers (fade the return on
+# net operating assets toward the cost of capital), not in the horizon and not here. That
+# is James's judgment to make and nobody should make it for him.
+convergence:
+  reviewed: true
+
 # The continuing period, year 13 onward: what PepsiCo does with its cash once the
 # explicit forecast ends. Added 2026-08-12 per kit v4 section 6 -- pure disclosure, does
 # not move the published value (confirmed: value is bit-identical across payout_ratio

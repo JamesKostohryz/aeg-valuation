@@ -65,7 +65,11 @@ jobs:
           if [ -n "${{ github.event.inputs.ticker }}" ]; then
             echo "list=companies/${{ github.event.inputs.ticker }}.yaml" >> "$GITHUB_OUTPUT"
           else
-            CHANGED=$(git diff --name-only HEAD^ HEAD -- 'companies/*.yaml' || true)
+            # .forecast.json counts as a change to that company. It did not until 2026-08-20,
+            # so editing a horizon or a driver -- the most consequential edit anyone makes here --
+            # selected NO company and silently fell through to re-running the whole fleet.
+            CHANGED=$(git diff --name-only HEAD^ HEAD -- 'companies/*.yaml' 'companies/*.forecast.json' | \
+                      sed 's|\.forecast\.json$|.yaml|' | sort -u || true)
             if [ -z "$CHANGED" ]; then
               CHANGED=$(ls companies/*.yaml)
             fi

@@ -278,5 +278,54 @@ expect_error("company: A\nticker: A\n" + HORIZON + "price:\n  source: override\n
 expect_error("company: A\nticker: A\n" + HORIZON + "cost_of_debt:\n  source: bananas\n", "source", "bad COD source aborts")
 expect_error("company: A\nticker: A\n" + HORIZON + "cost_of_debt:\n  source: single_ytw\n", "single_ytw", "single_ytw w/o value aborts")
 
+
+# ---------------------------------------------------------------- the onboarding relaxation
+# require_forecast=False exists for ONE caller and must not become a way past the gate.
+# Added 2026-08-19 after the gate refused every config onboard.py generated, which meant no new
+# company could be added to the system at all between 2026-08-03 and 2026-08-19.
+import tempfile as _tf3, os as _os3
+
+_BARE = """company: "Test Co"
+ticker: TSTX
+fy_end_month: 12
+judgments:
+  minority_include: false
+  finlease: 0.0
+  rd_capitalize: false
+  rd_life: 5.0
+cost_of_debt:
+  method: single_ytw
+  single_ytw: 0.05
+"""
+
+_d3 = _tf3.mkdtemp(); _p3 = _os3.path.join(_d3, "TSTX.yaml")
+open(_p3, "w").write(_BARE)
+
+_norm = None
+try:
+    _norm = CFG.load_config(_p3, require_forecast=False)
+    _ok = True
+except Exception as _e:
+    _ok = False
+    _err = _e
+ok(_ok, "a config with NO forecast block validates under require_forecast=False (onboarding)")
+if _ok:
+    ok(True, "the onboarded config carries no authorized horizon")
+
+try:
+    CFG.load_config(_p3)
+    ok(False, "the SAME config must still be refused on the valuation path")
+except CFG.ConfigError as _e:
+    ok("horizon_N" in str(_e),
+       "the same config is still refused on the valuation path (require_forecast defaults True)")
+
+# And the relaxation must not swallow a real config error.
+open(_p3, "w").write(_BARE.replace('fy_end_month: 12', 'fy_end_month: 99'))
+try:
+    CFG.load_config(_p3, require_forecast=False)
+    ok(False, "a genuinely broken config must still fail even with the forecast gate relaxed")
+except CFG.ConfigError:
+    ok(True, "a genuinely broken config still fails with the forecast gate relaxed")
+
 print(f"\n{_p} passed, {_f} failed")
 raise SystemExit(1 if _f else 0)

@@ -483,6 +483,16 @@ def main():
         try:
             feed = RF.load_all(tk, cash=cash, sti=sti, local_dir=args.rate_feed_dir,
                                bonded=cfg["bonded"])  # local_dir=None -> live repo fetch
+            # HOW OLD IS THE DISCOUNT RATE. Printed on every run because it is the one input
+            # the four-method tie is structurally blind to: the tie is an internal-consistency
+            # proof and it holds just as well on a curve from last year. real-yields rebuilds
+            # the GLOBAL curve daily, but coe_v2_<T> / cod_<T> / company_<T> are written only
+            # when somebody dispatches its company-data workflow for that ticker, and nothing
+            # schedules it. On 2026-08-19 the published Coca-Cola valuation was running on a
+            # rate side built on 3 August and said nothing at all.
+            print(f"[rates] {tk} rate side as of {feed.get('rate_asof')}"
+                  + ("   *** STALE — re-run real-yields company-data ***"
+                     if feed.get("rate_asof_stale") else ""))
             # Cost-of-debt provenance + generalized (unbonded) fallback (ERP ladder ratified
             # 2026-07-25): issuer_bonds -> published -> synthetic coverage rating. Unbonded keeps
             # the build-time BOOK NFO; only real_cod is supplied from the rating curve.

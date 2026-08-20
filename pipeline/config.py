@@ -57,10 +57,28 @@ def _opt(d, key, types, default):
     return d[key]
 
 
-def load_config(path):
+def load_config(path, require_forecast=True):
     """Parse + validate a companies/<TICKER>.yaml. Returns a normalized dict with a
     canonical `config_for_build` sub-dict ready for aeg_engine.build_model (minus the
-    file paths + resolved price/cost-of-debt, which the pipeline stages fill in)."""
+    file paths + resolved price/cost-of-debt, which the pipeline stages fill in).
+
+    require_forecast=False validates EVERYTHING EXCEPT the forecast horizon and its
+    confirmation, and is for exactly one caller: onboard.py, checking the config it has just
+    generated.
+
+    WHY IT HAD TO EXIST (2026-08-19). The forecast gate is about publishing a VALUATION -- a
+    horizon nobody chose must never reach a number. It is not about whether a config may exist.
+    Onboarding cannot supply horizon_N, because horizon_N is the judgment onboarding exists to
+    make possible. So onboard.py round-tripped its generated file through the full validator,
+    the validator refused it for want of the one field onboarding cannot know, and onboard
+    DELETED the file and exited non-zero.
+
+    The effect was that NO NEW COMPANY COULD BE ADDED TO THIS SYSTEM AT ALL. It broke silently
+    when the horizon gate landed and stayed broken because nobody onboarded a ticker between
+    2026-08-03 and 2026-08-19; the existing companies kept valuing perfectly the whole time.
+    The gate is unchanged and just as hard -- the onboarded company sits in AWAITING FORECAST,
+    produces no valuation, and is listed by name on every fleet run until a human forecasts it.
+    """
     with open(path, "r") as fh:
         raw = yaml.safe_load(fh)
     if not isinstance(raw, dict):
@@ -122,43 +140,49 @@ def load_config(path):
     fc = raw.get("forecast", {}) or {}
     if not isinstance(fc, dict):
         raise ConfigError("'forecast' must be a mapping")
-    if fc.get("horizon_N") is None:
-        raise ConfigError(
-            "missing required 'forecast.horizon_N' — the explicit forecast horizon "
-            "(cfg_N), i.e. the number of years YOU judge abnormal earnings growth to "
-            "persist for this company. There is no default and there never will be. "
-            "Any integer from 1 upward is accepted. Set it deliberately, then set "
-            "'forecast.reviewed: true' to confirm you chose it.")
-    try:
-        horizon_N = int(fc["horizon_N"])
-    except (TypeError, ValueError):
-        raise ConfigError(f"forecast.horizon_N must be an integer 1..30, "
-                          f"got {fc['horizon_N']!r}")
-    if not 1 <= horizon_N <= 30:
-        # 30 is a STRUCTURAL ceiling, not a judgment: the Forecast tab of MODEL_TEMPLATE
-        # carries thirty forecast columns. It is not a policy limit on how long an
-        # advantage period may be. Extending the template is a separate piece of work.
-        raise ConfigError(
-            f"forecast.horizon_N must be between 1 and 30, got {horizon_N}. Note that 30 "
-            f"is a STRUCTURAL limit — the Forecast tab has thirty columns — not a cap on "
-            f"your judgment. Extending it is a template change.")
-    # MANDATORY CONFIRMATION. A horizon that no human deliberately chose is not a valid
-    # horizon, so an unreviewed config produces NO VALUATION. This is a hard gate, not a
-    # warning; see the block above for why.
-    if _opt(fc, "reviewed", bool, False) is not True:
-        raise AwaitingReview(
-            f"forecast.reviewed is not true — this company has NO AUTHORIZED FORECAST "
-            f"HORIZON, so no valuation will be produced.\n"
-            f"  The config currently carries horizon_N: {horizon_N}. If that value was "
-            f"not deliberately chosen by the analyst for THIS company, it is an artifact "
-            f"and must not be inherited.\n"
-            f"  cfg_N is the competitive-advantage period — the number of years you judge "
-            f"abnormal earnings growth to persist. It is the most powerful single judgment "
-            f"in the model (31% on the Apple fixture between 4 and 30 years).\n"
-            f"  To authorize a valuation, set forecast.horizon_N deliberately and add:\n"
-            f"      forecast:\n        reviewed: true\n"
-            f"  There is no default and there is no way around this gate. That is intended.")
-    horizon_reviewed = True
+    # THE FORECAST GATE. It is about publishing a VALUATION -- a horizon nobody chose must
+    # never reach a number. It is not about whether a config may EXIST. See load_config's
+    # docstring for what conflating those two cost.
+    if fc.get("horizon_N") is None and not require_forecast:
+        horizon_N, horizon_reviewed = None, False
+    else:
+        if fc.get("horizon_N") is None:
+            raise ConfigError(
+                "missing required 'forecast.horizon_N' — the explicit forecast horizon "
+                "(cfg_N), i.e. the number of years YOU judge abnormal earnings growth to "
+                "persist for this company. There is no default and there never will be. "
+                "Any integer from 1 upward is accepted. Set it deliberately, then set "
+                "'forecast.reviewed: true' to confirm you chose it.")
+        try:
+            horizon_N = int(fc["horizon_N"])
+        except (TypeError, ValueError):
+            raise ConfigError(f"forecast.horizon_N must be an integer 1..30, "
+                              f"got {fc['horizon_N']!r}")
+        if not 1 <= horizon_N <= 30:
+            # 30 is a STRUCTURAL ceiling, not a judgment: the Forecast tab of MODEL_TEMPLATE
+            # carries thirty forecast columns. It is not a policy limit on how long an
+            # advantage period may be. Extending the template is a separate piece of work.
+            raise ConfigError(
+                f"forecast.horizon_N must be between 1 and 30, got {horizon_N}. Note that 30 "
+                f"is a STRUCTURAL limit — the Forecast tab has thirty columns — not a cap on "
+                f"your judgment. Extending it is a template change.")
+        # MANDATORY CONFIRMATION. A horizon that no human deliberately chose is not a valid
+        # horizon, so an unreviewed config produces NO VALUATION. This is a hard gate, not a
+        # warning; see the block above for why.
+        if _opt(fc, "reviewed", bool, False) is not True:
+            raise AwaitingReview(
+                f"forecast.reviewed is not true — this company has NO AUTHORIZED FORECAST "
+                f"HORIZON, so no valuation will be produced.\n"
+                f"  The config currently carries horizon_N: {horizon_N}. If that value was "
+                f"not deliberately chosen by the analyst for THIS company, it is an artifact "
+                f"and must not be inherited.\n"
+                f"  cfg_N is the competitive-advantage period — the number of years you judge "
+                f"abnormal earnings growth to persist. It is the most powerful single judgment "
+                f"in the model (31% on the Apple fixture between 4 and 30 years).\n"
+                f"  To authorize a valuation, set forecast.horizon_N deliberately and add:\n"
+                f"      forecast:\n        reviewed: true\n"
+                f"  There is no default and there is no way around this gate. That is intended.")
+        horizon_reviewed = True
 
     # --- CONVERGENCE REVIEW (James, 2026-08-09). The convergence reconciliation guard reports
     # REVIEW when the explicit forecast ends at an earnings level far from its own neutral line.

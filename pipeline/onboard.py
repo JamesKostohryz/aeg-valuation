@@ -223,6 +223,21 @@ company: "{company}"
 ticker: {t}
 fy_end_month: {fy_end_month}          # 0 = auto-detect from statement dates
 
+# THE ONE THING ONBOARDING CANNOT DO FOR YOU, LEFT DELIBERATELY BLANK.
+#
+# forecast.horizon_N is cfg_N, the competitive-advantage period: the number of years YOU judge
+# abnormal earnings growth to persist for this company. It is the single most powerful judgment
+# in the model -- worth 31% on the Apple fixture between 4 and 30 years -- and rule D1 makes it
+# permanently human. There is no default, no suggestion here, and there never will be, because
+# suggesting one is how the last default got established.
+#
+# Until both lines below are filled in and uncommented, {t} is AWAITING FORECAST: it produces no
+# valuation, and the fleet run lists it by name every time so it is not forgotten.
+#
+# forecast:
+#   horizon_N:                 # <- your judgment, an integer of years
+#   reviewed: true             # <- your confirmation that you chose it for THIS company
+
 judgments:
   minority_include: false      # exclude minority interest from common equity
   finlease: 0.0                # KEEP 0.0. The add-back is NOT wired: in_finlease feeds no engine
@@ -315,8 +330,15 @@ def onboard(ticker, *, cached_dir=None, api_key=None, local_dir=None,
     except ImportError:
         sys.path.insert(0, os.path.join(_HERE))
         import config as CFG
+    # Round-trip through the real loader so we never emit a config it would reject -- but
+    # WITHOUT the forecast gate, because horizon_N is the one field onboarding cannot supply.
+    # It is the judgment onboarding exists to make possible, and requiring it here meant the
+    # validator refused every config this tool generated and deleted it again, so no new
+    # company could be added to the system at all. Everything else is validated exactly as
+    # before. The onboarded company is AWAITING FORECAST until a human sets horizon_N and
+    # reviewed: true; it produces no valuation and is named on every fleet run until then.
     try:
-        norm = CFG.load_config(path)
+        norm = CFG.load_config(path, require_forecast=False)
     except Exception as e:
         os.remove(path)
         raise OnboardError(f"generated config failed validation (not written): {e}")

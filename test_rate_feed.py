@@ -147,5 +147,54 @@ try:
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
 
+# ---------------------------------------------------------------- freshness (2026-08-19)
+# The guard that answers "how old is this discount rate?", which nothing asked until now. The
+# four-method tie ties just as well on a frozen curve, so age is invisible to every other check
+# in this repository. These tests prove the guard DISCRIMINATES: it lets a fresh feed through,
+# flags a stale one, refuses an expired one, and reports an absent stamp as unknown rather than
+# treating it as either fresh or expired.
+import datetime as _dt2
+import tempfile as _tf
+
+
+def _stamp_dir(days_old, ticker="AAPL"):
+    d = _tf.mkdtemp()
+    shutil.copytree(FIX, d + "/f", dirs_exist_ok=True)
+    when = _dt2.datetime.now(_dt2.timezone.utc) - _dt2.timedelta(days=days_old)
+    open(d + f"/f/run_stamp_{ticker}.csv", "w").write(
+        "field,value\nticker,%s\ngenerated_iso,%s\ngit_sha,deadbee\nrun_id,1\n"
+        % (ticker, when.strftime("%Y-%m-%dT%H:%M:%SZ")))
+    return d + "/f"
+
+
+_d = _stamp_dir(3)
+_st = rf.load_run_stamp("AAPL", local_dir=_d)
+ok(_st is not None and _st["age_days"] in (2, 3) and not _st["stale"] and not _st["expired"],
+   "a 3-day-old rate side reads fresh")
+ok("days old" in rf.check_freshness("AAPL", _st) and "STALE" not in rf.check_freshness("AAPL", _st),
+   "a fresh feed reports its age and is not flagged")
+
+_d = _stamp_dir(45)
+_st = rf.load_run_stamp("AAPL", local_dir=_d)
+ok(_st["stale"] and not _st["expired"], "a 45-day-old rate side WARNS but still values")
+ok("STALE" in rf.check_freshness("AAPL", _st), "the warning is visible in the status string")
+_f = rf.load_all("AAPL", cash=0, sti=0, local_dir=_d)
+ok(_f["rate_asof_stale"] is True and _f["rate_age_days"] >= 44,
+   "load_all carries the age through to the caller instead of swallowing it")
+
+_d = _stamp_dir(200)
+_st = rf.load_run_stamp("AAPL", local_dir=_d)
+ok(_st["expired"], "a 200-day-old rate side is expired")
+expect_error(lambda: rf.load_all("AAPL", cash=0, sti=0, local_dir=_d),
+             "past the", "an expired rate side REFUSES the valuation")
+
+ok(rf.load_run_stamp("AAPL", local_dir=FIX) is None,
+   "a missing run_stamp reads as absent, not as fresh")
+ok("unknown" in rf.check_freshness("AAPL", None),
+   "an absent stamp is reported as unknown — a different thing from an old one")
+_f = rf.load_all("AAPL", cash=0, sti=0, local_dir=FIX)
+ok(_f["rate_age_days"] is None and _f["rate_asof_stale"] is False,
+   "a company with no published stamp still values, and says the age is unknown")
+
 print(f"\n{_pass} passed, {_fail} failed")
 raise SystemExit(1 if _fail else 0)

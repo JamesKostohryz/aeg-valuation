@@ -54,7 +54,7 @@ COE:  base we feed engine = real_rf + market_erp  (per tenor, both from coe_annu
 COD:  consume real_cod directly (already real forward) — no nominal step.
 NFO:  market NFO = market_value_of_debt - cash - ST investments, at period-0 anchor.
 """
-import csv, io, math, urllib.request
+import csv, datetime as _dt, io, math, urllib.request
 
 BASE_URL = "https://raw.githubusercontent.com/JamesKostohryz/real-yields/main/outputs"
 N_TENORS = 30
@@ -284,6 +284,98 @@ def market_nfo(company, cash, sti):
     return company["market_value_of_debt"] - float(cash) - float(sti)
 
 
+# ---------------------------------------------------------------- freshness
+# THE INSTANCE OF THE STANDING SUSPICION THAT SITS ON THE VALUATION PATH ITSELF.
+#
+# Until 2026-08-19 this module validated the SHAPE of every published series -- column names,
+# tenor count, decomposition to 1e-5, bounds -- and never once asked HOW OLD IT WAS. It fetches
+# `..._latest_annual.csv` from raw.githubusercontent. If the rate side stopped publishing --
+# a workflow disabled, a FRED key expiring, a schedule quietly dropped, a repository renamed --
+# the engine would go on returning valuations that TIE TO 1e-15 off a frozen curve, and no gate
+# anywhere in this repository could see it. The four-method tie is an internal-consistency
+# proof; it is exactly as happy with a curve from last July as with today's.
+#
+# THIS IS NOT HYPOTHETICAL AND IT IS NOT ABOUT THE MARKET CURVE. The global curve really is
+# rebuilt daily by real-yields' erp-daily-close. The PER-COMPANY files are not: coe_v2_<T>,
+# cod_<T> and company_<T> are written only when somebody dispatches real-yields' company-data
+# workflow for that ticker, and nothing schedules it. Measured 2026-08-19:
+#
+#     AAPL   2026-07-15    36 days old
+#     T      2026-07-20    31 days
+#     POOL   2026-07-29    22 days
+#     PEP    2026-08-03    17 days
+#     KO     2026-08-03    17 days
+#
+# The Coca-Cola valuation this repository published on 2026-08-19 used a cost-of-equity and
+# cost-of-debt curve built on 3 August, and said nothing. It would have used one from 2025 just
+# as quietly.
+#
+# THE STAMP ALREADY EXISTS AND NOTHING READ IT. real-yields publishes run_stamp_<T>.csv beside
+# the feeds, carrying generated_iso, the git sha and the run id. No file in this repository
+# referenced it. So this guard costs one extra fetch and no upstream change at all.
+#
+# TWO TIERS, matching idio/universe.py's convention rather than inventing a second one:
+#     WARN    older than WARN_AGE_DAYS. The feed is returned and `rate_asof_stale` is set. The
+#             caller decides; nothing is suppressed.
+#     REFUSE  older than MAX_AGE_DAYS. Raises. A discount rate built on a two-month-old credit
+#             spread is not a conservative approximation of the right answer, it is a different
+#             answer -- and it is the input the valuation is most sensitive to.
+#
+# The limits are deliberately generous. The point is not to be strict, it is to make the age
+# VISIBLE and to put a floor under how wrong it can silently get.
+WARN_AGE_DAYS = 30
+MAX_AGE_DAYS = 90
+
+
+def load_run_stamp(ticker, *, base_url=BASE_URL, local_dir=None):
+    """{generated_iso, git_sha, run_id, age_days, stale, expired} for one company's rate side,
+    or None if the upstream has not published a stamp for it.
+
+    Returning None rather than raising is deliberate and is the one soft edge here: a ticker
+    whose stamp is genuinely absent must still be valuable, or adding this guard would take the
+    fleet offline. An absent stamp is reported by the caller as `unknown`, which is honest, and
+    is a different thing from an old one.
+    """
+    fname = f"run_stamp_{ticker.upper()}.csv"
+    try:
+        text = _fetch_text(fname, base_url=base_url, local_dir=local_dir)
+    except RateFeedError:
+        return None
+    fields, rows = _read_rows(text, fname)
+    kv = {}
+    for r in rows:
+        k = (r.get("field") or "").strip()
+        if k:
+            kv[k] = (r.get("value") or "").strip()
+    iso = kv.get("generated_iso") or ""
+    if not iso:
+        return None
+    try:
+        when = _dt.datetime.strptime(iso[:19], "%Y-%m-%dT%H:%M:%S").replace(
+            tzinfo=_dt.timezone.utc)
+    except ValueError:
+        return None
+    age = (_dt.datetime.now(_dt.timezone.utc) - when).days
+    return dict(generated_iso=iso, git_sha=kv.get("git_sha"), run_id=kv.get("run_id"),
+                age_days=age, stale=age > WARN_AGE_DAYS, expired=age > MAX_AGE_DAYS)
+
+
+def check_freshness(ticker, stamp, *, refuse=True):
+    """Raise if the company's rate side is past MAX_AGE_DAYS. Returns a short status string."""
+    if stamp is None:
+        return "unknown (upstream published no run_stamp_%s.csv)" % ticker.upper()
+    if stamp["expired"] and refuse:
+        raise RateFeedError(
+            f"[freshness] {ticker.upper()}'s rate side was built {stamp['age_days']} days ago "
+            f"({stamp['generated_iso']}), past the {MAX_AGE_DAYS}-day limit. The cost of equity "
+            f"and cost of debt are the inputs a valuation is most sensitive to, and the "
+            f"four-method tie cannot see their age -- it ties just as well on a frozen curve. "
+            f"Re-run real-yields' company-data workflow for {ticker.upper()} and try again. "
+            f"Refusing rather than publishing a number off a stale discount rate.")
+    return "%s (%d days old%s)" % (stamp["generated_iso"][:10], stamp["age_days"],
+                                   ", STALE" if stamp["stale"] else "")
+
+
 # ---------------------------------------------------------------- one entry point
 def load_all(ticker, cash, sti, *, base_url=BASE_URL, local_dir=None,
              bonded=True):
@@ -293,9 +385,18 @@ def load_all(ticker, cash, sti, *, base_url=BASE_URL, local_dir=None,
     bonded=False -> the issuer has no committed bond list, so per-company COD /
     MV-of-debt are unavailable; caller falls back to rating-curve COD + book NFO.
     """
+    # AGE BEFORE SHAPE. Checked first so a stale feed costs one fetch and a readable refusal
+    # rather than a valuation nobody should quote.
+    stamp = load_run_stamp(ticker, base_url=base_url, local_dir=local_dir)
+    rate_asof = check_freshness(ticker, stamp)
+
     curve = load_curve(base_url=base_url, local_dir=local_dir)
     coe = load_coe(ticker, base_url=base_url, local_dir=local_dir)
     feed = {
+        "rate_asof": rate_asof,
+        "rate_asof_iso": (stamp or {}).get("generated_iso"),
+        "rate_age_days": (stamp or {}).get("age_days"),
+        "rate_asof_stale": bool((stamp or {}).get("stale")),
         "ticker": ticker.upper(),
         "tenor": list(range(1, N_TENORS + 1)),
         # global curve

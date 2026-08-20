@@ -1,7 +1,7 @@
 {
   "ticker": "PEP",
   "config_hash": "ead2bf1f854f1d44",
-  "data_vintage": "2026-08-20T02:56Z",
+  "data_vintage": "2026-08-20T04:46Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -233,7 +233,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-20T02:56Z",
+    "as_of": "2026-08-20T04:46Z",
     "flags": []
   }
 }

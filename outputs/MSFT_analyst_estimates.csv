@@ -1,0 +1,23 @@
+field,value,data_as_of
+ticker,MSFT,2026-08-20T20:03Z
+company,Microsoft Corporation,2026-08-20T20:03Z
+source,eodhd:Highlights+AnalystRatings,2026-08-20T20:03Z
+eodhd_updated_at,2026-08-20,2026-08-20T20:03Z
+rating,4.5902,2026-08-20T20:03Z
+target_price,569.5583,2026-08-20T20:03Z
+wall_street_target_price,569.5583,2026-08-20T20:03Z
+strong_buy,41,2026-08-20T20:03Z
+buy,15,2026-08-20T20:03Z
+hold,5,2026-08-20T20:03Z
+sell,0,2026-08-20T20:03Z
+strong_sell,0,2026-08-20T20:03Z
+analyst_count,61,2026-08-20T20:03Z
+eps_est_current_year,16.7788,2026-08-20T20:03Z
+eps_est_next_year,19.391,2026-08-20T20:03Z
+eps_est_current_quarter,4.2394,2026-08-20T20:03Z
+eps_est_next_quarter,4.6138,2026-08-20T20:03Z
+most_recent_quarter,2026-06-30,2026-08-20T20:03Z
+eps_ttm,17.96,2026-08-20T20:03Z
+pe_ratio,26.966,2026-08-20T20:03Z
+consensus_revenue_current_year,,2026-08-20T20:03Z
+consensus_revenue_next_year,,2026-08-20T20:03Z

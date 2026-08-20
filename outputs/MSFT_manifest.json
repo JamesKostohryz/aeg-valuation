@@ -1,0 +1,238 @@
+{
+  "ticker": "MSFT",
+  "config_hash": "52e0bef0d1a64799",
+  "data_vintage": "2026-08-20T20:03Z",
+  "gates_ok": true,
+  "tie_check": {
+    "tie_check": "PASS",
+    "audit_ok": true,
+    "tie_ok": true,
+    "mode_ok": true,
+    "max_identity_tie": 4.8312358558178e-09,
+    "mode_tie": 0,
+    "tie_scale": 494352.3,
+    "tie_scale_known": true,
+    "tie_relative": 9.772860075330488e-15,
+    "tie_rel_tol": 1e-11,
+    "tie_abs_rail": 0.001,
+    "tie_tol": 0.001,
+    "reasons": []
+  },
+  "rd_wedge": {
+    "opex_wedge": 24020.5914281245,
+    "wedge_pct_ebit": 0.13976645663122125,
+    "rev_scaled_consistent": true,
+    "rd_reserve": 0,
+    "rd_capitalization_wired": false,
+    "rd_reserve_nonzero_but_inert": false
+  },
+  "audit_status": "PASS \u2014 all identities tie",
+  "max_identity_tie": 4.8312358558178e-09,
+  "equity_value": 269.496907721408,
+  "enterprise_value": 269.496907721408,
+  "mode_tie": 0,
+  "anchor_year": 2026,
+  "disclosure": {
+    "base_equity_ps": 269.496907721409,
+    "adjusted_equity_ps": 276.3041751182019,
+    "depreciation_anchor_penalty_ps": -4.320309166624021,
+    "debt_capital_gain_ps": 2.4869582301688773
+  },
+  "convergence": {
+    "cfg_N": 12,
+    "K": 3,
+    "actual_eps_N": 28.6029391696601,
+    "normalized_eps_N": 28.689677814286085,
+    "gap_ps": -0.08673864462598502,
+    "engine_intrinsic_ps": 269.496907721409,
+    "corrected_intrinsic_ps": 269.496907721409,
+    "convergence_value_ps": 0.0,
+    "convergence_value_idio_adjusted_ps": null,
+    "headline_value_ps": 276.3041751182019,
+    "headline_value_pre_convergence_ps": 276.3041751182019,
+    "headline_basis": "adjusted equity (depreciation + market debt + idiosyncratic haircut)",
+    "guard": "PASS",
+    "guard_reason": "truncation valid: gap 0.3% of EPS, discarded AEG tail 0.49% of value",
+    "in_four_method_tie": false,
+    "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
+    "periods": [
+      {
+        "period": "explicit",
+        "years": "1..12",
+        "n_years": 12,
+        "eps_entry": 18.2075616544201,
+        "eps_exit": 28.6029391696601,
+        "eps_growth_annualized": 0.03835670773834754,
+        "aeg_sum_nominal_ps": -1.5073661343328606,
+        "aeg_first_ps": -5.55855115604059,
+        "aeg_last_ps": -0.0187705135524823,
+        "pv_contribution_ps": 3.9938818197158437,
+        "pct_of_corrected_value": 0.014819768632909501
+      },
+      {
+        "period": "convergence",
+        "years": "none",
+        "n_years": 0,
+        "eps_entry": 28.6029391696601,
+        "eps_exit": 28.6029391696601,
+        "eps_growth_annualized": null,
+        "aeg_sum_nominal_ps": 0.0,
+        "aeg_first_ps": null,
+        "aeg_last_ps": null,
+        "pv_contribution_ps": 0.0,
+        "pct_of_corrected_value": 0.0
+      },
+      {
+        "period": "combined",
+        "years": "1..12",
+        "n_years": 12,
+        "eps_entry": 18.2075616544201,
+        "eps_exit": 28.6029391696601,
+        "eps_growth_annualized": 0.03835670773834754,
+        "aeg_sum_nominal_ps": -1.5073661343328606,
+        "aeg_first_ps": -5.55855115604059,
+        "aeg_last_ps": -0.0187705135524823,
+        "pv_contribution_ps": 3.9938818197158437,
+        "pct_of_corrected_value": 0.014819768632909501
+      }
+    ],
+    "identity_checks": {
+      "normal_value_ps": 265.503025901693,
+      "explicit_identity_residual": 1.7053025658242404e-13,
+      "combined_identity_residual": 1.7053025658242404e-13
+    },
+    "schedule": [],
+    "outputs": [
+      "MSFT_convergence.csv",
+      "MSFT_periods.csv"
+    ],
+    "reviewed": false,
+    "review_note": ""
+  },
+  "outputs": [
+    "MSFT_anchors.csv",
+    "MSFT_valuation.csv",
+    "MSFT_summary.csv",
+    "MSFT_restated_real.csv",
+    "MSFT_reported_is.csv",
+    "MSFT_reported_bs.csv",
+    "MSFT_reported_cf.csv",
+    "MSFT_restated.csv",
+    "MSFT_fact_sheet.csv",
+    "MSFT_restated_bs.csv",
+    "MSFT_restated_is.csv",
+    "MSFT_aeg_schedule.csv",
+    "MSFT_dupont.json",
+    "MSFT_dupont.csv",
+    "MSFT_analyst_estimates.csv",
+    "MSFT_growth_trend.csv",
+    "MSFT_convergence.csv",
+    "MSFT_periods.csv"
+  ],
+  "tie_residuals": {
+    "components": {
+      "bs_noa_cse_nfo": {
+        "cell": "Audit!B22",
+        "residual": 0.0
+      },
+      "bs_flev_cse_nfo": {
+        "cell": "Audit!B23",
+        "residual": 0.0
+      },
+      "bs_bps_shares": {
+        "cell": "Audit!B24",
+        "residual": 0.0
+      },
+      "bs_nfops_shares": {
+        "cell": "Audit!B25",
+        "residual": 0.0
+      },
+      "equity_enterprise_tie": {
+        "cell": "Audit!B27",
+        "residual": 0.0
+      },
+      "value_additivity": {
+        "cell": "Audit!B28",
+        "residual": 0.0
+      },
+      "buyback_vp6_invariance": {
+        "cell": "Audit!B29",
+        "residual": 0.0
+      },
+      "sum_balance_ties": {
+        "cell": "Audit!B31",
+        "residual": 0.0
+      },
+      "sum_anchor_reconciliation": {
+        "cell": "Audit!B44",
+        "residual": 0.0
+      },
+      "reform_partition_nominal": {
+        "cell": "Audit!B47",
+        "residual": 0.0
+      },
+      "reform_partition_real": {
+        "cell": "Audit!B48",
+        "residual": 0.0
+      },
+      "cap_engine_anchor": {
+        "cell": "Audit!B49",
+        "residual": 0.0
+      },
+      "sum_reformulation_ties": {
+        "cell": "Audit!B50",
+        "residual": 0.0
+      },
+      "forecast_bs": {
+        "cell": "Audit!B55",
+        "residual": 0.0
+      },
+      "forecast_eps_shares": {
+        "cell": "Audit!B56",
+        "residual": 0.0
+      },
+      "forecast_fcfe": {
+        "cell": "Audit!B57",
+        "residual": 6.98491930961609e-10
+      },
+      "sum_forecast_ties": {
+        "cell": "Audit!B58",
+        "residual": 6.98491930961609e-10
+      },
+      "dcf_fcfe_vs_ri": {
+        "cell": "Audit!B61",
+        "residual": 0.0
+      },
+      "dcf_fcff_vs_ri": {
+        "cell": "Audit!B62",
+        "residual": 0.0
+      },
+      "sum_dcf_recon": {
+        "cell": "Audit!B63",
+        "residual": 0.0
+      },
+      "crosstab_aeg_vs_ri": {
+        "cell": "Audit!B72",
+        "residual": 0.0
+      },
+      "ops_direct_vs_additive": {
+        "cell": "Audit!B75",
+        "residual": 0.0
+      },
+      "master_total": {
+        "cell": "Audit!B5",
+        "residual": 5.5297277867794e-09
+      }
+    },
+    "worst_identity": "forecast_fcfe",
+    "worst_abs_residual": 6.98491930961609e-10
+  },
+  "cost_of_debt": {
+    "cod_source": "issuer_bonds",
+    "rating": "BBB",
+    "coverage": null,
+    "audit": "GREEN",
+    "as_of": "2026-08-20T20:03Z",
+    "flags": []
+  }
+}

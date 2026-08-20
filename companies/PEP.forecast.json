@@ -17,11 +17,12 @@
   "primary": "base",
   "expected_values": {
     "_comment": "Tied engine equity per anchor share, real terms. The reproduction check.",
-    "base": 110.980452128219,
-    "bull": 124.4046458159,
-    "bear": 75.7993443470992,
-    "expected_value": 103.11095853141927,
-    "_tolerance": "Retired 2026-08-19: tolerance_ps was an ABSOLUTE per-share band and it was 0.01, a penny, which required the market to stand still between the reviewed run and the next scheduled refresh. The reconciliation is now a RELATIVE band, tolerance_pct, defaulting to 2% in pipeline/test_reviewed_forecast.py. Set tolerance_pct here only to TIGHTEN it."
+    "base": 116.55753714471,
+    "bull": 129.559419961733,
+    "bear": 79.8383013919536,
+    "expected_value": 108.14214298228768,
+    "_tolerance": "Retired 2026-08-19: tolerance_ps was an ABSOLUTE per-share band and it was 0.01, a penny, which required the market to stand still between the reviewed run and the next scheduled refresh. The reconciliation is now a RELATIVE band, tolerance_pct, defaulting to 2% in pipeline/test_reviewed_forecast.py. Set tolerance_pct here only to TIGHTEN it.",
+    "_reproduction": "Re-recorded 2026-08-20 from the first successful PepsiCo run since 2026-08-13. The previous figures were base 110.9805 / bull 124.4046 / bear 75.7993 / expected 103.1110; they are now base 116.5575 / bull 129.5594 / bear 79.8383 / expected 108.1421, a move of about 5%. THE DRIVERS DID NOT CHANGE -- the bear horizon was extended and reverted, and every driver array is byte-identical to 2026-08-13. Three things did change underneath: a week of market movement, a rebuilt rate side (real cost of equity 5.4877% to 5.7374%), and the first run on the consolidated market-data store, which is now the single source of company fundamentals. A 5% move is larger than a week of rates alone would explain, so if PepsiCo ever matters, the data-source change is the piece to look at first."
   },
   "scenarios": [
     {

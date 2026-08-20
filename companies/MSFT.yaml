@@ -18,9 +18,36 @@ fy_end_month: 0          # 0 = auto-detect from statement dates
 # Until both lines below are filled in and uncommented, MSFT is AWAITING FORECAST: it produces no
 # valuation, and the fleet run lists it by name every time so it is not forgotten.
 #
-# forecast:
-#   horizon_N:                 # <- your judgment, an integer of years
-#   reviewed: true             # <- your confirmation that you chose it for THIS company
+forecast:
+  horizon_N: 12                # James Kostohryz, 2026-08-20.
+  reviewed: true
+  # WHY TWELVE, AND WHAT THE DRIVERS ARE BUILT TO SATISFY.
+  #
+  # The rule James stated, 2026-08-20: "the only thing that matters is the return on
+  # INCREMENTAL capital invested. That is what must equal the COE by the first year of the
+  # continuing period. It does not matter how high the return on capital is; it only matters
+  # what the return on incremental capital invested is."
+  #
+  # That is the forecaster kit's own bar (section 7.2): RORE_real > rho_real, return on
+  # RETAINED capital in real terms against the real cost of equity -- and the kit warns in 7.3
+  # that comparing the published nominal columns drops the inflation carry and gave the wrong
+  # answer in eight of Coca-Cola's twelve forecast years.
+  #
+  # So the driver set is solved, not chosen, on
+  #     (NOPAT_t / (1 + pi_t) - NOPAT_{t-1}) / delta_NOA_{t-1}  ->  rho_real  at t = 12
+  # using expected inflation from the published curve (2.93% falling to 2.29%) and Microsoft's
+  # real cost of equity at tenor 30. Real return on incremental capital falls 11.66% -> 6.70%
+  # and lands ON the cost of capital in the last explicit year, so the continuing period opens
+  # with abnormal earnings growth spent rather than truncated while still running.
+  #
+  # AVERAGE return on net operating assets still ends near 20%, and that is correct and not the
+  # test. The legacy book keeps earning its rent -- capitalised in the anchor -- while the
+  # marginal dollar stops earning an excess. Microsoft is still investing about $81bn in year
+  # 12; the forecast says that dollar earns exactly its cost of capital.
+  #
+  # Revenue growth fading 14.0% -> 4.4% and gross margin 67.9% -> 65.9% (infrastructure
+  # diluting software) are James's judgments of the business; the NOA path is arithmetic given
+  # them and the rule above.
 
 judgments:
   minority_include: false      # exclude minority interest from common equity

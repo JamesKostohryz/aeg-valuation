@@ -18,10 +18,15 @@ and shares outstanding, and writes `outputs/idio_universe_latest.csv`. Monthly i
 statistic blends one- and two-year windows on a sixty-trading-day lag, so it cannot move quickly
 by construction.
 
-THE UNIVERSE IS DECLARED, NOT DISCOVERED. `idio/universe.txt` holds the 228 tickers, committed
-and diffable. A feed that silently changes its own membership would move every cap-weighted
-normalizer without anything appearing to change — the same defect one level up. Adding or
-removing a name is a commit somebody can see.
+THE MEMBERSHIP IS MEASURED, AND THE CHANGE IS VISIBLE. Until 2026-08-19 `idio/universe.txt`
+was a hand-committed list that nothing updated: the refresh rebuilt the statistic FOR THE
+DECLARED NAMES but never the names themselves, so roughly twenty-five constituents a year would
+have drifted out of it with every gate green — the same class of defect as the frozen research
+outputs above, one level up. `idio/membership.py` now reads the constituents from the EODHD
+GSPC.INDX payload, refuses a payload that is the wrong size or too far from the committed list,
+and rewrites `universe.txt` as an OUTPUT of the run. The file stays in the repository because
+the commit diff is how a membership change becomes something a person can see, and because a
+past valuation has to be reproducible against the membership of its own date.
 
 FAIL-CLOSED ON COVERAGE. If fewer than MIN_COVERAGE of the universe resolves, the run refuses
 and leaves the previous file in place. The cap-weighted average semi-deviation is the
@@ -45,6 +50,7 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
+import membership as MB  # noqa: E402
 import semidev as SD  # noqa: E402
 
 EODHD_BASE = "https://eodhd.com/api"
@@ -61,8 +67,10 @@ class FeedRefused(Exception):
 
 
 def load_universe(path: str = UNIVERSE_FILE) -> list:
-    with open(path) as f:
-        return [ln.strip().upper() for ln in f if ln.strip() and not ln.startswith("#")]
+    """The committed record of the membership the LAST refresh used. This is no longer the
+    input to a refresh — `membership.resolve()` is — but it remains the reproducible record,
+    and it is what an offline reader (a test, a re-run of a past valuation) reads."""
+    return MB.read_committed(path)
 
 
 # ------------------------------------------------------------------ EODHD
@@ -119,7 +127,8 @@ def fetch_shares(ticker: str, api_key: str, timeout: int = 30):
 
 # ------------------------------------------------------------------ the build
 
-def build(api_key: str, asof: str | None = None, universe=None, log=print) -> dict:
+def build(api_key: str, asof: str | None = None, universe=None, log=print,
+          membership: dict | None = None) -> dict:
     asof = asof or dt.date.today().isoformat()
     tickers = universe if universe is not None else load_universe()
     start = (dt.date.fromisoformat(asof) - dt.timedelta(days=int(HISTORY_YEARS * 366))).isoformat()
@@ -174,7 +183,8 @@ def build(api_key: str, asof: str | None = None, universe=None, log=print) -> di
 
     return dict(asof=asof, rows=sorted(rows, key=lambda r: r["ticker"]), coverage=coverage,
                 no_price=no_price, no_semidev=no_semidev, no_shares=no_shares,
-                market_asof=market[-1][0], n_capped=len(capped))
+                market_asof=market[-1][0], n_capped=len(capped),
+                membership=membership)
 
 
 FIELDS = ["ticker", "semidev", "price", "shares", "market_cap", "px_asof", "n_closes"]
@@ -203,18 +213,50 @@ def main(argv=None) -> int:
     ap.add_argument("--outdir", default="outputs")
     ap.add_argument("--asof", default=None)
     ap.add_argument("--limit", type=int, default=None, help="first N names only (smoke runs)")
+    ap.add_argument("--accept-membership", action="store_true",
+                    help="ratify an index membership change larger than membership.MAX_DRIFT. "
+                         "Deliberate and logged; the diff on universe.txt is the record.")
+    ap.add_argument("--frozen-membership", action="store_true",
+                    help="use the committed universe.txt without consulting the index. For "
+                         "reproducing a past run; NOT for a scheduled refresh.")
     a = ap.parse_args(argv)
     key = os.environ.get("EODHD_API_KEY")
     if not key:
         print("EODHD_API_KEY not set", file=sys.stderr)
         return 2
-    uni = load_universe()[: a.limit] if a.limit else None
+
+    # 1) MEMBERSHIP FIRST. The names are an input the refresh used to take on faith. A wrong
+    #    or partial list does not give slightly worse premiums, it moves the cap-weighted
+    #    denominator and gives wrong ones for every name, so it is resolved and gated before a
+    #    single price is pulled.
+    mem = None
+    if a.frozen_membership:
+        tickers = load_universe()
+        print(f"membership FROZEN at the committed list ({len(tickers)} names) — "
+              f"reproduction mode, not a refresh")
+    else:
+        try:
+            mem = MB.resolve(key, accept=a.accept_membership)
+        except MB.MembershipRefused as e:
+            print(f"\nREFUSED, nothing written: {e}", file=sys.stderr)
+            return 2
+        tickers = mem["tickers"]
+
+    uni = tickers[: a.limit] if a.limit else tickers
     try:
-        res = build(key, asof=a.asof, universe=uni)
+        res = build(key, asof=a.asof, universe=uni, membership=(
+            {k: v for k, v in mem.items() if k != "tickers"} if mem else {"frozen": True}))
     except FeedRefused as e:
         print(f"\nREFUSED, nothing written: {e}", file=sys.stderr)
         return 2
     write(res, a.outdir)
+
+    # 2) universe.txt is an OUTPUT now. Written only on a full, unrefused run: a --limit smoke
+    #    run must never be able to shrink the committed membership to its first N names.
+    if mem and not a.limit:
+        MB.write_committed(mem["tickers"], asof=res["asof"])
+        print(f"  rewrote idio/universe.txt ({len(mem['tickers'])} names) — commit the diff")
+
     print(f"\nOK — {len(res['rows'])} names, coverage {res['coverage']:.1%}")
     return 0
 

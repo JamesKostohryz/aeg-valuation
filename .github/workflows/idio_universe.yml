@@ -1,7 +1,7 @@
 name: idio-universe-refresh
 
-# Rebuilds the company-premium universe: blended residual downside semi-deviation and cap
-# weights for the 228 declared names, from EODHD.
+# Rebuilds the company-premium universe from EODHD: the S&P 500 MEMBERSHIP itself, then the
+# blended residual downside semi-deviation and cap weights for those names.
 #
 # WHY IT EXISTS. idio/erp.py used to read three DATED ONE-SHOT research outputs from a working
 # folder that is not a repository -- rank_residual_scored.csv of 2026-08-17 and two price-test
@@ -12,10 +12,24 @@ name: idio-universe-refresh
 # MONTHLY IS AMPLE. The statistic blends one- and two-year windows on a sixty-trading-day lag,
 # so it cannot move quickly by construction. Runs the day after the ERP re-anchor.
 #
-# FAIL-CLOSED. Below 90% coverage of the declared universe the build REFUSES and leaves the
+# FAIL-CLOSED, TWICE. Below 90% coverage of the universe the build REFUSES and leaves the
 # previous file in place: the cap-weighted average semi-deviation is the denominator of every
 # company's premium, so a partial universe gives wrong premiums for every name, including the
 # ones that resolved.
+#
+# AND THE MEMBERSHIP ITSELF (added 2026-08-19). Until then this workflow rebuilt the statistic
+# FOR THE DECLARED NAMES but never the names: idio/universe.txt was hand-committed and nothing
+# updated it, so roughly twenty-five constituents a year would have drifted out of it with
+# every gate green. That is the same defect the workflow was built to stop, one level up, and
+# it had already cost a number once -- the 228-name research sample that was missing NVIDIA,
+# Lilly and Tesla depressed the denominator by 9.25% and inflated every premium in the system.
+#
+# idio/membership.py now reads the constituents from the EODHD GSPC.INDX payload before a
+# single price is pulled, and REFUSES rather than reconciling silently if the payload is the
+# wrong size (G1), differs from the committed list by more than five names (G2), or overlaps it
+# by less than 90% (G3). A change inside the limits is applied and universe.txt is rewritten
+# and committed, so the membership change is a diff a person can see. Ratify a larger change
+# deliberately with the accept_membership input.
 
 on:
   schedule:
@@ -26,6 +40,10 @@ on:
         description: "First N names only (smoke run; leave blank for the full universe)."
         type: string
         default: ""
+      accept_membership:
+        description: "Ratify an index membership change larger than membership.MAX_DRIFT (5)."
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -50,22 +68,32 @@ jobs:
 
       # Hermetic, no network. Pins the ported statistic to the values the 2026-08-17 research
       # run produced, so a change to the code is distinguishable from a change to the market.
+      # Hermetic, no network. test_idio_feed pins the ported statistic to the values the
+      # 2026-08-17 research run produced. test_idio_membership proves each membership guard
+      # DISCRIMINATES -- fires on a truncated payload, a large drift and a wrong index, and does
+      # not fire on an ordinary reconstitution -- and that the committed universe.txt still
+      # matches the index. A guard that never fires and a guard that always fires look
+      # identical from the outside.
       - name: Hermetic self-test
-        run: python -m pytest tests/test_idio_feed.py -q
+        run: python -m pytest tests/test_idio_feed.py tests/test_idio_membership.py -q
 
       - name: Rebuild the universe
         env:
           EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
         run: |
           python idio/feed.py --outdir outputs \
-            ${{ inputs.limit != '' && format('--limit {0}', inputs.limit) || '' }}
+            ${{ inputs.limit != '' && format('--limit {0}', inputs.limit) || '' }} \
+            ${{ inputs.accept_membership && '--accept-membership' || '' }}
 
       - name: Commit + push
         run: |
           git config user.name "asfp-bot"
           git config user.email "asfp-bot@users.noreply.github.com"
+          # universe.txt is an OUTPUT of this run, not an input to it. Committing it is what
+          # makes a membership change visible; without this line the refresh would rewrite the
+          # membership in the runner and throw the record away.
           git add outputs/idio_universe_latest.csv outputs/idio_universe_latest.json \
-                  outputs/idio_universe_*.csv
+                  outputs/idio_universe_*.csv idio/universe.txt
           git commit -m "idio: refresh company-premium universe $(date -u +%F)" || { echo "no changes"; exit 0; }
           git pull --rebase --autostash origin main || true
           git push

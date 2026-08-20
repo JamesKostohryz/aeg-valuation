@@ -37,9 +37,14 @@ def check(cond, msg):
 
 
 def run_unit(name):
-    """Run a self-contained test script as a subprocess; PASS iff it exits 0."""
-    r = subprocess.run([sys.executable, name], cwd=_PIPE if os.path.exists(os.path.join(_PIPE, name)) else _ROOT,
-                       capture_output=True, text=True)
+    """Run a self-contained test script as a subprocess; PASS iff it exits 0.
+
+    A name beginning `-m ` is a module invocation (`-m pytest ...`) rather than a script, so
+    that a pytest suite can be listed here alongside the standalone scripts."""
+    argv = name.split() if name.startswith("-m ") else [name]
+    cwd = _PIPE if (not name.startswith("-m ")
+                    and os.path.exists(os.path.join(_PIPE, name))) else _ROOT
+    r = subprocess.run([sys.executable] + argv, cwd=cwd, capture_output=True, text=True)
     tail = (r.stdout.strip().splitlines() or ["<no output>"])[-1]
     check(r.returncode == 0, f"{name}  ({tail})")
 
@@ -156,6 +161,17 @@ def main():
     # failure that quarantined PepsiCo's published outputs at commit 33a6b5a.
     run_unit("test_reviewed_forecast.py")
     run_unit("test_kit_feeds.py")
+    # THE COMPANY-PREMIUM PACKAGE. Until 2026-08-19 nothing ran these on a push: they live in
+    # tests/, but this harness never listed them, and idio-universe-refresh -- the only workflow
+    # that did run them -- fires on a monthly cron and on manual dispatch. So a change to
+    # idio/erp.py ran no test at all, on a module whose whole purpose is to set a discount rate.
+    # They are hermetic and cost under a second between them.
+    #   test_idio_feed        the ported risk statistic, pinned to the 2026-08-17 research values
+    #   test_idio_region2_common  COMMON(t): the T4 identity at every tenor, the front-tenor
+    #                         identity unchanged, no reordering, and NOT INERT
+    #   test_idio_membership  the three membership guards, each shown to discriminate
+    run_unit("-m pytest tests/test_idio_feed.py tests/test_idio_region2_common.py "
+             "tests/test_idio_membership.py -q")
     # The debt-feed guard (2026-08-09). The vendor "Total Debt" row is `in_debt`, which
     # sets net financial obligations and, through the identity that plugs net operating
     # assets, reprices the whole forecast — and the four-method tie stays green at 1e-14

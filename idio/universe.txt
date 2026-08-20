@@ -1,18 +1,15 @@
-# The company-premium universe: the CURRENT S&P 500 constituents.
+# idio/universe.txt — the S&P 500 membership the company-premium universe was built on.
 #
-# REPLACED 2026-08-19. The previous list was 228 names inherited from the 2026-08-17 rank-
-# residual research sample. It omitted 282 of the 503 current constituents -- including NVIDIA,
-# Broadcom, Eli Lilly, Tesla, Procter & Gamble, AMD and Applied Materials -- while carrying
-# seven names that have left the index.
+# GENERATED. Written by idio/membership.py from the EODHD GSPC.INDX constituents on
+# each run of the idio-universe-refresh workflow. Do not hand-edit: the next refresh
+# will overwrite it, and a hand-edit is exactly the drift this file was frozen by
+# before 2026-08-19. To change the universe deliberately, change the source or the
+# guards in membership.py.
 #
-# THAT WAS NOT A COVERAGE INCONVENIENCE, IT WAS A BIAS IN EVERY PUBLISHED PREMIUM. The cap-
-# weighted average semi-deviation is the DENOMINATOR of every company premium
-# (ERP_i(front) = market_ERP(front) x semidev_i / capw_avg_semidev). Measured on the 152 missing
-# names for which a price history was to hand, the omission depressed the equal-weighted
-# denominator by 9.25%, which inflates every company premium and stretches the whole dispersion.
-#
-# The universe must be the index the market ERP is measured on, or the ratio is between two
-# different populations. Source: the canonical EODHD store, current S&P 500 membership.
+# It is committed so that (a) a membership change is a visible diff and (b) a past
+# valuation can be reproduced against the membership of its own date.
+# as of 2026-08-19
+
 A
 AAPL
 ABBV

@@ -157,12 +157,12 @@ TAU_ADOPTED = TAU_MEASURED
 # the Region 2 -> Region 3 handoff at ORY is continuous rather than a jump.
 M_PASSTHROUGH = 1.5
 
-# THE COMMON-CREDIT PASS-THROUGH, AND THE ONE OPEN QUESTION IN THIS CHANGE.
+# THE COMMON-CREDIT PASS-THROUGH.
 #
-# James's ruling of 2026-08-19 writes the construction as
+# James's ruling of 2026-08-19 wrote the construction as
 #     Region 2_i(t) = COMMON(t) + 1.5 x [ widen_i(t) - capw_mean_widen(t) ]
-# i.e. the common half enters at 1.0 and the differential half at 1.5. That is implemented
-# exactly as decided, and it is named rather than left implicit so it is one line to revisit.
+# with no multiplier on the common half, i.e. an implicit 1.0. James approved 1.5 the same day.
+# The constant is named rather than left implicit so it is one line to revisit.
 #
 # THE ARGUMENT AGAINST 1.0, RECORDED BECAUSE IT IS NOT OBVIOUSLY WRONG. M = 1.5 is not a
 # statement about idiosyncratic risk specifically; it is the bond-to-equity conversion --
@@ -177,22 +177,30 @@ M_PASSTHROUGH = 1.5
 # evidence behind it, and the smaller of two defensible numbers is the right place to start a
 # term nobody has yet seen move a valuation.
 #
-# JAMES APPROVED 1.5 ON 2026-08-19 AND THE CONSTANT IS STILL 1.0. That is not an oversight, it
-# is the gate. Raising it adds 18.7bp to every company's collapsed real cost of equity, which
-# makes it a GATED change, and no cloud session can prove the four-method tie. It is recorded
-# here rather than in a chat so the approval cannot be lost, and it is item 1 of
-# docs/HANDOFF-Region2-Next-2026-08-19.md: change this line to 1.5 in a session that can run
-# the tie locally, then delete M_COMMON_IS_PROVISIONAL.
-#
 # WHAT THE APPROVAL ACTUALLY IS, because it reads like a new number and is not. M = 1.5 is
 # James's own long-standing formulation and has never been edited -- one line in the whole
 # history of this file. COMMON(t) was added on 2026-08-19 and the SPEC wrote it with no
 # multiplier in front of it; the pass-through was never discussed there at all. Nobody chose
 # 1.0. Setting Mc = 1.5 applies James's existing constant to a term that arrived without one.
-M_COMMON = 1.0
-M_COMMON_APPROVED_VALUE = 1.5        # James, 2026-08-19; awaiting a local four-method tie run
-M_COMMON_IS_PROVISIONAL = True
-M_COMMON_ALTERNATIVE = M_PASSTHROUGH          # the consistency-argument value, not adopted
+#
+# ADOPTED 2026-08-19, James's approval of the same date. Measured on the 2026-08-19 published
+# curve over the twenty-two-company table: every name's collapsed real cost of equity rises by
+# 17.2 to 17.7 basis points, mean 17.4, and no pair of names changes order. (The session that
+# approved it quoted 18.7bp off the older curve; the number moves with COMMON(30).)
+#
+# WHAT THE FOUR-METHOD TIE DOES AND DOES NOT PROVE ABOUT THIS LINE, stated because the earlier
+# handoff gated the change on a test that cannot see it. Nothing in the pricing pipeline
+# imports this package: the sealed engine takes its cost-of-equity curve through
+# repoint_rates.install_idio_hook(), whose `finrate_idio` series defaults to a row of zeros and
+# is written by no caller in this repository. Until Region 2 is wired into that hook, changing
+# M_COMMON moves no published valuation, and the tie reads identically at 1.0 and at 1.5 -- it
+# is blind to the constant by construction, not tolerant of it. The evidence that stands behind
+# this value is therefore tests/test_idio_region2_common.py (the T4 identity at every tenor),
+# influence_check() (no name inert), and the twenty-two-company table, NOT the tie. The tie
+# becomes the binding gate on the day the hook is fed, and it must be re-run then.
+M_COMMON = 1.5
+M_COMMON_ADOPTED = "2026-08-19, James"
+M_COMMON_ALTERNATIVE = 1.0            # the conservatism argument, considered and not adopted
 
 # The front is where the semi-deviation statistic actually lives (1y/2y trailing blend), so it
 # is where the level attaches and where the normalization target is read.

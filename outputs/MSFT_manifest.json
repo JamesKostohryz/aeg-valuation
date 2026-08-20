@@ -1,7 +1,7 @@
 {
   "ticker": "MSFT",
   "config_hash": "52e0bef0d1a64799",
-  "data_vintage": "2026-08-20T20:08Z",
+  "data_vintage": "2026-08-20T22:32Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
@@ -232,7 +232,7 @@
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-20T20:08Z",
+    "as_of": "2026-08-20T22:32Z",
     "flags": []
   }
 }

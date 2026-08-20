@@ -1,18 +1,18 @@
 field,value
-equity_value,116.55753714471
-enterprise_value,116.55753714471
-active_value,116.55753714471
+equity_value,116.264111741012
+enterprise_value,116.264111741012
+active_value,116.264111741012
 mode_tie,0
-max_identity_tie,2.21461959881708e-10
-tie_relative,3.266884040349128e-15
+max_identity_tie,2.21916707232595e-10
+tie_relative,3.2735922211301407e-15
 tie_scale,67789.9665695023
 audit_status,PASS — all identities tie
 tie_check,PASS
-adjusted_equity_ps,121.78180567538388
-depreciation_anchor_penalty_ps,0.1301539403675311
+adjusted_equity_ps,121.49355209328601
+depreciation_anchor_penalty_ps,0.12498211876740735
 debt_capital_gain_ps,5.35442247104142
-headline_value_ps,121.78180567538388
-headline_value_pre_convergence_ps,121.78180567538388
+headline_value_ps,121.49355209328601
+headline_value_pre_convergence_ps,121.49355209328601
 convergence_value_ps,0.0
 convergence_value_idio_adjusted_ps,
 convergence_K,3

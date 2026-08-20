@@ -13,8 +13,8 @@ anchor_margin_vs_normal,1.1033584548356974
 inflation_verdict,NET BENEFICIARY of inflation
 rd_capitalization_wired,False
 convergence_adjustment,RETIRED_2026-08-12 (inert)
-headline_value_ps,41.67269252323569
-headline_value_pre_convergence_ps,41.67269252323569
+headline_value_ps,44.09421403141292
+headline_value_pre_convergence_ps,44.09421403141292
 convergence_K,3
 convergence_value_ps,0.0
 convergence_value_idio_adjusted_ps,
@@ -41,4 +41,4 @@ payout_seed,0.671284
 ppe_life_years,17.35
 inputs_on_template_default,0
 config_hash,92a9dff16011983e
-vintage,2026-08-20T04:56Z
+vintage,2026-08-20T06:10Z

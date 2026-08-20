@@ -1,0 +1,6 @@
+field,value
+ticker,LIN
+verdict,REFUSED — no valuation was produced by this run
+reason,"AWAITING FORECAST (companies/LIN.yaml) — no valuation produced missing 'forecast.horizon_N' — this company has NO FORECAST HORIZON AT ALL, so no valuation will be produced. It is AWAITING FORECAST. cfg_N is the competitive-advantage period: the number of years YOU judge abnormal earnings growth to persist for this company. There is no default and there never will be. Any integer from 1 upward is accepted. To authorize a valuation, add: forecast: horizon_N: <your judgment> reviewed: true"
+stale_files_quarantined,0
+note,The .STALE files hold the PREVIOUS run's numbers. They are not current and must not be published or quoted.

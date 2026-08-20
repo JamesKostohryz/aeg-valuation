@@ -1,0 +1,10 @@
+field,value
+ticker,KO
+verdict,REFUSED — no valuation was produced by this run
+reason,"SCENARIOS FAILED: fail-closed: bear (TRUNCATION REVIEW REQUIRED: the truncation point does not satisfy the rule. TERMINAL CONDITION -- the abnormal earnings growth discarded at the stop year is worth -0.36 per share, 1.4% of value (AEG decaying at a factor of 0.924 a year). The forecast has not run to the point where abnormal growth is spent. Extend forecast.horizon_N. Both conditions must hold: the explicit forecast does not end until projected abnormal earnings growth is spent AND earnings are at a normalized level. (clear with convergence.reviewed: true in the company config, exactly as the primary scenario's own truncation is cleared))"
+stale_files_quarantined,4
+KO_valuation.csv,KO_valuation.STALE.csv
+KO_summary.csv,KO_summary.STALE.csv
+KO_manifest.json,KO_manifest.STALE.json
+KO_fact_sheet.csv,KO_fact_sheet.STALE.csv
+note,The .STALE files hold the PREVIOUS run's numbers. They are not current and must not be published or quoted.

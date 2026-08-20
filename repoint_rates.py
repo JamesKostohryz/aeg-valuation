@@ -138,15 +138,25 @@ def install_idio_hook(wb):
             MD.cell(r, c).value = 0.0
     _redefine_name(wb, "finrate_idio",
                    f"'{MD_SHEET}'!${_colname(COL0)}${r}:${_colname(COLN)}${r}")
-    # append +<col>31 (the idio series, same-column) onto each COE cell, once
+    # Append the idio series onto each COE cell, once, RESPECTING cfg_coe_mode.
+    #
+    # THE MODE HAD TO BE HONOURED HERE TOO, AND IT WAS NOT. Row 26 already reads
+    #     =IF(cfg_coe_mode="Single", $AE$24+$AE$25, <col>24+<col>25)
+    # so in Single mode every tenor takes the year-30 rate. The original append was a bare
+    # `+<col>31`, which in Single mode added a per-tenor premium onto a flat base -- so "Single"
+    # was not single once the hook carried anything. It never showed, because the hook has
+    # carried nothing but zeros since the day it was installed: zero is flat, so the defect was
+    # invisible for exactly as long as the feature was dormant. Wiring the premium on 2026-08-20
+    # is what makes it live, and this is the line that would otherwise have made cfg_coe_mode
+    # mean something different for the premium than for the rate it is added to.
     for c in range(COL0, COLN + 1):
         cell = MD.cell(ROW["coe"], c)
         f = cell.value
         if not isinstance(f, str) or not f.startswith("="):
             continue
-        if f"{_colname(c)}{r}" in f:
+        if f"${_colname(COLN)}${r}" in f or f"{_colname(c)}{r}" in f:
             continue
-        cell.value = f + f"+{_colname(c)}{r}"
+        cell.value = (f + f'+IF(cfg_coe_mode="Single",${_colname(COLN)}${r},{_colname(c)}{r})')
 
 
 def set_idio(wb, series):

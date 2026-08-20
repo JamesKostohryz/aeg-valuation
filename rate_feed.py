@@ -357,6 +357,11 @@ def load_run_stamp(ticker, *, base_url=BASE_URL, local_dir=None):
         return None
     age = (_dt.datetime.now(_dt.timezone.utc) - when).days
     return dict(generated_iso=iso, git_sha=kv.get("git_sha"), run_id=kv.get("run_id"),
+                # The durability judgment, recorded upstream since 2026-08-20. It selects the
+                # obsolescence onset and therefore enters the company premium, so it travels
+                # with the rate side rather than being re-chosen anywhere downstream.
+                obs_category=(kv.get("obs_category") or "").strip().upper()[:1] or None,
+                ory_override=(kv.get("ory_override") or "").strip() or None,
                 age_days=age, stale=age > WARN_AGE_DAYS, expired=age > MAX_AGE_DAYS)
 
 
@@ -397,6 +402,8 @@ def load_all(ticker, cash, sti, *, base_url=BASE_URL, local_dir=None,
         "rate_asof_iso": (stamp or {}).get("generated_iso"),
         "rate_age_days": (stamp or {}).get("age_days"),
         "rate_asof_stale": bool((stamp or {}).get("stale")),
+        "obs_category": (stamp or {}).get("obs_category"),
+        "ory_override": (stamp or {}).get("ory_override"),
         "ticker": ticker.upper(),
         "tenor": list(range(1, N_TENORS + 1)),
         # global curve

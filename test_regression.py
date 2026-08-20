@@ -189,7 +189,7 @@ def main():
     #                         identity unchanged, no reordering, and NOT INERT
     #   test_idio_membership  the three membership guards, each shown to discriminate
     run_unit("-m pytest tests/test_idio_feed.py tests/test_idio_region2_common.py "
-             "tests/test_idio_membership.py -q")
+             "tests/test_idio_membership.py tests/test_idio_company_curve.py -q")
     # The debt-feed guard (2026-08-09). The vendor "Total Debt" row is `in_debt`, which
     # sets net financial obligations and, through the identity that plugs net operating
     # assets, reprices the whole forecast — and the four-method tie stays green at 1e-14

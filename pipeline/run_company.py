@@ -531,6 +531,34 @@ def main():
                 print(f"[cod] unbonded fallback: {prov['cod_source']} rating={prov['rating']} "
                       f"coverage={prov['coverage']} audit={prov['audit']} flags={prov['flags']}")
             RP.repoint(wb, feed)
+
+            # --- THE COMPANY PREMIUM. Wired 2026-08-20; before that this row was thirty zeros.
+            #
+            # Until today `install_idio_hook` added a `finrate_idio` row to the cost-of-equity
+            # term structure and nothing ever wrote to it. The only caller of `set_idio` was the
+            # function that zeroes it. So every company on this system discounted at the market
+            # rate, and Coca-Cola and PepsiCo published the same real cost of equity to fifteen
+            # significant figures. This is the line that ends that.
+            #
+            # IT REFUSES RATHER THAN DEFAULTING. If the universe is stale, the issuer credit
+            # curves have expired, or COMMON(t) cannot be read, the run FAILS. Falling back to a
+            # zero premium would put the company back on the market rate -- silently, with a
+            # perfect four-method tie, which is exactly the state this change exists to end. The
+            # tie is an internal-consistency proof; it cannot see a missing premium.
+            import sys as _sys
+            _idio_dir = os.path.join(_BUILD_V2, "idio")
+            if _idio_dir not in _sys.path:
+                _sys.path.insert(0, _idio_dir)
+            import company_curve as CC
+            try:
+                _prem = CC.build(tk, feed["market_erp"],
+                                 outdir=os.path.join(_BUILD_V2, "outputs"),
+                                 obs_category=feed.get("obs_category"))
+            except CC.PremiumRefused as e:
+                _fail(f"COMPANY PREMIUM REFUSED for {tk}\n{e}")
+            RP.set_idio(wb, _prem["series"])
+            feed["idio_premium"] = _prem["provenance"]
+
             if _erp_override is not None:
                 RP.apply_erp_override(wb, _erp_override)
                 feed["erp_override"] = _erp_override

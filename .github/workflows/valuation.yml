@@ -50,7 +50,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libreoffice-calc
           python -m pip install --upgrade pip
-          pip install openpyxl==3.1.5 pyyaml
+          # requirements.txt, not a hand-kept list. This line read
+          # `pip install openpyxl==3.1.5 pyyaml` until 2026-08-19 while requirements.txt
+          # described itself as the dependency source of truth FOR THIS WORKFLOW -- so the
+          # market-data consolidation's pyarrow never reached the runner and the only two
+          # companies with a reviewed forecast crashed on every run. numpy was missing here
+          # too. A source of truth two workflows do not read is a comment.
+          pip install -r requirements.txt
 
       - name: Determine companies to run
         id: pick

@@ -64,7 +64,9 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install pytest
+        # requirements.txt, for the same reason valuation.yml now does: a hand-kept list
+        # drifts from the one the code is written against, silently, until something crashes.
+        run: pip install -r requirements.txt
 
       # Hermetic, no network. Pins the ported statistic to the values the 2026-08-17 research
       # run produced, so a change to the code is distinguishable from a change to the market.

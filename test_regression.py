@@ -166,6 +166,14 @@ def main():
     # failure that quarantined PepsiCo's published outputs at commit 33a6b5a.
     run_unit("test_reviewed_forecast.py")
     run_unit("test_kit_feeds.py")
+    # THE DEPENDENCY WIRING. requirements.txt called itself the source of truth for every
+    # workflow while two of them installed a hand-kept list instead, so pyarrow and pytest both
+    # reached the code and never reached the runner. Checks that every workflow installs from
+    # the file, that none keeps a substitute list beside it, and that every third-party import
+    # in the repository -- including the ones inside functions, which is where an optional
+    # dependency always hides -- is declared. No imports of its own beyond the standard
+    # library, so it can never be the test that fails for want of a package.
+    run_unit("test_workflow_deps.py")
     # THE COMPANY-PREMIUM PACKAGE. Until 2026-08-19 nothing ran these on a push: they live in
     # tests/, but this harness never listed them, and idio-universe-refresh -- the only workflow
     # that did run them -- fires on a monthly cron and on manual dispatch. So a change to

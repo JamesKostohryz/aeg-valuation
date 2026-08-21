@@ -57,8 +57,20 @@ GICS = {
     "10": "Energy", "15": "Materials", "20": "Industrials", "25": "Consumer Discretionary",
     "30": "Consumer Staples", "35": "Health Care", "40": "Financials",
     "45": "Information Technology", "50": "Communication Services", "55": "Utilities",
-    "60": "Real Estate",
 }
+
+# GICS 60, REAL ESTATE, IS DELIBERATELY ABSENT AND CANNOT BE BUILT FROM THIS DATA.
+# GICS sector 60 is roughly 90% equity REITs by market capitalisation. In French's scheme the
+# REIT code, SIC 6798, lives inside `Fin` (Trading) alongside brokers, closed-end funds and
+# holding offices, and the 49-industry set is the finest French publishes — so the REITs cannot
+# be separated out. What French calls `RlEst` is SIC 6500-6611: operators, lessors, agents,
+# title offices and land subdividers, with the income vehicles removed. Publishing that under
+# the name "Real Estate" produced a sector that read 1.71 and ranked riskiest of the eleven,
+# which is how the error was caught.
+#
+# Folding it into Financials is not a workaround, it is what GICS did: Real Estate was part of
+# Financials until September 2016. A post-2016 GICS Real Estate sector must come from the modern
+# panel, not from here.
 
 # industry -> (GICS code, note). "JUDGMENT" marks a call a reasonable person could make
 # differently; everything else is a direct correspondence.
@@ -142,10 +154,18 @@ MAP = {
                     "in the same 2018 restructure."),
     # ---- 55 Utilities
     "Util":  ("55", "Utilities"),
-    # ---- 60 Real Estate
-    "RlEst": ("60", "JUDGMENT: Real Estate became a GICS sector in its own right in 2016; before "
-                    "that it sat inside Financials. Assigned on the CURRENT definition, for the "
-                    "same reason as Fun."),
+    # ---- 60 Real Estate: NOT CONSTRUCTIBLE FROM THIS DATA. See the note below.
+    "RlEst": ("40", "CORRECTED 2026-08-21 after James said the Real Estate reading looked wrong. "
+                    "It was. I had mapped RlEst to GICS sector 60, and it printed as the RISKIEST "
+                    "sector at 1.71 — the opposite of what a property sector should do. Checked "
+                    "against French's own Siccodes49.txt: RlEst is SIC 6500-6611, real estate "
+                    "OPERATORS, LESSORS, AGENTS, TITLE OFFICES AND LAND SUBDIVIDERS. "
+                    "**SIC 6798, REIT, is not in it — it sits in `Fin` (Trading).** So RlEst is "
+                    "levered small-cap property developers with the income vehicles removed, "
+                    "which is genuinely among the most volatile groups on the exchange, and it "
+                    "is not GICS sector 60, which is roughly 90% equity REITs by market cap. "
+                    "Folded into Financials, which is ALSO where GICS itself put real estate "
+                    "until September 2016."),
     # ---- unassigned
     "Other": (None, "French's own catch-all, labelled 'Almost Nothing'. NOT assigned to any "
                     "sector and reported separately. Folding a catch-all into a real sector is "

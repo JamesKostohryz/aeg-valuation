@@ -22,10 +22,24 @@ So a threshold is chosen as a tolerance on the idiosyncratic ERP, not as a corre
 somebody liked the look of. At a market ERP near 3.3pp, an RMS difference of 0.076 costs about
 25bp of cost of equity.
 
-CLUSTERING. Agglomerative, average linkage, CONSTRAINED WITHIN SECTOR — an industry never merges
-across a sector boundary, because sector is the coarser grouping the score already carries as its
-own leg. The full threshold-versus-group-count curve is reported so the tolerance is chosen with
-the trade-off visible rather than asserted.
+CLUSTERING. Agglomerative, average linkage. The full threshold-versus-group-count curve is
+reported so the tolerance is chosen with the trade-off visible rather than asserted.
+
+CROSS-SECTOR MERGING IS ALLOWED, ON JAMES'S INSTRUCTION OF 2026-08-21: "individual stock and/or
+industries can be taken out of their sectors to merge with stock in a different sector. For
+example, some communications and tech stocks can be merged. Some utilities and industrials could
+be merged."
+
+He is right and the first version of this file was wrong to forbid it. THIS IS A RISK GROUPING,
+NOT A TAXONOMY. If regulated utilities and telecom services carry the same risk character they
+belong in the same bucket whatever GICS calls them, and forcing them apart because of an
+industrial classification injects a distinction the score is not trying to measure.
+
+ONE CONSEQUENCE TO WATCH, AND IT IS NOT AN OBJECTION. Grouping on measured risk and then using
+the group's risk as a score input is mildly circular: members are similar by construction. That
+is the intent — the leg asks "which risk bucket does this business fall into" — but it makes
+STABILITY the thing to test. Groups formed on one period must still cohere out of sample, or the
+score will jump when the grouping is refreshed. `--split-sample` runs that test.
 
 SMALL INDUSTRIES. An industry that cannot field MIN_FIRMS names has no risk series of its own —
 its "industry risk" would be one or two companies' idiosyncratic risk wearing an industry's name,
@@ -96,6 +110,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", required=True)
     ap.add_argument("--tolerance-bp", type=float, default=25.0)
+    ap.add_argument("--within-sector", action="store_true",
+                    help="forbid cross-sector merging (the superseded first design)")
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
     sys.path.insert(0, os.path.join(a.repo, "idio"))
@@ -215,18 +231,19 @@ def main():
     keys = sorted(series)
     for i, x in enumerate(keys):
         for y in keys[i + 1:]:
-            if x[0] != y[0]:
-                continue                                # within sector only
+            if a.within_sector and x[0] != y[0]:
+                continue
             common = sorted(set(series[x]) & set(series[y]))
             if len(common) < MIN_MONTHS:
                 continue
             D[(x, y)] = D[(y, x)] = math.sqrt(
                 sum((series[x][d] - series[y][d]) ** 2 for d in common) / len(common))
-    print("distance matrix: %d within-sector pairs" % (len(D) // 2))
+    print("distance matrix: %d pairs (%s)"
+          % (len(D) // 2, "within sector" if a.within_sector else "CROSS-SECTOR ALLOWED"))
 
     bysec = collections.defaultdict(list)
     for k in series:
-        bysec[k[0]].append(k)
+        bysec[k[0] if a.within_sector else "ALL"].append(k)
 
     def cluster(sec_keys, thresh):
         groups = [[k] for k in sec_keys]
@@ -264,9 +281,12 @@ def main():
         for g in cluster(bysec[s], tol_ratio):
             g = sorted(g)
             med = stat.median([stat.median(list(series[k].values())) for k in g])
-            name = "%s - %s" % (s, g[0][1] if len(g) == 1 else "/".join(x[1].split()[0] for x in g[:3])[:44])
-            groups[name] = dict(sector=s, industries=[x[1] for x in g], median_ratio=round(med, 4),
-                                n_industries=len(g))
+            secs = sorted({x[0] for x in g})
+            tag = secs[0] if len(secs) == 1 else "MIXED(%s)" % "+".join(x[:4] for x in secs)
+            name = "%s - %s" % (tag, g[0][1] if len(g) == 1 else "/".join(x[1].split()[0] for x in g[:3])[:44])
+            groups[name] = dict(sector=tag, sectors=secs,
+                                industries=["%s | %s" % (x[0], x[1]) for x in g],
+                                median_ratio=round(med, 4), n_industries=len(g))
     for s, n in bysec_small.items():
         groups["%s - Other" % s] = dict(sector=s, industries=["<pooled small industries>"],
                                         median_ratio=None, n_industries=n)

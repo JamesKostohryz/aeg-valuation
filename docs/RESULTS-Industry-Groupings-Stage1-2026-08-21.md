@@ -130,6 +130,49 @@ leg 5, not a parallel task.**
 
 ---
 
+## 5b. CROSS-SECTOR MERGING — James's correction, and it changes the result immediately
+
+**James, 2026-08-21: *"individual stock and/or industries can be taken out of their sectors to
+merge with stock in a different sector. For example, some communications and tech stocks can be
+merged. Some utilities and industrials could be merged."***
+
+He is right and the first version of the tool was wrong to forbid it. **This is a risk grouping,
+not a taxonomy.** If regulated utilities and telecom services carry the same risk character they
+belong in one bucket whatever GICS calls them, and forcing them apart injects a distinction the
+score is not trying to measure. The constraint is removed.
+
+**Lifting it changes the answer at once.** The same criterion, cross-sector allowed, at a 50bp
+tolerance gives **17 groups instead of 24**, and three of them span sectors:
+
+| ratio | group | members |
+|---|---|---|
+| **0.783** | **the defensive bucket** | Telecom Services *(Comm Svcs)*, Household & Personal Products, Packaged Foods *(Cons Def)*, Drug Manufacturers — General *(Healthcare)* |
+| **0.959** | **quality cyclicals** | Specialty Chemicals *(Materials)*, Financial Data & Exchanges, Insurance P&C *(Financials)*, Medical Devices *(Healthcare)*, Aerospace & Defense *(Industrials)* |
+| **1.043** | **market-like** | Packaging & Containers *(Cons Cyc)*, Diagnostics & Research, Medical Instruments *(Healthcare)*, Specialty Industrial Machinery *(Industrials)*, REIT Residential, REIT Specialty *(Real Estate)*, IT Services *(Tech)* |
+
+**The first of those is James's own example arriving unprompted** — Telecom Services leaves
+Communication Services and lands with consumer staples and large-cap pharma, at 0.783. That is
+what the market thinks a regulated telecom is: a defensive cash-flow business, not a
+communications-and-media stock.
+
+The third spans **five sectors** and puts residential REITs alongside industrial machinery and IT
+services at 1.043 — all businesses the market prices at roughly index risk.
+
+Stage 2 also answers a question I flagged as mine to not decide: **Software — Application and
+Software — Infrastructure merge**, at 1.151. They are one risk bucket.
+
+**One consequence to watch, and it is not an objection.** Grouping on measured risk and then
+feeding the group's risk into the score is mildly circular — members are similar by construction,
+and the resulting groups line up almost perfectly as a risk ladder from 0.783 to 1.743. That is
+the intent of the leg. But it means **stability is the thing to test**: groups formed on one
+period must still cohere out of sample, or the score jumps whenever the grouping is refreshed.
+That test is not yet built and should be part of the next step.
+
+**It also means leg 4 will correlate with leg 1**, for the same reason put-option implied
+volatility does. Worth measuring before the equal weighting is finalised.
+
+---
+
 ## 6. WHAT I NEED
 
 **Sign-off on the stage-1 table**, or corrections to it. It is a judgment call about business

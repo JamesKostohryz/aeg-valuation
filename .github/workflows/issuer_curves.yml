@@ -1,5 +1,20 @@
 name: issuer-credit-curves-refresh
 
+# UPDATED 2026-08-21: NOW ALSO QUARTERLY, NOT DISPATCH-ONLY. The dispatch-only ruling below
+# ("what is a monthly refresh FOR?") held because nothing but a single company's valuation, in
+# progress, ever read these curves. That stopped being true the moment the v2 four-block score
+# (idio/score_v2.py) landed: `idio_score_ticker.py` prints a full rank/percentile/indicated-ERP
+# DECOMPOSITION for any ticker at any time against a FROZEN snapshot -- and freezing a snapshot
+# nobody is scheduled to refresh reproduces the exact failure mode this project keeps hitting (a
+# number silently inert while every gate reports success). James approved a quarterly
+# full-universe cadence for the credit leg explicitly (2026-08-21: "Approved" on "quarterly for
+# the full universe, monthly for semi-deviation and put-IV"). So this workflow now does TWO
+# things: re-prices and refits the shared issuer curves (as before -- still the only thing
+# `company_curve.py`, the OLD per-company system, reads on demand from run_valuation.yml), AND
+# rebuilds the v2 credit block + full score + snapshot from that same fresh fit, on a quarterly
+# schedule, so the score board itself is never more than a quarter stale. workflow_dispatch is
+# unchanged and still the way to run it by hand between quarters.
+#
 # WHY THIS EXISTS. `outputs/issuer_widen_latest.csv` carries a `generated` date and
 # `idio/erp.py::ISSUER_WIDEN_MAX_AGE_DAYS = 45`. Past that limit `load_issuer_widen` returns
 # `(None, reason)`, `idio/company_curve.build()` raises `PremiumRefused`, and EVERY VALUATION ON
@@ -48,6 +63,12 @@ on:
   # so the curves are fresh AS OF THE VALUATION rather than as of the 2nd of the month, which
   # is strictly better as well as cheaper.
   #
+  # Quarterly, full-universe, for the v2 score board's own freshness -- separate rationale
+  # from the per-company on-demand path below, see the header note. 3rd of Jan/Apr/Jul/Oct,
+  # 14:30 UTC: after idio_universe.yml's semidev refresh (2nd, 14:00) and before rate_refresh's
+  # monthly run (3rd, 15:00), so market -> credit -> rate side rebuild in dependency order.
+  schedule:
+    - cron: "30 14 3 1,4,7,10 *"
   # Run it by hand any time from the Actions tab.
   workflow_dispatch:
     inputs:
@@ -197,6 +218,22 @@ jobs:
           print("reader OK: %d names, generated %s, tiers %s" % (len(widen), meta["generated"], meta["tier_counts"]))
           PY
 
+      # ---------------------------------------------------------------------- V2 SCORE REBUILD
+      # Everything above this point is unchanged from the per-company on-demand path (still what
+      # run_valuation.yml calls inline when curves are stale mid-valuation). Below is new: the
+      # v2 credit block, the full-universe score, and the frozen snapshot the single-ticker
+      # scorer (idio_score_ticker.py) reads for every "score any ticker, any time" call. Rebuilt
+      # from the SAME fresh issuer_curve_fit.csv this run just wrote, so the two systems never
+      # read two different vintages of the same bond pull.
+      - name: Rebuild the v2 credit block from the freshly-fit issuer curves
+        run: python idio/credit_block.py --write
+
+      - name: Rebuild the v2 full-universe score
+        run: python idio/score_v2.py
+
+      - name: Rebuild the v2 snapshot (frozen lookup for idio_score_ticker.py)
+        run: python idio/snapshot_build.py --write
+
       - name: Commit + push
         run: |
           git config user.name "asfp-bot"
@@ -204,8 +241,13 @@ jobs:
           git add data/bond_spreads/bond_spreads_live.csv \
                   outputs/issuer_widen_latest.csv \
                   outputs/issuer_curve_fit.csv \
-                  outputs/tier3_fit.json
-          git commit -m "idio: re-price issuer bonds and refit the credit curves $(date -u +%F)" \
+                  outputs/tier3_fit.json \
+                  outputs/credit_block_v2.csv \
+                  outputs/idio_score_latest.csv \
+                  outputs/idio_score_run_meta.json \
+                  outputs/idio_snapshot_latest.json \
+                  outputs/idio_snapshot_*.json
+          git commit -m "idio: re-price issuer bonds, refit credit curves, rebuild v2 score+snapshot $(date -u +%F)" \
             || { echo "no changes"; exit 0; }
           git pull --rebase --autostash origin main || true
           git push

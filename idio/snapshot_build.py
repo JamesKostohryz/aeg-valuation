@@ -107,6 +107,56 @@ def build_vintages(log=print):
     )
 
 
+# --------------------------------------------------------------------------------------------
+# STALENESS POLICY (task 22, 2026-08-21). James approved a refresh cadence explicitly: semi-
+# deviation and put-IV monthly (idio_universe.yml day 2; idio_putiv_monthly.yml), credit
+# spreads quarterly (idio_credit_quarterly.yml) plus a limited on-demand top-up wired into
+# run_valuation.yml. A cadence is only a promise if something checks it was kept -- mirrors
+# idio/erp.py's ISSUER_WIDEN_MAX_AGE_DAYS / PremiumRefused discipline for the OLD system: a
+# scheduled job that silently stops running produces a snapshot that is arithmetically perfect
+# and factually stale, with every other gate green. MAX_AGE_DAYS gives each promised cadence a
+# margin over its own schedule (a monthly job is stale past ~45 days, not past exactly 30, so an
+# ordinary one-or-two-day scheduler delay never trips it) rather than trusting the schedule to
+# have actually fired.
+#
+# risk_group carries NO age limit -- it is static by design (rule confirmed by James,
+# 2026-08-21: changes only on a reviewed business-driver event, not a calendar).
+MAX_AGE_DAYS = dict(
+    semidev=45,          # idio_universe.yml: monthly (2nd of month) + ~2 week margin
+    credit_spread=100,   # idio_credit_quarterly.yml: ~91-day cadence + ~9 day margin
+    put_iv=45,           # idio_putiv_monthly.yml: monthly + ~2 week margin
+)
+
+
+class StaleSnapshotError(Exception):
+    """A snapshot leg is older than this project's own refresh cadence promises. Callers decide
+    whether that is fatal (a live valuation should refuse) or advisory (a decomposition report
+    an analyst is about to review and can override anyway)."""
+
+
+def check_staleness(snapshot, today=None):
+    """Returns {leg: dict(as_of, age_days, max_age_days, stale[, reason])} for every leg that
+    carries an age policy (risk_group is excluded -- no policy applies to it). Never raises;
+    the caller decides what staleness means for its own use case."""
+    today = today or dt.date.today()
+    out = {}
+    for leg, max_age in MAX_AGE_DAYS.items():
+        v = (snapshot.get("vintages") or {}).get(leg, {})
+        as_of = v.get("as_of")
+        if not as_of:
+            out[leg] = dict(as_of=None, age_days=None, max_age_days=max_age, stale=True,
+                             reason="no as-of date recovered for this leg")
+            continue
+        try:
+            age = (today - dt.date.fromisoformat(as_of)).days
+        except ValueError:
+            out[leg] = dict(as_of=as_of, age_days=None, max_age_days=max_age, stale=True,
+                             reason="as-of date %r not parseable" % as_of)
+            continue
+        out[leg] = dict(as_of=as_of, age_days=age, max_age_days=max_age, stale=(age > max_age))
+    return out
+
+
 def build_snapshot(log=print):
     rows, excluded = S.load_universe()
     semidev, weight = S.load_semidev_and_weight()
@@ -243,6 +293,16 @@ def main():
            len(snap["credit_spread_all"])))
     for leg, v in snap["vintages"].items():
         log("  vintage -- %-13s as of %s  (%s)" % (leg, v["as_of"], v["basis"]))
+    stale = check_staleness(snap)
+    for leg, s in stale.items():
+        flag = "*** STALE ***" if s["stale"] else "ok"
+        log("  staleness -- %-13s age %s days / max %d  [%s]"
+            % (leg, s["age_days"] if s["age_days"] is not None else "?", s["max_age_days"], flag))
+    if any(s["stale"] for s in stale.values()):
+        log("  WARNING: at least one leg exceeds its promised refresh cadence -- see the "
+            "leg-specific refresh workflow (idio_universe.yml, idio_credit_quarterly.yml, "
+            "idio_putiv_monthly.yml). company_curve_v2.build() refuses on a stale semidev or "
+            "credit_spread leg; a stale put_iv is advisory only.")
     if "--write" in sys.argv:
         os.makedirs(os.path.dirname(OUT_LATEST), exist_ok=True)
         json.dump(snap, open(OUT_LATEST, "w"), indent=2)

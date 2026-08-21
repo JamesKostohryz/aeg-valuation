@@ -1,0 +1,145 @@
+name: idio-putiv-monthly-refresh
+
+# WHY THIS EXISTS. `outputs/svix_fleet_v2_cross_section.csv` -- the put-IV leg of the v2
+# idiosyncratic score's volatility block -- was built ONCE, 2026-08-21, across roughly a dozen
+# short interactive rounds (idio/svix/svix_layer1.py's checkpoint-resume design exists
+# specifically because that session was tool-call-time-limited, not compute- or API-limited: the
+# module's own comment says fitting the whole universe takes "about a quarter of an hour" once
+# it isn't artificially capped). Nothing scheduled a rebuild. Two months from now this file would
+# still show 21 August option chains, silently, with the volatility block's put-IV component
+# reading stale data forever -- the same failure mode idio_universe.yml and issuer_curves.yml
+# exist to stop for their own legs.
+#
+# James approved a monthly cadence explicitly (2026-08-21: "This should be run once per month").
+#
+# COVERAGE, HONESTLY STATED. The 2026-08-21 build reached 216 of the 499-name universe -- every
+# name whose option chain survived the arbitrage-free screens with enough listed expiries to
+# bracket a 365-day tenor. The other 283 are attempted fresh every run; some will keep failing
+# the screens (thin chains, no listed LEAPS) rather than being a coverage gap this job can close
+# by running more often. The volatility block degrades gracefully for a name with no put-IV --
+# it falls back to semi-deviation alone (see idio/score_v2.py's volatility_block) -- so a
+# shortfall here does not block scoring, only narrows the volatility measure for that name.
+#
+# API COST IS NOT YET MEASURED for a full-universe run in one pass (the 2026-08-21 build never
+# ran unthrottled). The first scheduled run's job log is the actual measurement; if it is
+# material against the 100,000-unit daily EODHD allowance, revisit the cadence or the --seconds
+# budget below. Flagged rather than assumed safe.
+#
+# NO CROSS-RUN CACHE. The checkpoint tag svix_layer1.py writes is keyed to the exact date range
+# requested, which is different every month by construction -- so a persisted cache would buy
+# nothing for a monthly job (unlike issuer_curves.yml's bond prices, which really do carry
+# forward). Every run fetches fresh, which is also the honest thing for an implied-volatility
+# reading: last month's option chain is not this month's.
+
+on:
+  # 12th of the month, 14:00 UTC -- after idio_universe.yml (2nd) and issuer_curves.yml's
+  # quarterly credit run (3rd), so this is never racing either of those for the runner's own
+  # attention, and after both so the score board's other two legs are already fresh when this
+  # one rebuilds the full score.
+  schedule:
+    - cron: "0 14 12 * *"
+  workflow_dispatch:
+    inputs:
+      seconds_budget:
+        description: "Per-invocation time budget for svix_layer1.py before it checkpoints and asks to be re-run."
+        type: string
+        default: "5000"
+      max_attempts:
+        description: "How many times to re-invoke svix_layer1.py if it hits its own time budget (checkpoints make this safe -- nothing is re-fetched)."
+        type: string
+        default: "3"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: idio-putiv-monthly-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compute the last five weekday sessions
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          import datetime as dt
+          d, out = dt.date.today() - dt.timedelta(days=1), []
+          while len(out) < 5:
+              if d.weekday() < 5:
+                  out.append(d.isoformat())
+              d -= dt.timedelta(days=1)
+          print("SVIX_DATES=" + ",".join(reversed(out)))
+          PY
+
+      # Checkpoint-resume, exactly as the module's own docstring specifies: a --seconds time
+      # limit ends the invocation cleanly (exit 3) with everything fitted so far written to
+      # disk, and re-running the SAME command picks up where it stopped, refetching nothing.
+      - name: Fit the put-IV cross-section (checkpoint-resumable)
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+        run: |
+          set +e
+          attempt=1
+          max_attempts="${{ inputs.max_attempts || '3' }}"
+          seconds_budget="${{ inputs.seconds_budget || '5000' }}"
+          while [ "$attempt" -le "$max_attempts" ]; do
+            echo "=== svix_layer1.py attempt $attempt/$max_attempts ==="
+            python idio/svix/svix_layer1.py \
+              --universe idio/universe.txt \
+              --dates "$SVIX_DATES" \
+              --tenors 365 \
+              --out outputs/svix_fleet_v2 \
+              --cache "$RUNNER_TEMP/svix_cache" \
+              --seconds "$seconds_budget"
+            rc=$?
+            if [ "$rc" -eq 0 ]; then
+              echo "completed within budget."
+              break
+            elif [ "$rc" -eq 3 ]; then
+              echo "hit its own time limit -- re-invoking to continue from checkpoint."
+              attempt=$((attempt + 1))
+              continue
+            else
+              echo "svix_layer1.py failed with exit code $rc -- not a time-limit checkpoint, stopping."
+              exit "$rc"
+            fi
+          done
+          if [ "$rc" -ne 0 ]; then
+            echo "REFUSED: did not finish within $max_attempts attempts of $seconds_budget seconds each. Re-run this workflow by hand, or raise seconds_budget / max_attempts." >&2
+            exit 1
+          fi
+
+      - name: Rebuild the v2 full-universe score
+        run: python idio/score_v2.py
+
+      - name: Rebuild the v2 snapshot (frozen lookup for idio_score_ticker.py)
+        run: python idio/snapshot_build.py --write
+
+      - name: Commit + push
+        run: |
+          git config user.name "asfp-bot"
+          git config user.email "asfp-bot@users.noreply.github.com"
+          git add outputs/svix_fleet_v2_cross_section.csv \
+                  outputs/svix_fleet_v2_by_date.csv \
+                  outputs/svix_fleet_v2_by_expiry.csv \
+                  outputs/idio_score_latest.csv \
+                  outputs/idio_score_run_meta.json \
+                  outputs/idio_snapshot_latest.json \
+                  outputs/idio_snapshot_*.json
+          git commit -m "idio: refresh put-IV cross-section, rebuild v2 score+snapshot $(date -u +%F)" \
+            || { echo "no changes"; exit 0; }
+          git pull --rebase --autostash origin main || true
+          git push

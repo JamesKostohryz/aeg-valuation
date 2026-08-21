@@ -107,6 +107,79 @@ jobs:
               fh.write("CURVES_REFRESHED=1\n")
           EOF
 
+      # ---------------------------------------------------------------- V2 SCORE ON-DEMAND TOP-UP
+      # Task 27, 2026-08-21. James: refresh credit "in a limited way every time a new valuation
+      # is made", and put-IV likewise. The scheduled jobs (idio_credit_quarterly.yml, monthly;
+      # idio_putiv_monthly.yml, monthly) are the primary refresh path -- this is the safety net
+      # for a scheduled job that silently stopped firing, and it is what makes company_curve_v2's
+      # own staleness gate (idio/snapshot_build.py::check_staleness, task 22) something a
+      # valuation can usually route around rather than simply refuse on.
+      #
+      # CREDIT is genuinely toppable here: if the step above just re-priced and refit the bonds
+      # (CURVES_REFRESHED=1) OR the v2 snapshot's own credit_spread leg is independently stale
+      # against its looser 100-day quarterly policy, rebuild the v2 credit block from whatever
+      # fit is on disk -- cheap, no new API spend if CURVES_REFRESHED already did the pull.
+      #
+      # PUT-IV is NOT toppable here, on purpose, and this step does not pretend otherwise.
+      # idio/svix/svix_layer1.py needs a peer pool (~20+ names) fit in the SAME run to complete
+      # an arbitrage-free surface (see that module's own docstring); fabricating one for a single
+      # ticker mid-valuation would be exactly the "silently degraded number wearing the real
+      # number's name" failure this project keeps a standing suspicion against. If the put_iv leg
+      # is stale, this step says so, loudly, in the run's own summary -- it does not fetch
+      # anything.
+      - name: Top up the v2 score's stale legs before this valuation runs (limited)
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+        run: |
+          python - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          import json, os, subprocess, sys
+          sys.path.insert(0, "idio")
+          import snapshot_build as SB
+
+          snap_path = "outputs/idio_snapshot_latest.json"
+          if not os.path.exists(snap_path):
+              print("## V2 score top-up\n\nno v2 snapshot on disk yet -- nothing to top up "
+                    "(first snapshot_build.py --write will create one).")
+              raise SystemExit(0)
+          snap = json.load(open(snap_path))
+          stale = SB.check_staleness(snap)
+
+          print("## V2 score legs, before this valuation\n")
+          for leg, s in stale.items():
+              flag = "STALE" if s["stale"] else "ok"
+              print("* %s: %s days old (limit %d) -- %s" % (leg, s["age_days"], s["max_age_days"], flag))
+
+          credit_refreshed_bonds = os.environ.get("CURVES_REFRESHED") == "1"
+          need_credit_rebuild = credit_refreshed_bonds or stale["credit_spread"]["stale"]
+
+          if need_credit_rebuild:
+              if stale["credit_spread"]["stale"] and not credit_refreshed_bonds:
+                  print("\ncredit_spread leg is stale on its own 100-day quarterly policy "
+                        "(independently of the OLD system's tighter 45-day check above) -- "
+                        "re-pricing and refitting now.")
+                  subprocess.run([sys.executable, "idio/bond_reprice.py",
+                                  "--cache", os.environ["RUNNER_TEMP"] + "/px"], check=True)
+                  subprocess.run([sys.executable, "idio/issuer_curves.py", "--outdir", "outputs",
+                                  "--real-yields", "_real_yields",
+                                  "--max-bond-age-days", "7"], check=True)
+              print("\nrebuilding the v2 credit block from the current issuer curve fit.")
+              subprocess.run([sys.executable, "idio/credit_block.py", "--write"], check=True)
+          else:
+              print("\ncredit_spread leg fresh enough -- no rebuild needed.")
+
+          if stale["put_iv"]["stale"]:
+              print("\n**WARNING: put-IV leg is %s days old (limit %d).** This job does NOT "
+                    "refit put-IV for a single ticker -- see idio_live_fetch.py and "
+                    "idio/svix/svix_layer1.py's own docstrings for why (a peer pool must be fit "
+                    "in the same run). Run idio_putiv_monthly.yml, or wait for its next "
+                    "scheduled run (12th of the month)." % (stale["put_iv"]["age_days"], stale["put_iv"]["max_age_days"]))
+
+          if need_credit_rebuild:
+              print("\nrebuilding the v2 full-universe score and snapshot from the topped-up inputs.")
+              subprocess.run([sys.executable, "idio/score_v2.py"], check=True)
+              subprocess.run([sys.executable, "idio/snapshot_build.py", "--write"], check=True)
+          EOF
+
       # Fail fast on a malformed payload BEFORE building anything, so a bad button press
       # costs seconds and produces a readable error instead of a mid-pipeline traceback.
       - name: Validate payload

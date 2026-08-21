@@ -67,6 +67,19 @@ sys.path.insert(0, HERE)
 
 import market_semidev_bridge as BR      # noqa: E402
 
+# RELIABILITY FLAG, added 2026-08-21. This series prices the ERP leg with the MARTIN BOUND
+# (vix_equivalent^2 / 100, via market_semidev_bridge.py) -- a direct variance read, not the
+# calibrated structural model ("Option B" / build_asof() in real-yields) that live valuations
+# actually use. The two disagree by roughly one percentage point on the same day (confirmed
+# same-day, not a date-mismatch artifact: docs/RESULTS-Market-ERP-Reconciliation-2026-08-21.md
+# in AEG-Project). This does NOT affect any live valuation -- idio_risk_score_v2.py reads a
+# third, correct, live-published number -- but this HISTORICAL series should not be read as
+# equivalent to it until rebuilt on Option B (blocked on a historical normalized-earnings-yield
+# input that does not exist yet; see the same doc, section 3). Every row here carries this flag
+# explicitly rather than requiring a reader to already know it from this docstring.
+ERP_METHODOLOGY_FLAG = ("martin_bound -- NOT the Option B construction live valuations use; "
+                         "see docs/RESULTS-Market-ERP-Reconciliation-2026-08-21.md")
+
 
 def _arg(flag, default=None):
     if flag in sys.argv:
@@ -136,7 +149,8 @@ def build(log=print):
         rec = dict(date=b["date"], month=ym,
                    market_semidev=b["market_semidev"],
                    vix_equiv=b["vix_equiv"], erp_source=b["source"],
-                   market_erp_1y_pct=erp)
+                   market_erp_1y_pct=erp,
+                   erp_methodology=ERP_METHODOLOGY_FLAG)
         for k in KNOTS:
             rec["real_rf_%dy_pct" % k] = c["real%d" % k]
             rec["real_rf_%dy_source" % k] = c["src%d" % k]

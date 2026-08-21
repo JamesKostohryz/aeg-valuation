@@ -545,11 +545,24 @@ def main():
             # zero premium would put the company back on the market rate -- silently, with a
             # perfect four-method tie, which is exactly the state this change exists to end. The
             # tie is an internal-consistency proof; it cannot see a missing premium.
+            #
+            # SWAPPED TO THE V2 FOUR-BLOCK SCORE, 2026-08-21 (task 21, GATED, on branch
+            # idio-v2-wiring pending James's sign-off on a live dispatch tie-proof before this
+            # merges to main). company_curve_v2.build() is a drop-in: identical signature,
+            # reuses company_curve.PremiumRefused/SANE_MIN_PP/SANE_MAX_PP verbatim (not
+            # redefined), same {series, provenance} return shape -- so this is the entire diff.
+            # It replaces Region 1/2/3's linear differential construction with the four-block
+            # percentile score (volatility, credit, industry, within-industry), calibrated so
+            # the idiosyncratic premium is an INCREMENT on the market ERP that can be negative
+            # for the safest companies (James, 2026-08-21, correcting the first version: "My
+            # intent is that the safest companies may have a negative idiosyncratic ERP and have
+            # an ERP which is below the market ERP"), and adds its own staleness gate (task 22)
+            # on top of the credit-curve expiry check this comment block already describes.
             import sys as _sys
             _idio_dir = os.path.join(_BUILD_V2, "idio")
             if _idio_dir not in _sys.path:
                 _sys.path.insert(0, _idio_dir)
-            import company_curve as CC
+            import company_curve_v2 as CC
             try:
                 _prem = CC.build(tk, feed["market_erp"],
                                  outdir=os.path.join(_BUILD_V2, "outputs"),

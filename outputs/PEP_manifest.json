@@ -1,18 +1,18 @@
 {
   "ticker": "PEP",
   "config_hash": "ead2bf1f854f1d44",
-  "data_vintage": "2026-08-20T22:32Z",
+  "data_vintage": "run-2026-08-21T22:35:41Z",
   "gates_ok": true,
   "tie_check": {
     "tie_check": "PASS",
     "audit_ok": true,
     "tie_ok": true,
     "mode_ok": true,
-    "max_identity_tie": 2.29192664846778e-10,
+    "max_identity_tie": 4.65206539956853e-10,
     "mode_tie": 0,
     "tie_scale": 67789.9665695023,
     "tie_scale_known": true,
-    "tie_relative": 3.380923113626204e-15,
+    "tie_relative": 6.862468938967474e-15,
     "tie_rel_tol": 1e-11,
     "tie_abs_rail": 0.001,
     "tie_tol": 0.001,
@@ -27,32 +27,32 @@
     "rd_reserve_nonzero_but_inert": false
   },
   "audit_status": "PASS \u2014 all identities tie",
-  "max_identity_tie": 2.29192664846778e-10,
-  "equity_value": 117.12224373768,
-  "enterprise_value": 117.12224373768,
+  "max_identity_tie": 4.65206539956853e-10,
+  "equity_value": 263.317322657642,
+  "enterprise_value": 263.317322657642,
   "mode_tie": 0,
   "anchor_year": 2025,
   "disclosure": {
-    "base_equity_ps": 117.12224373768,
-    "adjusted_equity_ps": 122.368755281558,
-    "depreciation_anchor_penalty_ps": 0.10791092716341412,
+    "base_equity_ps": 263.317322657642,
+    "adjusted_equity_ps": 268.64897267780157,
+    "depreciation_anchor_penalty_ps": 0.022772450881884534,
     "debt_capital_gain_ps": 5.35442247104142
   },
   "convergence": {
     "cfg_N": 12,
     "K": 3,
-    "actual_eps_N": 9.31948195888939,
-    "normalized_eps_N": 9.283794478981926,
-    "gap_ps": 0.03568747990746424,
-    "engine_intrinsic_ps": 117.12224373768,
-    "corrected_intrinsic_ps": 117.12224373768,
+    "actual_eps_N": 14.018262140289,
+    "normalized_eps_N": 14.019830429981628,
+    "gap_ps": -0.0015682896926279,
+    "engine_intrinsic_ps": 263.317322657642,
+    "corrected_intrinsic_ps": 263.317322657642,
     "convergence_value_ps": 0.0,
     "convergence_value_idio_adjusted_ps": null,
-    "headline_value_ps": 122.368755281558,
-    "headline_value_pre_convergence_ps": 122.368755281558,
+    "headline_value_ps": 268.64897267780157,
+    "headline_value_pre_convergence_ps": 268.64897267780157,
     "headline_basis": "adjusted equity (depreciation + market debt + idiosyncratic haircut)",
-    "guard": "PASS",
-    "guard_reason": "truncation valid: gap 0.4% of EPS, discarded AEG tail 0.39% of value",
+    "guard": "REVIEW",
+    "guard_reason": "the truncation point does not satisfy the rule. TERMINAL CONDITION -- abnormal earnings growth is still GROWING at the stop year (AEG 0.3021 -> 0.3293 per share, factor 1.090). The continuing period begins by forcing it to zero, so this truncation discards a stream the forecast says is still building. Extend forecast.horizon_N until it is spent -- up to thirty years is available, and that is what it is for. Both conditions must hold: the explicit forecast does not end until projected abnormal earnings growth is spent AND earnings are at a normalized level.",
     "in_four_method_tie": false,
     "caveat": "the convergence increment is computed on the EQUITY (EPS) leg only and therefore sits OUTSIDE the four-method tie; the tie covers the explicit period through cfg_N",
     "periods": [
@@ -61,20 +61,20 @@
         "years": "1..12",
         "n_years": 12,
         "eps_entry": 7.53703838487442,
-        "eps_exit": 9.31948195888939,
-        "eps_growth_annualized": 0.017847201871822316,
-        "aeg_sum_nominal_ps": -0.7980514115664272,
-        "aeg_first_ps": -0.162955495974393,
-        "aeg_last_ps": -0.00461200905582082,
-        "pv_contribution_ps": 4.911670903477523,
-        "pct_of_corrected_value": 0.041936277403276594
+        "eps_exit": 14.018262140289,
+        "eps_growth_annualized": 0.05307132584699281,
+        "aeg_sum_nominal_ps": 3.1903926222782477,
+        "aeg_first_ps": 0.220513960803227,
+        "aeg_last_ps": 0.329252329953428,
+        "pv_contribution_ps": 95.89704474110543,
+        "pct_of_corrected_value": 0.36418813533885175
       },
       {
         "period": "convergence",
         "years": "none",
         "n_years": 0,
-        "eps_entry": 9.31948195888939,
-        "eps_exit": 9.31948195888939,
+        "eps_entry": 14.018262140289,
+        "eps_exit": 14.018262140289,
         "eps_growth_annualized": null,
         "aeg_sum_nominal_ps": 0.0,
         "aeg_first_ps": null,
@@ -87,19 +87,19 @@
         "years": "1..12",
         "n_years": 12,
         "eps_entry": 7.53703838487442,
-        "eps_exit": 9.31948195888939,
-        "eps_growth_annualized": 0.017847201871822316,
-        "aeg_sum_nominal_ps": -0.7980514115664272,
-        "aeg_first_ps": -0.162955495974393,
-        "aeg_last_ps": -0.00461200905582082,
-        "pv_contribution_ps": 4.911670903477523,
-        "pct_of_corrected_value": 0.041936277403276594
+        "eps_exit": 14.018262140289,
+        "eps_growth_annualized": 0.05307132584699281,
+        "aeg_sum_nominal_ps": 3.1903926222782477,
+        "aeg_first_ps": 0.220513960803227,
+        "aeg_last_ps": 0.329252329953428,
+        "pv_contribution_ps": 95.89704474110543,
+        "pct_of_corrected_value": 0.36418813533885175
       }
     ],
     "identity_checks": {
-      "normal_value_ps": 112.210572834203,
-      "explicit_identity_residual": 5.400124791776761e-13,
-      "combined_identity_residual": 5.400124791776761e-13
+      "normal_value_ps": 167.420277916536,
+      "explicit_identity_residual": 5.684341886080801e-13,
+      "combined_identity_residual": 5.684341886080801e-13
     },
     "schedule": [],
     "outputs": [
@@ -194,11 +194,11 @@
       },
       "forecast_fcfe": {
         "cell": "Audit!B57",
-        "residual": 0.0
+        "residual": 2.27373675443232e-12
       },
       "sum_forecast_ties": {
         "cell": "Audit!B58",
-        "residual": 0.0
+        "residual": 2.27373675443232e-12
       },
       "dcf_fcfe_vs_ri": {
         "cell": "Audit!B61",
@@ -222,18 +222,18 @@
       },
       "master_total": {
         "cell": "Audit!B5",
-        "residual": 2.29192664846778e-10
+        "residual": 4.67480276711285e-10
       }
     },
-    "worst_identity": "bs_noa_cse_nfo",
-    "worst_abs_residual": 0.0
+    "worst_identity": "forecast_fcfe",
+    "worst_abs_residual": 2.27373675443232e-12
   },
   "cost_of_debt": {
     "cod_source": "issuer_bonds",
     "rating": "BBB",
     "coverage": null,
     "audit": "GREEN",
-    "as_of": "2026-08-20T22:32Z",
+    "as_of": "run-2026-08-21T22:35:41Z",
     "flags": []
   }
 }

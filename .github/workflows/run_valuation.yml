@@ -299,8 +299,16 @@ jobs:
           git config user.email "aeg-bot@users.noreply.github.com"
           git add outputs/
           git commit -m "run: ${TICKER} forecast valuation $(date -u +%F)" || echo "no changes to commit"
-          git pull --rebase --autostash origin main || true
-          git push
+          # Rebase onto whatever branch THIS run actually checked out -- "origin main" was
+          # hardcoded, which works for the normal case (dispatched on main) but rebases a
+          # feature-branch dispatch onto a diverged main and leaves the runner in a detached,
+          # unpushable state. Found 2026-08-21 dispatching idio-v2-wiring for a GATED tie-proof;
+          # the valuation itself succeeded (tie PASS) but this step failed with "not currently
+          # on a branch". Harmless to that proof -- outputs from an unmerged branch shouldn't
+          # land on main anyway -- but worth fixing so the next branch dispatch actually commits.
+          CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+          git pull --rebase --autostash origin "$CURRENT_BRANCH" || true
+          git push origin "HEAD:$CURRENT_BRANCH"
 
       - name: Summary
         if: always()

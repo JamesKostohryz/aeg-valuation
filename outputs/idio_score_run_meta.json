@@ -1,0 +1,24 @@
+{
+  "market_erp_pct": 3.3908,
+  "market_erp_source": "github-raw",
+  "market_erp_date": "2026-08-21",
+  "market_erp_age_days": 0,
+  "calibration_k": 0.07954516466333533,
+  "cap_weighted_avg_score_before_floors": 42.62735534398759,
+  "cap_weighted_avg_premium_after_floors_pct": 3.392648925002575,
+  "weight_coverage_pct": 100.00000000000009,
+  "n_scored": 499,
+  "n_refused": 0,
+  "refused": [],
+  "n_excluded_data_artifact": 4,
+  "excluded": [
+    "FDXF",
+    "HONA",
+    "Q",
+    "SNDK"
+  ],
+  "iv_weight": 0.6,
+  "score_floor": 1.5,
+  "credit_floor_margin_pp": 0.25,
+  "credit_floor_margin_status": "PROVISIONAL -- not yet confirmed by James, see results doc"
+}

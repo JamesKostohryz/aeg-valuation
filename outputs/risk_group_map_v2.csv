@@ -1,0 +1,504 @@
+ticker,name,gics_sector,gics_sub_industry,risk_group,sub_industry_score,company_exception,change,change_reason,data_flag,curve_suspect,group_score,group_score_basis
+AMP,Ameriprise Financial Inc,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,2.364pp against 0.55 for BlackRock and 0.96 for Blackstone,6.00,median of 9 unmoved members
+APO,Apollo Global Management LLC Class A,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,,6.00,median of 9 unmoved members
+ARES,Ares Management LP,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,,6.00,median of 9 unmoved members
+BEN,Franklin Resources Inc,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,,6.00,median of 9 unmoved members
+BLK,BlackRock Inc,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,,6.00,median of 9 unmoved members
+BX,Blackstone Group Inc,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,,6.00,median of 9 unmoved members
+IVZ,Invesco Plc,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,,6.00,median of 9 unmoved members
+KKR,KKR & Co. Inc.,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,,6.00,median of 9 unmoved members
+NTRS,Northern Trust Corporation,Financial Services,Asset Management,Banks & Capital Markets,6.0,,moved,"from Asset Management. Northern Trust is the third US custody bank. Same driver as State Street and Bank of New York, which are both already in this group.",,,7.00,median of 19 unmoved members
+PFG,Principal Financial Group Inc,Financial Services,Asset Management,Insurance Underwriters,6.0,,moved,"from Asset Management. Principal Financial is a regulated life insurer with an asset management arm, not the reverse. Reserve and spread risk on a leveraged balance sheet.",,,5.00,median of 17 unmoved members
+RJF,Raymond James Financial Inc.,Financial Services,Asset Management,Banks & Capital Markets,6.0,,moved,"from Asset Management. Raymond James is a brokerage and wealth manager that owns a bank. Capital markets driver, alongside Schwab and Morgan Stanley.",,,7.00,median of 19 unmoved members
+STT,State Street Corp,Financial Services,Asset Management,Banks & Capital Markets,6.0,,moved,"from Asset Management. State Street is a custody bank and a global systemically important bank, deposit-funded with net interest income. It belongs with Bank of New York.",,4.012pp for a custody bank is not a credible thirty-year spread,7.00,median of 19 unmoved members
+TROW,T. Rowe Price Group Inc,Financial Services,Asset Management,Asset Management,6.0,,split,"approved split of Asset Mgmt & Consumer Credit: fee on assets under management, levered to market levels",,,6.00,median of 9 unmoved members
+AXP,American Express Company,Financial Services,Credit Services,Fee-Based Financials,5.5,,moved,"from Asset Management. American Express earns most of its revenue as a discount rate on spend -- closed-loop network economics, like Visa and Mastercard. Its 0.80pp spread prices it as a network, not as a subprime lender.",,,3.50,median of 16 unmoved members
+COF,Capital One Financial Corporation,Financial Services,Credit Services,Banks & Capital Markets,5.5,,moved,"from Asset Management. Capital One is a deposit-funded bank holding company, not an asset manager. Its risk is the consumer credit cycle carried on an insured balance sheet.",,,7.00,median of 19 unmoved members
+PYPL,PayPal Holdings Inc,Financial Services,Credit Services,Payments & Financial Processing,5.5,,moved,from Asset Management. payments platform,,,5.50,all members moved; score is the median of what they brought
+SYF,Synchrony Financial,Financial Services,Credit Services,Banks & Capital Markets,5.5,,moved,"from Asset Management. Synchrony Bank is a deposit-funded lender. Spread of 2.90pp against 0.80 for American Express is the credit cycle, not a fee stream.",,,7.00,median of 19 unmoved members
+BAC,Bank of America Corp,Financial Services,Banks - Diversified,Banks & Capital Markets,7.0,,,,,,7.00,median of 19 unmoved members
+BNY,The Bank of New York Mellon Corporation,Financial Services,Banks - Diversified,Banks & Capital Markets,7.0,,,,,,7.00,median of 19 unmoved members
+C,Citigroup Inc.,Financial Services,Banks - Diversified,Banks & Capital Markets,7.0,,,,,,7.00,median of 19 unmoved members
+JPM,JPMorgan Chase & Co,Financial Services,Banks - Diversified,Banks & Capital Markets,7.0,,,,,,7.00,median of 19 unmoved members
+WFC,Wells Fargo & Company,Financial Services,Banks - Diversified,Banks & Capital Markets,7.0,,,,,,7.00,median of 19 unmoved members
+CFG,"Citizens Financial Group, Inc.",Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+FITB,Fifth Third Bancorp,Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+HBAN,Huntington Bancshares Incorporated,Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+KEY,KeyCorp,Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+MTB,M&T Bank Corporation,Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+PNC,PNC Financial Services Group Inc,Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+RF,Regions Financial Corporation,Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+TFC,Truist Financial Corp,Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+USB,U.S. Bancorp,Financial Services,Banks - Regional,Banks & Capital Markets,7.5,,,,,,7.00,median of 19 unmoved members
+GS,Goldman Sachs Group Inc,Financial Services,Capital Markets,Banks & Capital Markets,6.0,,,,,,7.00,median of 19 unmoved members
+HOOD,Robinhood Markets Inc,Financial Services,Capital Markets,Banks & Capital Markets,6.0,,,,,,7.00,median of 19 unmoved members
+IBKR,Interactive Brokers Group Inc,Financial Services,Capital Markets,Banks & Capital Markets,6.0,,,,,,7.00,median of 19 unmoved members
+MS,Morgan Stanley,Financial Services,Capital Markets,Banks & Capital Markets,6.0,,,,,,7.00,median of 19 unmoved members
+SCHW,Charles Schwab Corp,Financial Services,Capital Markets,Banks & Capital Markets,6.0,,,,,,7.00,median of 19 unmoved members
+RL,Ralph Lauren Corp Class A,Consumer Cyclical,Apparel Manufacturing,Consumer Services & Retail,5.5,,,,,,5.00,median of 14 unmoved members
+DECK,Deckers Outdoor Corporation,Consumer Cyclical,Footwear & Accessories,Consumer Services & Retail,5.5,,,,,,5.00,median of 14 unmoved members
+NKE,Nike Inc,Consumer Cyclical,Footwear & Accessories,Consumer Services & Retail,5.5,,,,,,5.00,median of 14 unmoved members
+TPR,Tapestry Inc,Consumer Cyclical,Luxury Goods,Consumer Services & Retail,5.5,,,,,,5.00,median of 14 unmoved members
+ROL,Rollins Inc,Consumer Cyclical,Personal Services,Quality Industrials,4.0,,moved,from Consumer Services & Retail. Rollins sells route-based pest control on recurring contracts -- the Cintas model. Not discretionary consumer demand.,,,4.00,median of 37 unmoved members
+CMG,Chipotle Mexican Grill Inc,Consumer Cyclical,Restaurants,Consumer Services & Retail,3.5,,,,,,5.00,median of 14 unmoved members
+DPZ,Domino's Pizza Inc Common Stock,Consumer Cyclical,Restaurants,Consumer Services & Retail,3.5,,,,,,5.00,median of 14 unmoved members
+DRI,Darden Restaurants Inc,Consumer Cyclical,Restaurants,Consumer Services & Retail,3.5,,,,,,5.00,median of 14 unmoved members
+MCD,McDonald’s Corporation,Consumer Cyclical,Restaurants,Consumer Services & Retail,3.5,,,,,,5.00,median of 14 unmoved members
+SBUX,Starbucks Corporation,Consumer Cyclical,Restaurants,Consumer Services & Retail,3.5,,,,,,5.00,median of 14 unmoved members
+YUM,Yum! Brands Inc,Consumer Cyclical,Restaurants,Consumer Services & Retail,3.5,,,,,,5.00,median of 14 unmoved members
+BBY,Best Buy Co. Inc,Consumer Cyclical,Specialty Retail,Consumer Services & Retail,5.0,,,,,,5.00,median of 14 unmoved members
+CASY,Caseys General Stores Inc,Consumer Cyclical,Specialty Retail,Defensive Retail,5.0,,moved,from Consumer Services & Retail. Casey's sells fuel and prepared food from small-town convenience stores. Non-discretionary replenishment demand.,,,3.50,median of 12 unmoved members
+TSCO,Tractor Supply Company,Consumer Cyclical,Specialty Retail,Consumer Services & Retail,5.0,,,,,,5.00,median of 14 unmoved members
+ULTA,Ulta Beauty Inc,Consumer Cyclical,Specialty Retail,Consumer Services & Retail,5.0,,,,,,5.00,median of 14 unmoved members
+WSM,Williams-Sonoma Inc,Consumer Cyclical,Specialty Retail,Consumer Services & Retail,5.0,,,,,,5.00,median of 14 unmoved members
+STZ,Constellation Brands Inc Class A,Consumer Defensive,Beverages - Brewers,Consumer Staples,3.0,,,,,,3.00,median of 23 unmoved members
+TAP,Molson Coors Brewing Co Class B,Consumer Defensive,Beverages - Brewers,Consumer Staples,3.0,,,,,,3.00,median of 23 unmoved members
+KDP,Keurig Dr Pepper Inc,Consumer Defensive,Beverages - Non-Alcoholic,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+KO,The Coca-Cola Company,Consumer Defensive,Beverages - Non-Alcoholic,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+MNST,Monster Beverage Corp,Consumer Defensive,Beverages - Non-Alcoholic,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+PEP,PepsiCo Inc,Consumer Defensive,Beverages - Non-Alcoholic,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+BF-B,Brown-Forman Corporation,Consumer Defensive,Beverages - Wineries & Distilleries,Consumer Staples,5.0,,,,,,3.00,median of 23 unmoved members
+HSY,Hershey Co,Consumer Defensive,Confectioners,Consumer Staples,3.0,,,,,,3.00,median of 23 unmoved members
+MDLZ,Mondelez International Inc,Consumer Defensive,Confectioners,Consumer Staples,3.0,,,,,,3.00,median of 23 unmoved members
+SYY,Sysco Corporation,Consumer Defensive,Food Distribution,Consumer Staples,4.5,,,,,,3.00,median of 23 unmoved members
+KR,Kroger Company,Consumer Defensive,Grocery Stores,Defensive Retail,5.0,,moved,"from Consumer Staples. Kroger is a grocery retailer. Separating it from Walmart, Costco and Target is a vendor artifact, not a risk distinction.",,,3.50,median of 12 unmoved members
+CHD,Church & Dwight Company Inc,Consumer Defensive,Household & Personal Products,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+CL,Colgate-Palmolive Company,Consumer Defensive,Household & Personal Products,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+CLX,The Clorox Company,Consumer Defensive,Household & Personal Products,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+EL,Estee Lauder Companies Inc,Consumer Defensive,Household & Personal Products,Consumer Services & Retail,2.0,,moved,"from Consumer Staples. Estee Lauder sells prestige beauty, heavily through Asian travel retail. Its demand is discretionary and its earnings have been cyclical. A semi-deviation of 34.3 against a Consumer Staples median near 18 is the measurement agreeing.",,,5.00,median of 14 unmoved members
+KMB,Kimberly-Clark Corporation,Consumer Defensive,Household & Personal Products,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+KVUE,Kenvue Inc.,Consumer Defensive,Household & Personal Products,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+PG,Procter & Gamble Company,Consumer Defensive,Household & Personal Products,Consumer Staples,2.0,,,,,,3.00,median of 23 unmoved members
+GIS,General Mills Inc,Consumer Defensive,Packaged Foods,Consumer Staples,4.5,,,,,,3.00,median of 23 unmoved members
+HRL,Hormel Foods Corporation,Consumer Defensive,Packaged Foods,Consumer Staples,4.5,,,,,,3.00,median of 23 unmoved members
+KHC,Kraft Heinz Co,Consumer Defensive,Packaged Foods,Consumer Staples,4.5,,,,,,3.00,median of 23 unmoved members
+MKC,McCormick & Company Incorporated,Consumer Defensive,Packaged Foods,Consumer Staples,4.5,,,,,,3.00,median of 23 unmoved members
+SJM,The J. M. Smucker Company,Consumer Defensive,Packaged Foods,Consumer Staples,4.5,,,,,,3.00,median of 23 unmoved members
+MO,Altria Group,Consumer Defensive,Tobacco,Consumer Staples,5.0,,,,,,3.00,median of 23 unmoved members
+PM,Philip Morris International Inc,Consumer Defensive,Tobacco,Consumer Staples,5.0,,,,,,3.00,median of 23 unmoved members
+KMI,Kinder Morgan Inc,Energy,Oil & Gas Midstream,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+OKE,ONEOK Inc,Energy,Oil & Gas Midstream,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+TRGP,Targa Resources Inc,Energy,Oil & Gas Midstream,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+WMB,Williams Companies Inc,Energy,Oil & Gas Midstream,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+VLTO,Veralto Corporation,Industrials,Pollution & Treatment Controls,Quality Industrials,3.5,,moved,"from Contracted Infrastructure. Veralto makes water-quality and product-identification instruments. A Danaher spinoff, not an infrastructure asset.",,,4.00,median of 37 unmoved members
+AMT,American Tower Corp,Real Estate,REIT - Specialty,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+CCI,Crown Castle,Real Estate,REIT - Specialty,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+DLR,Digital Realty Trust Inc,Real Estate,REIT - Specialty,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+EQIX,Equinix Inc,Real Estate,REIT - Specialty,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+IRM,Iron Mountain Incorporated,Real Estate,REIT - Specialty,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+SBAC,SBA Communications Corp,Real Estate,REIT - Specialty,Contracted Infrastructure,5.0,,,,,,5.00,median of 15 unmoved members
+WY,Weyerhaeuser Company,Real Estate,REIT - Specialty,Materials & Packaging,5.0,,moved,"from Contracted Infrastructure. Weyerhaeuser is a timber owner selling lumber into the housing cycle. Commodity fibre pricing, not the long-dated contracted lease that defines Contracted Infrastructure.",,,4.50,median of 17 unmoved members
+CSX,CSX Corporation,Industrials,Railroads,Contracted Infrastructure,3.0,,,,,,5.00,median of 15 unmoved members
+NSC,Norfolk Southern Corporation,Industrials,Railroads,Contracted Infrastructure,3.0,,,,,,5.00,median of 15 unmoved members
+UNP,Union Pacific Corporation,Industrials,Railroads,Contracted Infrastructure,3.0,,,,,,5.00,median of 15 unmoved members
+WAB,Westinghouse Air Brake Technologies Corp,Industrials,Railroads,Contracted Infrastructure,3.0,,,,,,5.00,median of 15 unmoved members
+AES,The AES Corporation,Utilities,Utilities - Diversified,Merchant Power,4.5,,moved,"from Contracted Infrastructure. AES is an independent power producer with heavy emerging-market exposure, not a contracted infrastructure asset.",,,6.50,all members moved; score is the median of what they brought
+SRE,Sempra Energy,Utilities,Utilities - Diversified,Contracted Infrastructure,4.5,,,,,,5.00,median of 15 unmoved members
+LULU,Lululemon Athletica Inc.,Consumer Cyclical,Apparel Retail,Consumer Services & Retail,4.0,,moved,"from Defensive Retail. Lululemon sells premium athletic apparel with real fashion risk. At a semi-deviation of 36.0 it is the most volatile name in Defensive Retail by ten points, and nothing about it is defensive.",,,5.00,median of 14 unmoved members
+ROST,Ross Stores Inc,Consumer Cyclical,Apparel Retail,Defensive Retail,4.0,,,,,,3.50,median of 12 unmoved members
+TJX,The TJX Companies Inc,Consumer Cyclical,Apparel Retail,Defensive Retail,4.0,,,,,,3.50,median of 12 unmoved members
+APTV,Aptiv PLC,Consumer Cyclical,Auto Parts,Heavy Cyclicals,3.5,,moved,"from Defensive Retail. Aptiv manufactures electrical architecture for vehicle makers on OEM programmes. The vendor files it with AutoZone and O'Reilly, which sell aftermarket parts to consumers repairing old cars -- a counter-cyclical business. Aptiv's cycle is the auto production cycle.",,,7.00,median of 16 unmoved members
+AZO,AutoZone Inc,Consumer Cyclical,Auto Parts,Defensive Retail,3.5,,,,,,3.50,median of 12 unmoved members
+GPC,Genuine Parts Co,Consumer Cyclical,Auto Parts,Defensive Retail,3.5,,,,,,3.50,median of 12 unmoved members
+ORLY,O’Reilly Automotive Inc,Consumer Cyclical,Auto Parts,Defensive Retail,3.5,,,,,,3.50,median of 12 unmoved members
+COST,Costco Wholesale Corp,Consumer Defensive,Discount Stores,Defensive Retail,3.0,,,,,,3.50,median of 12 unmoved members
+DG,Dollar General Corporation,Consumer Defensive,Discount Stores,Defensive Retail,3.0,,,,,,3.50,median of 12 unmoved members
+DLTR,Dollar Tree Inc,Consumer Defensive,Discount Stores,Defensive Retail,3.0,,,,,,3.50,median of 12 unmoved members
+TGT,Target Corporation,Consumer Defensive,Discount Stores,Defensive Retail,3.0,,,,,,3.50,median of 12 unmoved members
+WMT,Walmart Inc.,Consumer Defensive,Discount Stores,Defensive Retail,3.0,,,,,,3.50,median of 12 unmoved members
+HD,The Home Depot Inc,Consumer Cyclical,Home Improvement Retail,Defensive Retail,3.5,,,,,,3.50,median of 12 unmoved members
+LOW,Lowe's Companies Inc,Consumer Cyclical,Home Improvement Retail,Defensive Retail,3.5,,,,,,3.50,median of 12 unmoved members
+CF,CF Industries Holdings Inc,Basic Materials,Agricultural Inputs,Energy & Commodities,6.5,,,,,,7.50,median of 25 unmoved members
+CTVA,Corteva Inc,Basic Materials,Agricultural Inputs,Materials & Packaging,6.5,,moved,"from Energy & Commodities. Corteva sells patented seed traits and crop protection -- an intellectual property business, not a commodity price-taker on depleting assets.",,,4.50,median of 17 unmoved members
+MOS,The Mosaic Company,Basic Materials,Agricultural Inputs,Energy & Commodities,6.5,,,,,,7.50,median of 25 unmoved members
+DOW,Dow Inc,Basic Materials,Chemicals,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+FCX,Freeport-McMoran Copper & Gold Inc,Basic Materials,Copper,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+NEM,Newmont Goldcorp Corp,Basic Materials,Gold,Energy & Commodities,6.0,,,,,,7.50,median of 25 unmoved members
+APA,APA Corporation,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+COP,ConocoPhillips,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+DVN,Devon Energy Corporation,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+EOG,EOG Resources Inc,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+EQT,EQT Corporation,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+EXE,Expand Energy Corporation,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+FANG,Diamondback Energy Inc,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+OXY,Occidental Petroleum Corporation,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+TPL,Texas Pacific Land Corporation,Energy,Oil & Gas E&P,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+BKR,Baker Hughes Co,Energy,Oil & Gas Equipment & Services,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+HAL,Halliburton Company,Energy,Oil & Gas Equipment & Services,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+SLB,Schlumberger NV,Energy,Oil & Gas Equipment & Services,Energy & Commodities,7.5,,,,,,7.50,median of 25 unmoved members
+CVX,Chevron Corp,Energy,Oil & Gas Integrated,Energy & Commodities,5.0,,,,,,7.50,median of 25 unmoved members
+XOM,Exxon Mobil Corp,Energy,Oil & Gas Integrated,Energy & Commodities,5.0,,,,,,7.50,median of 25 unmoved members
+MPC,Marathon Petroleum Corp,Energy,Oil & Gas Refining & Marketing,Energy & Commodities,7.0,,,,,,7.50,median of 25 unmoved members
+PSX,Phillips 66,Energy,Oil & Gas Refining & Marketing,Energy & Commodities,7.0,,,,,,7.50,median of 25 unmoved members
+VLO,Valero Energy Corporation,Energy,Oil & Gas Refining & Marketing,Energy & Commodities,7.0,,,,,,7.50,median of 25 unmoved members
+FSLR,First Solar Inc,Technology,Solar,Energy & Commodities,8.5,,,,,,7.50,median of 25 unmoved members
+NUE,Nucor Corp,Basic Materials,Steel,Energy & Commodities,6.5,,,,,,7.50,median of 25 unmoved members
+STLD,Steel Dynamics Inc,Basic Materials,Steel,Energy & Commodities,6.5,,,,,,7.50,median of 25 unmoved members
+MA,Mastercard Inc,Financial Services,Credit Services,Fee-Based Financials,5.5,yes,,,,,3.50,median of 16 unmoved members
+V,Visa Inc. Class A,Financial Services,Credit Services,Fee-Based Financials,5.5,yes,,,,,3.50,median of 16 unmoved members
+CBOE,Cboe Global Markets Inc,Financial Services,Financial Data & Stock Exchanges,Fee-Based Financials,3.5,,,,,,3.50,median of 16 unmoved members
+CME,CME Group Inc,Financial Services,Financial Data & Stock Exchanges,Fee-Based Financials,3.5,,,,,,3.50,median of 16 unmoved members
+COIN,Coinbase Global Inc,Financial Services,Financial Data & Stock Exchanges,Banks & Capital Markets,3.5,,moved,"from Fee-Based Financials. Coinbase is a retail trading venue whose volumes track speculative activity. That is Robinhood's business, and Robinhood is in this group. It is not the regulated toll-road economics of CME and S&P Global that Fee-Based Financials is scored on. Flagged as a known error in the v1 closeout and never fixed.",,,7.00,median of 19 unmoved members
+FDS,FactSet Research Systems Inc,Financial Services,Financial Data & Stock Exchanges,Fee-Based Financials,3.5,,,,,,3.50,median of 16 unmoved members
+ICE,Intercontinental Exchange Inc,Financial Services,Financial Data & Stock Exchanges,Fee-Based Financials,3.5,,,,,,3.50,median of 16 unmoved members
+MCO,Moodys Corporation,Financial Services,Financial Data & Stock Exchanges,Fee-Based Financials,3.5,,,,,,3.50,median of 16 unmoved members
+MSCI,MSCI Inc,Financial Services,Financial Data & Stock Exchanges,Fee-Based Financials,3.5,,,,,,3.50,median of 16 unmoved members
+NDAQ,Nasdaq Inc,Financial Services,Financial Data & Stock Exchanges,Fee-Based Financials,3.5,,,,,,3.50,median of 16 unmoved members
+SPGI,S&P Global Inc,Financial Services,Financial Data & Stock Exchanges,Fee-Based Financials,3.5,,,,,,3.50,median of 16 unmoved members
+AJG,Arthur J Gallagher & Co,Financial Services,Insurance Brokers,Fee-Based Financials,3.0,,,,,,3.50,median of 16 unmoved members
+AON,Aon PLC,Financial Services,Insurance Brokers,Fee-Based Financials,3.0,,,,,,3.50,median of 16 unmoved members
+BRO,Brown & Brown Inc,Financial Services,Insurance Brokers,Fee-Based Financials,3.0,,,,,,3.50,median of 16 unmoved members
+ERIE,Erie Indemnity Company,Financial Services,Insurance Brokers,Fee-Based Financials,3.0,,,,,,3.50,median of 16 unmoved members
+MRSH,"Marsh & McLennan Companies, Inc.",Financial Services,Insurance Brokers,Fee-Based Financials,3.0,,,,,,3.50,median of 16 unmoved members
+WTW,Willis Towers Watson PLC,Financial Services,Insurance Brokers,Fee-Based Financials,3.0,,,,,,3.50,median of 16 unmoved members
+ABBV,AbbVie Inc,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+AMGN,Amgen Inc,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+BIIB,Biogen Inc,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+BMY,Bristol-Myers Squibb Company,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+GILD,Gilead Sciences Inc,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+JNJ,Johnson & Johnson,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+LLY,Eli Lilly and Company,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+MRK,Merck & Company Inc,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+PFE,Pfizer Inc,Healthcare,Drug Manufacturers - General,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+ABT,Abbott Laboratories,Healthcare,Medical Devices,Healthcare - Established,4.0,,,,,,3.50,median of 21 unmoved members
+BSX,Boston Scientific Corp,Healthcare,Medical Devices,Healthcare - Established,4.0,,,,,,3.50,median of 21 unmoved members
+DXCM,DexCom Inc,Healthcare,Medical Devices,Healthcare - Innovation,4.0,,moved,"from Healthcare - Established. Dexcom's risk is product cycle and competitive displacement in continuous glucose monitoring, not an established device franchise.",,,5.00,median of 25 unmoved members
+EW,Edwards Lifesciences Corp,Healthcare,Medical Devices,Healthcare - Established,4.0,,,,,,3.50,median of 21 unmoved members
+GEHC,GE HealthCare Technologies Inc.,Healthcare,Medical Devices,Healthcare - Established,4.0,,,,,,3.50,median of 21 unmoved members
+MDT,Medtronic PLC,Healthcare,Medical Devices,Healthcare - Established,4.0,,,,,,3.50,median of 21 unmoved members
+PODD,Insulet Corporation,Healthcare,Medical Devices,Healthcare - Innovation,4.0,,moved,from Healthcare - Established. Insulet is a single-product insulin pump company facing the same competitive and reimbursement dynamics as Dexcom.,,,5.00,median of 25 unmoved members
+STE,STERIS plc,Healthcare,Medical Devices,Healthcare - Established,4.0,,,,,,3.50,median of 21 unmoved members
+SYK,Stryker Corporation,Healthcare,Medical Devices,Healthcare - Established,4.0,,,,,,3.50,median of 21 unmoved members
+ZBH,Zimmer Biomet Holdings Inc,Healthcare,Medical Devices,Healthcare - Established,4.0,,,,,,3.50,median of 21 unmoved members
+CAH,Cardinal Health Inc,Healthcare,Medical Distribution,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+COR,Cencora Inc.,Healthcare,Medical Distribution,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+HSIC,Henry Schein Inc,Healthcare,Medical Distribution,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+MCK,McKesson Corporation,Healthcare,Medical Distribution,Healthcare - Established,3.5,,,,,,3.50,median of 21 unmoved members
+INCY,Incyte Corporation,Healthcare,Biotechnology,Healthcare - Innovation,6.0,,,,,,5.00,median of 25 unmoved members
+MRNA,Moderna Inc,Healthcare,Biotechnology,Healthcare - Innovation,6.0,,,,,,5.00,median of 25 unmoved members
+REGN,Regeneron Pharmaceuticals Inc,Healthcare,Biotechnology,Healthcare - Innovation,6.0,,,,,,5.00,median of 25 unmoved members
+TECH,Bio-Techne Corp,Healthcare,Biotechnology,Healthcare - Innovation,6.0,,,,,,5.00,median of 25 unmoved members
+VRTX,Vertex Pharmaceuticals Inc,Healthcare,Biotechnology,Healthcare - Innovation,6.0,,,,,,5.00,median of 25 unmoved members
+A,Agilent Technologies Inc,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+CRL,Charles River Laboratories,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+DGX,Quest Diagnostics Incorporated,Healthcare,Diagnostics & Research,Healthcare - Services,5.0,,moved,"from Healthcare - Innovation. Quest is a clinical laboratory paid at administered reimbursement rates. That is the Healthcare Services driver, not life-science innovation.",,,7.50,median of 9 unmoved members
+DHR,Danaher Corporation,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+IDXX,IDEXX Laboratories Inc,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+IQV,IQVIA Holdings Inc,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+LH,Laboratory Corporation of America Holdings,Healthcare,Diagnostics & Research,Healthcare - Services,5.0,,moved,from Healthcare - Innovation. Labcorp is the other clinical laboratory. Same reimbursement driver as Quest.,,,7.50,median of 9 unmoved members
+MTD,Mettler-Toledo International Inc,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+RVTY,Revvity Inc.,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+TMO,Thermo Fisher Scientific Inc,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+WAT,Waters Corporation,Healthcare,Diagnostics & Research,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+VTRS,Viatris Inc,Healthcare,Drug Manufacturers - Specialty & Generic,Healthcare - Innovation,6.5,,,,,,5.00,median of 25 unmoved members
+ZTS,Zoetis Inc,Healthcare,Drug Manufacturers - Specialty & Generic,Healthcare - Innovation,6.5,,,,,,5.00,median of 25 unmoved members
+VEEV,Veeva Systems Inc Class A,Healthcare,Health Information Services,Healthcare - Innovation,6.0,,,,,,5.00,median of 25 unmoved members
+ALGN,Align Technology Inc,Healthcare,Medical Instruments & Supplies,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+BAX,Baxter International Inc,Healthcare,Medical Instruments & Supplies,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+BDX,Becton Dickinson and Company,Healthcare,Medical Instruments & Supplies,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+COO,"The Cooper Companies, Inc",Healthcare,Medical Instruments & Supplies,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+ISRG,Intuitive Surgical Inc,Healthcare,Medical Instruments & Supplies,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+RMD,ResMed Inc,Healthcare,Medical Instruments & Supplies,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+SOLV,Solventum Corp.,Healthcare,Medical Instruments & Supplies,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+WST,West Pharmaceutical Services Inc,Healthcare,Medical Instruments & Supplies,Healthcare - Innovation,5.0,,,,,,5.00,median of 25 unmoved members
+CI,Cigna Corp,Healthcare,Healthcare Plans,Healthcare - Services,7.5,,,,,,7.50,median of 9 unmoved members
+CNC,Centene Corp,Healthcare,Healthcare Plans,Healthcare - Services,7.5,,,,,,7.50,median of 9 unmoved members
+CVS,CVS Health Corp,Healthcare,Healthcare Plans,Healthcare - Services,7.5,,,,,,7.50,median of 9 unmoved members
+ELV,Elevance Health Inc,Healthcare,Healthcare Plans,Healthcare - Services,7.5,,,,,,7.50,median of 9 unmoved members
+HUM,Humana Inc,Healthcare,Healthcare Plans,Healthcare - Services,7.5,,,,,,7.50,median of 9 unmoved members
+UNH,UnitedHealth Group Incorporated,Healthcare,Healthcare Plans,Healthcare - Services,7.5,,,,,,7.50,median of 9 unmoved members
+DVA,DaVita HealthCare Partners Inc,Healthcare,Medical Care Facilities,Healthcare - Services,6.5,,,,,,7.50,median of 9 unmoved members
+HCA,"HCA Healthcare, Inc.",Healthcare,Medical Care Facilities,Healthcare - Services,6.5,,,,,,7.50,median of 9 unmoved members
+UHS,Universal Health Services Inc,Healthcare,Medical Care Facilities,Healthcare - Services,6.5,,,,,,7.50,median of 9 unmoved members
+DAL,Delta Air Lines Inc,Industrials,Airlines,Heavy Cyclicals,8.5,,,,,,7.00,median of 16 unmoved members
+LUV,Southwest Airlines Company,Industrials,Airlines,Heavy Cyclicals,8.5,,,,,,7.00,median of 16 unmoved members
+UAL,United Airlines Holdings Inc,Industrials,Airlines,Heavy Cyclicals,8.5,,,,,,7.00,median of 16 unmoved members
+CVNA,Carvana Co,Consumer Cyclical,Auto & Truck Dealerships,Heavy Cyclicals,7.0,,,,,,7.00,median of 16 unmoved members
+F,Ford Motor Company,Consumer Cyclical,Auto Manufacturers,Heavy Cyclicals,7.5,,,,,,7.00,median of 16 unmoved members
+GM,General Motors Company,Consumer Cyclical,Auto Manufacturers,Heavy Cyclicals,7.5,,,,,,7.00,median of 16 unmoved members
+TSLA,Tesla Inc,Consumer Cyclical,Auto Manufacturers,Heavy Cyclicals,7.5,,,,,,7.00,median of 16 unmoved members
+EME,EMCOR Group Inc,Industrials,Engineering & Construction,Heavy Cyclicals,5.5,,,,,,7.00,median of 16 unmoved members
+FIX,Comfort Systems USA Inc,Industrials,Engineering & Construction,Heavy Cyclicals,5.5,,,,,,7.00,median of 16 unmoved members
+J,Jacobs Solutions Inc.,Industrials,Engineering & Construction,Heavy Cyclicals,5.5,,,,,,7.00,median of 16 unmoved members
+PWR,Quanta Services Inc,Industrials,Engineering & Construction,Heavy Cyclicals,5.5,,,,,,7.00,median of 16 unmoved members
+URI,United Rentals Inc,Industrials,Rental & Leasing Services,Heavy Cyclicals,6.5,,,,,,7.00,median of 16 unmoved members
+DHI,DR Horton Inc,Consumer Cyclical,Residential Construction,Heavy Cyclicals,7.0,,,,,,7.00,median of 16 unmoved members
+LEN,Lennar Corporation,Consumer Cyclical,Residential Construction,Heavy Cyclicals,7.0,,,,,,7.00,median of 16 unmoved members
+NVR,NVR Inc,Consumer Cyclical,Residential Construction,Heavy Cyclicals,7.0,,,,,,7.00,median of 16 unmoved members
+PHM,PulteGroup Inc,Consumer Cyclical,Residential Construction,Heavy Cyclicals,7.0,,,,,,7.00,median of 16 unmoved members
+APP,Applovin Corp,Communication Services,Advertising Agencies,IT Services & Advertising,7.5,,,,,,7.00,median of 8 unmoved members
+OMC,Omnicom Group Inc,Communication Services,Advertising Agencies,IT Services & Advertising,7.5,,,,,,7.00,median of 8 unmoved members
+TTD,Trade Desk Inc,Communication Services,Advertising Agencies,IT Services & Advertising,7.5,,,,,,7.00,median of 8 unmoved members
+ACN,Accenture plc,Technology,Information Technology Services,IT Services & Advertising,7.0,,,,,,7.00,median of 8 unmoved members
+BR,Broadridge Financial Solutions Inc,Technology,Information Technology Services,Payments & Financial Processing,7.0,,moved,from IT Services & Advertising. securities transaction and proxy processing,,,5.50,all members moved; score is the median of what they brought
+CDW,CDW Corp,Technology,Information Technology Services,IT Services & Advertising,7.0,,,,,,7.00,median of 8 unmoved members
+CTSH,Cognizant Technology Solutions Corp Class A,Technology,Information Technology Services,IT Services & Advertising,7.0,,,,,,7.00,median of 8 unmoved members
+FIS,Fidelity National Information Services Inc,Technology,Information Technology Services,Payments & Financial Processing,7.0,,moved,from IT Services & Advertising. merchant acquiring and core banking software,,,5.50,all members moved; score is the median of what they brought
+IBM,International Business Machines,Technology,Information Technology Services,IT Services & Advertising,7.0,,,,,,7.00,median of 8 unmoved members
+IT,Gartner Inc,Technology,Information Technology Services,IT Services & Advertising,7.0,,,,,,7.00,median of 8 unmoved members
+JKHY,Jack Henry & Associates Inc,Technology,Information Technology Services,Payments & Financial Processing,7.0,,moved,from IT Services & Advertising. core banking software for community banks,,,5.50,all members moved; score is the median of what they brought
+LDOS,Leidos Holdings Inc,Technology,Information Technology Services,Aerospace & Defense,7.0,,moved,"from IT Services & Advertising. Leidos is a federal services contractor. Its revenue is appropriations, which is the defence driver, not commercial information technology services.",,,3.50,median of 13 unmoved members
+ACGL,Arch Capital Group Ltd.,Financial Services,Insurance - Diversified,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+AIG,American International Group Inc,Financial Services,Insurance - Diversified,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+BRK-B,Berkshire Hathaway Inc,Financial Services,Insurance - Diversified,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+HIG,Hartford Financial Services Group,Financial Services,Insurance - Diversified,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+AFL,Aflac Incorporated,Financial Services,Insurance - Life,Insurance Underwriters,6.0,,,,,,5.00,median of 17 unmoved members
+GL,Globe Life Inc,Financial Services,Insurance - Life,Insurance Underwriters,6.0,,,,,,5.00,median of 17 unmoved members
+MET,MetLife Inc,Financial Services,Insurance - Life,Insurance Underwriters,6.0,,,,,,5.00,median of 17 unmoved members
+PRU,"Prudential Financial, Inc.",Financial Services,Insurance - Life,Insurance Underwriters,6.0,,,,,,5.00,median of 17 unmoved members
+AIZ,"Assurant, Inc.",Financial Services,Insurance - Property & Casualty,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+ALL,The Allstate Corporation,Financial Services,Insurance - Property & Casualty,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+CB,Chubb Ltd,Financial Services,Insurance - Property & Casualty,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+CINF,Cincinnati Financial Corporation,Financial Services,Insurance - Property & Casualty,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+L,Loews Corp,Financial Services,Insurance - Property & Casualty,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+PGR,Progressive Corp,Financial Services,Insurance - Property & Casualty,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+TRV,The Travelers Companies Inc,Financial Services,Insurance - Property & Casualty,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+WRB,W. R. Berkley Corp,Financial Services,Insurance - Property & Casualty,Insurance Underwriters,5.0,,,,,,5.00,median of 17 unmoved members
+EG,Everest Group Ltd,Financial Services,Insurance - Reinsurance,Insurance Underwriters,6.0,,,,,,5.00,median of 17 unmoved members
+CRH,CRH PLC ADR,Basic Materials,Building Materials,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+MLM,Martin Marietta Materials Inc,Basic Materials,Building Materials,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+VMC,Vulcan Materials Company,Basic Materials,Building Materials,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+ADM,Archer-Daniels-Midland Company,Consumer Defensive,Farm Products,Energy & Commodities,7.0,,moved,from Materials & Packaging. Archer-Daniels-Midland earns crush spreads on agricultural commodities -- the same economics as a refining crack spread.,,,7.50,median of 25 unmoved members
+BG,Bunge Global SA,Consumer Defensive,Farm Products,Energy & Commodities,7.0,,moved,from Materials & Packaging. Bunge is the other agricultural processor. Same crush-spread driver.,,,7.50,median of 25 unmoved members
+TSN,Tyson Foods Inc,Consumer Defensive,Farm Products,Energy & Commodities,7.0,,moved,"from Materials & Packaging. Tyson's margin is the spread between livestock input costs and protein prices. A commodity processor, not a branded staple.",,,7.50,median of 25 unmoved members
+AMCR,Amcor PLC,Consumer Cyclical,Packaging & Containers,Materials & Packaging,5.5,,,,,,4.50,median of 17 unmoved members
+AVY,Avery Dennison Corp,Consumer Cyclical,Packaging & Containers,Materials & Packaging,5.5,,,,,,4.50,median of 17 unmoved members
+BALL,Ball Corporation,Consumer Cyclical,Packaging & Containers,Materials & Packaging,5.5,,,,,,4.50,median of 17 unmoved members
+IP,International Paper,Consumer Cyclical,Packaging & Containers,Materials & Packaging,5.5,,,,,,4.50,median of 17 unmoved members
+PKG,Packaging Corp of America,Consumer Cyclical,Packaging & Containers,Materials & Packaging,5.5,,,,,,4.50,median of 17 unmoved members
+SW,Smurfit WestRock plc,Consumer Cyclical,Packaging & Containers,Materials & Packaging,5.5,,,,,,4.50,median of 17 unmoved members
+ALB,Albemarle Corp,Basic Materials,Specialty Chemicals,Energy & Commodities,4.5,,moved,from Materials & Packaging. Albemarle is a lithium miner and a pure commodity price-taker. Its semi-deviation of 40.1 is ten points above anything else in Materials.,,,7.50,median of 25 unmoved members
+APD,Air Products and Chemicals Inc,Basic Materials,Specialty Chemicals,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+DD,Dupont De Nemours Inc,Basic Materials,Specialty Chemicals,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+ECL,Ecolab Inc,Basic Materials,Specialty Chemicals,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+IFF,International Flavors & Fragrances Inc,Basic Materials,Specialty Chemicals,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+LIN,Linde plc Ordinary Shares,Basic Materials,Specialty Chemicals,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+LYB,LyondellBasell Industries NV,Basic Materials,Specialty Chemicals,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+PPG,PPG Industries Inc,Basic Materials,Specialty Chemicals,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+SHW,Sherwin-Williams Co,Basic Materials,Specialty Chemicals,Materials & Packaging,4.5,,,,,,4.50,median of 17 unmoved members
+AXON,Axon Enterprise Inc.,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+BA,The Boeing Company,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+GD,General Dynamics Corporation,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+GE,GE Aerospace,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+HII,Huntington Ingalls Industries Inc,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+HONA,Honeywell Aerospace Inc,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,spinoff or when-issued line with no price history; Honeywell also present as HON. Excluded from scoring (fails the two-block minimum).,,3.50,median of 13 unmoved members
+HWM,Howmet Aerospace Inc,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+LHX,L3Harris Technologies Inc,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+LMT,Lockheed Martin Corporation,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+NOC,Northrop Grumman Corporation,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+RTX,RTX Corporation,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+TDG,Transdigm Group Incorporated,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+TXT,Textron Inc,Industrials,Aerospace & Defense,Aerospace & Defense,3.5,,split,split out of Quality Industrials: government appropriations and long-cycle contracts,,,3.50,median of 13 unmoved members
+BLDR,Builders FirstSource Inc,Industrials,Building Products & Equipment,Heavy Cyclicals,5.0,,moved,"from Quality Industrials. Builders FirstSource supplies lumber and components to homebuilders. Its cycle IS the housing cycle. Highest semi-deviation and widest spread in Quality Industrials, at 27.1 and 2.89pp.",,,7.00,median of 16 unmoved members
+CARR,Carrier Global Corp,Industrials,Building Products & Equipment,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+JCI,Johnson Controls International PLC,Industrials,Building Products & Equipment,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+LII,Lennox International Inc,Industrials,Building Products & Equipment,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+MAS,Masco Corporation,Industrials,Building Products & Equipment,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+TT,Trane Technologies plc,Industrials,Building Products & Equipment,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+HON,Honeywell International Inc,Industrials,Conglomerates,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+MMM,3M Company,Industrials,Conglomerates,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+EFX,Equifax Inc,Industrials,Consulting Services,Fee-Based Financials,4.5,,moved,"from Quality Industrials. Equifax is a credit bureau: a regulated data monopoly earning a fee per enquiry. That is Moody's and S&P Global's business, not an industrial consultancy.",,,3.50,median of 16 unmoved members
+VRSK,Verisk Analytics Inc,Industrials,Consulting Services,Fee-Based Financials,4.5,,moved,from Quality Industrials. Verisk is an insurance data monopoly on subscription. Same driver as the rating agencies and exchanges.,,,3.50,median of 16 unmoved members
+HUBB,Hubbell Inc,Industrials,Electrical Equipment & Parts,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+VRT,Vertiv Holdings Co,Industrials,Electrical Equipment & Parts,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+CAT,Caterpillar Inc,Industrials,Farm & Heavy Construction Machinery,Quality Industrials,5.5,,,,,,4.00,median of 37 unmoved members
+DE,Deere & Company,Industrials,Farm & Heavy Construction Machinery,Quality Industrials,5.5,,,,,,4.00,median of 37 unmoved members
+PCAR,PACCAR Inc,Industrials,Farm & Heavy Construction Machinery,Quality Industrials,5.5,,,,,,4.00,median of 37 unmoved members
+FAST,Fastenal Company,Industrials,Industrial Distribution,Quality Industrials,3.0,,,,,,4.00,median of 37 unmoved members
+FERG,Ferguson Plc,Industrials,Industrial Distribution,Quality Industrials,3.0,,,,,,4.00,median of 37 unmoved members
+GWW,WW Grainger Inc,Industrials,Industrial Distribution,Quality Industrials,3.0,,,,,,4.00,median of 37 unmoved members
+ALLE,Allegion PLC,Industrials,Security & Protection Services,Quality Industrials,3.5,,,,,,4.00,median of 37 unmoved members
+CPRT,Copart Inc,Industrials,Specialty Business Services,Quality Industrials,4.5,,,,,,4.00,median of 37 unmoved members
+CTAS,Cintas Corporation,Industrials,Specialty Business Services,Quality Industrials,4.5,,,,,,4.00,median of 37 unmoved members
+GPN,Global Payments Inc,Industrials,Specialty Business Services,Payments & Financial Processing,4.5,,moved,from Quality Industrials. merchant acquiring,,,5.50,all members moved; score is the median of what they brought
+AME,Ametek Inc,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+AOS,Smith AO Corporation,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+CMI,Cummins Inc,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+DOV,Dover Corporation,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+EMR,Emerson Electric Company,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+ETN,Eaton Corporation PLC,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+GEV,GE Vernova LLC,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+GNRC,Generac Holdings Inc,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+IEX,IDEX Corporation,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+IR,Ingersoll Rand Inc,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+ITW,Illinois Tool Works Inc,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,2.157pp for an A-rated industrial while Emerson is 0.653 and Parker 0.758,4.00,median of 37 unmoved members
+NDSN,Nordson Corporation,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+OTIS,Otis Worldwide Corp,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+PH,Parker-Hannifin Corporation,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+PNR,Pentair PLC,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+ROK,Rockwell Automation Inc,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+XYL,Xylem Inc,Industrials,Specialty Industrial Machinery,Quality Industrials,4.0,,,,,,4.00,median of 37 unmoved members
+SNA,Snap-On Inc,Industrials,Tools & Accessories,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+SWK,Stanley Black & Decker Inc,Industrials,Tools & Accessories,Quality Industrials,5.0,,,,,,4.00,median of 37 unmoved members
+VICI,VICI Properties Inc,Real Estate,REIT - Diversified,Real Estate,5.5,,,,,,4.50,median of 21 unmoved members
+DOC,Healthpeak Properties Inc,Real Estate,REIT - Healthcare Facilities,Real Estate,5.0,,,,,,4.50,median of 21 unmoved members
+VTR,Ventas Inc,Real Estate,REIT - Healthcare Facilities,Real Estate,5.0,,,,,,4.50,median of 21 unmoved members
+WELL,Welltower Inc,Real Estate,REIT - Healthcare Facilities,Real Estate,5.0,,,,,,4.50,median of 21 unmoved members
+HST,Host Hotels & Resorts Inc,Real Estate,REIT - Hotel & Motel,Real Estate,6.5,,,,,,4.50,median of 21 unmoved members
+EXR,Extra Space Storage Inc,Real Estate,REIT - Industrial,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+PLD,Prologis Inc,Real Estate,REIT - Industrial,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+PSA,Public Storage,Real Estate,REIT - Industrial,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+ARE,Alexandria Real Estate Equities Inc,Real Estate,REIT - Office,Real Estate,8.0,,,,,,4.50,median of 21 unmoved members
+BXP,"BXP, Inc.",Real Estate,REIT - Office,Real Estate,8.0,,,,,,4.50,median of 21 unmoved members
+CPT,Camden Property Trust,Real Estate,REIT - Residential,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+EQR,Equity Residential,Real Estate,REIT - Residential,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+ESS,Essex Property Trust Inc,Real Estate,REIT - Residential,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+INVH,Invitation Homes Inc,Real Estate,REIT - Residential,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+MAA,Mid-America Apartment Communities Inc,Real Estate,REIT - Residential,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+UDR,UDR Inc,Real Estate,REIT - Residential,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+FRT,Federal Realty Investment Trust,Real Estate,REIT - Retail,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+KIM,Kimco Realty Corporation,Real Estate,REIT - Retail,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+O,Realty Income Corporation,Real Estate,REIT - Retail,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+REG,Regency Centers Corporation,Real Estate,REIT - Retail,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+SPG,Simon Property Group Inc,Real Estate,REIT - Retail,Real Estate,4.5,,,,,,4.50,median of 21 unmoved members
+CBRE,CBRE Group Inc Class A,Real Estate,Real Estate Services,Fee-Based Financials,6.5,,moved,"from Real Estate. CBRE earns transaction and management fees and retains no property on its balance sheet -- the insurance-broker structure, applied to real estate.",,,3.50,median of 16 unmoved members
+CSGP,CoStar Group Inc,Real Estate,Real Estate Services,Fee-Based Financials,6.5,,moved,"from Real Estate. CoStar sells subscription commercial-property data. It owns no property and carries no occupancy or leverage risk, which is what the Real Estate group is scored on.",,,3.50,median of 16 unmoved members
+AEE,Ameren Corp,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+AEP,American Electric Power Co Inc,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+CMS,CMS Energy Corporation,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+CNP,CenterPoint Energy Inc,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+D,Dominion Energy Inc,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+DTE,DTE Energy Company,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+DUK,Duke Energy Corporation,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+ED,Consolidated Edison Inc,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+EIX,Edison International,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+ES,Eversource Energy,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+ETR,Entergy Corporation,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+EVRG,"Evergy, Inc.",Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+EXC,Exelon Corporation,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+FE,FirstEnergy Corporation,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+LNT,Alliant Energy Corp,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+NEE,Nextera Energy Inc,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+PCG,PG&E Corp,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+PEG,Public Service Enterprise Group Inc,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+PNW,Pinnacle West Capital Corp,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+PPL,PPL Corporation,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+SO,Southern Company,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+WEC,WEC Energy Group Inc,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+XEL,Xcel Energy Inc,Utilities,Utilities - Regulated Electric,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+ATO,Atmos Energy Corporation,Utilities,Utilities - Regulated Gas,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+NI,NiSource Inc,Utilities,Utilities - Regulated Gas,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+AWK,American Water Works,Utilities,Utilities - Regulated Water,Regulated & Monopoly Assets,1.5,,,,,,1.50,median of 28 unmoved members
+RSG,Republic Services Inc,Industrials,Waste Management,Regulated & Monopoly Assets,2.0,,,,,,1.50,median of 28 unmoved members
+WM,Waste Management Inc,Industrials,Waste Management,Regulated & Monopoly Assets,2.0,,,,,,1.50,median of 28 unmoved members
+CIEN,Ciena Corp,Technology,Communication Equipment,Hardware & Components,6.0,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+CSCO,Cisco Systems Inc,Technology,Communication Equipment,Hardware & Components,6.0,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+HPE,Hewlett Packard Enterprise Co,Technology,Communication Equipment,Hardware & Components,6.0,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+LITE,Lumentum Holdings Inc,Technology,Communication Equipment,Hardware & Components,6.0,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+MSI,Motorola Solutions Inc,Technology,Communication Equipment,Hardware & Components,6.0,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+ZBRA,Zebra Technologies Corporation,Technology,Communication Equipment,Hardware & Components,6.0,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+ANET,Arista Networks,Technology,Computer Hardware,Hardware & Components,7.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+DELL,Dell Technologies Inc,Technology,Computer Hardware,Hardware & Components,7.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+HPQ,HP Inc,Technology,Computer Hardware,Hardware & Components,7.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+SMCI,Super Micro Computer Inc,Technology,Computer Hardware,Hardware & Components,7.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+SNDK,Sandisk Corp,Technology,Computer Hardware,Hardware & Components,7.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,no price history in the store. Excluded from scoring (fails the two-block minimum).,,6.00,median of 20 unmoved members
+STX,Seagate Technology PLC,Technology,Computer Hardware,Hardware & Components,7.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+WDC,Western Digital Corporation,Technology,Computer Hardware,Hardware & Components,7.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+AAPL,Apple Inc.,Technology,Consumer Electronics,Hardware & Components,3.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+APH,Amphenol Corporation,Technology,Electronic Components,Hardware & Components,5.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+FLEX,Flex Ltd,Technology,Electronic Components,Hardware & Components,5.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+GLW,Corning Incorporated,Technology,Electronic Components,Hardware & Components,5.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+JBL,Jabil Circuit Inc,Technology,Electronic Components,Hardware & Components,5.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+TEL,TE Connectivity Ltd,Technology,Electronic Components,Hardware & Components,5.5,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+COHR,Coherent Inc,Technology,Scientific & Technical Instruments,Hardware & Components,5.0,,split,residue of Semiconductors & Hardware: enterprise and consumer hardware product cycles,,,6.00,median of 20 unmoved members
+FTV,Fortive Corp,Technology,Scientific & Technical Instruments,Quality Industrials,5.0,,moved,"from Hardware & Components. precision instruments, not the semiconductor cycle",,,4.00,median of 37 unmoved members
+GRMN,Garmin Ltd,Technology,Scientific & Technical Instruments,Quality Industrials,5.0,,moved,"from Hardware & Components. precision instruments, not the semiconductor cycle",,,4.00,median of 37 unmoved members
+KEYS,Keysight Technologies Inc,Technology,Scientific & Technical Instruments,Quality Industrials,5.0,,moved,"from Hardware & Components. precision instruments, not the semiconductor cycle",,,4.00,median of 37 unmoved members
+TDY,Teledyne Technologies Incorporated,Technology,Scientific & Technical Instruments,Quality Industrials,5.0,,moved,"from Hardware & Components. precision instruments, not the semiconductor cycle",,,4.00,median of 37 unmoved members
+TRMB,Trimble Inc,Technology,Scientific & Technical Instruments,Quality Industrials,5.0,,moved,"from Hardware & Components. precision instruments, not the semiconductor cycle",,,4.00,median of 37 unmoved members
+AMAT,Applied Materials Inc,Technology,Semiconductor Equipment & Materials,Semiconductors & Semicap,6.0,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+KLAC,KLA Corporation,Technology,Semiconductor Equipment & Materials,Semiconductors & Semicap,6.0,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+LRCX,Lam Research Corp,Technology,Semiconductor Equipment & Materials,Semiconductors & Semicap,6.0,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+Q,"Qnity Electronics, Inc",Technology,Semiconductor Equipment & Materials,Semiconductors & Semicap,6.0,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,no price history in the store. Excluded from scoring (fails the two-block minimum).,,6.50,median of 19 unmoved members
+TER,Teradyne Inc,Technology,Semiconductor Equipment & Materials,Semiconductors & Semicap,6.0,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+ADI,Analog Devices Inc,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+AMD,Advanced Micro Devices Inc,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+AVGO,Broadcom Inc,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+INTC,Intel Corporation,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+MCHP,Microchip Technology Inc,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+MPWR,Monolithic Power Systems Inc,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+MRVL,Marvell Technology Group Ltd,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+MU,Micron Technology Inc,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+NVDA,NVIDIA Corporation,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+NXPI,NXP Semiconductors NV,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+ON,ON Semiconductor Corporation,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+QCOM,Qualcomm Incorporated,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+SWKS,Skyworks Solutions Inc,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+TXN,Texas Instruments Incorporated,Technology,Semiconductors,Semiconductors & Semicap,6.5,,split,split out of Semiconductors & Hardware: semiconductor design and fabrication capital-expenditure cycle,,,6.50,median of 19 unmoved members
+TTWO,Take-Two Interactive Software Inc,Communication Services,Electronic Gaming & Multimedia,Software & Digital Platforms,5.0,,,,,,5.50,median of 35 unmoved members
+GOOG,Alphabet Inc Class C,Communication Services,Internet Content & Information,Software & Digital Platforms,5.0,,,,,,5.50,median of 35 unmoved members
+GOOGL,Alphabet Inc Class A,Communication Services,Internet Content & Information,Software & Digital Platforms,5.0,,,,,,5.50,median of 35 unmoved members
+META,Meta Platforms Inc.,Communication Services,Internet Content & Information,Software & Digital Platforms,5.0,,,,,,5.50,median of 35 unmoved members
+RDDT,"Reddit, Inc.",Communication Services,Internet Content & Information,Software & Digital Platforms,5.0,,,,,,5.50,median of 35 unmoved members
+AMZN,Amazon.com Inc,Consumer Cyclical,Internet Retail,Software & Digital Platforms,5.0,,,,,,5.50,median of 35 unmoved members
+DASH,"DoorDash, Inc. Class A Common Stock",Consumer Cyclical,Internet Retail,Software & Digital Platforms,5.0,,,,,,5.50,median of 35 unmoved members
+EBAY,eBay Inc,Consumer Cyclical,Internet Retail,Software & Digital Platforms,5.0,,,,,,5.50,median of 35 unmoved members
+FISV,"Fiserv, Inc.",Technology,Software,Payments & Financial Processing,8.0,,moved,from Software & Digital Platforms. merchant acquiring and core banking software,,,5.50,all members moved; score is the median of what they brought
+ADBE,Adobe Systems Incorporated,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+ADP,Automatic Data Processing Inc,Technology,Software - Application,Payments & Financial Processing,5.5,,moved,"from Software & Digital Platforms. payroll processing, earns float",,,5.50,all members moved; score is the median of what they brought
+ADSK,Autodesk Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+CDNS,Cadence Design Systems Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+CRM,Salesforce.com Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+DDOG,Datadog Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+FICO,Fair Isaac Corporation,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+INTU,Intuit Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+NOW,ServiceNow Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+PAYX,Paychex Inc,Technology,Software - Application,Payments & Financial Processing,5.5,,moved,"from Software & Digital Platforms. payroll processing, earns float",,,5.50,all members moved; score is the median of what they brought
+PTC,PTC Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+ROP,Roper Technologies Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+TYL,Tyler Technologies Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+UBER,Uber Technologies Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+WDAY,Workday Inc,Technology,Software - Application,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+AKAM,Akamai Technologies Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+CPAY,Corpay Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+CRWD,Crowdstrike Holdings Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+FFIV,F5 Networks Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+FTNT,Fortinet Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+GDDY,Godaddy Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+GEN,Gen Digital Inc.,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+MSFT,Microsoft Corporation,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+NTAP,NetApp Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+ORCL,Oracle Corporation,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+PANW,Palo Alto Networks Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+PLTR,Palantir Technologies Inc.,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+SNPS,Synopsys Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+VRSN,VeriSign Inc,Technology,Software - Infrastructure,Software & Digital Platforms,5.5,,,,,,5.50,median of 35 unmoved members
+XYZ,"Block, Inc",Technology,Software - Infrastructure,Payments & Financial Processing,5.5,,moved,"from Software & Digital Platforms. merchant acquiring, Block/Square",,,5.50,all members moved; score is the median of what they brought
+DIS,Walt Disney Company,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+FOX,Fox Corp Class B,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+FOXA,Fox Corp Class A,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+LYV,Live Nation Entertainment Inc,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+NFLX,Netflix Inc,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+NWS,News Corp B,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+NWSA,News Corp A,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+PSKY,Paramount Skydance Corporation Class B Common Stock,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+TKO,"TKO Group Holdings, Inc.",Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+WBD,Warner Bros Discovery Inc,Communication Services,Entertainment,Media & Entertainment,5.5,,split,residue of Telecom & Media: content economics and streaming disruption,,,5.50,median of 10 unmoved members
+CHTR,Charter Communications Inc,Communication Services,Telecom Services,Telecom & Cable,7.0,,split,split out of Telecom & Media: network capital intensity and balance-sheet leverage,,,7.00,median of 6 unmoved members
+CMCSA,Comcast Corp,Communication Services,Telecom Services,Telecom & Cable,7.0,,split,split out of Telecom & Media: network capital intensity and balance-sheet leverage,,,7.00,median of 6 unmoved members
+ECHO,EchoStar Corporation,Communication Services,Telecom Services,Telecom & Cable,7.0,,split,split out of Telecom & Media: network capital intensity and balance-sheet leverage,,,7.00,median of 6 unmoved members
+T,AT&T Inc.,Communication Services,Telecom Services,Telecom & Cable,7.0,,split,split out of Telecom & Media: network capital intensity and balance-sheet leverage,,,7.00,median of 6 unmoved members
+TMUS,T-Mobile US Inc,Communication Services,Telecom Services,Telecom & Cable,7.0,,split,split out of Telecom & Media: network capital intensity and balance-sheet leverage,,,7.00,median of 6 unmoved members
+VZ,Verizon Communications Inc,Communication Services,Telecom Services,Telecom & Cable,7.0,,split,split out of Telecom & Media: network capital intensity and balance-sheet leverage,,,7.00,median of 6 unmoved members
+CEG,Constellation Energy Corp,Utilities,Utilities - Independent Power Producers,Merchant Power,6.5,,moved,from Media & Entertainment. unregulated generation selling into merchant power markets,,,6.50,all members moved; score is the median of what they brought
+NRG,NRG Energy Inc.,Utilities,Utilities - Independent Power Producers,Merchant Power,6.5,,moved,from Media & Entertainment. unregulated generation selling into merchant power markets,,,6.50,all members moved; score is the median of what they brought
+VST,Vistra Corp.,Utilities,Utilities - Independent Power Producers,Merchant Power,6.5,,moved,from Media & Entertainment. unregulated generation selling into merchant power markets,,0.682pp for a merchant generator is implausibly tight,6.50,all members moved; score is the median of what they brought
+CHRW,CH Robinson Worldwide Inc,Industrials,Integrated Freight & Logistics,Transport & Logistics,5.0,,,,,,5.00,median of 7 unmoved members
+EXPD,"Expeditors International of Washington, Inc.",Industrials,Integrated Freight & Logistics,Transport & Logistics,5.0,,,,,,5.00,median of 7 unmoved members
+FDX,FedEx Corporation,Industrials,Integrated Freight & Logistics,Transport & Logistics,5.0,,,,,,5.00,median of 7 unmoved members
+FDXF,"FedEx Freight Holding Company, Inc.",Industrials,Integrated Freight & Logistics,Transport & Logistics,5.0,,,,FedEx Freight spinoff line with no price history; FedEx also present as FDX. Excluded from scoring (fails the two-block minimum).,,5.00,median of 7 unmoved members
+JBHT,JB Hunt Transport Services Inc,Industrials,Integrated Freight & Logistics,Transport & Logistics,5.0,,,,,,5.00,median of 7 unmoved members
+UPS,United Parcel Service Inc,Industrials,Integrated Freight & Logistics,Transport & Logistics,5.0,,,,,,5.00,median of 7 unmoved members
+ODFL,Old Dominion Freight Line Inc,Industrials,Trucking,Transport & Logistics,5.0,,,,,,5.00,median of 7 unmoved members
+HAS,Hasbro Inc,Consumer Cyclical,Leisure,Consumer Services & Retail,6.0,,moved,"from Travel & Leisure. Hasbro manufactures toys. Discretionary consumer goods, not travel or leisure services.",,,5.00,median of 14 unmoved members
+HLT,Hilton Worldwide Holdings Inc,Consumer Cyclical,Lodging,Travel & Leisure,4.0,,,,,,7.00,median of 11 unmoved members
+MAR,Marriott International Inc,Consumer Cyclical,Lodging,Travel & Leisure,4.0,,,,,,7.00,median of 11 unmoved members
+LVS,Las Vegas Sands Corp,Consumer Cyclical,Resorts & Casinos,Travel & Leisure,6.0,,,,,,7.00,median of 11 unmoved members
+MGM,MGM Resorts International,Consumer Cyclical,Resorts & Casinos,Travel & Leisure,6.0,,,,,0.439pp for a levered casino operator is implausibly tight,7.00,median of 11 unmoved members
+WYNN,Wynn Resorts Limited,Consumer Cyclical,Resorts & Casinos,Travel & Leisure,6.0,,,,,,7.00,median of 11 unmoved members
+ABNB,Airbnb Inc,Consumer Cyclical,Travel Services,Travel & Leisure,7.0,,,,,,7.00,median of 11 unmoved members
+BKNG,Booking Holdings Inc,Consumer Cyclical,Travel Services,Travel & Leisure,7.0,,,,,,7.00,median of 11 unmoved members
+CCL,Carnival Corporation,Consumer Cyclical,Travel Services,Travel & Leisure,7.0,,,,,,7.00,median of 11 unmoved members
+EXPE,Expedia Group Inc.,Consumer Cyclical,Travel Services,Travel & Leisure,7.0,,,,,,7.00,median of 11 unmoved members
+NCLH,Norwegian Cruise Line Holdings Ltd,Consumer Cyclical,Travel Services,Travel & Leisure,7.0,,,,,,7.00,median of 11 unmoved members
+RCL,Royal Caribbean Cruises Ltd,Consumer Cyclical,Travel Services,Travel & Leisure,7.0,,,,,,7.00,median of 11 unmoved members

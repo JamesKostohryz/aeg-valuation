@@ -1,0 +1,500 @@
+ticker,risk_group,group_score,group_change,semidev,spread_30y_pp,credit_n_fit,put_iv_365d,has_put_iv,block_volatility,block_credit,block_industry,block_within_industry,within_group_n,within_group_shrink,within_group_ranked_on,n_blocks,weight_per_block,combined_score,cap_weight,suggested_idio_erp_pct,floor_applied,reliability
+A,Healthcare - Innovation,5.00,,17.22345,1.8226,2,,False,37.58,94.75,45.0,47.07,27,0.9,2,4,0.25,56.099,0.0005667848611068226,4.4624,,credit spread fit on only 2 bonds -- treat with caution
+AAPL,Hardware & Components,6.00,split,13.323488,0.7041,34,28.62,True,17.65,5.42,56.0,7.75,19,0.864,2,4,0.25,21.706,0.06148279304878136,1.7266,,full
+ABBV,Healthcare - Established,3.50,,18.042683,0.8992,13,29.19,True,32.18,29.48,28.5,33.17,21,0.875,2,4,0.25,30.835,0.006165000490479052,2.4528,,full
+ABNB,Travel & Leisure,7.00,,19.515958,,,38.02,True,60.98,,67.0,34.94,11,0.786,1,3,0.3333,54.306,0.0014708462256600493,4.3198,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ABT,Healthcare - Established,3.50,,18.176893,0.7722,6,29.99,True,35.88,11.51,28.5,20.18,21,0.875,2,4,0.25,24.017,0.002640542618220283,1.9104,,full
+ACGL,Insurance Underwriters,5.00,,16.343628,0.8578,2,,False,30.62,21.19,45.0,48.0,18,0.857,2,4,0.25,36.203,0.00046383726164059383,2.8798,,credit spread fit on only 2 bonds -- treat with caution
+ACN,IT Services & Advertising,7.00,,22.601089,,,50.94,True,79.48,,67.0,45.36,8,0.727,1,3,0.3333,63.945,0.0014312425938613378,5.0865,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ADBE,Software & Digital Platforms,5.50,,23.881563,0.9741,1,47.73,True,80.41,40.27,50.5,26.36,35,0.921,2,4,0.25,49.384,0.0014222039463320654,3.9283,,credit spread fit on only 1 bond -- treat with caution
+ADI,Semiconductors & Semicap,6.50,split,17.195008,0.9813,5,47.73,True,65.97,41.37,61.5,23.05,18,0.857,2,4,0.25,47.974,0.002483508718949611,3.8161,,full
+ADM,Energy & Commodities,7.50,moved,18.57058,0.8387,6,34.23,True,51.23,18.97,72.5,15.25,29,0.906,2,4,0.25,39.49,0.0005342366143143092,3.1412,,full
+ADP,Payments & Financial Processing,5.50,moved,15.412333,1.023,2,31.55,True,32.44,49.67,50.5,22.66,9,0.75,2,4,0.25,38.817,0.001446240749026248,3.0877,,credit spread fit on only 2 bonds -- treat with caution
+ADSK,Software & Digital Platforms,5.50,,20.438413,1.3518,2,48.34,True,75.18,78.98,50.5,53.18,35,0.921,2,4,0.25,64.462,0.00070341621419052,5.1276,,credit spread fit on only 2 bonds -- treat with caution
+AEE,Regulated & Monopoly Assets,1.50,,11.648163,0.8379,15,,False,2.99,18.56,6.5,9.1,28,0.903,2,4,0.25,9.288,0.0004107881542435519,1.0879,credit floor applied (0.739 -> 1.088),full
+AEP,Regulated & Monopoly Assets,1.50,,12.687687,1.0479,46,24.02,True,6.41,53.27,6.5,65.4,28,0.903,2,4,0.25,32.895,0.000935368139770864,2.6166,,full
+AES,Merchant Power,6.50,moved,29.527054,,,13.3,True,34.9,,61.5,22.21,4,0.571,1,3,0.3333,39.537,0.00014169433302806735,3.145,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+AFL,Insurance Underwriters,5.00,,12.609764,0.9079,4,24.46,True,7.12,30.87,45.0,18.05,18,0.857,2,4,0.25,25.26,0.0008232902754925765,2.0093,,full
+AIG,Insurance Underwriters,5.00,,16.895625,1.0077,7,30.01,True,30.37,46.63,45.0,67.97,18,0.857,2,4,0.25,47.493,0.0005503874638693902,3.7778,,full
+AIZ,Insurance Underwriters,5.00,,16.482589,1.6359,3,,False,32.01,91.7,45.0,92.93,18,0.857,2,4,0.25,65.411,0.0001876370671317697,5.2031,,full
+AJG,Fee-Based Financials,3.50,,20.621034,1.0754,5,,False,60.44,57.97,28.5,63.49,21,0.875,2,4,0.25,52.6,0.000863777433484533,4.1841,,full
+AKAM,Software & Digital Platforms,5.50,,33.253372,,,54.14,True,91.85,,50.5,77.32,35,0.921,1,3,0.3333,73.223,0.00023803221742032808,5.8245,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ALB,Energy & Commodities,7.50,moved,40.058549,1.5615,3,55.93,True,94.58,88.39,72.5,88.95,29,0.906,2,4,0.25,86.103,0.0002430345260376617,6.8491,,full
+ALGN,Healthcare - Innovation,5.00,,43.32135,,,46.9,True,89.65,,45.0,88.2,27,0.9,1,3,0.3333,74.281,0.00016170163294914057,5.9087,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ALL,Insurance Underwriters,5.00,,17.314281,1.0342,5,,False,38.37,51.33,45.0,72.96,18,0.857,2,4,0.25,51.916,0.0009097171855954962,4.1297,,full
+ALLE,Quality Industrials,4.00,,17.098661,0.9572,3,,False,35.99,36.4,34.0,49.42,44,0.936,2,4,0.25,38.952,0.00018480159134246155,3.0984,,full
+AMAT,Semiconductors & Semicap,6.50,split,27.353019,0.7408,6,,False,82.7,8.47,61.5,8.07,18,0.857,2,4,0.25,40.186,0.00553198252650233,3.1966,,full
+AMCR,Materials & Packaging,4.50,,20.058157,1.1689,2,34.73,True,55.04,68.2,39.5,74.25,19,0.864,2,4,0.25,59.247,0.0002859655719990353,4.7128,,credit spread fit on only 2 bonds -- treat with caution
+AMD,Semiconductors & Semicap,6.50,split,32.550588,0.9497,2,65.91,True,95.0,35.57,61.5,48.0,18,0.857,2,4,0.25,60.018,0.010778097868830876,4.7741,,credit spread fit on only 2 bonds -- treat with caution
+AME,Quality Industrials,4.00,,11.869999,,,,False,3.78,,34.0,4.16,44,0.936,1,3,0.3333,13.981,0.0007725145236660898,1.1121,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+AMGN,Healthcare - Established,3.50,,17.606153,0.9875,32,29.75,True,32.27,42.2,28.5,46.17,21,0.875,2,4,0.25,37.286,0.003110447066343047,2.9659,,full
+AMP,Asset Management,6.00,split,15.676246,2.3644,2,,False,25.65,97.51,56.0,59.78,9,0.75,2,4,0.25,59.736,0.000702091487598883,4.7517,,credit spread fit on only 2 bonds -- treat with caution
+AMT,Contracted Infrastructure,5.00,,17.953901,1.0021,13,31.11,True,40.18,45.52,45.0,38.71,15,0.833,2,4,0.25,42.355,0.0010810209264536927,3.3691,,full
+AMZN,Software & Digital Platforms,5.50,,16.485549,1.0541,22,37.1,True,48.79,54.65,50.5,18.32,35,0.921,2,4,0.25,43.063,0.03803195434706493,3.4255,,full
+ANET,Hardware & Components,6.00,split,34.51983,,,,False,93.64,,56.0,69.5,19,0.864,1,3,0.3333,73.046,0.0033112139175248533,5.8105,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+AON,Fee-Based Financials,3.50,,17.489115,1.1109,14,,False,39.57,60.46,28.5,46.17,21,0.875,2,4,0.25,43.673,0.0009902069102140545,3.474,,full
+AOS,Quality Industrials,4.00,,17.163155,,,,False,36.98,,34.0,53.73,44,0.936,1,3,0.3333,41.572,0.0001133352922126559,3.3069,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+APA,Energy & Commodities,7.50,,33.482897,1.6106,7,46.6,True,86.92,90.32,72.5,85.75,29,0.906,2,4,0.25,83.872,0.0002016319864345022,6.6716,,full
+APD,Materials & Packaging,4.50,,16.227905,0.8112,4,,False,29.43,15.38,39.5,17.25,19,0.864,2,4,0.25,25.389,0.0009083146280226654,2.0196,,full
+APH,Hardware & Components,6.00,split,25.648856,1.0418,2,,False,78.73,52.16,56.0,22.0,19,0.864,2,4,0.25,52.222,0.0027662273241196747,4.154,,credit spread fit on only 2 bonds -- treat with caution
+APO,Asset Management,6.00,split,21.783103,,,38.06,True,65.48,,56.0,69.06,9,0.75,1,3,0.3333,63.513,0.0010931209384313558,5.0522,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+APP,IT Services & Advertising,7.00,,51.06976,,,73.75,True,98.93,,67.0,76.21,8,0.727,1,3,0.3333,80.714,0.0013957609410557988,6.4204,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+APTV,Heavy Cyclicals,7.00,moved,25.639646,1.2675,3,,False,78.53,75.39,67.0,38.02,18,0.857,2,4,0.25,64.735,0.0001385880849895437,5.1494,,full
+ARE,Real Estate,4.50,,31.743355,1.2014,9,45.99,True,86.47,71.24,39.5,93.81,21,0.875,2,4,0.25,72.755,0.00011609896750340397,5.7873,,full
+ARES,Asset Management,6.00,split,25.016537,1.164,1,43.09,True,75.99,67.65,56.0,87.62,9,0.75,2,4,0.25,71.815,0.0004269052916365057,5.7125,,credit spread fit on only 1 bond -- treat with caution
+ATO,Regulated & Monopoly Assets,1.50,,11.350353,0.8759,7,,False,1.99,26.72,6.5,22.35,28,0.903,2,4,0.25,14.39,0.0003882804769791605,1.1447,,full
+AVGO,Semiconductors & Semicap,6.50,split,25.419496,1.446,10,52.43,True,84.72,83.96,61.5,72.96,18,0.857,2,4,0.25,75.786,0.024911291835265387,6.0284,,full
+AVY,Materials & Packaging,4.50,,13.64513,1.2603,3,,False,12.33,74.84,39.5,45.75,19,0.864,2,4,0.25,43.104,0.0001832551493058657,3.4287,,full
+AWK,Regulated & Monopoly Assets,1.50,,15.381269,0.9996,8,,False,23.27,44.69,6.5,72.03,28,0.903,2,4,0.25,36.621,0.00035909163071799386,2.913,,full
+AXON,Aerospace & Defense,3.50,split,35.863991,,,64.83,True,95.34,,28.5,90.72,13,0.812,1,3,0.3333,71.52,0.0006876766131070316,5.6891,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+AXP,Fee-Based Financials,3.50,moved,16.321043,0.8014,7,29.72,True,26.43,14.55,28.5,20.18,21,0.875,2,4,0.25,22.416,0.00308576594662698,1.7831,,full
+AZO,Defensive Retail,3.50,,18.010148,0.9999,5,,False,44.14,44.97,28.5,53.64,14,0.824,2,4,0.25,42.811,0.0006962917202475361,3.4054,,full
+BA,Aerospace & Defense,3.50,split,20.477095,1.1033,30,36.09,True,58.37,59.63,28.5,63.91,13,0.812,2,4,0.25,52.602,0.002372311607519091,4.1842,,full
+BAC,Banks & Capital Markets,7.00,,14.059611,0.8896,10,26.45,True,13.56,28.65,67.0,21.04,25,0.893,2,4,0.25,32.563,0.00629889755474442,2.5902,,full
+BALL,Materials & Packaging,4.50,,17.855886,1.5021,1,,False,42.35,86.45,39.5,79.0,19,0.864,2,4,0.25,61.825,0.0002216025445932631,4.9179,,credit spread fit on only 1 bond -- treat with caution
+BAX,Healthcare - Innovation,5.00,,34.215036,1.2197,6,45.47,True,85.86,72.62,45.0,64.21,27,0.9,2,4,0.25,66.922,0.00018065445980695684,5.3233,,full
+BBY,Consumer Services & Retail,5.00,,23.728428,1.0721,1,40.38,True,71.11,57.14,45.0,55.76,17,0.85,2,4,0.25,57.251,0.00024792106507024787,4.554,,credit spread fit on only 1 bond -- treat with caution
+BDX,Healthcare - Innovation,5.00,,17.173645,0.853,3,30.56,True,34.42,20.63,45.0,5.95,27,0.9,2,4,0.25,26.501,0.0006687402420768284,2.108,,full
+BEN,Asset Management,6.00,split,16.457649,,,35.63,True,45.7,,56.0,31.94,9,0.75,1,3,0.3333,44.547,0.00023580326933855727,3.5435,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+BF-B,Consumer Staples,3.00,,29.639106,,,38.36,True,76.18,,23.0,94.29,23,0.885,1,3,0.3333,64.49,0.00016765815813492158,5.1299,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+BG,Energy & Commodities,7.50,moved,19.494813,1.0383,1,33.35,True,48.97,51.61,72.5,40.89,29,0.906,2,4,0.25,53.492,0.0003013555359867159,4.255,,credit spread fit on only 1 bond -- treat with caution
+BIIB,Healthcare - Established,3.50,,21.07849,1.1236,3,37.47,True,62.74,63.08,28.5,85.15,21,0.875,2,4,0.25,59.868,0.00042493356198695405,4.7622,,full
+BKNG,Travel & Leisure,7.00,,20.607466,1.0857,1,37.94,True,63.28,59.07,67.0,42.72,11,0.786,2,4,0.25,58.019,0.0021558805340952426,4.6151,,credit spread fit on only 1 bond -- treat with caution
+BKR,Energy & Commodities,7.50,,20.546949,0.8716,2,37.12,True,60.08,25.89,72.5,31.27,29,0.906,2,4,0.25,47.435,0.0008629066703084084,3.7732,,credit spread fit on only 2 bonds -- treat with caution
+BLDR,Heavy Cyclicals,7.00,moved,27.296228,2.8907,2,57.21,True,90.32,99.17,67.0,87.94,18,0.857,2,4,0.25,86.107,9.883109749392252e-05,6.8494,,credit spread fit on only 2 bonds -- treat with caution
+BLK,Asset Management,6.00,split,13.984444,0.55,3,29.75,True,21.9,2.38,56.0,13.38,9,0.75,2,4,0.25,23.414,0.0025576650595345416,1.8625,,full
+BMY,Healthcare - Established,3.50,,18.095861,0.9336,18,31.39,True,41.34,33.91,28.5,50.5,21,0.875,2,4,0.25,38.562,0.0018186609014469815,3.0674,,full
+BNY,Banks & Capital Markets,7.00,,12.390089,,,30.12,True,21.52,,67.0,24.72,25,0.893,1,3,0.3333,37.746,0.0015387385914743532,3.0025,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+BR,Payments & Financial Processing,5.50,moved,17.234803,2.2674,2,,False,37.78,96.96,50.5,50.5,9,0.75,2,4,0.25,58.934,0.00026399634234250115,4.6879,,credit spread fit on only 2 bonds -- treat with caution
+BRK-B,Insurance Underwriters,5.00,,10.897321,0.9098,21,18.46,True,1.2,31.42,45.0,13.06,18,0.857,2,4,0.25,22.67,0.014570080754314643,1.8033,,full
+BRO,Fee-Based Financials,3.50,,21.217369,1.3554,1,,False,62.03,79.54,28.5,72.16,21,0.875,2,4,0.25,60.556,0.0003161697738944724,4.8169,,credit spread fit on only 1 bond -- treat with caution
+BSX,Healthcare - Established,3.50,,24.267262,0.8057,6,44.38,True,76.73,15.1,28.5,76.49,21,0.875,2,4,0.25,49.205,0.0010075798365868193,3.914,,full
+BX,Asset Management,6.00,split,19.249941,0.9615,6,38.01,True,60.64,37.78,56.0,50.5,9,0.75,2,4,0.25,51.231,0.001481211776856957,4.0752,,full
+BXP,Real Estate,4.50,,19.633817,1.5603,6,,False,53.28,88.11,39.5,89.48,21,0.875,2,4,0.25,67.593,0.00014205388970864536,5.3767,,full
+C,Banks & Capital Markets,7.00,,16.225801,1.1199,13,32.11,True,35.31,61.7,67.0,57.87,25,0.893,2,4,0.25,55.468,0.003211994649272107,4.4122,,full
+CAH,Healthcare - Established,3.50,,17.669281,,,31.98,True,40.96,,28.5,67.82,21,0.875,1,3,0.3333,45.761,0.0007487351146549192,3.6401,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CARR,Quality Industrials,4.00,,21.918772,0.8517,5,37.85,True,64.22,20.36,34.0,64.51,44,0.936,2,4,0.25,45.771,0.000693315960440326,3.6409,,full
+CASY,Defensive Retail,3.50,moved,16.322516,,,,False,30.22,,28.5,41.09,14,0.824,1,3,0.3333,33.272,0.0004285591560363681,2.6466,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CAT,Quality Industrials,4.00,,16.644228,0.6921,12,45.84,True,61.74,5.15,34.0,45.11,44,0.936,2,4,0.25,36.5,0.005228649755544244,2.9034,,full
+CB,Insurance Underwriters,5.00,,12.839792,0.7719,9,24.26,True,7.41,11.23,45.0,8.07,18,0.857,2,4,0.25,17.927,0.0018244228678678182,1.426,,full
+CBOE,Fee-Based Financials,3.50,,16.079639,1.1731,1,37.59,True,49.51,68.75,28.5,59.16,21,0.875,2,4,0.25,51.481,0.00041039542306517017,4.0951,,credit spread fit on only 1 bond -- treat with caution
+CBRE,Fee-Based Financials,3.50,moved,20.38818,,,,False,57.46,,28.5,50.5,21,0.875,1,3,0.3333,45.486,0.000588152201696253,3.6182,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CCI,Contracted Infrastructure,5.00,,19.142358,1.1874,11,34.67,True,52.67,70.13,45.0,74.07,15,0.833,2,4,0.25,60.468,0.0004319628867498588,4.8099,,full
+CCL,Travel & Leisure,7.00,,26.245913,1.7912,1,46.91,True,82.61,94.19,67.0,89.39,11,0.786,2,4,0.25,83.298,0.0005088895819192769,6.626,,credit spread fit on only 1 bond -- treat with caution
+CDNS,Software & Digital Platforms,5.50,,22.589428,,,47.15,True,77.07,,50.5,50.5,35,0.921,1,3,0.3333,59.356,0.0011700399158435717,4.7215,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CDW,IT Services & Advertising,7.00,,28.31574,1.6229,2,,False,84.49,91.15,67.0,55.64,8,0.727,2,4,0.25,74.572,0.00023118285982758464,5.9318,,credit spread fit on only 2 bonds -- treat with caution
+CEG,Merchant Power,6.50,moved,33.397153,1.8612,3,50.56,True,90.11,95.3,61.5,59.93,4,0.571,2,4,0.25,76.71,0.0012699507362284486,6.1019,,full
+CF,Energy & Commodities,7.50,,27.636304,1.1204,3,44.46,True,80.97,62.11,72.5,69.73,29,0.906,2,4,0.25,71.327,0.0002477161285274362,5.6737,,full
+CFG,Banks & Capital Markets,7.00,,16.215586,1.1718,1,30.3,True,29.31,68.47,67.0,61.55,25,0.893,2,4,0.25,56.583,0.00042140918623451444,4.5009,,credit spread fit on only 1 bond -- treat with caution
+CHD,Consumer Staples,3.00,,14.849569,0.7922,5,,False,21.28,13.72,23.0,22.63,23,0.885,2,4,0.25,20.158,0.00031746497607175434,1.6035,,full
+CHRW,Transport & Logistics,5.00,,22.732792,1.2465,1,40.14,True,68.71,73.73,45.0,70.3,6,0.667,2,4,0.25,64.435,0.00023291989526902935,5.1255,,credit spread fit on only 1 bond -- treat with caution
+CHTR,Telecom & Cable,7.00,split,39.320203,2.4114,30,61.32,True,95.99,97.79,67.0,83.5,6,0.667,2,4,0.25,86.07,0.0002418464652173692,6.8465,,full
+CI,Healthcare - Services,7.50,,25.527048,1.0288,14,32.36,True,56.66,50.22,72.5,27.16,11,0.786,2,4,0.25,51.637,0.000988360921751306,4.1075,,full
+CIEN,Hardware & Components,6.00,split,37.89587,,,,False,95.83,,56.0,79.0,19,0.864,1,3,0.3333,76.942,0.0007977531655632685,6.1204,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CINF,Insurance Underwriters,5.00,,14.096062,1.7413,2,,False,16.11,93.64,45.0,87.94,18,0.857,2,4,0.25,60.671,0.00035915135433284084,4.8261,,credit spread fit on only 2 bonds -- treat with caution
+CL,Consumer Staples,3.00,,14.367443,0.4579,5,26.72,True,14.74,1.55,23.0,14.67,23,0.885,2,4,0.25,13.491,0.0009908660796028265,1.0731,,full
+CLX,Consumer Staples,3.00,,19.054043,0.9244,4,34.0,True,51.36,32.53,23.0,50.5,23,0.885,2,4,0.25,39.347,0.00017331520398326927,3.1299,,full
+CMCSA,Telecom & Cable,7.00,split,21.285107,1.5985,43,37.23,True,62.15,89.77,67.0,57.1,6,0.667,2,4,0.25,69.005,0.0012575303152496183,5.489,,full
+CME,Fee-Based Financials,3.50,,14.019749,0.7904,4,30.85,True,27.55,13.17,28.5,15.85,21,0.875,2,4,0.25,21.266,0.001322424182348698,1.6916,,full
+CMG,Consumer Services & Retail,5.00,,27.689381,,,41.55,True,77.5,,45.0,82.06,17,0.85,1,3,0.3333,68.185,0.000578788932989143,5.4238,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CMI,Quality Industrials,4.00,,17.466906,0.7525,3,,False,39.37,9.3,34.0,32.18,44,0.936,2,4,0.25,28.711,0.0011568335893728699,2.2838,,full
+CMS,Regulated & Monopoly Assets,1.50,,11.918716,0.9663,11,,False,4.38,38.89,6.5,35.6,28,0.903,2,4,0.25,21.34,0.00028715400491299435,1.6975,,full
+CNC,Healthcare - Services,7.50,,54.825236,2.631,4,47.1,True,90.56,98.34,72.5,89.39,11,0.786,2,4,0.25,87.699,0.00043635746864038324,6.976,,full
+CNP,Regulated & Monopoly Assets,1.50,,12.70099,0.8743,16,,False,7.16,26.44,6.5,32.28,28,0.903,2,4,0.25,18.097,0.00036300025446175943,1.4395,,full
+COF,Banks & Capital Markets,7.00,moved,20.182475,0.8698,3,33.35,True,50.78,25.34,67.0,43.13,25,0.893,2,4,0.25,46.563,0.0018493767388562087,3.7039,,full
+COHR,Hardware & Components,6.00,split,40.758044,,,,False,97.81,,56.0,83.75,19,0.864,1,3,0.3333,79.188,0.0008330314316964139,6.299,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+COIN,Banks & Capital Markets,7.00,moved,39.225636,2.3178,1,75.54,True,98.0,97.23,67.0,94.7,25,0.893,2,4,0.25,89.233,0.0005178702843973299,7.0981,,credit spread fit on only 1 bond -- treat with caution
+COO,Healthcare - Innovation,5.00,,23.744023,,,,False,72.96,,45.0,57.35,27,0.9,1,3,0.3333,58.439,0.00019862025416688756,4.6485,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+COP,Energy & Commodities,7.50,,21.22231,0.9624,11,32.21,True,49.8,38.06,72.5,37.68,29,0.906,2,4,0.25,49.509,0.002117706630639352,3.9382,,full
+COR,Healthcare - Established,3.50,,23.694447,0.9691,4,28.41,True,39.97,39.72,28.5,59.16,21,0.875,2,4,0.25,41.836,0.0008243108489889649,3.3279,,full
+COST,Defensive Retail,3.50,,13.448713,0.3236,4,27.0,True,14.02,1.0,28.5,9.74,14,0.824,2,4,0.25,13.314,0.005731962629751553,1.0591,,full
+CPAY,Software & Digital Platforms,5.50,,20.558793,,,,False,59.45,,50.5,21.0,35,0.921,1,3,0.3333,43.648,0.00036276761525238187,3.472,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CPRT,Quality Industrials,4.00,,18.809881,,,38.12,True,60.87,,34.0,83.91,44,0.936,1,3,0.3333,59.592,0.0004089040589848893,4.7403,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CPT,Real Estate,4.50,,13.127433,0.7929,1,,False,9.15,14.0,39.5,7.19,21,0.875,2,4,0.25,17.459,0.0001476422742189334,1.3888,,credit spread fit on only 1 bond -- treat with caution
+CRH,Materials & Packaging,4.50,,16.717682,,,37.49,True,50.89,,39.5,60.0,19,0.864,1,3,0.3333,50.129,0.0008384826119778006,3.9875,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CRL,Healthcare - Innovation,5.00,,31.6916,1.5269,1,,False,89.86,87.0,45.0,81.34,27,0.9,2,4,0.25,75.802,0.00018199739500302813,6.0297,,credit spread fit on only 1 bond -- treat with caution
+CRM,Software & Digital Platforms,5.50,,26.043615,1.352,6,48.07,True,84.42,79.26,50.5,63.91,35,0.921,2,4,0.25,69.522,0.002296853428109515,5.5301,,full
+CRWD,Software & Digital Platforms,5.50,,29.814474,,,,False,87.08,,50.5,66.59,35,0.921,1,3,0.3333,68.057,0.0029528728748608526,5.4136,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CSCO,Hardware & Components,6.00,split,16.802185,1.7687,2,42.09,True,57.33,93.92,56.0,36.25,19,0.864,2,4,0.25,60.874,0.005982714793334344,4.8422,,credit spread fit on only 2 bonds -- treat with caution
+CSGP,Fee-Based Financials,3.50,moved,28.904097,,,57.13,True,91.01,,28.5,93.81,21,0.875,1,3,0.3333,71.109,0.00017061336244253805,5.6564,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CSX,Contracted Infrastructure,5.00,,14.453998,0.8346,17,28.01,True,17.39,17.59,45.0,26.93,15,0.833,2,4,0.25,26.727,0.0012556771070188785,2.126,,full
+CTAS,Quality Industrials,4.00,,14.42182,0.872,3,30.34,True,25.83,26.16,34.0,36.49,44,0.936,2,4,0.25,30.622,0.0010841621898291882,2.4358,,full
+CTSH,IT Services & Advertising,7.00,,20.587611,,,49.42,True,76.14,,67.0,24.79,8,0.727,1,3,0.3333,55.977,0.00036200320046878454,4.4527,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CTVA,Materials & Packaging,4.50,moved,17.712574,,,,False,41.36,,39.5,36.25,19,0.864,1,3,0.3333,39.035,0.0007034817702216655,3.105,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CVNA,Heavy Cyclicals,7.00,,37.972786,,,65.17,True,96.58,,67.0,92.93,18,0.857,1,3,0.3333,85.502,0.0006466518975419312,6.8013,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+CVS,Healthcare - Services,7.50,,24.378229,1.2251,21,33.91,True,60.41,73.18,72.5,58.28,11,0.786,2,4,0.25,66.092,0.0016371466573513146,5.2573,,full
+CVX,Energy & Commodities,7.50,,16.411523,0.5618,10,28.09,True,22.45,2.66,72.5,5.64,29,0.906,2,4,0.25,25.813,0.005416019130914919,2.0533,,full
+D,Regulated & Monopoly Assets,1.50,,14.443013,1.3073,16,22.89,True,8.63,77.05,6.5,88.59,28,0.903,2,4,0.25,45.19,0.0008136810417935151,3.5946,,full
+DAL,Heavy Cyclicals,7.00,,22.05964,1.6373,2,40.64,True,67.65,91.98,67.0,57.99,18,0.857,2,4,0.25,71.155,0.0007569987239623905,5.66,,credit spread fit on only 2 bonds -- treat with caution
+DASH,Software & Digital Platforms,5.50,,28.798303,,,51.25,True,88.41,,50.5,69.27,35,0.921,1,3,0.3333,69.393,0.001277943177369148,5.5199,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DD,Materials & Packaging,4.50,,15.525058,,,35.62,True,42.97,,39.5,41.0,19,0.864,1,3,0.3333,41.156,0.00025604943481305725,3.2738,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DDOG,Software & Digital Platforms,5.50,,30.624582,,,,False,88.47,,50.5,71.96,35,0.921,1,3,0.3333,70.308,0.0012180120479709398,5.5927,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DE,Quality Industrials,4.00,,18.183069,0.6572,18,35.71,True,52.99,3.49,34.0,38.65,44,0.936,2,4,0.25,32.281,0.0021434156920485483,2.5678,,full
+DECK,Consumer Services & Retail,5.00,,34.387744,,,45.43,True,85.15,,45.0,87.32,17,0.85,1,3,0.3333,72.489,0.00016674593426470202,5.7661,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DELL,Hardware & Components,6.00,split,31.49021,1.3164,6,,False,89.27,77.32,56.0,55.25,19,0.864,2,4,0.25,69.46,0.004133342719765831,5.5252,,full
+DG,Defensive Retail,3.50,,29.493951,1.1062,4,41.63,True,78.62,59.9,28.5,84.99,14,0.824,2,4,0.25,63.005,0.00035995571137366724,5.0117,,full
+DGX,Healthcare - Services,7.50,moved,14.576426,1.0168,1,,False,19.69,49.12,72.5,19.39,11,0.786,2,4,0.25,40.172,0.00035574499263909274,3.1955,,credit spread fit on only 1 bond -- treat with caution
+DHI,Heavy Cyclicals,7.00,,22.518776,,,37.58,True,64.51,,67.0,18.05,18,0.857,1,3,0.3333,49.856,0.0005648643221533643,3.9658,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DHR,Healthcare - Innovation,5.00,,18.001257,0.7845,3,33.77,True,48.36,12.61,45.0,9.38,27,0.9,2,4,0.25,28.838,0.0018986888432513988,2.2939,,full
+DIS,Media & Entertainment,5.50,split,15.930183,0.8597,14,30.38,True,29.93,21.74,50.5,12.42,10,0.769,2,4,0.25,28.647,0.0024359638370961877,2.2787,,full
+DLR,Contracted Infrastructure,5.00,,14.39074,1.2877,4,31.1,True,28.75,75.94,45.0,68.18,15,0.833,2,4,0.25,54.467,0.0009490711124011013,4.3326,,full
+DLTR,Defensive Retail,3.50,,29.099999,1.0263,3,43.51,True,80.99,49.95,28.5,78.72,14,0.824,2,4,0.25,59.54,0.00034629008127917373,4.7361,,full
+DOC,Real Estate,4.50,,16.769347,0.9896,5,28.5,True,24.41,42.48,39.5,59.16,21,0.875,2,4,0.25,41.388,0.00018958612486791424,3.2922,,full
+DOV,Quality Industrials,4.00,,12.788717,,,29.79,True,20.27,,34.0,21.4,44,0.936,1,3,0.3333,25.224,0.0003700687996395405,2.0064,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DOW,Energy & Commodities,7.50,,32.265928,1.5438,11,45.92,True,86.24,87.28,72.5,82.54,29,0.906,2,4,0.25,82.139,0.0002975203871630098,6.5338,,full
+DPZ,Consumer Services & Retail,5.00,,19.655274,,,35.92,True,56.09,,45.0,39.98,17,0.85,1,3,0.3333,47.024,0.00015062261138593913,3.7405,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DRI,Consumer Services & Retail,5.00,,17.492797,1.1166,2,31.48,True,38.94,61.01,45.0,24.2,17,0.85,2,4,0.25,42.287,0.00033897512528540666,3.3637,,credit spread fit on only 2 bonds -- treat with caution
+DTE,Regulated & Monopoly Assets,1.50,,12.231371,0.8413,11,,False,4.98,19.25,6.5,15.73,28,0.903,2,4,0.25,11.613,0.00039209497834198246,1.0913,credit floor applied (0.924 -> 1.091),full
+DUK,Regulated & Monopoly Assets,1.50,,11.14876,1.0161,58,21.21,True,1.6,48.56,6.5,48.84,28,0.903,2,4,0.25,26.376,0.0012985930482038225,2.0981,,full
+DVA,Healthcare - Services,7.50,,23.194204,,,41.17,True,70.18,,72.5,66.06,11,0.786,1,3,0.3333,69.579,0.00015808774688959578,5.5347,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DVN,Energy & Commodities,7.50,,24.365408,,,38.05,True,70.3,,72.5,60.11,29,0.906,1,3,0.3333,67.637,0.0006044733944842078,5.3802,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+DXCM,Healthcare - Innovation,5.00,moved,37.987445,,,44.61,True,86.28,,45.0,77.92,27,0.9,1,3,0.3333,69.731,0.0004719776105515227,5.5468,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+EBAY,Software & Digital Platforms,5.50,,24.870345,1.1381,7,36.01,True,65.02,64.88,50.5,31.73,35,0.921,2,4,0.25,53.031,0.0006283670620378083,4.2184,,full
+ECHO,Telecom & Cable,7.00,split,46.132091,,,56.75,True,95.49,,67.0,70.3,6,0.667,1,3,0.3333,77.597,0.0004254685911623914,6.1725,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ECL,Materials & Packaging,4.50,,13.490335,0.7345,7,,False,11.73,7.36,39.5,12.5,19,0.864,2,4,0.25,17.774,0.0010649762795513157,1.4138,,full
+ED,Regulated & Monopoly Assets,1.50,,12.426361,0.9969,26,21.74,True,4.04,44.14,6.5,45.53,28,0.903,2,4,0.25,25.052,0.0005385906587536958,1.9928,,full
+EFX,Fee-Based Financials,3.50,moved,25.100251,1.4403,4,,False,76.94,83.68,28.5,85.15,21,0.875,2,4,0.25,68.569,0.0002914168329482207,5.4543,,full
+EG,Insurance Underwriters,5.00,,18.390206,,,,False,47.52,,45.0,82.95,18,0.857,1,3,0.3333,58.488,0.0001989733430915839,4.6524,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+EIX,Regulated & Monopoly Assets,1.50,,20.537347,1.3565,35,32.28,True,48.55,79.81,6.5,91.9,28,0.903,2,4,0.25,56.69,0.0003834144509611272,4.5094,,full
+EL,Consumer Services & Retail,5.00,moved,34.271588,0.9853,5,45.77,True,86.06,41.65,45.0,50.5,17,0.85,2,4,0.25,55.802,0.00041399061207675905,4.4388,,full
+ELV,Healthcare - Services,7.50,,30.001889,1.0556,16,35.41,True,68.61,54.92,72.5,42.72,11,0.786,2,4,0.25,59.689,0.0011667660406569592,4.748,,full
+EME,Heavy Cyclicals,7.00,,25.620057,,,,False,78.33,,67.0,48.0,18,0.857,1,3,0.3333,64.445,0.0004994130116587232,5.1263,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+EMR,Quality Industrials,4.00,,16.341013,0.6526,3,32.35,True,36.78,3.21,34.0,19.25,44,0.936,2,4,0.25,23.309,0.0011902581842421105,1.8541,,full
+EOG,Energy & Commodities,7.50,,18.887151,0.9258,3,33.85,True,50.21,32.8,72.5,28.07,29,0.906,2,4,0.25,45.896,0.001057585764719354,3.6508,,full
+EQIX,Contracted Infrastructure,5.00,,17.538303,1.0686,6,,False,40.16,56.58,45.0,50.5,15,0.833,2,4,0.25,48.062,0.0014393816227512967,3.8231,,full
+EQR,Real Estate,4.50,,13.680841,0.8054,6,,False,12.53,14.83,39.5,11.52,21,0.875,2,4,0.25,19.594,0.00033046516109162306,1.5586,,full
+EQT,Energy & Commodities,7.50,,24.254992,0.8713,2,33.91,True,60.45,25.61,72.5,34.48,29,0.906,2,4,0.25,48.259,0.00044692210969904844,3.8388,,credit spread fit on only 2 bonds -- treat with caution
+ERIE,Fee-Based Financials,3.50,,23.586148,,,,False,72.37,,28.5,76.49,21,0.875,1,3,0.3333,59.118,0.0001806710096797786,4.7026,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ES,Regulated & Monopoly Assets,1.50,,19.167445,0.9076,19,,False,50.1,30.31,6.5,85.27,28,0.903,2,4,0.25,43.047,0.00036605515150382896,3.4242,,full
+ESS,Real Estate,4.50,,15.204407,1.0825,1,,False,22.47,58.8,39.5,63.49,21,0.875,2,4,0.25,46.065,0.00024588083575435,3.6642,,credit spread fit on only 1 bond -- treat with caution
+ETN,Quality Industrials,4.00,,19.35897,0.7356,6,42.38,True,65.58,7.64,34.0,51.58,44,0.936,2,4,0.25,39.7,0.0022587391704240456,3.1579,,full
+ETR,Regulated & Monopoly Assets,1.50,,13.929711,0.9945,19,25.19,True,11.08,43.31,6.5,58.78,28,0.903,2,4,0.25,29.918,0.000677591573465024,2.3798,,full
+EVRG,Regulated & Monopoly Assets,1.50,,11.357051,0.846,3,,False,2.19,19.8,6.5,12.41,28,0.903,2,4,0.25,10.228,0.00026524688144852275,1.096,credit floor applied (0.814 -> 1.096),full
+EW,Healthcare - Established,3.50,,22.388024,0.9472,1,34.16,True,56.89,35.29,28.5,80.82,21,0.875,2,4,0.25,50.375,0.000706516116362206,4.0071,,credit spread fit on only 1 bond -- treat with caution
+EXC,Regulated & Monopoly Assets,1.50,,13.061169,1.007,51,24.92,True,8.08,46.08,6.5,55.47,28,0.903,2,4,0.25,29.031,0.0006262332643136302,2.3093,,full
+EXE,Energy & Commodities,7.50,,21.459508,,,33.37,True,53.43,,72.5,47.3,29,0.906,1,3,0.3333,57.743,0.00030588120990702783,4.5932,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+EXPD,Transport & Logistics,5.00,,20.476458,,,,False,58.45,,45.0,43.9,6,0.667,1,3,0.3333,49.117,0.0003318139194271959,3.907,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+EXPE,Travel & Leisure,7.00,,28.049074,0.927,4,47.68,True,85.36,33.08,67.0,27.16,11,0.786,2,4,0.25,53.15,0.0005348262079955224,4.2278,,full
+EXR,Real Estate,4.50,,17.973617,1.1854,3,,False,43.14,69.58,39.5,85.15,21,0.875,2,4,0.25,59.344,0.00043524033283103057,4.7205,,full
+F,Heavy Cyclicals,7.00,,22.477886,2.0921,16,41.66,True,69.92,96.13,67.0,72.96,18,0.857,2,4,0.25,76.502,0.0007467002694305833,6.0854,,full
+FANG,Energy & Commodities,7.50,,23.347003,1.0163,4,37.62,True,66.56,48.84,72.5,50.5,29,0.906,2,4,0.25,59.599,0.000794013735536244,4.7408,,full
+FAST,Quality Industrials,4.00,,16.722341,,,29.11,True,25.39,,34.0,34.33,44,0.936,1,3,0.3333,31.242,0.0007929090836065385,2.4852,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+FCX,Energy & Commodities,7.50,,30.410865,0.9612,8,,False,87.87,37.5,72.5,53.7,29,0.906,2,4,0.25,62.895,0.0012866481638988262,5.003,,full
+FDS,Fee-Based Financials,3.50,,27.166755,1.622,2,,False,82.11,90.87,28.5,89.48,21,0.875,2,4,0.25,72.741,0.00014181261044023265,5.7862,,credit spread fit on only 2 bonds -- treat with caution
+FDX,Transport & Logistics,5.00,,20.096446,1.4255,19,34.38,True,54.41,82.85,45.0,57.1,6,0.667,2,4,0.25,59.841,0.0010640026192199883,4.7601,,full
+FE,Regulated & Monopoly Assets,1.50,,12.364745,1.1321,5,,False,5.57,64.05,6.5,75.34,28,0.903,2,4,0.25,37.865,0.0003678927564580318,3.012,,full
+FERG,Quality Industrials,4.00,,18.805625,,,,False,48.51,,34.0,70.98,44,0.936,1,3,0.3333,51.163,0.0006376410355250539,4.0698,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+FFIV,Software & Digital Platforms,5.50,,20.15195,,,42.89,True,67.79,,50.5,39.77,35,0.921,1,3,0.3333,52.688,0.00030521521965252963,4.1911,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+FICO,Software & Digital Platforms,5.50,,35.890808,1.6767,1,53.85,True,92.22,92.53,50.5,80.0,35,0.921,2,4,0.25,78.814,0.000329078347453081,6.2693,,credit spread fit on only 1 bond -- treat with caution
+FIS,Payments & Financial Processing,5.50,moved,22.084577,1.4167,5,,False,65.01,81.75,50.5,59.78,9,0.75,2,4,0.25,64.26,0.000284638344705636,5.1116,,full
+FISV,Payments & Financial Processing,5.50,moved,56.182843,1.2688,7,,False,99.6,75.66,50.5,87.62,9,0.75,2,4,0.25,78.348,0.00037263970051016395,6.2322,,full
+FITB,Banks & Capital Markets,7.00,,15.875091,1.4096,3,30.03,True,28.62,80.92,67.0,68.92,25,0.893,2,4,0.25,61.364,0.0007055110374021617,4.8812,,full
+FIX,Heavy Cyclicals,7.00,,30.475371,,,,False,88.07,,67.0,77.95,18,0.857,1,3,0.3333,77.675,0.0008242840887911815,6.1787,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+FLEX,Hardware & Components,6.00,split,25.856976,1.5513,1,,False,79.13,87.56,56.0,60.0,19,0.864,2,4,0.25,70.671,0.0006046019251769375,5.6215,,credit spread fit on only 1 bond -- treat with caution
+FOX,Media & Entertainment,5.50,split,17.86706,1.3372,3,,False,42.55,78.43,50.5,63.19,10,0.769,2,4,0.25,58.668,0.00035562883100884326,4.6668,,full
+FOXA,Media & Entertainment,5.50,split,18.179345,,,,False,45.33,,50.5,37.81,10,0.769,1,3,0.3333,44.546,0.00040742844798124774,3.5434,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+FRT,Real Estate,4.50,,11.907448,1.0151,2,,False,4.18,48.29,39.5,50.5,21,0.875,2,4,0.25,35.617,0.00013612393703356924,2.8332,,credit spread fit on only 2 bonds -- treat with caution
+FSLR,Energy & Commodities,7.50,,39.592039,,,,False,97.02,,72.5,95.36,29,0.906,1,3,0.3333,88.292,0.0003186662717889007,7.0232,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+FTNT,Software & Digital Platforms,5.50,,29.757778,0.979,1,55.38,True,89.92,40.82,50.5,34.41,35,0.921,2,4,0.25,53.912,0.0015748076983552997,4.2884,,credit spread fit on only 1 bond -- treat with caution
+FTV,Quality Industrials,4.00,moved,15.06956,1.0449,1,,False,22.07,52.71,34.0,55.89,44,0.936,2,4,0.25,41.168,0.00024585958602768007,3.2747,,credit spread fit on only 1 bond -- treat with caution
+GD,Aerospace & Defense,3.50,split,13.106322,0.7695,7,24.16,True,7.37,10.96,28.5,10.28,13,0.812,2,4,0.25,14.277,0.0014484551840836717,1.1357,,full
+GDDY,Software & Digital Platforms,5.50,,26.993731,,,,False,81.71,,50.5,61.23,35,0.921,1,3,0.3333,64.479,0.00016871972888890088,5.129,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+GE,Aerospace & Defense,3.50,split,20.235884,0.6902,6,35.72,True,56.78,4.87,28.5,30.39,13,0.812,2,4,0.25,30.137,0.005288400804622258,2.3973,,full
+GEHC,Healthcare - Established,3.50,,21.773101,,,,False,63.62,,28.5,89.48,21,0.875,1,3,0.3333,60.534,0.0004433236017453249,4.8152,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+GEN,Software & Digital Platforms,5.50,,17.449482,,,,False,39.17,,50.5,10.27,35,0.921,1,3,0.3333,33.313,0.00022408062481921192,2.6499,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+GEV,Quality Industrials,4.00,,29.208299,,,,False,85.89,,34.0,94.69,44,0.936,1,3,0.3333,71.524,0.0036464950760790598,5.6894,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+GILD,Healthcare - Established,3.50,,16.907377,0.8271,12,30.41,True,32.23,17.04,28.5,28.84,21,0.875,2,4,0.25,26.654,0.0023971232331058303,2.1202,,full
+GIS,Consumer Staples,3.00,,17.148434,1.0202,6,33.13,True,41.7,49.39,23.0,58.46,23,0.885,2,4,0.25,43.138,0.0002748775679419929,3.4314,,full
+GL,Insurance Underwriters,5.00,,14.82495,1.2095,1,,False,20.88,71.52,45.0,77.95,18,0.857,2,4,0.25,53.838,0.00019106165044435692,4.2826,,credit spread fit on only 1 bond -- treat with caution
+GLW,Hardware & Components,6.00,split,26.919873,1.1031,4,,False,81.31,59.35,56.0,26.75,19,0.864,2,4,0.25,55.853,0.0018777131753443836,4.4428,,full
+GM,Heavy Cyclicals,7.00,,21.168292,1.4181,25,37.33,True,62.38,82.03,67.0,33.03,18,0.857,2,4,0.25,61.11,0.001034788469890377,4.861,,full
+GNRC,Quality Industrials,4.00,,26.021097,,,,False,79.33,,34.0,92.53,44,0.936,1,3,0.3333,68.618,0.00016905772137284003,5.4582,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+GOOG,Software & Digital Platforms,5.50,,15.498314,0.8617,5,,False,24.06,22.57,50.5,4.91,35,0.921,2,4,0.25,25.509,0.056478423516273114,2.0291,,full
+GOOGL,Software & Digital Platforms,5.50,,15.940486,,,36.91,True,46.98,,50.5,15.64,35,0.921,1,3,0.3333,37.705,0.05696165428475505,2.9993,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+GPC,Defensive Retail,3.50,,23.466098,1.5617,1,,False,71.57,88.66,28.5,91.26,14,0.824,2,4,0.25,70.0,0.00024473349219371874,5.5682,,credit spread fit on only 1 bond -- treat with caution
+GPN,Payments & Financial Processing,5.50,moved,22.615237,1.5587,8,44.58,True,73.72,87.83,50.5,69.06,9,0.75,2,4,0.25,70.278,0.00031519309389854385,5.5903,,full
+GRMN,Quality Industrials,4.00,moved,19.750251,,,33.13,True,49.56,,34.0,75.29,44,0.936,1,3,0.3333,52.95,0.0007736850495925142,4.2119,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+GS,Banks & Capital Markets,7.00,,14.505409,0.7752,66,36.52,True,42.57,11.78,67.0,28.4,25,0.893,2,4,0.25,37.44,0.004265166043483217,2.9782,,full
+GWW,Quality Industrials,4.00,,15.807432,,,27.19,True,19.62,,34.0,17.09,44,0.936,1,3,0.3333,23.569,0.000835689839005353,1.8748,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+HAL,Energy & Commodities,7.50,,24.212265,1.2228,7,,False,74.55,72.9,72.5,76.13,29,0.906,2,4,0.25,74.022,0.00039050044485267803,5.8881,,full
+HAS,Consumer Services & Retail,5.00,moved,19.238326,1.6329,5,,False,50.5,91.43,45.0,76.8,17,0.85,2,4,0.25,65.931,0.00017960857490645116,5.2445,,full
+HBAN,Banks & Capital Markets,7.00,,17.140058,,,,False,36.39,,67.0,39.45,25,0.893,1,3,0.3333,47.612,0.0004689286366501359,3.7873,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+HCA,Healthcare - Services,7.50,,20.363429,1.2608,12,35.1,True,55.33,75.11,72.5,50.5,11,0.786,2,4,0.25,63.359,0.0012334774960446548,5.0399,,full
+HD,Defensive Retail,3.50,,14.70384,0.8622,28,29.99,True,24.49,23.12,28.5,34.82,14,0.824,2,4,0.25,27.733,0.004519279518348614,2.206,,full
+HIG,Insurance Underwriters,5.00,,13.433678,0.9603,1,,False,11.34,37.23,45.0,43.01,18,0.857,2,4,0.25,34.144,0.0005279720337285134,2.716,,credit spread fit on only 1 bond -- treat with caution
+HII,Aerospace & Defense,3.50,split,28.091397,0.9356,3,,False,83.9,34.46,28.5,70.61,13,0.812,2,4,0.25,54.367,0.0001686709221817097,4.3246,,full
+HLT,Travel & Leisure,7.00,,13.526582,,,29.75,True,21.6,,67.0,11.61,11,0.786,1,3,0.3333,33.404,0.0010090527902587227,2.6571,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+HON,Quality Industrials,4.00,,13.778596,0.6787,8,34.3,True,38.19,4.32,34.0,25.71,44,0.936,2,4,0.25,25.556,0.0009766112938532673,2.0329,,full
+HOOD,Banks & Capital Markets,7.00,,38.293431,,,,False,96.42,,67.0,91.01,25,0.893,1,3,0.3333,84.812,0.0011235261779259968,6.7464,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+HPE,Hardware & Components,6.00,split,23.747368,1.4475,2,,False,73.16,84.38,56.0,50.5,19,0.864,2,4,0.25,66.01,0.0010721836784800371,5.2508,,credit spread fit on only 2 bonds -- treat with caution
+HPQ,Hardware & Components,6.00,split,23.348064,1.3664,8,,False,71.17,80.09,56.0,41.0,19,0.864,2,4,0.25,62.066,0.0003725911179518963,4.9371,,full
+HRL,Consumer Staples,3.00,,20.9335,0.7892,3,,False,61.04,12.89,23.0,42.54,23,0.885,2,4,0.25,34.866,0.00018024837004109644,2.7734,,full
+HSIC,Healthcare - Established,3.50,,17.54634,,,,False,40.36,,28.5,63.49,21,0.875,1,3,0.3333,44.118,0.0001372301150904706,3.5094,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+HST,Real Estate,4.50,,14.042361,1.338,1,,False,15.71,78.71,39.5,76.49,21,0.875,2,4,0.25,52.601,0.00021382597290214465,4.1842,,credit spread fit on only 1 bond -- treat with caution
+HSY,Consumer Staples,3.00,,18.295627,0.7226,1,30.51,True,39.14,6.25,23.0,34.58,23,0.885,2,4,0.25,25.743,0.0005038265397262555,2.0477,,credit spread fit on only 1 bond -- treat with caution
+HUBB,Quality Industrials,4.00,,17.733292,0.7261,2,,False,41.55,6.53,34.0,30.02,44,0.936,2,4,0.25,28.027,0.00034682333936619954,2.2294,,credit spread fit on only 2 bonds -- treat with caution
+HUM,Healthcare - Services,7.50,,36.927803,1.422,8,,False,95.63,82.58,72.5,81.61,11,0.786,2,4,0.25,83.08,0.0006208882966339764,6.6086,,full
+HWM,Aerospace & Defense,3.50,split,18.738773,1.175,2,,False,48.31,69.03,28.5,57.2,13,0.812,2,4,0.25,50.761,0.0015816978980545675,4.0378,,credit spread fit on only 2 bonds -- treat with caution
+IBKR,Banks & Capital Markets,7.00,,20.722174,,,,False,60.64,,67.0,83.65,25,0.893,1,3,0.3333,70.429,0.0005480028333893895,5.6023,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+IBM,IT Services & Advertising,7.00,,22.980444,1.3232,20,45.44,True,75.03,77.6,67.0,35.07,8,0.727,2,4,0.25,63.676,0.0029802006905348313,5.0651,,full
+ICE,Fee-Based Financials,3.50,,15.288132,0.9526,13,31.69,True,32.81,35.84,28.5,37.51,21,0.875,2,4,0.25,33.666,0.0011884770661342177,2.678,,full
+IDXX,Healthcare - Innovation,5.00,,18.947479,,,,False,49.31,,45.0,23.08,27,0.9,1,3,0.3333,39.131,0.0006001562017842325,3.1127,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+IEX,Quality Industrials,4.00,,16.798745,1.0325,1,,False,34.2,51.05,34.0,66.67,44,0.936,2,4,0.25,46.479,0.00023359609080675174,3.6972,,credit spread fit on only 1 bond -- treat with caution
+IFF,Materials & Packaging,4.50,,20.179202,1.0734,6,,False,56.66,57.69,39.5,69.5,19,0.864,2,4,0.25,55.838,0.00027987692788238825,4.4416,,full
+INCY,Healthcare - Innovation,5.00,,21.469087,,,,False,63.02,,45.0,43.65,27,0.9,1,3,0.3333,50.557,0.00034564040326360673,4.0216,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+INTC,Semiconductors & Semicap,6.50,split,39.679977,1.3272,32,,False,97.22,78.15,61.5,82.95,18,0.857,2,4,0.25,79.954,0.006634660784064162,6.36,,full
+INTU,Software & Digital Platforms,5.50,,32.127972,,,56.91,True,92.94,,50.5,82.68,35,0.921,1,3,0.3333,75.376,0.001300272955113507,5.9958,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+INVH,Real Estate,4.50,,14.525344,1.6698,4,,False,19.49,92.26,39.5,80.82,21,0.875,2,4,0.25,58.016,0.00023674701019842968,4.6149,,full
+IP,Materials & Packaging,4.50,,27.6845,1.2511,6,,False,83.1,74.01,39.5,88.5,19,0.864,2,4,0.25,71.277,0.000285113276370979,5.6697,,full
+IQV,Healthcare - Innovation,5.00,,23.937806,1.8491,1,,False,73.56,95.02,45.0,74.49,27,0.9,2,4,0.25,72.018,0.0005440916379561987,5.7287,,credit spread fit on only 1 bond -- treat with caution
+IR,Quality Industrials,4.00,,19.258262,,,,False,50.9,,34.0,77.44,44,0.936,1,3,0.3333,54.113,0.0004257261287029779,4.3044,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+IRM,Contracted Infrastructure,5.00,,20.389249,1.9923,7,,False,57.66,95.85,45.0,91.75,15,0.833,2,4,0.25,72.565,0.0005106523458173586,5.7722,,full
+ISRG,Healthcare - Innovation,5.00,,17.355814,,,40.01,True,57.08,,45.0,29.94,27,0.9,1,3,0.3333,44.007,0.0018854488643261856,3.5005,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+IT,IT Services & Advertising,7.00,,39.911382,2.9773,2,,False,97.42,99.72,67.0,65.93,8,0.727,2,4,0.25,82.517,0.00016298125656112126,6.5638,,credit spread fit on only 2 bonds -- treat with caution
+ITW,Quality Industrials,4.00,,12.58702,2.1573,2,,False,6.37,96.41,34.0,79.6,44,0.936,2,4,0.25,54.092,0.0010983918396270925,4.3028,,credit spread fit on only 2 bonds -- treat with caution
+IVZ,Asset Management,6.00,split,17.298959,1.049,1,,False,38.17,53.54,56.0,41.22,9,0.75,2,4,0.25,47.234,0.00019781723311925538,3.7572,,credit spread fit on only 1 bond -- treat with caution
+J,Heavy Cyclicals,7.00,,20.454555,,,,False,58.25,,67.0,13.06,18,0.857,1,3,0.3333,46.105,0.00022857485859939397,3.6674,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+JBHT,Transport & Logistics,5.00,,19.657125,,,,False,54.08,,45.0,30.7,6,0.667,1,3,0.3333,43.259,0.00035000003851923446,3.441,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+JBL,Hardware & Components,6.00,split,23.566818,1.3001,1,,False,71.97,76.49,56.0,31.5,19,0.864,2,4,0.25,58.991,0.0004848542079324785,4.6924,,credit spread fit on only 1 bond -- treat with caution
+JCI,Quality Industrials,4.00,,15.826505,1.0495,2,,False,26.64,53.82,34.0,58.04,44,0.936,2,4,0.25,43.127,0.0012335967171356195,3.4305,,credit spread fit on only 2 bonds -- treat with caution
+JKHY,Payments & Financial Processing,5.50,moved,17.632113,,,,False,40.76,,50.5,13.38,9,0.75,1,3,0.3333,34.878,0.00014817695006941208,2.7744,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+JNJ,Healthcare - Established,3.50,,11.830372,0.5305,21,25.82,True,7.18,2.11,28.5,7.19,21,0.875,2,4,0.25,11.242,0.008894102248344424,0.8942,,full
+JPM,Banks & Capital Markets,7.00,,13.943,,,26.18,True,12.66,,67.0,9.99,25,0.893,1,3,0.3333,29.883,0.013643768650460752,2.377,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+KDP,Consumer Staples,3.00,,19.647464,1.1897,8,,False,53.68,70.41,23.0,82.35,23,0.885,2,4,0.25,57.359,0.000564848766712832,4.5626,,full
+KEY,Banks & Capital Markets,7.00,,16.118227,1.4112,6,,False,28.43,81.2,67.0,72.6,25,0.893,2,4,0.25,62.307,0.00032822798180211064,4.9562,,full
+KEYS,Quality Industrials,4.00,moved,16.455086,1.1582,1,,False,31.42,66.54,34.0,73.13,44,0.936,2,4,0.25,51.272,0.0007931392422811035,4.0784,,credit spread fit on only 1 bond -- treat with caution
+KHC,Consumer Staples,3.00,,18.087521,1.4876,7,,False,44.73,85.9,23.0,86.33,23,0.885,2,4,0.25,59.99,0.0003957632120453706,4.7719,,full
+KIM,Real Estate,4.50,,12.650025,0.8681,6,,False,6.77,24.78,39.5,24.51,21,0.875,2,4,0.25,23.89,0.0002189145250765146,1.9003,,full
+KKR,Asset Management,6.00,split,22.493152,1.1862,2,,False,66.8,69.86,56.0,78.34,9,0.75,2,4,0.25,67.751,0.0013627066565703903,5.3893,,credit spread fit on only 2 bonds -- treat with caution
+KLAC,Semiconductors & Semicap,6.50,split,27.339707,0.8877,6,70.55,True,92.45,28.1,61.5,33.03,18,0.857,2,4,0.25,53.771,0.0034559605865537146,4.2772,,full
+KMB,Consumer Staples,3.00,,19.472452,0.7452,8,28.56,True,32.83,8.74,23.0,30.6,23,0.885,2,4,0.25,23.792,0.00048270368508468583,1.8925,,full
+KMI,Contracted Infrastructure,5.00,,15.652072,1.2576,24,,False,25.45,74.28,45.0,56.39,15,0.833,2,4,0.25,50.282,0.0009832833274907229,3.9997,,full
+KO,Consumer Staples,3.00,,10.734303,0.6622,18,22.09,True,2.11,3.77,23.0,6.71,23,0.885,2,4,0.25,8.896,0.005150378933177581,0.9122,credit floor applied (0.708 -> 0.912),full
+KR,Defensive Retail,3.50,moved,16.936256,1.1174,14,,False,35.19,61.28,28.5,72.45,14,0.824,2,4,0.25,49.357,0.00046584443780994664,3.9261,,full
+KVUE,Consumer Staples,3.00,,23.033236,,,,False,69.98,,23.0,90.31,23,0.885,1,3,0.3333,61.097,0.00048605575479537176,4.86,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+L,Insurance Underwriters,5.00,,12.064534,0.9802,2,,False,4.58,41.1,45.0,38.02,18,0.857,2,4,0.25,32.174,0.000310512289078853,2.5593,,credit spread fit on only 2 bonds -- treat with caution
+LDOS,Aerospace & Defense,3.50,moved,22.824352,1.4475,4,,False,69.19,84.38,28.5,84.02,13,0.812,2,4,0.25,66.52,0.00024498756712282093,5.2913,,full
+LEN,Heavy Cyclicals,7.00,,23.398031,1.1212,1,,False,71.37,62.39,67.0,28.04,18,0.857,2,4,0.25,57.201,0.00027705407361888133,4.5501,,credit spread fit on only 1 bond -- treat with caution
+LH,Healthcare - Services,7.50,moved,15.258502,0.8583,3,,False,22.67,21.46,72.5,11.61,11,0.786,2,4,0.25,32.06,0.0003551905359687815,2.5502,,full
+LHX,Aerospace & Defense,3.50,split,16.42425,0.9584,1,,False,31.22,36.95,28.5,37.09,13,0.812,2,4,0.25,33.44,0.00070744712711742,2.66,,credit spread fit on only 1 bond -- treat with caution
+LII,Quality Industrials,4.00,,22.638198,,,,False,68.59,,34.0,88.22,44,0.936,1,3,0.3333,63.603,0.00019231929240384006,5.0593,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+LIN,Materials & Packaging,4.50,,11.453773,,,24.98,True,6.18,,39.5,7.75,19,0.864,1,3,0.3333,17.811,0.0029896761145731874,1.4168,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+LITE,Hardware & Components,6.00,split,48.313616,,,,False,99.01,,56.0,88.5,19,0.864,1,3,0.3333,81.169,0.0008759034089310204,6.4566,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+LLY,Healthcare - Established,3.50,,26.511216,0.6679,10,39.34,True,73.89,4.04,28.5,54.83,21,0.875,2,4,0.25,40.315,0.014727720362541583,3.2069,,full
+LMT,Aerospace & Defense,3.50,split,20.009229,0.8288,16,29.34,True,36.61,17.32,28.5,23.69,13,0.812,2,4,0.25,26.527,0.0018865104122242884,2.1101,,full
+LNT,Regulated & Monopoly Assets,1.50,,11.770167,1.0444,4,,False,3.39,52.44,6.5,62.09,28,0.903,2,4,0.25,31.103,0.00024546918077082995,2.4741,,full
+LOW,Defensive Retail,3.50,,16.120423,1.0632,27,33.12,True,38.03,55.48,28.5,66.18,14,0.824,2,4,0.25,47.046,0.0016235523854538404,3.7423,,full
+LRCX,Semiconductors & Semicap,6.50,split,26.527411,0.8254,4,,False,80.72,16.76,61.5,18.05,18,0.857,2,4,0.25,44.259,0.005559901219282201,3.5206,,full
+LULU,Consumer Services & Retail,5.00,moved,36.07351,,,,False,94.83,,45.0,92.58,17,0.85,1,3,0.3333,77.469,0.00018477648779237251,6.1623,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+LUV,Heavy Cyclicals,7.00,,25.583466,,,,False,78.13,,67.0,43.01,18,0.857,1,3,0.3333,62.715,0.000284488705938891,4.9887,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+LVS,Travel & Leisure,7.00,,24.680721,1.4355,1,,False,76.14,83.41,67.0,73.84,11,0.786,2,4,0.25,75.097,0.00040531011158517007,5.9736,,credit spread fit on only 1 bond -- treat with caution
+LYB,Materials & Packaging,4.50,,29.87225,1.4547,6,,False,87.28,84.79,39.5,93.25,19,0.864,2,4,0.25,76.204,0.0002837031360250625,6.0617,,full
+LYV,Media & Entertainment,5.50,split,20.517265,,,,False,58.85,,50.5,54.73,10,0.769,1,3,0.3333,54.693,0.0005900511777706466,4.3506,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MA,Fee-Based Financials,3.50,,14.516296,0.6846,12,26.25,True,13.49,4.59,28.5,11.52,21,0.875,2,4,0.25,14.525,0.006817984944671888,1.1554,,full
+MAA,Real Estate,4.50,,12.773441,0.8599,3,,False,7.36,22.02,39.5,20.18,21,0.875,2,4,0.25,22.265,0.00020326220843355954,1.7711,,full
+MAR,Travel & Leisure,7.00,,14.364878,1.1926,8,30.77,True,27.52,70.69,67.0,19.39,11,0.786,2,4,0.25,46.149,0.0012942436018289667,3.6709,,full
+MAS,Quality Industrials,4.00,,17.684217,0.9756,7,,False,41.16,40.54,34.0,60.2,44,0.936,2,4,0.25,43.975,0.00019608022685266456,3.498,,full
+MCD,Consumer Services & Retail,5.00,,12.110348,0.9471,22,24.93,True,6.99,35.01,45.0,8.43,17,0.85,2,4,0.25,23.857,0.0025611671847955994,1.8977,,full
+MCHP,Semiconductors & Semicap,6.50,split,25.360359,,,,False,77.34,,61.5,62.98,18,0.857,1,3,0.3333,67.272,0.0005787053434026867,5.3512,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MCK,Healthcare - Established,3.50,,19.484203,0.7293,2,30.84,True,41.73,6.81,28.5,24.51,21,0.875,2,4,0.25,25.387,0.0013930763099899383,2.0194,,credit spread fit on only 2 bonds -- treat with caution
+MCO,Fee-Based Financials,3.50,,17.418789,1.0141,8,,False,38.97,48.01,28.5,41.84,21,0.875,2,4,0.25,39.33,0.0011488500989966773,3.1285,,full
+MDLZ,Consumer Staples,3.00,,15.594324,0.85,5,27.72,True,19.41,20.08,23.0,26.62,23,0.885,2,4,0.25,22.276,0.0010884333998671615,1.7719,,full
+MDT,Healthcare - Established,3.50,,13.760659,0.7693,2,28.85,True,18.93,10.68,28.5,11.52,21,0.875,2,4,0.25,17.406,0.001594817560957894,1.3846,,credit spread fit on only 2 bonds -- treat with caution
+MET,Insurance Underwriters,5.00,,14.321265,0.9685,17,,False,17.1,39.44,45.0,53.0,18,0.857,2,4,0.25,38.634,0.0008527374321456205,3.0731,,full
+META,Software & Digital Platforms,5.50,,19.767516,1.5751,4,43.69,True,68.61,89.49,50.5,58.55,35,0.921,2,4,0.25,66.787,0.018756032519274875,5.3126,,full
+MGM,Travel & Leisure,7.00,,22.169946,,,,False,65.61,,67.0,50.5,11,0.786,1,3,0.3333,61.036,0.00015012380285883394,4.8551,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MKC,Consumer Staples,3.00,,19.561346,0.8618,2,,False,52.89,22.85,23.0,46.52,23,0.885,2,4,0.25,36.313,0.00020007464080043733,2.8885,,credit spread fit on only 2 bonds -- treat with caution
+MLM,Materials & Packaging,4.50,,15.946675,0.967,6,,False,27.84,39.16,39.5,31.5,19,0.864,2,4,0.25,34.5,0.00042314511655400504,2.7443,,full
+MMM,Quality Industrials,4.00,,15.309532,0.9338,9,29.81,True,25.83,34.18,34.0,42.96,44,0.936,2,4,0.25,34.242,0.0012834777042924701,2.7238,,full
+MNST,Consumer Staples,3.00,,17.151179,,,,False,36.78,,23.0,38.56,23,0.885,1,3,0.3333,32.78,0.0012593355266778666,2.6075,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MO,Consumer Staples,3.00,,15.470266,1.4189,13,27.94,True,19.52,82.3,23.0,66.42,23,0.885,2,4,0.25,47.811,0.0014654338197006118,3.8031,,full
+MOS,Energy & Commodities,7.50,,29.622897,1.4795,5,,False,86.48,85.62,72.5,79.34,29,0.906,2,4,0.25,80.985,9.035339315955082e-05,6.442,,full
+MPC,Energy & Commodities,7.50,,23.202248,,,,False,70.38,,72.5,63.32,29,0.906,1,3,0.3333,68.732,0.0014288433095110133,5.4673,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MPWR,Semiconductors & Semicap,6.50,split,26.934375,,,,False,81.51,,61.5,67.97,18,0.857,1,3,0.3333,70.328,0.0008827807031955138,5.5943,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MRK,Healthcare - Established,3.50,,18.3818,0.8941,14,30.71,True,39.86,28.93,28.5,41.84,21,0.875,2,4,0.25,34.782,0.004492392941013782,2.7667,,full
+MRNA,Healthcare - Innovation,5.00,,40.928962,,,,False,98.01,,45.0,95.05,27,0.9,1,3,0.3333,79.354,0.00033520374435663954,6.3122,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MRSH,Fee-Based Financials,3.50,,16.529367,,,,False,32.61,,28.5,33.17,21,0.875,1,3,0.3333,31.428,0.0012127473178618101,2.4999,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MRVL,Semiconductors & Semicap,6.50,split,36.274797,1.03,4,,False,95.03,50.78,61.5,57.99,18,0.857,2,4,0.25,66.324,0.0025941796075469514,5.2758,,full
+MS,Banks & Capital Markets,7.00,,13.431297,1.0759,5,33.08,True,32.41,58.24,67.0,54.18,25,0.893,2,4,0.25,52.96,0.004659333740581064,4.2127,,full
+MSCI,Fee-Based Financials,3.50,,18.256541,2.6346,3,,False,46.13,98.62,28.5,80.82,21,0.875,2,4,0.25,63.516,0.0005530918652682696,5.0524,,full
+MSFT,Software & Digital Platforms,5.50,,15.820456,0.814,21,33.56,True,39.71,15.93,50.5,7.59,35,0.921,2,4,0.25,28.432,0.04826069899387463,2.2616,,full
+MSI,Hardware & Components,6.00,split,17.763475,1.1632,7,,False,41.75,67.09,56.0,17.25,19,0.864,2,4,0.25,45.524,0.001055409078615489,3.6212,,full
+MTB,Banks & Capital Markets,7.00,,14.40963,1.0054,1,,False,17.9,45.8,67.0,32.08,25,0.893,2,4,0.25,40.695,0.0005293566091045319,3.2371,,credit spread fit on only 1 bond -- treat with caution
+MTD,Healthcare - Innovation,5.00,,22.463756,,,,False,66.4,,45.0,50.5,27,0.9,1,3,0.3333,53.968,0.0003794904347392276,4.2929,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+MU,Semiconductors & Semicap,6.50,split,36.433426,0.879,4,76.87,True,97.72,26.99,61.5,43.01,18,0.857,2,4,0.25,57.306,0.014482158158354122,4.5584,,full
+NCLH,Travel & Leisure,7.00,,30.525742,,,,False,88.27,,67.0,81.61,11,0.786,1,3,0.3333,78.962,0.00010984063012122732,6.281,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+NDAQ,Fee-Based Financials,3.50,,15.791751,0.9576,1,,False,26.05,36.67,28.5,28.84,21,0.875,2,4,0.25,30.016,0.0007382708609073439,2.3876,,credit spread fit on only 1 bond -- treat with caution
+NDSN,Quality Industrials,4.00,,13.325757,,,,False,10.94,,34.0,8.47,44,0.936,1,3,0.3333,17.803,0.00022950171238160107,1.4161,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+NEE,Regulated & Monopoly Assets,1.50,,18.623812,0.9386,32,26.53,True,27.12,34.74,6.5,68.72,28,0.903,2,4,0.25,34.267,0.0024215610049622316,2.7258,,full
+NEM,Energy & Commodities,7.50,,32.728203,1.0539,5,,False,91.25,54.37,72.5,72.93,29,0.906,2,4,0.25,72.764,0.001663782223385596,5.788,,full
+NFLX,Media & Entertainment,5.50,split,22.958943,1.0292,5,42.92,True,72.42,50.5,50.5,71.65,10,0.769,2,4,0.25,61.27,0.004455568910991336,4.8737,,full
+NI,Regulated & Monopoly Assets,1.50,,13.215444,1.1234,11,,False,10.34,62.67,6.5,81.96,28,0.903,2,4,0.25,40.368,0.0002724977603207888,3.2111,,full
+NKE,Consumer Services & Retail,5.00,,27.923398,0.8359,7,,False,83.5,18.15,45.0,29.46,17,0.85,2,4,0.25,44.027,0.0007986780815705025,3.5021,,full
+NOC,Aerospace & Defense,3.50,split,18.399849,0.9169,10,31.55,True,42.88,31.7,28.5,43.8,13,0.812,2,4,0.25,36.719,0.0011279178135596168,2.9208,,full
+NOW,Software & Digital Platforms,5.50,,32.582162,,,61.17,True,93.82,,50.5,85.36,35,0.921,1,3,0.3333,76.561,0.001665939683664084,6.0901,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+NRG,Merchant Power,6.50,moved,30.772305,,,,False,88.67,,61.5,41.07,4,0.571,1,3,0.3333,63.747,0.0003262689789632822,5.0708,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+NSC,Contracted Infrastructure,5.00,,12.330343,0.886,17,23.91,True,5.37,27.55,45.0,21.04,15,0.833,2,4,0.25,24.739,0.0010256860041966821,1.9679,,full
+NTAP,Software & Digital Platforms,5.50,,20.596853,,,,False,60.04,,50.5,23.68,35,0.921,1,3,0.3333,44.741,0.0005476979187901205,3.5589,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+NTRS,Banks & Capital Markets,7.00,moved,14.198004,0.7073,4,,False,16.51,5.7,67.0,6.3,25,0.893,2,4,0.25,23.878,0.00047373961308003014,1.8994,,full
+NUE,Energy & Commodities,7.50,,19.662032,0.7604,5,,False,54.28,10.13,72.5,12.05,29,0.906,2,4,0.25,37.238,0.0008116177477254746,2.9621,,full
+NVDA,Semiconductors & Semicap,6.50,split,21.993026,1.009,5,42.61,True,69.94,47.18,61.5,28.04,18,0.857,2,4,0.25,51.665,0.0720589089800153,4.1097,,full
+NVR,Heavy Cyclicals,7.00,,18.086063,,,,False,44.54,,67.0,8.07,18,0.857,1,3,0.3333,39.869,0.000241268225528835,3.1714,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+NWS,Media & Entertainment,5.50,split,16.471228,,,,False,31.81,,50.5,29.35,10,0.769,1,3,0.3333,37.22,0.0002514256103652694,2.9607,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+NWSA,Media & Entertainment,5.50,split,15.856656,,,,False,27.04,,50.5,20.88,10,0.769,1,3,0.3333,32.809,0.00022064492949045288,2.6098,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+NXPI,Semiconductors & Semicap,6.50,split,20.973914,1.1106,8,,False,61.43,60.18,61.5,38.02,18,0.857,2,4,0.25,55.283,0.0007805824894956157,4.3975,,full
+O,Real Estate,4.50,,12.265031,0.864,9,,False,5.17,23.4,39.5,15.85,21,0.875,2,4,0.25,20.981,0.0007817425362716391,1.6689,,full
+ODFL,Transport & Logistics,5.00,,24.228476,,,,False,74.75,,45.0,83.5,6,0.667,1,3,0.3333,67.751,0.000583668093607067,5.3893,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+OKE,Contracted Infrastructure,5.00,,19.883927,1.4132,11,,False,55.27,81.47,45.0,85.86,15,0.833,2,4,0.25,66.9,0.000824804580015922,5.3216,,full
+OMC,IT Services & Advertising,7.00,,21.916785,1.1578,1,,False,64.02,66.26,67.0,14.5,8,0.727,2,4,0.25,52.945,0.00023776724790166106,4.2115,,credit spread fit on only 1 bond -- treat with caution
+ON,Semiconductors & Semicap,6.50,split,31.680891,1.5687,1,,False,89.66,89.22,61.5,87.94,18,0.857,2,4,0.25,82.079,0.00043180730545527,6.529,,credit spread fit on only 1 bond -- treat with caution
+ORCL,Software & Digital Platforms,5.50,,31.012706,2.5014,30,67.95,True,94.59,98.06,50.5,90.73,35,0.921,2,4,0.25,83.471,0.005596097965207808,6.6397,,full
+ORLY,Defensive Retail,3.50,,15.056962,0.7759,3,30.98,True,30.16,12.06,28.5,28.55,14,0.824,2,4,0.25,24.818,0.0010114222051785169,1.9742,,full
+OTIS,Quality Industrials,4.00,,18.369473,0.9966,2,,False,47.12,43.86,34.0,68.82,44,0.936,2,4,0.25,48.451,0.00036546868910456126,3.854,,credit spread fit on only 2 bonds -- treat with caution
+OXY,Energy & Commodities,7.50,,24.257859,1.1515,17,,False,75.15,65.71,72.5,66.52,29,0.906,2,4,0.25,69.97,0.0008137977277644567,5.5658,,full
+PANW,Software & Digital Platforms,5.50,,24.034205,,,,False,73.76,,50.5,47.82,35,0.921,1,3,0.3333,57.359,0.0037424502294110614,4.5626,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+PAYX,Payments & Financial Processing,5.50,moved,18.24866,,,,False,45.93,,50.5,31.94,9,0.75,1,3,0.3333,42.788,0.0005775669997601409,3.4036,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+PCAR,Quality Industrials,4.00,,15.827355,0.9088,1,,False,26.84,31.14,34.0,40.8,44,0.936,2,4,0.25,33.197,0.0009080955880596996,2.6407,,credit spread fit on only 1 bond -- treat with caution
+PCG,Regulated & Monopoly Assets,1.50,,19.373191,1.3803,17,,False,51.69,80.37,6.5,95.21,28,0.903,2,4,0.25,58.442,0.0005474479830602202,4.6488,,full
+PEG,Regulated & Monopoly Assets,1.50,,14.239683,0.8969,13,,False,16.7,29.21,6.5,38.91,28,0.903,2,4,0.25,22.83,0.0005082071323415611,1.816,,full
+PEP,Consumer Staples,3.00,,13.863056,0.7383,25,26.14,True,12.42,7.91,23.0,18.65,23,0.885,2,4,0.25,15.497,0.002579191127193821,1.2327,,full
+PFE,Healthcare - Established,3.50,,15.519087,0.9078,16,25.71,True,14.59,30.59,28.5,15.85,21,0.875,2,4,0.25,22.382,0.0020879212747776897,1.7804,,full
+PFG,Insurance Underwriters,5.00,moved,13.59133,0.9205,6,,False,12.13,32.25,45.0,28.04,18,0.857,2,4,0.25,29.355,0.0003326702108002187,2.335,,full
+PG,Consumer Staples,3.00,,13.196347,0.4875,11,23.59,True,6.91,1.83,23.0,10.69,23,0.885,2,4,0.25,10.607,0.0046721125282559945,0.8437,,full
+PGR,Insurance Underwriters,5.00,,16.782023,0.8379,9,29.17,True,25.99,18.56,45.0,33.03,18,0.857,2,4,0.25,30.644,0.0016279365324268068,2.4376,,full
+PH,Quality Industrials,4.00,,14.035074,0.7585,9,,False,15.51,9.85,34.0,12.78,44,0.936,2,4,0.25,18.036,0.0017901317932825683,1.4347,,full
+PHM,Heavy Cyclicals,7.00,,20.394605,2.7156,3,,False,57.86,98.89,67.0,53.0,18,0.857,2,4,0.25,69.186,0.00032852105752800696,5.5034,,full
+PKG,Materials & Packaging,4.50,,16.504893,0.9041,2,,False,32.41,30.04,39.5,26.75,19,0.864,2,4,0.25,32.174,0.0002995020588633136,2.5593,,credit spread fit on only 2 bonds -- treat with caution
+PLD,Real Estate,4.50,,14.026937,0.9286,12,26.96,True,14.21,33.35,39.5,46.17,21,0.875,2,4,0.25,33.308,0.0018032334226305835,2.6495,,full
+PLTR,Software & Digital Platforms,5.50,,35.500842,,,,False,94.04,,50.5,88.05,35,0.921,1,3,0.3333,77.528,0.005926770088948456,6.167,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+PM,Consumer Staples,3.00,,19.302156,1.1165,18,30.84,True,41.84,60.73,23.0,70.4,23,0.885,2,4,0.25,48.994,0.003942186686733101,3.8972,,full
+PNC,Banks & Capital Markets,7.00,,13.711702,1.0722,3,27.06,True,14.94,57.41,67.0,35.77,25,0.893,2,4,0.25,43.78,0.0013809847370471555,3.4825,,full
+PNR,Quality Industrials,4.00,,18.318532,1.679,2,,False,46.52,92.81,34.0,90.37,44,0.936,2,4,0.25,65.927,0.00013892648640544415,5.2442,,credit spread fit on only 2 bonds -- treat with caution
+PNW,Regulated & Monopoly Assets,1.50,,11.422477,1.1657,6,,False,2.39,67.92,6.5,78.65,28,0.903,2,4,0.25,38.866,0.00016762868212124576,3.0916,,full
+PODD,Healthcare - Innovation,5.00,moved,26.589511,,,,False,80.92,,45.0,71.06,27,0.9,1,3,0.3333,65.659,0.00013812647816565022,5.2229,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+PPG,Materials & Packaging,4.50,,17.058526,1.1567,1,,False,35.79,65.99,39.5,64.75,19,0.864,2,4,0.25,51.506,0.0003395866813126241,4.0971,,credit spread fit on only 1 bond -- treat with caution
+PPL,Regulated & Monopoly Assets,1.50,,12.49163,0.8641,9,,False,6.17,23.68,6.5,25.66,28,0.903,2,4,0.25,15.501,0.0003626334109244709,1.233,,full
+PRU,Insurance Underwriters,5.00,,14.968828,1.0579,18,,False,21.67,55.2,45.0,62.98,18,0.857,2,4,0.25,46.214,0.0005435803219675598,3.6761,,full
+PSA,Real Estate,4.50,,15.480826,0.7803,4,,False,23.86,12.34,39.5,28.84,21,0.875,2,4,0.25,26.136,0.0007667612377726341,2.079,,full
+PSKY,Media & Entertainment,5.50,split,33.144635,,,,False,91.65,,50.5,88.58,10,0.769,1,3,0.3333,76.909,0.0001570548263799254,6.1177,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+PSX,Energy & Commodities,7.50,,21.490156,0.8449,7,36.1,True,60.18,19.53,72.5,24.87,29,0.906,2,4,0.25,44.269,0.0013180238614820755,3.5214,,full
+PTC,Software & Digital Platforms,5.50,,19.19323,1.9732,1,,False,50.3,95.58,50.5,45.14,35,0.921,2,4,0.25,60.378,0.00022643420787681656,4.8028,,credit spread fit on only 1 bond -- treat with caution
+PWR,Heavy Cyclicals,7.00,,22.107528,1.1497,2,,False,65.21,65.43,67.0,23.05,18,0.857,2,4,0.25,55.173,0.0014267499781158639,4.3887,,credit spread fit on only 2 bonds -- treat with caution
+PYPL,Payments & Financial Processing,5.50,moved,28.221602,0.8683,4,,False,84.3,25.06,50.5,41.22,9,0.75,2,4,0.25,50.268,0.0007320257212610551,3.9986,,full
+QCOM,Semiconductors & Semicap,6.50,split,24.082712,1.0072,12,57.27,True,85.84,46.35,61.5,53.0,18,0.857,2,4,0.25,61.671,0.0023023007901150925,4.9056,,full
+RCL,Travel & Leisure,7.00,,25.698046,1.1612,2,,False,78.93,66.82,67.0,66.06,11,0.786,2,4,0.25,69.7,0.0010890152835890594,5.5443,,credit spread fit on only 2 bonds -- treat with caution
+RDDT,Software & Digital Platforms,5.50,,43.725189,,,,False,98.41,,50.5,93.41,35,0.921,1,3,0.3333,80.773,0.00042984105508528294,6.4251,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+REG,Real Estate,4.50,,11.090012,0.9704,1,,False,1.4,39.99,39.5,37.51,21,0.875,2,4,0.25,29.599,0.000187814973132115,2.3545,,credit spread fit on only 1 bond -- treat with caution
+REGN,Healthcare - Innovation,5.00,,28.206128,0.9645,2,33.58,True,63.93,38.61,45.0,26.51,27,0.9,2,4,0.25,43.512,0.0011634129357095224,3.4612,,credit spread fit on only 2 bonds -- treat with caution
+RF,Banks & Capital Markets,7.00,,15.622173,1.4762,2,,False,25.05,85.34,67.0,76.28,25,0.893,2,4,0.25,63.42,0.00036524900379920514,5.0448,,credit spread fit on only 2 bonds -- treat with caution
+RJF,Banks & Capital Markets,7.00,moved,16.265594,1.071,2,,False,29.83,56.86,67.0,50.5,25,0.893,2,4,0.25,51.046,0.0004753748004509953,4.0605,,credit spread fit on only 2 bonds -- treat with caution
+RL,Consumer Services & Retail,5.00,,19.913524,,,,False,55.47,,45.0,34.72,17,0.85,1,3,0.3333,45.064,0.00031173701112810535,3.5846,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+RMD,Healthcare - Innovation,5.00,,17.80336,,,,False,41.95,,45.0,19.66,27,0.9,1,3,0.3333,35.536,0.00042877382622467377,2.8267,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ROK,Quality Industrials,4.00,,15.649301,0.73,2,,False,25.25,7.08,34.0,14.94,44,0.936,2,4,0.25,20.318,0.0006565181340078517,1.6162,,credit spread fit on only 2 bonds -- treat with caution
+ROL,Quality Industrials,4.00,moved,16.731527,,,,False,33.6,,34.0,47.27,44,0.936,1,3,0.3333,38.29,0.00023507052392608474,3.0458,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ROP,Software & Digital Platforms,5.50,,17.837367,1.6171,2,,False,42.15,90.6,50.5,37.09,35,0.921,2,4,0.25,55.085,0.0005437257288209128,4.3817,,credit spread fit on only 2 bonds -- treat with caution
+ROST,Defensive Retail,3.50,,15.721878,1.1337,3,,False,25.85,64.33,28.5,59.91,14,0.824,2,4,0.25,44.646,0.0010208857315904532,3.5514,,full
+RSG,Regulated & Monopoly Assets,1.50,,13.193037,0.8559,4,,False,9.75,20.91,6.5,28.97,28,0.903,2,4,0.25,16.533,0.0008972944386951345,1.3151,,full
+RTX,Aerospace & Defense,3.50,split,16.049046,0.8119,11,28.38,True,21.96,15.66,28.5,16.98,13,0.812,2,4,0.25,20.775,0.004137265904047277,1.6526,,full
+RVTY,Healthcare - Innovation,5.00,,22.561691,1.0453,4,,False,67.2,52.99,45.0,33.37,27,0.9,2,4,0.25,49.638,0.0001708961770227595,3.9485,,full
+SBAC,Contracted Infrastructure,5.00,,17.991795,,,,False,43.74,,45.0,44.61,15,0.833,1,3,0.3333,44.449,0.00025897728870349587,3.5357,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+SBUX,Consumer Services & Retail,5.00,,18.333843,1.0121,12,31.71,True,43.41,47.73,45.0,13.68,17,0.85,2,4,0.25,37.457,0.001630218745456115,2.9795,,full
+SCHW,Banks & Capital Markets,7.00,,17.932597,0.7493,11,29.41,True,32.8,9.02,67.0,17.35,25,0.893,2,4,0.25,31.543,0.0026111026361612627,2.5091,,full
+SHW,Materials & Packaging,4.50,,14.264461,0.9855,7,29.12,True,19.94,41.93,39.5,22.0,19,0.864,2,4,0.25,30.843,0.0011470452376666758,2.4534,,full
+SJM,Consumer Staples,3.00,,22.139165,1.0497,4,,False,65.41,54.09,23.0,78.37,23,0.885,2,4,0.25,55.217,0.00016999326907328257,4.3922,,full
+SLB,Energy & Commodities,7.50,,21.550667,0.7918,1,36.64,True,60.66,13.44,72.5,18.46,29,0.906,2,4,0.25,41.265,0.001083814227262437,3.2824,,credit spread fit on only 1 bond -- treat with caution
+SMCI,Hardware & Components,6.00,split,60.726698,,,,False,100.0,,56.0,93.25,19,0.864,1,3,0.3333,83.083,0.00035074074799458835,6.6089,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+SNA,Quality Industrials,4.00,,13.09467,0.7983,2,,False,8.55,14.27,34.0,10.63,44,0.936,2,4,0.25,16.863,0.000278115707831529,1.3414,,credit spread fit on only 2 bonds -- treat with caution
+SNPS,Software & Digital Platforms,5.50,,44.434534,,,,False,98.61,,50.5,96.09,35,0.921,1,3,0.3333,81.734,0.0010416480636890007,6.5015,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+SO,Regulated & Monopoly Assets,1.50,,11.712343,0.9922,37,22.27,True,3.19,42.76,6.5,42.22,28,0.903,2,4,0.25,23.666,0.0014123838518470494,1.8825,,full
+SOLV,Healthcare - Innovation,5.00,,17.360082,,,,False,38.77,,45.0,16.23,27,0.9,1,3,0.3333,33.334,0.00020504786437402654,2.6516,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+SPG,Real Estate,4.50,,13.011613,0.8893,16,,False,8.16,28.38,39.5,33.17,21,0.875,2,4,0.25,27.302,0.0011272269020508102,2.1717,,full
+SPGI,Fee-Based Financials,3.50,,19.607306,0.7576,5,33.05,True,47.56,9.57,28.5,24.51,21,0.875,2,4,0.25,27.536,0.0016608265552381365,2.1904,,full
+SRE,Contracted Infrastructure,5.00,,17.114989,1.0095,19,,False,36.19,47.46,45.0,32.82,15,0.833,2,4,0.25,40.367,0.0007688351786456508,3.211,,full
+STE,Healthcare - Established,3.50,,14.841798,1.1236,2,,False,21.08,63.08,28.5,72.16,21,0.875,2,4,0.25,46.204,0.0003058785929091889,3.6753,,credit spread fit on only 2 bonds -- treat with caution
+STLD,Energy & Commodities,7.50,,19.50412,,,,False,52.49,,72.5,44.09,29,0.906,1,3,0.3333,56.36,0.0004849723132533397,4.4832,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+STT,Banks & Capital Markets,7.00,moved,14.711489,4.0125,2,,False,20.68,100.0,67.0,79.96,25,0.893,2,4,0.25,66.911,0.0007297079253968105,5.3224,,credit spread fit on only 2 bonds -- treat with caution
+STX,Hardware & Components,6.00,split,33.463575,2.2529,1,,False,92.25,96.68,56.0,74.25,19,0.864,2,4,0.25,79.795,0.0027822689494752017,6.3473,,credit spread fit on only 1 bond -- treat with caution
+STZ,Consumer Staples,3.00,,21.456245,1.0417,10,33.46,True,53.79,51.88,23.0,74.38,23,0.885,2,4,0.25,50.763,0.0003036513012062198,4.038,,full
+SW,Materials & Packaging,4.50,,25.190111,,,,False,77.14,,39.5,83.75,19,0.864,1,3,0.3333,66.796,0.00033292865187393013,5.3133,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+SWK,Quality Industrials,4.00,,22.61482,1.1249,7,,False,67.99,63.5,34.0,86.06,44,0.936,2,4,0.25,62.889,0.00020160331709881423,5.0025,,full
+SWKS,Semiconductors & Semicap,6.50,split,28.531433,1.4914,1,,False,84.69,86.17,61.5,77.95,18,0.857,2,4,0.25,77.58,0.00013671099909036384,6.1711,,credit spread fit on only 1 bond -- treat with caution
+SYF,Banks & Capital Markets,7.00,moved,19.677637,2.8974,4,,False,54.48,99.45,67.0,87.33,25,0.893,2,4,0.25,77.063,0.00036195342843693457,6.13,,full
+SYK,Healthcare - Established,3.50,,14.483448,0.9547,5,31.77,True,31.05,36.12,28.5,37.51,21,0.875,2,4,0.25,33.294,0.0017196871590844686,2.6484,,full
+SYY,Consumer Staples,3.00,,19.342802,1.1821,7,25.96,True,26.43,69.3,23.0,62.44,23,0.885,2,4,0.25,45.294,0.000529596999413802,3.6029,,full
+T,Telecom & Cable,7.00,split,15.596621,1.4273,52,29.6,True,24.3,83.13,67.0,30.7,6,0.667,2,4,0.25,51.284,0.002325321900978509,4.0794,,full
+TAP,Consumer Staples,3.00,,17.987105,,,,False,43.54,,23.0,54.48,23,0.885,1,3,0.3333,40.341,0.00010379392567717508,3.2089,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TDG,Aerospace & Defense,3.50,split,20.585369,,,,False,59.64,,28.5,77.31,13,0.812,1,3,0.3333,55.152,0.000960428956967394,4.3871,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TDY,Quality Industrials,4.00,moved,13.206457,1.2173,2,,False,10.14,72.35,34.0,62.35,44,0.936,2,4,0.25,44.711,0.00041931794039774546,3.5565,,credit spread fit on only 2 bonds -- treat with caution
+TECH,Healthcare - Innovation,5.00,,31.628668,,,,False,89.46,,45.0,84.77,27,0.9,1,3,0.3333,73.078,0.00015245124928073978,5.813,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TEL,Hardware & Components,6.00,split,18.832985,0.9004,3,,False,48.91,29.76,56.0,12.5,19,0.864,2,4,0.25,36.792,0.000807433710672026,2.9266,,full
+TER,Semiconductors & Semicap,6.50,split,34.980627,,,,False,93.84,,61.5,92.93,18,0.857,1,3,0.3333,82.755,0.0008569875167660018,6.5828,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TFC,Banks & Capital Markets,7.00,,14.481707,1.1637,2,,False,18.69,67.37,67.0,46.82,25,0.893,2,4,0.25,49.97,0.0008730687478595906,3.9749,,credit spread fit on only 2 bonds -- treat with caution
+TGT,Defensive Retail,3.50,,23.546254,0.8613,12,37.2,True,65.14,22.29,28.5,47.36,14,0.824,2,4,0.25,40.824,0.0009344071653247967,3.2474,,full
+TJX,Defensive Retail,3.50,,11.473452,,,26.45,True,8.73,,28.5,16.01,14,0.824,1,3,0.3333,17.745,0.0022714976567029476,1.4115,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TKO,Media & Entertainment,5.50,split,19.759751,,,,False,54.87,,50.5,46.27,10,0.769,1,3,0.3333,50.548,0.0005027034138488363,4.0208,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TMO,Healthcare - Innovation,5.00,,17.974611,0.8349,8,32.98,True,44.45,17.87,45.0,12.8,27,0.9,2,4,0.25,30.03,0.0029381073054494584,2.3887,,full
+TMUS,Telecom & Cable,7.00,split,18.247163,1.3246,16,,False,45.73,77.88,67.0,43.9,6,0.667,2,4,0.25,58.627,0.0026594886271701923,4.6635,,full
+TPL,Energy & Commodities,7.50,,33.552905,,,,False,92.64,,72.5,92.16,29,0.906,1,3,0.3333,85.767,0.0003391070098225387,6.8224,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TPR,Consumer Services & Retail,5.00,,27.036977,0.9325,1,,False,81.91,33.63,45.0,45.24,17,0.85,2,4,0.25,51.445,0.0003737749447883233,4.0922,,credit spread fit on only 1 bond -- treat with caution
+TRGP,Contracted Infrastructure,5.00,,20.743893,1.2593,6,,False,60.84,74.56,45.0,79.96,15,0.833,2,4,0.25,65.09,0.0008607328075775008,5.1776,,full
+TRMB,Quality Industrials,4.00,moved,17.256959,1.4003,1,,False,37.98,80.64,34.0,81.75,44,0.936,2,4,0.25,58.593,0.00017852684661401897,4.6608,,credit spread fit on only 1 bond -- treat with caution
+TROW,Asset Management,6.00,split,13.753547,,,,False,12.93,,56.0,22.66,9,0.75,1,3,0.3333,30.528,0.0003177039947595524,2.4284,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TRV,Insurance Underwriters,5.00,,14.008899,0.8875,9,,False,14.92,27.82,45.0,23.05,18,0.857,2,4,0.25,27.696,0.0010566116741597665,2.2031,,full
+TSCO,Consumer Services & Retail,5.00,,22.079933,,,,False,64.81,,45.0,61.02,17,0.85,1,3,0.3333,56.944,0.00024488905560694546,4.5296,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TSLA,Heavy Cyclicals,7.00,,30.970827,,,52.47,True,90.53,,67.0,82.95,18,0.857,1,3,0.3333,80.157,0.016032991212130476,6.3761,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TSN,Energy & Commodities,7.50,moved,15.190065,1.0677,6,,False,22.27,56.31,72.5,21.66,29,0.906,2,4,0.25,43.185,0.00027287899633784377,3.4352,,full
+TT,Quality Industrials,4.00,,16.618099,0.7398,6,,False,32.81,8.19,34.0,23.56,44,0.936,2,4,0.25,24.639,0.001389877226759647,1.9599,,full
+TTD,IT Services & Advertising,7.00,,56.304409,,,,False,99.8,,67.0,86.5,8,0.727,1,3,0.3333,84.434,8.479129680597695e-05,6.7163,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+TTWO,Software & Digital Platforms,5.50,,19.644563,0.9644,2,,False,53.48,38.33,50.5,12.95,35,0.921,2,4,0.25,38.817,0.0006068219029994836,3.0877,,credit spread fit on only 2 bonds -- treat with caution
+TXN,Semiconductors & Semicap,6.50,split,22.641918,0.8253,10,49.98,True,79.56,16.49,61.5,13.06,18,0.857,2,4,0.25,42.653,0.003367353569628922,3.3928,,full
+TXT,Aerospace & Defense,3.50,split,16.953829,1.081,2,,False,35.59,58.52,28.5,50.5,13,0.812,2,4,0.25,43.277,0.00020500743340438315,3.4425,,credit spread fit on only 2 bonds -- treat with caution
+TYL,Software & Digital Platforms,5.50,,25.437308,,,,False,77.73,,50.5,55.86,35,0.921,1,3,0.3333,61.366,0.00018693397912796316,4.8814,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+UAL,Heavy Cyclicals,7.00,,26.612231,,,,False,81.11,,67.0,62.98,18,0.857,1,3,0.3333,70.364,0.0005213015596685009,5.5971,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+UBER,Software & Digital Platforms,5.50,,22.202467,,,40.23,True,68.02,,50.5,42.45,35,0.921,1,3,0.3333,53.657,0.002057967284227132,4.2682,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+UDR,Real Estate,4.50,,13.262228,1.3022,4,,False,10.54,76.77,39.5,67.82,21,0.875,2,4,0.25,48.66,0.00016225795089446244,3.8707,,full
+UHS,Healthcare - Services,7.50,,24.198358,1.6927,2,,False,74.36,93.09,72.5,73.84,11,0.786,2,4,0.25,78.444,0.00013949059215450702,6.2398,,credit spread fit on only 2 bonds -- treat with caution
+ULTA,Consumer Services & Retail,5.00,,23.256637,,,,False,70.58,,45.0,66.28,17,0.85,1,3,0.3333,60.619,0.00030543460218474764,4.8219,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+UNH,Healthcare - Services,7.50,,32.996395,1.0001,42,32.87,True,63.0,45.25,72.5,34.94,11,0.786,2,4,0.25,53.921,0.004798397362244442,4.2892,,full
+UNP,Contracted Infrastructure,5.00,,13.183464,0.8147,35,27.55,True,14.32,16.21,45.0,15.14,15,0.833,2,4,0.25,22.669,0.0023857711226755677,1.8032,,full
+UPS,Transport & Logistics,5.00,,22.409138,0.8661,12,,False,66.2,24.23,45.0,17.5,6,0.667,2,4,0.25,38.233,0.0011662201482179524,3.0413,,full
+URI,Heavy Cyclicals,7.00,,22.961871,1.7,5,,False,69.58,93.36,67.0,67.97,18,0.857,2,4,0.25,74.48,0.0009545927223931432,5.9245,,full
+USB,Banks & Capital Markets,7.00,,14.146694,0.8645,4,27.37,True,16.03,23.95,67.0,13.67,25,0.893,2,4,0.25,30.163,0.0013545259487396071,2.3993,,full
+V,Fee-Based Financials,3.50,,13.976906,0.6516,9,26.01,True,12.03,2.94,28.5,7.19,21,0.875,2,4,0.25,12.664,0.009466302325339009,1.0074,,full
+VEEV,Healthcare - Innovation,5.00,,24.144041,,,,False,74.16,,45.0,60.78,27,0.9,1,3,0.3333,59.979,0.000541735758420809,4.771,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+VICI,Real Estate,4.50,,11.873438,1.5159,7,,False,3.98,86.73,39.5,72.16,21,0.875,2,4,0.25,50.591,0.0003797844041298881,4.0243,,full
+VLO,Energy & Commodities,7.50,,25.043588,1.0658,11,,False,76.74,56.03,72.5,56.91,29,0.906,2,4,0.25,65.545,0.001383650385259049,5.2138,,full
+VLTO,Quality Industrials,4.00,moved,13.184287,,,,False,9.55,,34.0,6.31,44,0.936,1,3,0.3333,16.621,0.00031748164741683644,1.3221,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+VMC,Materials & Packaging,4.50,,16.894388,1.1199,4,,False,34.6,61.7,39.5,55.25,19,0.864,2,4,0.25,47.762,0.0004777122843671039,3.7992,,full
+VRSK,Fee-Based Financials,3.50,moved,22.603084,1.215,1,,False,67.8,71.79,28.5,67.82,21,0.875,2,4,0.25,58.978,0.0003146571240021263,4.6914,,credit spread fit on only 1 bond -- treat with caution
+VRSN,Software & Digital Platforms,5.50,,18.965272,1.231,1,,False,49.51,73.45,50.5,29.04,35,0.921,2,4,0.25,50.626,0.00033796074116032625,4.0271,,credit spread fit on only 1 bond -- treat with caution
+VRT,Quality Industrials,4.00,,35.956314,,,,False,94.63,,34.0,96.84,44,0.936,1,3,0.3333,75.158,0.0014391036805061217,5.9785,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+VRTX,Healthcare - Innovation,5.00,,26.101927,,,33.35,True,60.58,,45.0,36.79,27,0.9,1,3,0.3333,47.458,0.0018158077217378776,3.7751,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+VST,Merchant Power,6.50,moved,36.868336,,,,False,95.43,,61.5,78.79,4,0.571,1,3,0.3333,78.571,0.0006419637001907134,6.2499,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+VTR,Real Estate,4.50,,13.123592,0.9949,4,,False,8.95,43.59,39.5,54.83,21,0.875,2,4,0.25,36.717,0.0006036118408817776,2.9207,,full
+VTRS,Healthcare - Innovation,5.00,,20.117143,1.563,1,,False,56.27,88.94,45.0,53.93,27,0.9,2,4,0.25,61.033,0.00025290109162820127,4.8549,,credit spread fit on only 1 bond -- treat with caution
+VZ,Telecom & Cable,7.00,split,14.601456,1.2168,53,27.08,True,16.22,72.07,67.0,17.5,6,0.667,2,4,0.25,43.197,0.002722004994822684,3.4361,,full
+WAB,Contracted Infrastructure,5.00,,13.889396,,,,False,13.92,,45.0,9.25,15,0.833,1,3,0.3333,22.724,0.000674004627196672,1.8076,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+WAT,Healthcare - Innovation,5.00,,26.344507,,,,False,80.32,,45.0,67.63,27,0.9,1,3,0.3333,64.318,0.000529777096728012,5.1162,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+WBD,Media & Entertainment,5.50,split,26.033666,,,,False,79.52,,50.5,80.12,10,0.769,1,3,0.3333,70.046,0.0009859756152751514,5.5718,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+WDAY,Software & Digital Platforms,5.50,,29.98992,1.5993,2,,False,87.48,90.04,50.5,74.64,35,0.921,2,4,0.25,75.664,0.0006518087042869854,6.0187,,credit spread fit on only 2 bonds -- treat with caution
+WDC,Hardware & Components,6.00,split,34.142462,,,,False,92.84,,56.0,64.75,19,0.864,1,3,0.3333,71.198,0.002508179129477604,5.6635,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+WEC,Regulated & Monopoly Assets,1.50,,11.200932,0.8678,3,,False,1.8,24.51,6.5,19.04,28,0.903,2,4,0.25,12.96,0.0004910564188651808,1.1178,credit floor applied (1.031 -> 1.118),full
+WELL,Real Estate,4.50,,14.693732,0.8816,8,,False,20.28,27.27,39.5,41.84,21,0.875,2,4,0.25,32.223,0.002317509698992899,2.5632,,full
+WFC,Banks & Capital Markets,7.00,,18.363239,1.1945,11,29.23,True,33.38,70.96,67.0,65.23,25,0.893,2,4,0.25,59.145,0.0036191876817272357,4.7047,,full
+WM,Regulated & Monopoly Assets,1.50,,13.884059,0.7608,8,23.92,True,8.75,10.4,6.5,5.79,28,0.903,2,4,0.25,7.861,0.0012123000686960832,1.0108,credit floor applied (0.625 -> 1.011),full
+WMB,Contracted Infrastructure,5.00,,16.946881,1.1371,18,,False,35.39,64.6,45.0,62.29,15,0.833,2,4,0.25,51.82,0.0012363566314246956,4.122,,full
+WMT,Defensive Retail,3.50,,16.201207,0.4427,21,29.37,True,25.24,1.28,28.5,22.28,14,0.824,2,4,0.25,19.324,0.012389025071543306,1.5371,,full
+WRB,Insurance Underwriters,5.00,,16.381542,0.9987,3,,False,30.82,44.42,45.0,57.99,18,0.857,2,4,0.25,44.556,0.00036963177511730957,3.5442,,full
+WSM,Consumer Services & Retail,5.00,,23.276835,,,,False,70.78,,45.0,71.54,17,0.85,1,3,0.3333,62.438,0.0003891039865721133,4.9666,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+WST,Healthcare - Innovation,5.00,,31.94738,,,,False,90.26,,45.0,91.62,27,0.9,1,3,0.3333,75.627,0.00033224198579037185,6.0158,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+WTW,Fee-Based Financials,3.50,,20.966583,1.0646,5,,False,61.23,55.75,28.5,54.83,21,0.875,2,4,0.25,50.08,0.00041439854913521165,3.9836,,full
+WY,Materials & Packaging,4.50,moved,16.259543,1.13,7,,False,29.63,63.77,39.5,50.5,19,0.864,2,4,0.25,45.85,0.0002291514377412902,3.6471,,full
+WYNN,Travel & Leisure,7.00,,22.62251,,,,False,68.39,,67.0,58.28,11,0.786,1,3,0.3333,64.557,0.00014079721433761652,5.1352,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+XEL,Regulated & Monopoly Assets,1.50,,12.794324,0.9938,25,,False,7.76,43.03,6.5,52.16,28,0.903,2,4,0.25,27.362,0.0006673860763098103,2.1765,,full
+XOM,Energy & Commodities,7.50,,17.531783,0.7116,11,30.06,True,34.16,5.98,72.5,8.84,29,0.906,2,4,0.25,30.371,0.00929087930672955,2.4159,,full
+XYL,Quality Industrials,4.00,,14.955594,,,,False,21.48,,34.0,27.87,44,0.936,1,3,0.3333,27.782,0.00036240333372438273,2.2099,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+XYZ,Payments & Financial Processing,5.50,moved,28.900283,1.4747,1,,False,85.29,85.07,50.5,78.34,9,0.75,2,4,0.25,74.8,0.0006501921008273884,5.95,,credit spread fit on only 1 bond -- treat with caution
+YUM,Consumer Services & Retail,5.00,,14.593551,1.2971,4,,False,19.89,76.22,45.0,18.94,17,0.85,2,4,0.25,40.012,0.0005433774859335606,3.1828,,full
+ZBH,Healthcare - Established,3.50,,23.577173,,,,False,72.17,,28.5,93.81,21,0.875,1,3,0.3333,64.827,0.0002570092202829937,5.1567,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ZBRA,Hardware & Components,6.00,split,24.605279,,,,False,75.95,,56.0,45.75,19,0.864,1,3,0.3333,59.232,0.0002495321102361714,4.7116,,no credit data -- combined score can shift materially if a credit spread becomes available (see diagnostic 2)
+ZTS,Healthcare - Innovation,5.00,,28.597815,1.0083,7,41.99,True,79.09,46.91,45.0,40.22,27,0.9,2,4,0.25,52.803,0.000415346288213863,4.2002,,full

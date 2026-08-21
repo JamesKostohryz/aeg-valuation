@@ -1,0 +1,500 @@
+ticker,name,sector,industry,industry_score,within_rank,rank_source,company_score,erp_pct,semidev,spread_pp,weight
+UAL,United Airlines Holdings Inc,Industrials,Airlines,8.5,1.0,semidev only,9.5,6.5338,26.398,,0.0006
+TPL,Texas Pacific Land Corporation,Energy,Oil & Gas E&P,7.5,1.0,semidev only,9.0,6.1899,33.57,,0.0003
+HBAN,Huntington Bancshares Incorporated,Financial Services,Banks - Regional,7.5,1.0,semidev only,9.0,6.1899,17.135,,0.0005
+APA,APA Corporation,Energy,Oil & Gas E&P,7.5,0.9625,spread70/semidev30,8.887,6.1122,33.426,1.611,0.0002
+SMCI,Super Micro Computer Inc,Technology,Computer Hardware,7.5,1.0,semidev only,8.833,6.075,60.644,,0.0003
+CNC,Centene Corp,Healthcare,Healthcare Plans,7.5,1.0,spread70/semidev30,8.833,6.075,54.846,2.631,0.0005
+RF,Regions Financial Corporation,Financial Services,Banks - Regional,7.5,0.85,spread70/semidev30,8.55,5.8804,15.634,1.476,0.0004
+IT,Gartner Inc,Technology,Information Technology Services,7.0,1.0,spread70/semidev30,8.5,5.846,39.919,2.977,0.0002
+TTD,Trade Desk Inc,Communication Services,Advertising Agencies,7.5,1.0,semidev only,8.5,5.846,56.332,,0.0001
+HAL,Halliburton Company,Energy,Oil & Gas Equipment & Services,7.5,1.0,spread70/semidev30,8.5,5.846,24.232,1.223,0.0004
+LUV,Southwest Airlines Company,Industrials,Airlines,8.5,0.5,semidev only,8.5,5.846,25.43,,0.0003
+TSLA,Tesla Inc,Consumer Cyclical,Auto Manufacturers,7.5,1.0,semidev only,8.5,5.846,31.064,,0.0143
+FSLR,First Solar Inc,Technology,Solar,8.5,0.5,semidev only,8.5,5.846,39.402,,0.0004
+KEY,KeyCorp,Financial Services,Banks - Regional,7.5,0.825,spread70/semidev30,8.475,5.8288,16.144,1.411,0.0003
+STX,Seagate Technology PLC,Technology,Computer Hardware,7.5,0.82,spread70/semidev30,8.353,5.7449,33.316,2.253,0.0031
+NCLH,Norwegian Cruise Line Holdings Ltd,Consumer Cyclical,Travel Services,7.0,1.0,semidev only,8.333,5.7312,30.348,,0.0001
+ECHO,EchoStar Corporation,Communication Services,Telecom Services,7.0,1.0,semidev only,8.333,5.7312,45.44,,0.0002
+BXP,"BXP, Inc.",Real Estate,REIT - Office,8.0,0.7,spread70/semidev30,8.32,5.7222,19.622,1.56,0.0001
+ANET,Arista Networks,Technology,Computer Hardware,7.5,0.8,semidev only,8.3,5.7085,34.38,,0.003
+HUM,Humana Inc,Healthcare,Healthcare Plans,7.5,0.8,spread70/semidev30,8.3,5.7085,36.993,1.422,0.0007
+DVN,Devon Energy Corporation,Energy,Oil & Gas E&P,7.5,0.75,semidev only,8.25,5.6741,24.287,,0.0008
+WFC,Wells Fargo & Company,Financial Services,Banks - Diversified,7.0,1.0,spread70/semidev30,8.25,5.6741,18.31,1.195,0.004
+OXY,Occidental Petroleum Corporation,Energy,Oil & Gas E&P,7.5,0.7475,spread70/semidev30,8.242,5.6686,24.204,1.151,0.0007
+DAL,Delta Air Lines Inc,Industrials,Airlines,8.5,0.35,spread70/semidev30,8.2,5.6397,21.817,1.637,0.0008
+F,Ford Motor Company,Consumer Cyclical,Auto Manufacturers,7.5,0.85,spread70/semidev30,8.2,5.6397,22.321,2.092,0.0008
+CHTR,Charter Communications Inc,Communication Services,Telecom Services,7.0,0.94,spread70/semidev30,8.173,5.6211,39.267,2.411,0.0002
+FITB,Fifth Third Bancorp,Financial Services,Banks - Regional,7.5,0.6875,spread70/semidev30,8.062,5.5448,15.852,1.41,0.0008
+CCL,Carnival Corporation,Consumer Cyclical,Travel Services,7.0,0.88,spread70/semidev30,8.013,5.5111,26.07,1.791,0.0005
+FISV,"Fiserv, Inc.",Technology,Software,8.0,0.5,spread70/semidev30,8.0,5.5021,56.179,1.269,0.0004
+VLO,Valero Energy Corporation,Energy,Oil & Gas Refining & Marketing,7.0,1.0,spread70/semidev30,8.0,5.5021,24.786,1.066,0.0016
+CFG,"Citizens Financial Group, Inc.",Financial Services,Banks - Regional,7.5,0.6625,spread70/semidev30,7.987,5.4932,16.233,1.172,0.0005
+ON,ON Semiconductor Corporation,Technology,Semiconductors,6.5,0.9077,spread70/semidev30,7.843,5.3941,31.697,1.569,0.0005
+WDC,Western Digital Corporation,Technology,Computer Hardware,7.5,0.6,semidev only,7.767,5.3419,34.065,,0.0026
+PHM,PulteGroup Inc,Consumer Cyclical,Residential Construction,7.0,0.8,spread70/semidev30,7.686,5.2862,20.311,2.716,0.0004
+ARE,Alexandria Real Estate Equities Inc,Real Estate,REIT - Office,8.0,0.3,spread70/semidev30,7.68,5.282,31.707,1.201,0.0001
+FANG,Diamondback Energy Inc,Energy,Oil & Gas E&P,7.5,0.5325,spread70/semidev30,7.598,5.2256,23.331,1.016,0.0006
+SWKS,Skyworks Solutions Inc,Technology,Semiconductors,6.5,0.821,spread70/semidev30,7.557,5.1974,28.458,1.491,0.0002
+CDW,CDW Corp,Technology,Information Technology Services,7.0,0.6825,spread70/semidev30,7.548,5.1913,28.298,1.623,0.0003
+CMCSA,Comcast Corp,Communication Services,Telecom Services,7.0,0.705,spread70/semidev30,7.547,5.1906,21.268,1.599,0.0014
+INTC,Intel Corporation,Technology,Semiconductors,6.5,0.8091,spread70/semidev30,7.518,5.1706,39.51,1.327,0.0072
+APP,Applovin Corp,Communication Services,Advertising Agencies,7.5,0.5,semidev only,7.5,5.1582,51.1,,0.0012
+MOS,The Mosaic Company,Basic Materials,Agricultural Inputs,6.5,1.0,spread70/semidev30,7.5,5.1582,29.613,1.479,0.0001
+DOW,Dow Inc,Basic Materials,Chemicals,7.5,0.5,spread70/semidev30,7.5,5.1582,32.136,1.544,0.0003
+UHS,Universal Health Services Inc,Healthcare,Medical Care Facilities,6.5,1.0,spread70/semidev30,7.5,5.1582,24.19,1.693,0.0001
+FCX,Freeport-McMoran Copper & Gold Inc,Basic Materials,Copper,7.5,0.5,spread70/semidev30,7.5,5.1582,30.412,0.961,0.0014
+C,Citigroup Inc.,Financial Services,Banks - Diversified,7.0,0.6917,spread70/semidev30,7.479,5.1438,16.179,1.12,0.0035
+TSN,Tyson Foods Inc,Consumer Defensive,Farm Products,7.0,0.7,spread70/semidev30,7.4,5.0895,15.209,1.068,0.0002
+DHI,DR Horton Inc,Consumer Cyclical,Residential Construction,7.0,0.6667,semidev only,7.381,5.0764,22.415,,0.0006
+LITE,Lumentum Holdings Inc,Technology,Communication Equipment,6.0,1.0,semidev only,7.333,5.0434,48.005,,0.001
+BG,Bunge Global SA,Consumer Defensive,Farm Products,7.0,0.65,spread70/semidev30,7.3,5.0207,19.514,1.038,0.0002
+CSGP,CoStar Group Inc,Real Estate,Real Estate Services,6.5,1.0,semidev only,7.3,5.0207,28.897,,0.0002
+CVS,CVS Health Corp,Healthcare,Healthcare Plans,7.5,0.42,spread70/semidev30,7.287,5.0118,24.47,1.225,0.0018
+HOOD,Robinhood Markets Inc,Financial Services,Capital Markets,6.0,1.0,semidev only,7.25,4.9863,38.501,,0.0011
+MRNA,Moderna Inc,Healthcare,Biotechnology,6.0,1.0,semidev only,7.25,4.9863,41.079,,0.0003
+TFC,Truist Financial Corp,Financial Services,Banks - Regional,7.5,0.4125,spread70/semidev30,7.237,4.9774,14.499,1.164,0.001
+ELV,Elevance Health Inc,Healthcare,Healthcare Plans,7.5,0.4,spread70/semidev30,7.233,4.9746,30.042,1.056,0.0013
+RCL,Royal Caribbean Cruises Ltd,Consumer Cyclical,Travel Services,7.0,0.5867,spread70/semidev30,7.231,4.9732,25.621,1.161,0.0011
+OMC,Omnicom Group Inc,Communication Services,Advertising Agencies,7.5,0.35,spread70/semidev30,7.2,4.9519,21.884,1.158,0.0004
+BKR,Baker Hughes Co,Energy,Oil & Gas Equipment & Services,7.5,0.35,spread70/semidev30,7.2,4.9519,20.515,0.872,0.001
+CEG,Constellation Energy Corp,Utilities,Utilities - Independent Power Producers,6.5,0.85,spread70/semidev30,7.2,4.9519,33.231,1.861,0.0013
+AVGO,Broadcom Inc,Technology,Semiconductors,6.5,0.7112,spread70/semidev30,7.196,4.9492,25.589,1.446,0.0272
+BR,Broadridge Financial Solutions Inc,Technology,Information Technology Services,7.0,0.56,spread70/semidev30,7.18,4.9382,17.23,2.267,0.0003
+SNPS,Synopsys Inc,Technology,Software - Infrastructure,5.5,1.0,semidev only,7.167,4.9292,44.437,,0.0012
+TER,Teradyne Inc,Technology,Semiconductor Equipment & Materials,6.0,1.0,semidev only,7.143,4.9127,34.883,,0.001
+HPQ,HP Inc,Technology,Computer Hardware,7.5,0.35,spread70/semidev30,7.1,4.8831,23.273,1.366,0.0004
+APO,Apollo Global Management LLC Class A,Financial Services,Asset Management,6.0,0.8333,semidev only,7.083,4.8714,21.898,,0.0009
+KKR,KKR & Co. Inc.,Financial Services,Asset Management,6.0,0.8194,spread70/semidev30,7.038,4.8405,22.516,1.186,0.0011
+PSKY,Paramount Skydance Corporation Class B Common Stock,Communication Services,Entertainment,5.5,1.0,semidev only,7.038,4.8405,33.171,,0
+MRVL,Marvell Technology Group Ltd,Technology,Semiconductors,6.5,0.6587,spread70/semidev30,7.023,4.8302,36.225,1.03,0.0029
+LDOS,Leidos Holdings Inc,Technology,Information Technology Services,7.0,0.505,spread70/semidev30,7.015,4.8247,22.834,1.447,0.0003
+ACN,Accenture plc,Technology,Information Technology Services,7.0,0.5,semidev only,7.0,4.8144,22.504,,0.0016
+CVNA,Carvana Co,Consumer Cyclical,Auto & Truck Dealerships,7.0,0.5,semidev only,7.0,4.8144,37.983,,0.0007
+LVS,Las Vegas Sands Corp,Consumer Cyclical,Resorts & Casinos,6.0,1.0,spread70/semidev30,7.0,4.8144,24.747,1.435,0.0002
+MPC,Marathon Petroleum Corp,Energy,Oil & Gas Refining & Marketing,7.0,0.5,spread70/semidev30,7.0,4.8144,23.055,1.015,0.0016
+STT,State Street Corp,Financial Services,Asset Management,6.0,0.8,spread70/semidev30,6.975,4.7972,14.697,4.012,0.0008
+ORCL,Oracle Corporation,Technology,Software - Infrastructure,5.5,0.9357,spread70/semidev30,6.952,4.7813,30.962,2.501,0.0037
+COP,ConocoPhillips,Energy,Oil & Gas E&P,7.5,0.3175,spread70/semidev30,6.952,4.7813,21.179,0.962,0.0024
+NOW,ServiceNow Inc,Technology,Software - Application,5.5,0.9286,semidev only,6.929,4.7655,32.38,,0.0019
+PLTR,Palantir Technologies Inc.,Technology,Software - Infrastructure,5.5,0.9286,semidev only,6.929,4.7655,35.506,,0.006
+GL,Globe Life Inc,Financial Services,Insurance - Life,6.0,0.9,spread70/semidev30,6.914,4.7552,14.877,1.209,0.0002
+KLAC,KLA Corporation,Technology,Semiconductor Equipment & Materials,6.0,0.9,spread70/semidev30,6.914,4.7552,27.365,0.888,0.0038
+ARES,Ares Management LP,Financial Services,Asset Management,6.0,0.7667,spread70/semidev30,6.867,4.7229,24.978,1.164,0.0004
+FICO,Fair Isaac Corporation,Technology,Software - Application,5.5,0.9,spread70/semidev30,6.833,4.6995,37.455,1.677,0.0004
+VTRS,Viatris Inc,Healthcare,Drug Manufacturers - Specialty & Generic,6.5,0.7,spread70/semidev30,6.82,4.6906,20.176,1.563,0.0003
+AMP,Ameriprise Financial Inc,Financial Services,Asset Management,6.0,0.7472,spread70/semidev30,6.803,4.6789,15.569,2.364,0.0008
+SLB,Schlumberger NV,Energy,Oil & Gas Equipment & Services,7.5,0.15,spread70/semidev30,6.8,4.6768,21.487,0.792,0.0012
+CIEN,Ciena Corp,Technology,Communication Equipment,6.0,0.8,semidev only,6.8,4.6768,37.847,,0.0009
+T,AT&T Inc.,Communication Services,Telecom Services,7.0,0.41,spread70/semidev30,6.76,4.6493,15.527,1.427,0.0026
+EXE,Expand Energy Corporation,Energy,Oil & Gas E&P,7.5,0.25,semidev only,6.75,4.6424,21.454,,0.0003
+NUE,Nucor Corp,Basic Materials,Steel,6.5,0.65,spread70/semidev30,6.74,4.6355,19.639,0.76,0.0009
+BAC,Bank of America Corp,Financial Services,Banks - Diversified,7.0,0.3833,spread70/semidev30,6.708,4.6135,14.023,0.89,0.0063
+CI,Cigna Corp,Healthcare,Healthcare Plans,7.5,0.2,spread70/semidev30,6.7,4.608,25.441,1.029,0.0011
+WBD,Warner Bros Discovery Inc,Communication Services,Entertainment,5.5,0.8889,semidev only,6.697,4.606,26.1,,0.0011
+DDOG,Datadog Inc,Technology,Software - Application,5.5,0.8571,semidev only,6.69,4.6012,30.546,,0.0012
+AKAM,Akamai Technologies Inc,Technology,Software - Infrastructure,5.5,0.8571,semidev only,6.69,4.6012,33.223,,0.0003
+UNH,UnitedHealth Group Incorporated,Healthcare,Healthcare Plans,7.5,0.18,spread70/semidev30,6.647,4.5716,33.322,1.0,0.0054
+FIX,Comfort Systems USA Inc,Industrials,Engineering & Construction,5.5,1.0,semidev only,6.643,4.5688,30.602,,0.0009
+MPWR,Monolithic Power Systems Inc,Technology,Semiconductors,6.5,0.5385,semidev only,6.627,4.5578,26.874,,0.001
+IBKR,Interactive Brokers Group Inc,Financial Services,Capital Markets,6.0,0.75,semidev only,6.625,4.5564,20.777,,0.0006
+TECH,Bio-Techne Corp,Healthcare,Biotechnology,6.0,0.75,semidev only,6.625,4.5564,31.655,,0.0002
+PRU,"Prudential Financial, Inc.",Financial Services,Insurance - Life,6.0,0.7667,spread70/semidev30,6.61,4.5461,14.973,1.058,0.0007
+PNC,PNC Financial Services Group Inc,Financial Services,Banks - Regional,7.5,0.2,spread70/semidev30,6.6,4.5393,13.667,1.072,0.0015
+FLEX,Flex Ltd,Technology,Electronic Components,5.5,0.925,spread70/semidev30,6.562,4.5131,25.879,1.551,0.0007
+LEN,Lennar Corporation,Consumer Cyclical,Residential Construction,7.0,0.3,spread70/semidev30,6.543,4.5001,23.268,1.121,0.0003
+CSCO,Cisco Systems Inc,Technology,Communication Equipment,6.0,0.7,spread70/semidev30,6.533,4.4932,16.676,1.769,0.0067
+MTB,M&T Bank Corporation,Financial Services,Banks - Regional,7.5,0.175,spread70/semidev30,6.525,4.4877,14.381,1.005,0.0006
+SYF,Synchrony Financial,Financial Services,Credit Services,5.5,0.88,spread70/semidev30,6.513,4.4794,19.664,2.897,0.0004
+DVA,DaVita HealthCare Partners Inc,Healthcare,Medical Care Facilities,6.5,0.5,semidev only,6.5,4.4705,23.248,,0.0001
+GM,General Motors Company,Consumer Cyclical,Auto Manufacturers,7.5,0.0,spread70/semidev30,6.5,4.4705,21.007,1.418,0.0011
+MS,Morgan Stanley,Financial Services,Capital Markets,6.0,0.7,spread70/semidev30,6.5,4.4705,13.363,1.076,0.0039
+HST,Host Hotels & Resorts Inc,Real Estate,REIT - Hotel & Motel,6.5,0.5,spread70/semidev30,6.5,4.4705,14.049,1.338,0.0002
+URI,United Rentals Inc,Industrials,Rental & Leasing Services,6.5,0.5,spread70/semidev30,6.5,4.4705,23.037,1.7,0.0011
+ALGN,Align Technology Inc,Healthcare,Medical Instruments & Supplies,5.0,1.0,semidev only,6.455,4.4395,43.288,,0.0002
+TMUS,T-Mobile US Inc,Communication Services,Telecom Services,7.0,0.295,spread70/semidev30,6.453,4.4382,18.224,1.325,0.0013
+EQT,EQT Corporation,Energy,Oil & Gas E&P,7.5,0.15,spread70/semidev30,6.45,4.4361,24.155,0.871,0.0005
+BKNG,Booking Holdings Inc,Consumer Cyclical,Travel Services,7.0,0.2933,spread70/semidev30,6.449,4.4354,20.578,1.086,0.0024
+FOX,Fox Corp Class B,Communication Services,Entertainment,5.5,0.8,spread70/semidev30,6.423,4.4175,17.862,1.337,0.0001
+EOG,EOG Resources Inc,Energy,Oil & Gas E&P,7.5,0.14,spread70/semidev30,6.42,4.4155,18.807,0.926,0.0012
+IRM,Iron Mountain Incorporated,Real Estate,REIT - Specialty,5.0,1.0,spread70/semidev30,6.4,4.4017,20.383,1.992,0.0006
+NXPI,NXP Semiconductors NV,Technology,Semiconductors,6.5,0.4685,spread70/semidev30,6.396,4.399,20.728,1.111,0.0009
+IQV,IQVIA Holdings Inc,Healthcare,Diagnostics & Research,5.0,0.94,spread70/semidev30,6.383,4.39,23.962,1.849,0.0006
+PTC,PTC Inc,Technology,Software - Application,5.5,0.7643,spread70/semidev30,6.381,4.3886,19.171,1.973,0.0003
+BALL,Ball Corporation,Consumer Cyclical,Packaging & Containers,5.5,0.82,spread70/semidev30,6.353,4.3694,17.796,1.502,0.0002
+BLDR,Builders FirstSource Inc,Industrials,Building Products & Equipment,5.0,1.0,spread70/semidev30,6.333,4.3556,27.071,2.891,0.0001
+COHR,Coherent Inc,Technology,Scientific & Technical Instruments,5.0,1.0,semidev only,6.333,4.3556,40.794,,0.0009
+BAX,Baxter International Inc,Healthcare,Medical Instruments & Supplies,5.0,0.9571,spread70/semidev30,6.33,4.3536,34.17,1.22,0.0002
+DELL,Dell Technologies Inc,Technology,Computer Hardware,7.5,0.06,spread70/semidev30,6.327,4.3515,31.408,1.316,0.002
+EXPE,Expedia Group Inc.,Consumer Cyclical,Travel Services,7.0,0.24,spread70/semidev30,6.307,4.3377,28.064,0.927,0.0006
+ADM,Archer-Daniels-Midland Company,Consumer Defensive,Farm Products,7.0,0.15,spread70/semidev30,6.3,4.3329,18.637,0.839,0.0006
+SW,Smurfit WestRock plc,Consumer Cyclical,Packaging & Containers,5.5,0.8,semidev only,6.3,4.3329,25.196,,0.0004
+COF,Capital One Financial Corporation,Financial Services,Credit Services,5.5,0.8,spread70/semidev30,6.3,4.3329,20.181,0.87,0.0021
+DECK,Deckers Outdoor Corporation,Consumer Cyclical,Footwear & Accessories,5.5,1.0,semidev only,6.3,4.3329,34.268,,0.0002
+BEN,Franklin Resources Inc,Financial Services,Asset Management,6.0,0.5833,semidev only,6.271,4.313,16.448,,0.0002
+ZBRA,Zebra Technologies Corporation,Technology,Communication Equipment,6.0,0.6,semidev only,6.267,4.3102,24.538,,0.0003
+FIS,Fidelity National Information Services Inc,Technology,Information Technology Services,7.0,0.2525,spread70/semidev30,6.258,4.304,22.004,1.417,0.0003
+WAT,Waters Corporation,Healthcare,Diagnostics & Research,5.0,0.9,semidev only,6.257,4.3034,26.355,,0.0006
+CTSH,Cognizant Technology Solutions Corp Class A,Technology,Information Technology Services,7.0,0.25,semidev only,6.25,4.2985,20.563,,0.0004
+INTU,Intuit Inc,Technology,Software - Application,5.5,0.7143,semidev only,6.214,4.2738,26.186,,0.0015
+NRG,NRG Energy Inc.,Utilities,Utilities - Independent Power Producers,6.5,0.35,spread70/semidev30,6.2,4.2641,30.563,1.045,0.0004
+ZTS,Zoetis Inc,Healthcare,Drug Manufacturers - Specialty & Generic,6.5,0.3,spread70/semidev30,6.18,4.2504,28.513,1.008,0.0005
+XYZ,"Block, Inc",Technology,Software - Infrastructure,5.5,0.6964,spread70/semidev30,6.155,4.2332,28.811,1.475,0.0006
+AIG,American International Group Inc,Financial Services,Insurance - Diversified,5.0,1.0,spread70/semidev30,6.143,4.2249,16.89,1.008,0.0006
+RDDT,"Reddit, Inc.",Communication Services,Internet Content & Information,5.0,1.0,semidev only,6.143,4.2249,43.625,,0.0003
+RJF,Raymond James Financial Inc.,Financial Services,Asset Management,6.0,0.5389,spread70/semidev30,6.126,4.2133,16.262,1.071,0.0005
+MCHP,Microchip Technology Inc,Technology,Semiconductors,6.5,0.3846,semidev only,6.12,4.2091,25.264,,0.0006
+USB,U.S. Bancorp,Financial Services,Banks - Regional,7.5,0.0375,spread70/semidev30,6.112,4.2036,14.123,0.864,0.0015
+VST,Vistra Corp.,Utilities,Utilities - Independent Power Producers,6.5,0.3,spread70/semidev30,6.1,4.1954,36.684,0.682,0.0007
+PYPL,PayPal Holdings Inc,Financial Services,Credit Services,5.5,0.72,spread70/semidev30,6.087,4.1864,28.264,0.868,0.0008
+IBM,International Business Machines,Technology,Information Technology Services,7.0,0.1875,spread70/semidev30,6.062,4.1692,22.687,1.323,0.0033
+NVDA,NVIDIA Corporation,Technology,Semiconductors,6.5,0.3643,spread70/semidev30,6.053,4.163,21.981,1.009,0.0804
+IVZ,Invesco Plc,Financial Services,Asset Management,6.0,0.5111,spread70/semidev30,6.036,4.1514,17.284,1.049,0.0002
+AMD,Advanced Micro Devices Inc,Technology,Semiconductors,6.5,0.358,spread70/semidev30,6.032,4.1486,32.512,0.95,0.0119
+TRMB,Trimble Inc,Technology,Scientific & Technical Instruments,5.0,0.88,spread70/semidev30,6.013,4.1355,17.257,1.4,0.0002
+LYV,Live Nation Entertainment Inc,Communication Services,Entertainment,5.5,0.6667,semidev only,6.013,4.1355,20.496,,0.0004
+ALB,Albemarle Corp,Basic Materials,Specialty Chemicals,4.5,1.0,spread70/semidev30,6.0,4.1266,40.111,1.562,0.0002
+DASH,"DoorDash, Inc. Class A Common Stock",Consumer Cyclical,Internet Retail,5.0,1.0,semidev only,6.0,4.1266,28.842,,0.0012
+EG,Everest Group Ltd,Financial Services,Insurance - Reinsurance,6.0,0.5,semidev only,6.0,4.1266,18.44,,0.0002
+HAS,Hasbro Inc,Consumer Cyclical,Leisure,6.0,0.5,spread70/semidev30,6.0,4.1266,17.246,1.633,0.0002
+REGN,Regeneron Pharmaceuticals Inc,Healthcare,Biotechnology,6.0,0.5,spread70/semidev30,6.0,4.1266,27.023,0.964,0.0012
+WYNN,Wynn Resorts Limited,Consumer Cyclical,Resorts & Casinos,6.0,0.5,spread70/semidev30,6.0,4.1266,22.573,0.822,0.0001
+PSX,Phillips 66,Energy,Oil & Gas Refining & Marketing,7.0,0.0,spread70/semidev30,6.0,4.1266,21.9,0.845,0.0015
+NEM,Newmont Goldcorp Corp,Basic Materials,Gold,6.0,0.5,spread70/semidev30,6.0,4.1266,32.796,1.054,0.0019
+VEEV,Veeva Systems Inc Class A,Healthcare,Health Information Services,6.0,0.5,semidev only,6.0,4.1266,23.976,,0.0006
+QCOM,Qualcomm Incorporated,Technology,Semiconductors,6.5,0.3469,spread70/semidev30,5.996,4.1238,23.879,1.007,0.0026
+CRWD,Crowdstrike Holdings Inc,Technology,Software - Infrastructure,5.5,0.6429,semidev only,5.976,4.1101,29.759,,0.0033
+CINF,Cincinnati Financial Corporation,Financial Services,Insurance - Property & Casualty,5.0,0.8286,spread70/semidev30,5.956,4.0963,14.14,1.741,0.0004
+WDAY,Workday Inc,Technology,Software - Application,5.5,0.6357,spread70/semidev30,5.952,4.0936,29.897,1.599,0.0006
+CRL,Charles River Laboratories,Healthcare,Diagnostics & Research,5.0,0.8,spread70/semidev30,5.943,4.0874,31.724,1.527,0.0002
+JPM,JPMorgan Chase & Co,Financial Services,Banks - Diversified,7.0,0.075,spread70/semidev30,5.938,4.084,13.918,0.739,0.0147
+HPE,Hewlett Packard Enterprise Co,Technology,Communication Equipment,6.0,0.47,spread70/semidev30,5.92,4.0716,23.778,1.448,0.0011
+AIZ,"Assurant, Inc.",Financial Services,Insurance - Property & Casualty,5.0,0.8143,spread70/semidev30,5.914,4.0674,16.603,1.636,0.0002
+META,Meta Platforms Inc.,Communication Services,Internet Content & Information,5.0,0.9,spread70/semidev30,5.914,4.0674,19.822,1.575,0.018
+OKE,ONEOK Inc,Energy,Oil & Gas Midstream,5.0,0.9,spread70/semidev30,5.914,4.0674,19.775,1.413,0.0009
+IP,International Paper,Consumer Cyclical,Packaging & Containers,5.5,0.65,spread70/semidev30,5.9,4.0578,27.572,1.251,0.0003
+PCAR,PACCAR Inc,Industrials,Farm & Heavy Construction Machinery,5.5,0.7,spread70/semidev30,5.9,4.0578,15.738,0.909,0.001
+MU,Micron Technology Inc,Technology,Semiconductors,6.5,0.3175,spread70/semidev30,5.899,4.0571,35.987,0.879,0.016
+EME,EMCOR Group Inc,Industrials,Engineering & Construction,5.5,0.6667,semidev only,5.881,4.0448,25.655,,0.0006
+JKHY,Jack Henry & Associates Inc,Technology,Information Technology Services,7.0,0.125,semidev only,5.875,4.0406,17.66,,0.0002
+GLW,Corning Incorporated,Technology,Electronic Components,5.5,0.65,spread70/semidev30,5.875,4.0406,26.86,1.103,0.0019
+ALL,The Allstate Corporation,Financial Services,Insurance - Property & Casualty,5.0,0.8,spread70/semidev30,5.873,4.0392,17.129,1.034,0.001
+BX,Blackstone Group Inc,Financial Services,Asset Management,6.0,0.4583,spread70/semidev30,5.865,4.0337,19.226,0.961,0.0016
+NVR,NVR Inc,Consumer Cyclical,Residential Construction,7.0,0.0,semidev only,5.857,4.0282,17.972,,0.0003
+GS,Goldman Sachs Group Inc,Financial Services,Capital Markets,6.0,0.425,spread70/semidev30,5.812,3.9973,14.43,0.775,0.0046
+LII,Lennox International Inc,Industrials,Building Products & Equipment,5.0,0.8,semidev only,5.8,3.989,22.57,,0.0002
+CF,CF Industries Holdings Inc,Basic Materials,Agricultural Inputs,6.5,0.15,spread70/semidev30,5.8,3.989,27.594,1.12,0.0003
+GRMN,Garmin Ltd,Technology,Scientific & Technical Instruments,5.0,0.8,semidev only,5.8,3.989,19.703,,0.0007
+XOM,Exxon Mobil Corp,Energy,Oil & Gas Integrated,5.0,1.0,spread70/semidev30,5.8,3.989,17.297,0.712,0.0104
+VRT,Vertiv Holdings Co,Industrials,Electrical Equipment & Parts,5.0,1.0,semidev only,5.8,3.989,35.887,,0.0016
+SWK,Stanley Black & Decker Inc,Industrials,Tools & Accessories,5.0,1.0,spread70/semidev30,5.8,3.989,22.67,1.125,0.0002
+NFLX,Netflix Inc,Communication Services,Entertainment,5.5,0.5833,spread70/semidev30,5.756,3.9588,22.886,1.029,0.0049
+JBL,Jabil Circuit Inc,Technology,Electronic Components,5.5,0.6,spread70/semidev30,5.75,3.9547,23.509,1.3,0.0005
+BNY,The Bank of New York Mellon Corporation,Financial Services,Banks - Diversified,7.0,0.0,semidev only,5.75,3.9547,12.377,,0.0017
+TYL,Tyler Technologies Inc,Technology,Software - Application,5.5,0.5714,semidev only,5.738,3.9464,25.376,,0.0002
+GEV,GE Vernova LLC,Industrials,Specialty Industrial Machinery,4.0,1.0,semidev only,5.7,3.9203,29.276,,0.0041
+EBAY,eBay Inc,Consumer Cyclical,Internet Retail,5.0,0.85,spread70/semidev30,5.7,3.9203,24.824,1.138,0.0007
+CBRE,CBRE Group Inc Class A,Real Estate,Real Estate Services,6.5,0.0,semidev only,5.7,3.9203,20.494,,0.0007
+STLD,Steel Dynamics Inc,Basic Materials,Steel,6.5,0.0,semidev only,5.7,3.9203,19.44,,0.0005
+FDX,FedEx Corporation,Industrials,Integrated Freight & Logistics,5.0,0.775,spread70/semidev30,5.688,3.912,20.067,1.426,0.0011
+INVH,Invitation Homes Inc,Real Estate,REIT - Residential,4.5,0.94,spread70/semidev30,5.673,3.9017,14.513,1.67,0.0002
+TKO,"TKO Group Holdings, Inc.",Communication Services,Entertainment,5.5,0.5556,semidev only,5.671,3.9003,19.741,,0.0002
+ABNB,Airbnb Inc,Consumer Cyclical,Travel Services,7.0,0.0,semidev only,5.667,3.8976,19.539,,0.0012
+VZ,Verizon Communications Inc,Communication Services,Telecom Services,7.0,0.0,spread70/semidev30,5.667,3.8976,14.536,1.217,0.0031
+LRCX,Lam Research Corp,Technology,Semiconductor Equipment & Materials,6.0,0.35,spread70/semidev30,5.657,3.8907,26.478,0.825,0.0062
+ULTA,Ulta Beauty Inc,Consumer Cyclical,Specialty Retail,5.0,0.75,semidev only,5.625,3.8687,23.187,,0.0003
+WST,West Pharmaceutical Services Inc,Healthcare,Medical Instruments & Supplies,5.0,0.7143,semidev only,5.623,3.8673,31.882,,0.0004
+MET,MetLife Inc,Financial Services,Insurance - Life,6.0,0.3333,spread70/semidev30,5.619,3.8646,14.27,0.969,0.0008
+TRGP,Targa Resources Inc,Energy,Oil & Gas Midstream,5.0,0.7667,spread70/semidev30,5.61,3.8584,20.706,1.259,0.001
+ROP,Roper Technologies Inc,Technology,Software - Application,5.5,0.5214,spread70/semidev30,5.571,3.8315,17.797,1.617,0.0006
+AVY,Avery Dennison Corp,Consumer Cyclical,Packaging & Containers,5.5,0.525,spread70/semidev30,5.567,3.8288,13.591,1.26,0.0002
+DXCM,DexCom Inc,Healthcare,Medical Devices,4.0,1.0,semidev only,5.538,3.8088,37.885,,0.0005
+LYB,LyondellBasell Industries NV,Basic Materials,Specialty Chemicals,4.5,0.8458,spread70/semidev30,5.538,3.8088,29.863,1.455,0.0003
+A,Agilent Technologies Inc,Healthcare,Diagnostics & Research,5.0,0.66,spread70/semidev30,5.503,3.7848,17.197,1.823,0.0006
+GDDY,Godaddy Inc,Technology,Software - Infrastructure,5.5,0.5,semidev only,5.5,3.7827,26.964,,0.0002
+CAT,Caterpillar Inc,Industrials,Farm & Heavy Construction Machinery,5.5,0.5,spread70/semidev30,5.5,3.7827,16.559,0.692,0.0059
+CTVA,Corteva Inc,Basic Materials,Agricultural Inputs,6.5,0.0,semidev only,5.5,3.7827,17.74,,0.0008
+GPN,Global Payments Inc,Industrials,Specialty Business Services,4.5,1.0,spread70/semidev30,5.5,3.7827,22.519,1.559,0.0003
+VMC,Vulcan Materials Company,Basic Materials,Building Materials,4.5,1.0,spread70/semidev30,5.5,3.7827,16.966,1.12,0.0005
+HCA,"HCA Healthcare, Inc.",Healthcare,Medical Care Facilities,6.5,0.0,spread70/semidev30,5.5,3.7827,20.317,1.261,0.001
+EXR,Extra Space Storage Inc,Real Estate,REIT - Industrial,4.5,1.0,spread70/semidev30,5.5,3.7827,18.031,1.185,0.0005
+RL,Ralph Lauren Corp Class A,Consumer Cyclical,Apparel Manufacturing,5.5,0.5,semidev only,5.5,3.7827,19.607,,0.0002
+TPR,Tapestry Inc,Consumer Cyclical,Luxury Goods,5.5,0.5,spread70/semidev30,5.5,3.7827,26.966,0.933,0.0004
+VICI,VICI Properties Inc,Real Estate,REIT - Diversified,5.5,0.5,spread70/semidev30,5.5,3.7827,11.873,1.516,0.0004
+GNRC,Generac Holdings Inc,Industrials,Specialty Industrial Machinery,4.0,0.9375,semidev only,5.487,3.7738,25.994,,0.0002
+ADI,Analog Devices Inc,Technology,Semiconductors,6.5,0.1909,spread70/semidev30,5.482,3.7703,16.431,0.981,0.0028
+CRM,Salesforce.com Inc,Technology,Software - Application,5.5,0.4929,spread70/semidev30,5.476,3.7662,25.941,1.352,0.0024
+CCI,Crown Castle,Real Estate,REIT - Specialty,5.0,0.67,spread70/semidev30,5.476,3.7662,19.144,1.187,0.0005
+SBAC,SBA Communications Corp,Real Estate,REIT - Specialty,5.0,0.6667,semidev only,5.467,3.76,17.985,,0.0003
+VTR,Ventas Inc,Real Estate,REIT - Healthcare Facilities,5.0,0.7,spread70/semidev30,5.4,3.7139,13.185,0.995,0.0007
+PWR,Quanta Services Inc,Industrials,Engineering & Construction,5.5,0.45,spread70/semidev30,5.386,3.7043,22.102,1.15,0.0016
+BBY,Best Buy Co. Inc,Consumer Cyclical,Specialty Retail,5.0,0.65,spread70/semidev30,5.375,3.6967,23.683,1.072,0.0003
+CHRW,CH Robinson Worldwide Inc,Industrials,Integrated Freight & Logistics,5.0,0.65,spread70/semidev30,5.375,3.6967,22.665,1.246,0.0003
+VRTX,Vertex Pharmaceuticals Inc,Healthcare,Biotechnology,6.0,0.25,semidev only,5.375,3.6967,26.131,,0.002
+RVTY,Revvity Inc.,Healthcare,Diagnostics & Research,5.0,0.61,spread70/semidev30,5.346,3.6768,22.527,1.045,0.0002
+FOXA,Fox Corp Class A,Communication Services,Entertainment,5.5,0.4444,semidev only,5.329,3.6651,18.201,,0.0002
+MO,Altria Group,Consumer Defensive,Tobacco,5.0,0.7,spread70/semidev30,5.32,3.6589,15.501,1.419,0.0016
+MTD,Mettler-Toledo International Inc,Healthcare,Diagnostics & Research,5.0,0.6,semidev only,5.314,3.6548,22.49,,0.0004
+SJM,The J. M. Smucker Company,Consumer Defensive,Packaged Foods,4.5,0.825,spread70/semidev30,5.312,3.6534,22.115,1.05,0.0002
+AES,The AES Corporation,Utilities,Utilities - Diversified,4.5,1.0,semidev only,5.3,3.6452,30.197,,0.0002
+DOC,Healthpeak Properties Inc,Real Estate,REIT - Healthcare Facilities,5.0,0.65,spread70/semidev30,5.3,3.6452,16.825,0.99,0.0002
+EFX,Equifax Inc,Industrials,Consulting Services,4.5,1.0,spread70/semidev30,5.3,3.6452,25.229,1.44,0.0003
+IR,Ingersoll Rand Inc,Industrials,Specialty Industrial Machinery,4.0,0.875,semidev only,5.275,3.628,19.249,,0.0004
+CDNS,Cadence Design Systems Inc,Technology,Software - Application,5.5,0.4286,semidev only,5.262,3.619,22.535,,0.0013
+PANW,Palo Alto Networks Inc,Technology,Software - Infrastructure,5.5,0.4286,semidev only,5.262,3.619,24.139,,0.0046
+NKE,Nike Inc,Consumer Cyclical,Footwear & Accessories,5.5,0.35,spread70/semidev30,5.26,3.6176,27.895,0.836,0.0007
+AXP,American Express Company,Financial Services,Credit Services,5.5,0.4,spread70/semidev30,5.233,3.5991,16.342,0.801,0.0027
+WRB,W. R. Berkley Corp,Financial Services,Insurance - Property & Casualty,5.0,0.5714,spread70/semidev30,5.208,3.5819,16.383,0.999,0.0003
+COO,"The Cooper Companies, Inc",Healthcare,Medical Instruments & Supplies,5.0,0.5714,semidev only,5.208,3.5819,23.71,,0.0002
+PODD,Insulet Corporation,Healthcare,Medical Devices,4.0,0.8889,semidev only,5.197,3.5743,26.612,,0.0002
+FRT,Federal Realty Investment Trust,Real Estate,REIT - Retail,4.5,0.775,spread70/semidev30,5.188,3.5681,11.914,1.015,0.0001
+KHC,Kraft Heinz Co,Consumer Defensive,Packaged Foods,4.5,0.775,spread70/semidev30,5.188,3.5681,18.242,1.488,0.0003
+DLR,Digital Realty Trust Inc,Real Estate,REIT - Specialty,5.0,0.56,spread70/semidev30,5.168,3.5544,14.31,1.288,0.001
+HIG,Hartford Financial Services Group,Financial Services,Insurance - Diversified,5.0,0.5667,spread70/semidev30,5.152,3.5434,13.432,0.96,0.0006
+VRSN,VeriSign Inc,Technology,Software - Infrastructure,5.5,0.3929,spread70/semidev30,5.143,3.5372,18.954,1.231,0.0003
+FTNT,Fortinet Inc,Technology,Software - Infrastructure,5.5,0.3893,spread70/semidev30,5.131,3.5289,29.761,0.979,0.0015
+SCHW,Charles Schwab Corp,Financial Services,Capital Markets,6.0,0.15,spread70/semidev30,5.125,3.5248,17.846,0.749,0.0028
+AMCR,Amcor PLC,Consumer Cyclical,Packaging & Containers,5.5,0.355,spread70/semidev30,5.113,3.5165,19.979,1.169,0.0003
+AXON,Axon Enterprise Inc.,Industrials,Aerospace & Defense,3.5,1.0,semidev only,5.1,3.5076,35.867,,0.0008
+DE,Deere & Company,Industrials,Farm & Heavy Construction Machinery,5.5,0.3,spread70/semidev30,5.1,3.5076,17.874,0.657,0.0022
+ESS,Essex Property Trust Inc,Real Estate,REIT - Residential,4.5,0.72,spread70/semidev30,5.087,3.4987,15.28,1.083,0.0003
+AMAT,Applied Materials Inc,Technology,Semiconductor Equipment & Materials,6.0,0.1,spread70/semidev30,5.086,3.498,27.333,0.741,0.0062
+PNR,Pentair PLC,Industrials,Specialty Industrial Machinery,4.0,0.8187,spread70/semidev30,5.084,3.4966,18.275,1.679,0.0002
+TXN,Texas Instruments Incorporated,Technology,Semiconductors,6.5,0.0692,spread70/semidev30,5.081,3.4945,22.593,0.825,0.0037
+JCI,Johnson Controls International PLC,Industrials,Building Products & Equipment,5.0,0.525,spread70/semidev30,5.067,3.4849,15.802,1.049,0.0014
+APH,Amphenol Corporation,Technology,Electronic Components,5.5,0.325,spread70/semidev30,5.062,3.4815,25.633,1.042,0.003
+UBER,Uber Technologies Inc,Technology,Software - Application,5.5,0.3571,semidev only,5.024,3.4553,22.251,,0.0023
+CPAY,Corpay Inc,Technology,Software - Infrastructure,5.5,0.3571,semidev only,5.024,3.4553,20.559,,0.0004
+IDXX,IDEXX Laboratories Inc,Healthcare,Diagnostics & Research,5.0,0.5,semidev only,5.0,3.4388,18.947,,0.0007
+WSM,Williams-Sonoma Inc,Consumer Cyclical,Specialty Retail,5.0,0.5,semidev only,5.0,3.4388,23.013,,0.0004
+BF-B,Brown-Forman Corporation,Consumer Defensive,Beverages - Wineries & Distilleries,5.0,0.5,semidev only,5.0,3.4388,29.61,,0.0001
+EXPD,"Expeditors International of Washington, Inc.",Industrials,Integrated Freight & Logistics,5.0,0.5,semidev only,5.0,3.4388,20.484,,0.0004
+KR,Kroger Company,Consumer Defensive,Grocery Stores,5.0,0.5,spread70/semidev30,5.0,3.4388,16.835,1.117,0.0005
+LULU,Lululemon Athletica Inc.,Consumer Cyclical,Apparel Retail,4.0,1.0,semidev only,5.0,3.4388,36.007,,0.0002
+MGM,MGM Resorts International,Consumer Cyclical,Resorts & Casinos,6.0,0.0,spread70/semidev30,5.0,3.4388,22.146,0.439,0.0001
+ODFL,Old Dominion Freight Line Inc,Industrials,Trucking,5.0,0.5,semidev only,5.0,3.4388,24.186,,0.0006
+TTWO,Take-Two Interactive Software Inc,Communication Services,Electronic Gaming & Multimedia,5.0,0.5,spread70/semidev30,5.0,3.4388,19.733,0.964,0.0006
+UDR,UDR Inc,Real Estate,REIT - Residential,4.5,0.68,spread70/semidev30,4.98,3.4251,13.313,1.302,0.0002
+PPG,PPG Industries Inc,Basic Materials,Specialty Chemicals,4.5,0.6542,spread70/semidev30,4.962,3.4127,16.967,1.157,0.0004
+MAS,Masco Corporation,Industrials,Building Products & Equipment,5.0,0.47,spread70/semidev30,4.92,3.3838,17.659,0.976,0.0002
+TROW,T. Rowe Price Group Inc,Financial Services,Asset Management,6.0,0.1667,semidev only,4.917,3.3817,13.759,,0.0004
+TDY,Teledyne Technologies Incorporated,Technology,Scientific & Technical Instruments,5.0,0.4667,spread70/semidev30,4.911,3.3776,13.194,1.217,0.0005
+BIIB,Biogen Inc,Healthcare,Drug Manufacturers - General,3.5,0.9625,spread70/semidev30,4.887,3.3611,21.083,1.124,0.0005
+PFG,Principal Financial Group Inc,Financial Services,Asset Management,6.0,0.1556,spread70/semidev30,4.881,3.357,13.62,0.92,0.0003
+SPG,Simon Property Group Inc,Real Estate,REIT - Retail,4.5,0.65,spread70/semidev30,4.875,3.3529,13.04,0.889,0.0011
+NTRS,Northern Trust Corporation,Financial Services,Asset Management,6.0,0.1528,spread70/semidev30,4.872,3.3508,14.185,0.707,0.0005
+AFL,Aflac Incorporated,Financial Services,Insurance - Life,6.0,0.0,spread70/semidev30,4.857,3.3405,12.613,0.908,0.0008
+CMG,Chipotle Mexican Grill Inc,Consumer Cyclical,Restaurants,3.5,1.0,semidev only,4.833,3.324,27.72,,0.0006
+MSI,Motorola Solutions Inc,Technology,Communication Equipment,6.0,0.06,spread70/semidev30,4.827,3.3198,17.594,1.163,0.0012
+STE,STERIS plc,Healthcare,Medical Devices,4.0,0.7667,spread70/semidev30,4.821,3.3157,14.808,1.124,0.0003
+MAR,Marriott International Inc,Consumer Cyclical,Lodging,4.0,1.0,spread70/semidev30,4.8,3.3013,14.287,1.193,0.0012
+MMM,3M Company,Industrials,Conglomerates,4.0,1.0,spread70/semidev30,4.8,3.3013,15.26,0.934,0.0014
+RMD,ResMed Inc,Healthcare,Medical Instruments & Supplies,5.0,0.4286,semidev only,4.792,3.2958,17.821,,0.0005
+ADSK,Autodesk Inc,Technology,Software - Application,5.5,0.2857,spread70/semidev30,4.786,3.2916,20.451,1.352,0.0008
+NTAP,NetApp Inc,Technology,Software - Infrastructure,5.5,0.2857,semidev only,4.786,3.2916,20.45,,0.0006
+HUBB,Hubbell Inc,Industrials,Electrical Equipment & Parts,5.0,0.35,spread70/semidev30,4.76,3.2738,17.792,0.726,0.0004
+INCY,Incyte Corporation,Healthcare,Biotechnology,6.0,0.0,semidev only,4.75,3.2669,21.503,,0.0003
+ITW,Illinois Tool Works Inc,Industrials,Specialty Industrial Machinery,4.0,0.7188,spread70/semidev30,4.744,3.2628,12.585,2.157,0.0011
+COIN,Coinbase Global Inc,Financial Services,Financial Data & Stock Exchanges,3.5,0.9125,spread70/semidev30,4.737,3.2579,39.461,2.318,0.0005
+IFF,International Flavors & Fragrances Inc,Basic Materials,Specialty Chemicals,4.5,0.575,spread70/semidev30,4.725,3.2497,20.142,1.073,0.0003
+MA,Mastercard Inc,Financial Services,Credit Services,5.5,0.2,spread70/semidev30,4.7,3.2325,14.464,0.685,0.007
+PM,Philip Morris International Inc,Consumer Defensive,Tobacco,5.0,0.3,spread70/semidev30,4.68,3.2187,19.316,1.116,0.0044
+MSCI,MSCI Inc,Financial Services,Financial Data & Stock Exchanges,3.5,0.8875,spread70/semidev30,4.662,3.2064,18.275,2.635,0.0006
+NWS,News Corp B,Communication Services,Entertainment,5.5,0.2222,semidev only,4.645,3.1947,16.412,,0.0001
+COR,Cencora Inc.,Healthcare,Medical Distribution,3.5,1.0,spread70/semidev30,4.643,3.1933,23.693,0.969,0.0009
+GOOGL,Alphabet Inc Class A,Communication Services,Internet Content & Information,5.0,0.3333,semidev only,4.619,3.1768,16.0,,0.0305
+CARR,Carrier Global Corp,Industrials,Building Products & Equipment,5.0,0.355,spread70/semidev30,4.613,3.1727,21.826,0.852,0.0007
+KEYS,Keysight Technologies Inc,Technology,Scientific & Technical Instruments,5.0,0.3533,spread70/semidev30,4.609,3.1699,16.427,1.158,0.0009
+IEX,IDEX Corporation,Industrials,Specialty Industrial Machinery,4.0,0.675,spread70/semidev30,4.595,3.1603,16.814,1.033,0.0003
+BA,The Boeing Company,Industrials,Aerospace & Defense,3.5,0.8404,spread70/semidev30,4.589,3.1562,20.484,1.103,0.0027
+PGR,Progressive Corp,Financial Services,Insurance - Property & Casualty,5.0,0.3571,spread70/semidev30,4.584,3.1527,16.802,0.838,0.0018
+HWM,Howmet Aerospace Inc,Industrials,Aerospace & Defense,3.5,0.8364,spread70/semidev30,4.576,3.1472,18.699,1.175,0.0018
+REG,Regency Centers Corporation,Real Estate,REIT - Retail,4.5,0.525,spread70/semidev30,4.562,3.1376,11.139,0.97,0.0002
+OTIS,Otis Worldwide Corp,Industrials,Specialty Industrial Machinery,4.0,0.6625,spread70/semidev30,4.553,3.1314,18.358,0.997,0.0004
+FFIV,F5 Networks Inc,Technology,Software - Infrastructure,5.5,0.2143,semidev only,4.548,3.128,20.175,,0.0003
+WY,Weyerhaeuser Company,Real Estate,REIT - Specialty,5.0,0.33,spread70/semidev30,4.524,3.1115,16.281,1.13,0.0003
+TDG,Transdigm Group Incorporated,Industrials,Aerospace & Defense,3.5,0.8182,semidev only,4.518,3.1073,20.548,,0.001
+CPRT,Copart Inc,Industrials,Specialty Business Services,4.5,0.5,semidev only,4.5,3.0949,18.772,,0.0004
+CRH,CRH PLC ADR,Basic Materials,Building Materials,4.5,0.5,semidev only,4.5,3.0949,16.74,,0.0009
+SYY,Sysco Corporation,Consumer Defensive,Food Distribution,4.5,0.5,spread70/semidev30,4.5,3.0949,19.254,1.182,0.0006
+BLK,BlackRock Inc,Financial Services,Asset Management,6.0,0.025,spread70/semidev30,4.456,3.0647,13.676,0.55,0.0025
+AOS,Smith AO Corporation,Industrials,Specialty Industrial Machinery,4.0,0.625,semidev only,4.425,3.0434,17.165,,0.0001
+L,Loews Corp,Financial Services,Insurance - Property & Casualty,5.0,0.3,spread70/semidev30,4.418,3.0385,12.058,0.98,0.0003
+GPC,Genuine Parts Co,Consumer Cyclical,Auto Parts,3.5,0.9,spread70/semidev30,4.414,3.0358,23.361,1.562,0.0003
+EW,Edwards Lifesciences Corp,Healthcare,Medical Devices,4.0,0.6333,spread70/semidev30,4.41,3.033,22.377,0.947,0.0008
+BRK-B,Berkshire Hathaway Inc,Financial Services,Insurance - Diversified,5.0,0.2333,spread70/semidev30,4.39,3.0193,10.859,0.91,0.0139
+KMI,Kinder Morgan Inc,Energy,Oil & Gas Midstream,5.0,0.2333,spread70/semidev30,4.39,3.0193,15.614,1.258,0.001
+TRV,The Travelers Companies Inc,Financial Services,Insurance - Property & Casualty,5.0,0.2857,spread70/semidev30,4.377,3.0104,14.017,0.887,0.0012
+SOLV,Solventum Corp.,Healthcare,Medical Instruments & Supplies,5.0,0.2857,semidev only,4.377,3.0104,17.318,,0.0002
+TSCO,Tractor Supply Company,Consumer Cyclical,Specialty Retail,5.0,0.25,semidev only,4.375,3.009,22.104,,0.0003
+DGX,Quest Diagnostics Incorporated,Healthcare,Diagnostics & Research,5.0,0.3,spread70/semidev30,4.371,3.0062,14.806,1.017,0.0004
+FDS,FactSet Research Systems Inc,Financial Services,Financial Data & Stock Exchanges,3.5,0.7875,spread70/semidev30,4.362,3.0,27.145,1.622,0.0002
+SYK,Stryker Corporation,Healthcare,Medical Devices,4.0,0.6167,spread70/semidev30,4.359,2.998,14.305,0.955,0.0017
+J,Jacobs Solutions Inc.,Industrials,Engineering & Construction,5.5,0.0,semidev only,4.357,2.9966,20.463,,0.0003
+ADBE,Adobe Systems Incorporated,Technology,Software - Application,5.5,0.15,spread70/semidev30,4.333,2.9801,23.737,0.974,0.0016
+ERIE,Erie Indemnity Company,Financial Services,Insurance Brokers,3.0,1.0,semidev only,4.333,2.9801,23.673,,0.0001
+PKG,Packaging Corp of America,Consumer Cyclical,Packaging & Containers,5.5,0.06,spread70/semidev30,4.327,2.976,16.409,0.904,0.0003
+ACGL,Arch Capital Group Ltd.,Financial Services,Insurance - Diversified,5.0,0.2,spread70/semidev30,4.314,2.967,16.38,0.858,0.0005
+UPS,United Parcel Service Inc,Industrials,Integrated Freight & Logistics,5.0,0.225,spread70/semidev30,4.312,2.9656,22.396,0.866,0.0012
+PAYX,Paychex Inc,Technology,Software - Application,5.5,0.1429,semidev only,4.31,2.9643,18.256,,0.0006
+DPZ,Domino's Pizza Inc Common Stock,Consumer Cyclical,Restaurants,3.5,0.8,semidev only,4.3,2.9574,19.638,,0.0002
+WELL,Welltower Inc,Real Estate,REIT - Healthcare Facilities,5.0,0.15,spread70/semidev30,4.3,2.9574,14.709,0.882,0.0025
+LOW,Lowe's Companies Inc,Consumer Cyclical,Home Improvement Retail,3.5,1.0,spread70/semidev30,4.3,2.9574,16.078,1.063,0.0018
+EQIX,Equinix Inc,Real Estate,REIT - Specialty,5.0,0.24,spread70/semidev30,4.272,2.9381,17.484,1.069,0.0016
+SRE,Sempra Energy,Utilities,Utilities - Diversified,4.5,0.35,spread70/semidev30,4.26,2.9299,17.122,1.01,0.0009
+BSX,Boston Scientific Corp,Healthcare,Medical Devices,4.0,0.5833,spread70/semidev30,4.256,2.9271,24.134,0.806,0.0011
+TEL,TE Connectivity Ltd,Technology,Electronic Components,5.5,0.0,spread70/semidev30,4.25,2.923,18.821,0.9,0.0009
+DG,Dollar General Corporation,Consumer Defensive,Discount Stores,3.0,1.0,spread70/semidev30,4.25,2.923,29.574,1.106,0.0004
+KIM,Kimco Realty Corporation,Real Estate,REIT - Retail,4.5,0.4,spread70/semidev30,4.25,2.923,12.709,0.868,0.0002
+CVX,Chevron Corp,Energy,Oil & Gas Integrated,5.0,0.0,spread70/semidev30,4.2,2.8886,16.207,0.562,0.0058
+PLD,Prologis Inc,Real Estate,REIT - Industrial,4.5,0.35,spread70/semidev30,4.2,2.8886,14.102,0.929,0.002
+SNA,Snap-On Inc,Industrials,Tools & Accessories,5.0,0.0,spread70/semidev30,4.2,2.8886,13.084,0.798,0.0003
+YUM,Yum! Brands Inc,Consumer Cyclical,Restaurants,3.5,0.76,spread70/semidev30,4.193,2.8838,14.586,1.297,0.0006
+AMGN,Amgen Inc,Healthcare,Drug Manufacturers - General,3.5,0.725,spread70/semidev30,4.175,2.8714,17.564,0.987,0.0035
+BRO,Brown & Brown Inc,Financial Services,Insurance Brokers,3.0,0.94,spread70/semidev30,4.173,2.87,21.192,1.355,0.0003
+ADP,Automatic Data Processing Inc,Technology,Software - Application,5.5,0.1,spread70/semidev30,4.167,2.8659,15.399,1.023,0.0016
+V,Visa Inc. Class A,Financial Services,Credit Services,5.5,0.0,spread70/semidev30,4.167,2.8659,13.955,0.652,0.0091
+LH,Laboratory Corporation of America Holdings,Healthcare,Diagnostics & Research,5.0,0.23,spread70/semidev30,4.151,2.8549,15.342,0.858,0.0004
+BMY,Bristol-Myers Squibb Company,Healthcare,Drug Manufacturers - General,3.5,0.7125,spread70/semidev30,4.137,2.8453,18.054,0.934,0.002
+DD,Dupont De Nemours Inc,Basic Materials,Specialty Chemicals,4.5,0.375,semidev only,4.125,2.837,15.57,,0.0003
+GIS,General Mills Inc,Consumer Defensive,Packaged Foods,4.5,0.35,spread70/semidev30,4.125,2.837,17.197,1.02,0.0003
+APTV,Aptiv PLC,Consumer Cyclical,Auto Parts,3.5,0.7667,spread70/semidev30,4.11,2.8267,25.571,1.268,0.0002
+WMB,Williams Companies Inc,Energy,Oil & Gas Midstream,5.0,0.1,spread70/semidev30,4.086,2.8102,16.918,1.137,0.0014
+GEN,Gen Digital Inc.,Technology,Software - Infrastructure,5.5,0.0714,semidev only,4.071,2.7999,17.425,,0.0002
+DIS,Walt Disney Company,Communication Services,Entertainment,5.5,0.0333,spread70/semidev30,4.064,2.7951,15.976,0.86,0.0027
+MKC,McCormick & Company Incorporated,Consumer Defensive,Packaged Foods,4.5,0.325,spread70/semidev30,4.062,2.7937,19.565,0.862,0.0002
+TMO,Thermo Fisher Scientific Inc,Healthcare,Diagnostics & Research,5.0,0.19,spread70/semidev30,4.026,2.7689,17.954,0.835,0.0033
+AMT,American Tower Corp,Real Estate,REIT - Specialty,5.0,0.15,spread70/semidev30,4.02,2.7648,17.823,1.002,0.0012
+EQR,Equity Residential,Real Estate,REIT - Residential,4.5,0.32,spread70/semidev30,4.02,2.7648,13.726,0.805,0.0007
+HII,Huntington Ingalls Industries Inc,Industrials,Aerospace & Defense,3.5,0.6616,spread70/semidev30,4.017,2.7628,28.078,0.936,0.0002
+AMZN,Amazon.com Inc,Consumer Cyclical,Internet Retail,5.0,0.0,spread70/semidev30,4.0,2.7511,16.458,1.054,0.0384
+FERG,Ferguson Plc,Industrials,Industrial Distribution,3.0,1.0,semidev only,4.0,2.7511,18.858,,0.0007
+ROST,Ross Stores Inc,Consumer Cyclical,Apparel Retail,4.0,0.5,spread70/semidev30,4.0,2.7511,15.719,1.134,0.0012
+ROL,Rollins Inc,Consumer Cyclical,Personal Services,4.0,0.5,semidev only,4.0,2.7511,16.74,,0.0002
+NWSA,News Corp A,Communication Services,Entertainment,5.5,0.0,semidev only,3.962,2.7249,15.745,,0.0002
+ISRG,Intuitive Surgical Inc,Healthcare,Medical Instruments & Supplies,5.0,0.1429,semidev only,3.961,2.7242,17.173,,0.0021
+SHW,Sherwin-Williams Co,Basic Materials,Specialty Chemicals,4.5,0.3083,spread70/semidev30,3.925,2.6995,14.171,0.986,0.0012
+MAA,Mid-America Apartment Communities Inc,Real Estate,REIT - Residential,4.5,0.28,spread70/semidev30,3.913,2.6912,12.792,0.86,0.0002
+TXT,Textron Inc,Industrials,Aerospace & Defense,3.5,0.6263,spread70/semidev30,3.904,2.685,16.969,1.081,0.0002
+GOOG,Alphabet Inc Class C,Communication Services,Internet Content & Information,5.0,0.0,spread70/semidev30,3.857,2.6527,15.576,0.862,0.0244
+MSFT,Microsoft Corporation,Technology,Software - Infrastructure,5.5,0.0,spread70/semidev30,3.833,2.6362,15.838,0.814,0.0541
+GEHC,GE HealthCare Technologies Inc.,Healthcare,Medical Devices,4.0,0.4444,semidev only,3.829,2.6335,21.709,,0.0005
+TT,Trane Technologies plc,Industrials,Building Products & Equipment,5.0,0.06,spread70/semidev30,3.827,2.6321,16.661,0.74,0.0015
+FTV,Fortive Corp,Technology,Scientific & Technical Instruments,5.0,0.06,spread70/semidev30,3.827,2.6321,15.052,1.045,0.0003
+HRL,Hormel Foods Corporation,Consumer Defensive,Packaged Foods,4.5,0.225,spread70/semidev30,3.812,2.6218,20.906,0.789,0.0001
+DHR,Danaher Corporation,Healthcare,Diagnostics & Research,5.0,0.12,spread70/semidev30,3.806,2.6176,18.098,0.785,0.0019
+APD,Air Products and Chemicals Inc,Basic Materials,Specialty Chemicals,4.5,0.2667,spread70/semidev30,3.8,2.6135,16.271,0.811,0.001
+PSA,Public Storage,Real Estate,REIT - Industrial,4.5,0.15,spread70/semidev30,3.8,2.6135,15.521,0.78,0.0008
+STZ,Constellation Brands Inc Class A,Consumer Defensive,Beverages - Brewers,3.0,1.0,spread70/semidev30,3.8,2.6135,21.374,1.042,0.0003
+CMI,Cummins Inc,Industrials,Specialty Industrial Machinery,4.0,0.4312,spread70/semidev30,3.766,2.5901,17.021,0.752,0.0013
+CASY,Caseys General Stores Inc,Consumer Cyclical,Specialty Retail,5.0,0.0,semidev only,3.75,2.5791,16.144,,0.0005
+JBHT,JB Hunt Transport Services Inc,Industrials,Integrated Freight & Logistics,5.0,0.0,semidev only,3.75,2.5791,19.673,,0.0003
+PH,Parker-Hannifin Corporation,Industrials,Specialty Industrial Machinery,4.0,0.425,spread70/semidev30,3.745,2.5757,14.073,0.758,0.002
+DRI,Darden Restaurants Inc,Consumer Cyclical,Restaurants,3.5,0.5867,spread70/semidev30,3.731,2.5661,17.473,1.117,0.0004
+ETN,Eaton Corporation PLC,Industrials,Specialty Industrial Machinery,4.0,0.4187,spread70/semidev30,3.724,2.5612,19.091,0.736,0.0025
+VRSK,Verisk Analytics Inc,Industrials,Consulting Services,4.5,0.0,spread70/semidev30,3.7,2.5447,22.591,1.215,0.0004
+CB,Chubb Ltd,Financial Services,Insurance - Property & Casualty,5.0,0.0429,spread70/semidev30,3.67,2.5241,12.862,0.772,0.0019
+CBOE,Cboe Global Markets Inc,Financial Services,Financial Data & Stock Exchanges,3.5,0.55,spread70/semidev30,3.65,2.5103,16.027,1.173,0.0005
+DLTR,Dollar Tree Inc,Consumer Defensive,Discount Stores,3.0,0.75,spread70/semidev30,3.625,2.4932,29.091,1.026,0.0004
+O,Realty Income Corporation,Real Estate,REIT - Retail,4.5,0.15,spread70/semidev30,3.625,2.4932,12.281,0.864,0.0009
+MCK,McKesson Corporation,Healthcare,Medical Distribution,3.5,0.55,spread70/semidev30,3.614,2.4856,19.428,0.729,0.0016
+LHX,L3Harris Technologies Inc,Industrials,Aerospace & Defense,3.5,0.5212,spread70/semidev30,3.568,2.4539,16.456,0.958,0.0008
+BDX,Becton Dickinson and Company,Healthcare,Medical Instruments & Supplies,5.0,0.0,spread70/semidev30,3.545,2.4381,17.148,0.853,0.0008
+AAPL,Apple Inc.,Technology,Consumer Electronics,3.5,0.5,spread70/semidev30,3.5,2.4072,13.289,0.704,0.0688
+ABBV,AbbVie Inc,Healthcare,Drug Manufacturers - General,3.5,0.5,spread70/semidev30,3.5,2.4072,18.023,0.899,0.0069
+ALLE,Allegion PLC,Industrials,Security & Protection Services,3.5,0.5,spread70/semidev30,3.5,2.4072,17.047,0.957,0.0002
+MCO,Moodys Corporation,Financial Services,Financial Data & Stock Exchanges,3.5,0.5,spread70/semidev30,3.5,2.4072,17.399,1.014,0.0011
+CTAS,Cintas Corporation,Industrials,Specialty Business Services,4.5,0.0,spread70/semidev30,3.5,2.4072,14.412,0.872,0.001
+MLM,Martin Marietta Materials Inc,Basic Materials,Building Materials,4.5,0.0,spread70/semidev30,3.5,2.4072,16.096,0.967,0.0005
+VLTO,Veralto Corporation,Industrials,Pollution & Treatment Controls,3.5,0.5,semidev only,3.5,2.4072,13.189,,0.0004
+ABT,Abbott Laboratories,Healthcare,Medical Devices,4.0,0.3333,spread70/semidev30,3.487,2.3982,18.107,0.772,0.003
+MRK,Merck & Company Inc,Healthcare,Drug Manufacturers - General,3.5,0.4875,spread70/semidev30,3.462,2.381,18.309,0.894,0.005
+NSC,Norfolk Southern Corporation,Industrials,Railroads,3.0,0.7,spread70/semidev30,3.457,2.3776,12.169,0.886,0.0012
+PFE,Pfizer Inc,Healthcare,Drug Manufacturers - General,3.5,0.475,spread70/semidev30,3.425,2.3556,15.537,0.908,0.0023
+EL,Estee Lauder Companies Inc,Consumer Defensive,Household & Personal Products,2.0,1.0,spread70/semidev30,3.4,2.3384,34.275,0.985,0.0003
+WAB,Westinghouse Air Brake Technologies Corp,Industrials,Railroads,3.0,0.6667,semidev only,3.381,2.3253,13.845,,0.0008
+XYL,Xylem Inc,Industrials,Specialty Industrial Machinery,4.0,0.3125,semidev only,3.362,2.3123,14.935,,0.0004
+CSX,CSX Corporation,Industrials,Railroads,3.0,0.65,spread70/semidev30,3.343,2.2992,14.458,0.835,0.0014
+CPT,Camden Property Trust,Real Estate,REIT - Residential,4.5,0.06,spread70/semidev30,3.327,2.2882,13.155,0.793,0.0002
+MDLZ,Mondelez International Inc,Consumer Defensive,Confectioners,3.0,0.7,spread70/semidev30,3.32,2.2834,15.561,0.85,0.0012
+SBUX,Starbucks Corporation,Consumer Cyclical,Restaurants,3.5,0.4133,spread70/semidev30,3.269,2.2483,18.353,1.012,0.0018
+NOC,Northrop Grumman Corporation,Industrials,Aerospace & Defense,3.5,0.4202,spread70/semidev30,3.245,2.2318,18.363,0.917,0.0012
+PCG,PG&E Corp,Utilities,Utilities - Regulated Electric,1.5,0.9864,spread70/semidev30,3.221,2.2153,19.369,1.38,0.0006
+HLT,Hilton Worldwide Holdings Inc,Consumer Cyclical,Lodging,4.0,0.0,spread70/semidev30,3.2,2.2009,13.498,0.909,0.0011
+HON,Honeywell International Inc,Industrials,Conglomerates,4.0,0.0,spread70/semidev30,3.2,2.2009,13.691,0.679,0.0011
+LMT,Lockheed Martin Corporation,Industrials,Aerospace & Defense,3.5,0.397,spread70/semidev30,3.17,2.1802,19.997,0.829,0.0019
+LLY,Eli Lilly and Company,Healthcare,Drug Manufacturers - General,3.5,0.3875,spread70/semidev30,3.162,2.1747,26.45,0.668,0.0147
+EIX,Edison International,Utilities,Utilities - Regulated Electric,1.5,0.9682,spread70/semidev30,3.157,2.1713,20.52,1.356,0.0004
+KDP,Keurig Dr Pepper Inc,Consumer Defensive,Beverages - Non-Alcoholic,2.0,1.0,spread70/semidev30,3.143,2.1616,19.653,1.19,0.0006
+AZO,AutoZone Inc,Consumer Cyclical,Auto Parts,3.5,0.3333,spread70/semidev30,3.119,2.1451,17.982,1.0,0.0008
+ECL,Ecolab Inc,Basic Materials,Specialty Chemicals,4.5,0.0375,spread70/semidev30,3.112,2.1403,13.49,0.735,0.0011
+ZBH,Zimmer Biomet Holdings Inc,Healthcare,Medical Devices,4.0,0.2,spread70/semidev30,3.077,2.1163,23.58,0.73,0.0003
+AON,Aon PLC,Financial Services,Insurance Brokers,3.0,0.5267,spread70/semidev30,3.071,2.1121,17.445,1.111,0.0011
+NDAQ,Nasdaq Inc,Financial Services,Financial Data & Stock Exchanges,3.5,0.3375,spread70/semidev30,3.012,2.0716,15.65,0.958,0.0007
+LIN,Linde plc Ordinary Shares,Basic Materials,Specialty Chemicals,4.5,0.0,semidev only,3.0,2.0633,11.419,,0.0033
+TGT,Target Corporation,Consumer Defensive,Discount Stores,3.0,0.5,spread70/semidev30,3.0,2.0633,23.22,0.861,0.001
+FAST,Fastenal Company,Industrials,Industrial Distribution,3.0,0.5,semidev only,3.0,2.0633,16.743,,0.0009
+TJX,The TJX Companies Inc,Consumer Cyclical,Apparel Retail,4.0,0.0,semidev only,3.0,2.0633,11.383,,0.0025
+ROK,Rockwell Automation Inc,Industrials,Specialty Industrial Machinery,4.0,0.2,spread70/semidev30,2.98,2.0495,15.601,0.73,0.0007
+NDSN,Nordson Corporation,Industrials,Specialty Industrial Machinery,4.0,0.1875,semidev only,2.938,2.0207,13.235,,0.0002
+KVUE,Kenvue Inc.,Consumer Defensive,Household & Personal Products,2.0,0.8333,semidev only,2.933,2.0172,23.013,,0.0005
+D,Dominion Energy Inc,Utilities,Utilities - Regulated Electric,1.5,0.8818,spread70/semidev30,2.851,1.9608,14.554,1.307,0.0009
+MDT,Medtronic PLC,Healthcare,Medical Devices,4.0,0.1167,spread70/semidev30,2.821,1.9402,13.709,0.769,0.0018
+GILD,Gilead Sciences Inc,Healthcare,Drug Manufacturers - General,3.5,0.25,spread70/semidev30,2.75,1.8914,17.046,0.827,0.0027
+EMR,Emerson Electric Company,Industrials,Specialty Industrial Machinery,4.0,0.1313,spread70/semidev30,2.746,1.8886,16.32,0.653,0.0013
+DOV,Dover Corporation,Industrials,Specialty Industrial Machinery,4.0,0.125,semidev only,2.725,1.8742,12.735,,0.0004
+GWW,WW Grainger Inc,Industrials,Industrial Distribution,3.0,0.35,spread70/semidev30,2.7,1.857,15.818,0.46,0.0009
+HD,The Home Depot Inc,Consumer Cyclical,Home Improvement Retail,3.5,0.0,spread70/semidev30,2.7,1.857,14.582,0.862,0.0051
+HSY,Hershey Co,Consumer Defensive,Confectioners,3.0,0.3,spread70/semidev30,2.68,1.8432,18.34,0.723,0.0004
+SPGI,S&P Global Inc,Financial Services,Financial Data & Stock Exchanges,3.5,0.225,spread70/semidev30,2.675,1.8398,19.548,0.758,0.0019
+ICE,Intercontinental Exchange Inc,Financial Services,Financial Data & Stock Exchanges,3.5,0.2125,spread70/semidev30,2.638,1.8143,15.247,0.953,0.0013
+AJG,Arthur J Gallagher & Co,Financial Services,Insurance Brokers,3.0,0.3533,spread70/semidev30,2.609,1.7944,20.585,1.075,0.001
+CLX,The Clorox Company,Consumer Defensive,Household & Personal Products,2.0,0.71,spread70/semidev30,2.588,1.7799,19.017,0.924,0.0002
+CAH,Cardinal Health Inc,Healthcare,Medical Distribution,3.5,0.1,spread70/semidev30,2.586,1.7786,17.676,0.648,0.0008
+GE,GE Aerospace,Industrials,Aerospace & Defense,3.5,0.1909,spread70/semidev30,2.511,1.727,20.149,0.69,0.0059
+RTX,RTX Corporation,Industrials,Aerospace & Defense,3.5,0.1828,spread70/semidev30,2.485,1.7091,15.992,0.812,0.0046
+MNST,Monster Beverage Corp,Consumer Defensive,Beverages - Non-Alcoholic,2.0,0.6667,semidev only,2.381,1.6376,17.166,,0.001
+WMT,Walmart Inc.,Consumer Defensive,Discount Stores,3.0,0.25,spread70/semidev30,2.375,1.6334,14.872,0.443,0.0076
+ORLY,O’Reilly Automotive Inc,Consumer Cyclical,Auto Parts,3.5,0.0,spread70/semidev30,2.357,1.6211,14.972,0.776,0.0011
+HSIC,Henry Schein Inc,Healthcare,Medical Distribution,3.5,0.0,semidev only,2.357,1.6211,17.578,,0.0001
+RSG,Republic Services Inc,Industrials,Waste Management,2.0,0.7,spread70/semidev30,2.32,1.5956,13.129,0.856,0.0007
+AME,Ametek Inc,Industrials,Specialty Industrial Machinery,4.0,0.0,semidev only,2.3,1.5819,11.847,,0.0009
+NI,NiSource Inc,Utilities,Utilities - Regulated Gas,1.5,1.0,spread70/semidev30,2.3,1.5819,13.18,1.123,0.0003
+CME,CME Group Inc,Financial Services,Financial Data & Stock Exchanges,3.5,0.0875,spread70/semidev30,2.263,1.5564,13.694,0.79,0.0015
+AEP,American Electric Power Co Inc,Utilities,Utilities - Regulated Electric,1.5,0.7045,spread70/semidev30,2.224,1.5296,12.679,1.048,0.001
+TAP,Molson Coors Brewing Co Class B,Consumer Defensive,Beverages - Brewers,3.0,0.0,spread70/semidev30,2.2,1.5131,18.001,0.771,0.0001
+FE,FirstEnergy Corporation,Utilities,Utilities - Regulated Electric,1.5,0.6955,spread70/semidev30,2.192,1.5076,12.348,1.132,0.0004
+MCD,McDonald’s Corporation,Consumer Cyclical,Restaurants,3.5,0.0,spread70/semidev30,2.167,1.4904,12.06,0.947,0.0029
+GD,General Dynamics Corporation,Industrials,Aerospace & Defense,3.5,0.0778,spread70/semidev30,2.149,1.478,13.076,0.769,0.0015
+WTW,Willis Towers Watson PLC,Financial Services,Insurance Brokers,3.0,0.18,spread70/semidev30,2.147,1.4766,20.938,1.065,0.0005
+UNP,Union Pacific Corporation,Industrials,Railroads,3.0,0.1,spread70/semidev30,2.086,1.4347,12.984,0.815,0.0027
+CHD,Church & Dwight Company Inc,Consumer Defensive,Household & Personal Products,2.0,0.52,spread70/semidev30,2.056,1.414,14.859,0.792,0.0004
+EXC,Exelon Corporation,Utilities,Utilities - Regulated Electric,1.5,0.65,spread70/semidev30,2.031,1.3969,13.009,1.007,0.0007
+PNW,Pinnacle West Capital Corp,Utilities,Utilities - Regulated Electric,1.5,0.6455,spread70/semidev30,2.015,1.3858,11.453,1.166,0.0002
+JNJ,Johnson & Johnson,Healthcare,Drug Manufacturers - General,3.5,0.0,spread70/semidev30,2.0,1.3755,11.829,0.53,0.0099
+KMB,Kimberly-Clark Corporation,Consumer Defensive,Household & Personal Products,2.0,0.48,spread70/semidev30,1.944,1.337,19.454,0.745,0.0005
+PEP,PepsiCo Inc,Consumer Defensive,Beverages - Non-Alcoholic,2.0,0.45,spread70/semidev30,1.886,1.2971,13.866,0.738,0.0029
+ETR,Entergy Corporation,Utilities,Utilities - Regulated Electric,1.5,0.6,spread70/semidev30,1.854,1.2751,13.956,0.995,0.0007
+LNT,Alliant Energy Corp,Utilities,Utilities - Regulated Electric,1.5,0.5909,spread70/semidev30,1.822,1.2531,11.791,1.044,0.0003
+COST,Costco Wholesale Corp,Consumer Defensive,Discount Stores,3.0,0.0,spread70/semidev30,1.75,1.2036,13.226,0.324,0.0064
+WM,Waste Management Inc,Industrials,Waste Management,2.0,0.3,spread70/semidev30,1.68,1.1554,13.895,0.761,0.0012
+ED,Consolidated Edison Inc,Utilities,Utilities - Regulated Electric,1.5,0.55,spread70/semidev30,1.677,1.1534,12.374,0.997,0.0006
+MRSH,"Marsh & McLennan Companies, Inc.",Financial Services,Insurance Brokers,3.0,0.0,semidev only,1.667,1.1465,16.486,,0.0014
+XEL,Xcel Energy Inc,Utilities,Utilities - Regulated Electric,1.5,0.5409,spread70/semidev30,1.645,1.1314,12.931,0.994,0.0007
+NEE,Nextera Energy Inc,Utilities,Utilities - Regulated Electric,1.5,0.5136,spread70/semidev30,1.548,1.0647,18.3,0.939,0.0027
+AWK,American Water Works,Utilities,Utilities - Regulated Water,1.5,0.5,spread70/semidev30,1.5,1.0316,15.337,1.0,0.0004
+ES,Eversource Energy,Utilities,Utilities - Regulated Electric,1.5,0.4955,spread70/semidev30,1.484,1.0206,19.225,0.908,0.0004
+DUK,Duke Energy Corporation,Utilities,Utilities - Regulated Electric,1.5,0.4773,spread70/semidev30,1.42,0.9766,11.116,1.016,0.0015
+PEG,Public Service Enterprise Group Inc,Utilities,Utilities - Regulated Electric,1.5,0.4227,spread70/semidev30,1.227,0.8439,14.22,0.897,0.0006
+SO,Southern Company,Utilities,Utilities - Regulated Electric,1.5,0.3864,spread70/semidev30,1.098,0.7552,11.748,0.992,0.0016
+CMS,CMS Energy Corporation,Utilities,Utilities - Regulated Electric,1.5,0.3818,spread70/semidev30,1.082,0.7442,11.923,0.966,0.0003
+AEE,Ameren Corp,Utilities,Utilities - Regulated Electric,1.5,0.0545,spread70/semidev30,1.0,0.6878,11.667,0.838,0.0005
+CNP,CenterPoint Energy Inc,Utilities,Utilities - Regulated Electric,1.5,0.3364,spread70/semidev30,1.0,0.6878,12.68,0.874,0.0004
+DTE,DTE Energy Company,Utilities,Utilities - Regulated Electric,1.5,0.1409,spread70/semidev30,1.0,0.6878,12.236,0.841,0.0004
+EVRG,"Evergy, Inc.",Utilities,Utilities - Regulated Electric,1.5,0.0909,spread70/semidev30,1.0,0.6878,11.378,0.846,0.0003
+PPL,PPL Corporation,Utilities,Utilities - Regulated Electric,1.5,0.2455,spread70/semidev30,1.0,0.6878,12.424,0.864,0.0004
+WEC,WEC Energy Group Inc,Utilities,Utilities - Regulated Electric,1.5,0.1409,spread70/semidev30,1.0,0.6878,11.169,0.868,0.0005
+ATO,Atmos Energy Corporation,Utilities,Utilities - Regulated Gas,1.5,0.0,spread70/semidev30,1.0,0.6878,11.327,0.876,0.0004
+CL,Colgate-Palmolive Company,Consumer Defensive,Household & Personal Products,2.0,0.05,spread70/semidev30,1.0,0.6878,14.338,0.458,0.0011
+PG,Procter & Gamble Company,Consumer Defensive,Household & Personal Products,2.0,0.14,spread70/semidev30,1.0,0.6878,13.197,0.487,0.005
+KO,The Coca-Cola Company,Consumer Defensive,Beverages - Non-Alcoholic,2.0,0.0,spread70/semidev30,1.0,0.6878,10.711,0.662,0.0052

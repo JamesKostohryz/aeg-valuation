@@ -1,0 +1,389 @@
+{
+ "tolerance_bp": 25.0,
+ "min_firms": 6,
+ "groups": {
+  "Basic Materials - Specialty Chemicals": {
+   "sector": "Basic Materials",
+   "industries": [
+    "Specialty Chemicals"
+   ],
+   "median_ratio": 1.0278,
+   "n_industries": 1
+  },
+  "Communication Services - Entertainment": {
+   "sector": "Communication Services",
+   "industries": [
+    "Entertainment"
+   ],
+   "median_ratio": 1.6698,
+   "n_industries": 1
+  },
+  "Communication Services - Telecom Services": {
+   "sector": "Communication Services",
+   "industries": [
+    "Telecom Services"
+   ],
+   "median_ratio": 0.7993,
+   "n_industries": 1
+  },
+  "Consumer Cyclical - Apparel Manufacturing": {
+   "sector": "Consumer Cyclical",
+   "industries": [
+    "Apparel Manufacturing"
+   ],
+   "median_ratio": 1.4796,
+   "n_industries": 1
+  },
+  "Consumer Cyclical - Auto Parts": {
+   "sector": "Consumer Cyclical",
+   "industries": [
+    "Auto Parts"
+   ],
+   "median_ratio": 1.1063,
+   "n_industries": 1
+  },
+  "Consumer Cyclical - Packaging & Containers": {
+   "sector": "Consumer Cyclical",
+   "industries": [
+    "Packaging & Containers"
+   ],
+   "median_ratio": 1.0083,
+   "n_industries": 1
+  },
+  "Consumer Cyclical - Restaurants": {
+   "sector": "Consumer Cyclical",
+   "industries": [
+    "Restaurants"
+   ],
+   "median_ratio": 1.1688,
+   "n_industries": 1
+  },
+  "Consumer Cyclical - Travel Services": {
+   "sector": "Consumer Cyclical",
+   "industries": [
+    "Travel Services"
+   ],
+   "median_ratio": 1.5603,
+   "n_industries": 1
+  },
+  "Consumer Defensive - Household & Personal Products": {
+   "sector": "Consumer Defensive",
+   "industries": [
+    "Household & Personal Products"
+   ],
+   "median_ratio": 0.7829,
+   "n_industries": 1
+  },
+  "Consumer Defensive - Packaged Foods": {
+   "sector": "Consumer Defensive",
+   "industries": [
+    "Packaged Foods"
+   ],
+   "median_ratio": 0.7774,
+   "n_industries": 1
+  },
+  "Energy - Oil & Gas E&P": {
+   "sector": "Energy",
+   "industries": [
+    "Oil & Gas E&P"
+   ],
+   "median_ratio": 1.5719,
+   "n_industries": 1
+  },
+  "Financial Services - Asset Management": {
+   "sector": "Financial Services",
+   "industries": [
+    "Asset Management"
+   ],
+   "median_ratio": 1.3199,
+   "n_industries": 1
+  },
+  "Financial Services - Banks - Regional": {
+   "sector": "Financial Services",
+   "industries": [
+    "Banks - Regional"
+   ],
+   "median_ratio": 1.3657,
+   "n_industries": 1
+  },
+  "Financial Services - Credit Services": {
+   "sector": "Financial Services",
+   "industries": [
+    "Credit Services"
+   ],
+   "median_ratio": 1.1334,
+   "n_industries": 1
+  },
+  "Financial Services - Financial Data & Stock Exchanges": {
+   "sector": "Financial Services",
+   "industries": [
+    "Financial Data & Stock Exchanges"
+   ],
+   "median_ratio": 0.9063,
+   "n_industries": 1
+  },
+  "Financial Services - Insurance - Life": {
+   "sector": "Financial Services",
+   "industries": [
+    "Insurance - Life"
+   ],
+   "median_ratio": 1.3337,
+   "n_industries": 1
+  },
+  "Financial Services - Insurance - Property & Casualty": {
+   "sector": "Financial Services",
+   "industries": [
+    "Insurance - Property & Casualty"
+   ],
+   "median_ratio": 0.9589,
+   "n_industries": 1
+  },
+  "Healthcare - Diagnostics & Research": {
+   "sector": "Healthcare",
+   "industries": [
+    "Diagnostics & Research"
+   ],
+   "median_ratio": 1.0004,
+   "n_industries": 1
+  },
+  "Healthcare - Drug Manufacturers - General": {
+   "sector": "Healthcare",
+   "industries": [
+    "Drug Manufacturers - General"
+   ],
+   "median_ratio": 0.7822,
+   "n_industries": 1
+  },
+  "Healthcare - Healthcare Plans": {
+   "sector": "Healthcare",
+   "industries": [
+    "Healthcare Plans"
+   ],
+   "median_ratio": 1.0424,
+   "n_industries": 1
+  },
+  "Healthcare - Medical Devices": {
+   "sector": "Healthcare",
+   "industries": [
+    "Medical Devices"
+   ],
+   "median_ratio": 0.9673,
+   "n_industries": 1
+  },
+  "Healthcare - Medical Instruments & Supplies": {
+   "sector": "Healthcare",
+   "industries": [
+    "Medical Instruments & Supplies"
+   ],
+   "median_ratio": 1.0461,
+   "n_industries": 1
+  },
+  "Industrials - Aerospace & Defense": {
+   "sector": "Industrials",
+   "industries": [
+    "Aerospace & Defense"
+   ],
+   "median_ratio": 0.9537,
+   "n_industries": 1
+  },
+  "Industrials - Specialty Industrial Machinery": {
+   "sector": "Industrials",
+   "industries": [
+    "Specialty Industrial Machinery"
+   ],
+   "median_ratio": 1.1835,
+   "n_industries": 1
+  },
+  "Real Estate - REIT - Residential": {
+   "sector": "Real Estate",
+   "industries": [
+    "REIT - Residential"
+   ],
+   "median_ratio": 1.0666,
+   "n_industries": 1
+  },
+  "Real Estate - REIT - Specialty": {
+   "sector": "Real Estate",
+   "industries": [
+    "REIT - Specialty"
+   ],
+   "median_ratio": 1.0433,
+   "n_industries": 1
+  },
+  "Technology - Information Technology Services": {
+   "sector": "Technology",
+   "industries": [
+    "Information Technology Services"
+   ],
+   "median_ratio": 0.9369,
+   "n_industries": 1
+  },
+  "Technology - Semiconductors": {
+   "sector": "Technology",
+   "industries": [
+    "Semiconductors"
+   ],
+   "median_ratio": 1.7432,
+   "n_industries": 1
+  },
+  "Technology - Software - Application": {
+   "sector": "Technology",
+   "industries": [
+    "Software - Application"
+   ],
+   "median_ratio": 1.1887,
+   "n_industries": 1
+  },
+  "Technology - Software - Infrastructure": {
+   "sector": "Technology",
+   "industries": [
+    "Software - Infrastructure"
+   ],
+   "median_ratio": 1.1139,
+   "n_industries": 1
+  },
+  "Utilities - Utilities - Regulated Electric": {
+   "sector": "Utilities",
+   "industries": [
+    "Utilities - Regulated Electric"
+   ],
+   "median_ratio": 0.9059,
+   "n_industries": 1
+  },
+  "Basic Materials - Other": {
+   "sector": "Basic Materials",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 8
+  },
+  "Communication Services - Other": {
+   "sector": "Communication Services",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 4
+  },
+  "Consumer Cyclical - Other": {
+   "sector": "Consumer Cyclical",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 19
+  },
+  "Consumer Defensive - Other": {
+   "sector": "Consumer Defensive",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 10
+  },
+  "Energy - Other": {
+   "sector": "Energy",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 6
+  },
+  "Financial Services - Other": {
+   "sector": "Financial Services",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 6
+  },
+  "Healthcare - Other": {
+   "sector": "Healthcare",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 10
+  },
+  "Industrials - Other": {
+   "sector": "Industrials",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 20
+  },
+  "Real Estate - Other": {
+   "sector": "Real Estate",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 8
+  },
+  "Technology - Other": {
+   "sector": "Technology",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 8
+  },
+  "Utilities - Other": {
+   "sector": "Utilities",
+   "industries": [
+    "<pooled small industries>"
+   ],
+   "median_ratio": null,
+   "n_industries": 4
+  }
+ },
+ "curve": [
+  {
+   "bp": 10,
+   "rms": 0.030439547059539756,
+   "groups": 31
+  },
+  {
+   "bp": 15,
+   "rms": 0.045659320589309625,
+   "groups": 31
+  },
+  {
+   "bp": 20,
+   "rms": 0.06087909411907951,
+   "groups": 31
+  },
+  {
+   "bp": 25,
+   "rms": 0.07609886764884938,
+   "groups": 31
+  },
+  {
+   "bp": 30,
+   "rms": 0.09131864117861925,
+   "groups": 29
+  },
+  {
+   "bp": 40,
+   "rms": 0.12175818823815902,
+   "groups": 27
+  },
+  {
+   "bp": 50,
+   "rms": 0.15219773529769876,
+   "groups": 24
+  },
+  {
+   "bp": 75,
+   "rms": 0.22829660294654816,
+   "groups": 22
+  },
+  {
+   "bp": 100,
+   "rms": 0.3043954705953975,
+   "groups": 16
+  }
+ ]
+}

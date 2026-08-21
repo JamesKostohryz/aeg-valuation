@@ -181,18 +181,28 @@ def main():
         ends.append(prev)
     print("%d month-ends %s .. %s" % (len(ends), ends[0], ends[-1]))
 
-    series = {}
-    for key in inds:
-        s = {}
-        for asof in ends:
-            if counts[key].get(asof[:7], 0) < MIN_FIRMS:
-                continue
-            m = tsd(mkt, asof)
-            v = tsd(cut(px[key], asof), asof)
-            if m and v:
-                s[asof] = v / m
-        if len(s) >= MIN_MONTHS:
-            series[key] = s
+    cache = os.path.join(OUT, "industry_ratio_cache.json")
+    if os.path.exists(cache):
+        raw = json.load(open(cache))
+        series = {tuple(k.split("||")): v for k, v in raw.items()}
+        print("loaded cached ratio series for %d industries" % len(series))
+    else:
+        mcache = {asof: tsd(mkt, asof) for asof in ends}
+        series = {}
+        for n_, key in enumerate(inds):
+            s = {}
+            for asof in ends:
+                if counts[key].get(asof[:7], 0) < MIN_FIRMS:
+                    continue
+                m = mcache.get(asof)
+                v = tsd(cut(px[key], asof), asof)
+                if m and v:
+                    s[asof] = v / m
+            if len(s) >= MIN_MONTHS:
+                series[key] = s
+            if (n_ + 1) % 20 == 0:
+                print("   scored %d/%d industries" % (n_ + 1, len(inds)), flush=True)
+        json.dump({"||".join(k): v for k, v in series.items()}, open(cache, "w"))
     print("industries with a usable risk series (>=%d firms, >=%d months): %d of %d"
           % (MIN_FIRMS, MIN_MONTHS, len(series), len(inds)))
 
@@ -201,11 +211,18 @@ def main():
     print("pooled into '<Sector> - Other': %d industries" % len(small))
 
     # ---------------------------------------------------------------- distance and clustering
-    def dist(a_, b_):
-        common = sorted(set(series[a_]) & set(series[b_]))
-        if len(common) < MIN_MONTHS:
-            return None
-        return math.sqrt(sum((series[a_][d] - series[b_][d]) ** 2 for d in common) / len(common))
+    D = {}
+    keys = sorted(series)
+    for i, x in enumerate(keys):
+        for y in keys[i + 1:]:
+            if x[0] != y[0]:
+                continue                                # within sector only
+            common = sorted(set(series[x]) & set(series[y]))
+            if len(common) < MIN_MONTHS:
+                continue
+            D[(x, y)] = D[(y, x)] = math.sqrt(
+                sum((series[x][d] - series[y][d]) ** 2 for d in common) / len(common))
+    print("distance matrix: %d within-sector pairs" % (len(D) // 2))
 
     bysec = collections.defaultdict(list)
     for k in series:
@@ -217,8 +234,7 @@ def main():
             best, bi, bj = None, None, None
             for i in range(len(groups)):
                 for j in range(i + 1, len(groups)):
-                    ds = [dist(x, y) for x in groups[i] for y in groups[j]]
-                    ds = [d for d in ds if d is not None]
+                    ds = [D[(x, y)] for x in groups[i] for y in groups[j] if (x, y) in D]
                     if not ds:
                         continue
                     d = sum(ds) / len(ds)              # average linkage

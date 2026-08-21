@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-20",
+  "generated": "2026-08-21",
   "prereg": "docs/PREREG-Region2-Issuer-Curves-and-Tier3-2026-08-19.md",
   "form": "b_i = alpha + beta * s1_i, tier-1 issuers only",
   "alpha": 0.22114926121573314,

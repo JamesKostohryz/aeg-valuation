@@ -124,14 +124,21 @@ def _rank_of_score(score, n):
     return max(1, min(n, 1 + int(round(pct * (n - 1)))))
 
 
-def build_decomposition(blocks, combined, k, snapshot, detail, grp):
+def build_decomposition(blocks, combined, k, snapshot, detail, grp, market_erp):
     """James, 2026-08-21: 'for all 4 categories of risk show the rank..., the percentile
     rank..., indicated idiosyncratic ERP... And for the final idiosyncratic ERP, we get the
     same thing... it should tell him for each risk category, when each rank and score was last
     updated.' This builds exactly that -- one entry per block plus one for the combined score,
-    each with rank/n, percentile, an INDICATED ERP (what the premium would be if this block
-    alone were the whole score: k x block_score -- the same k, so the four numbers and the
-    final are directly comparable), and the vintage of the data behind it.
+    each with rank/n, percentile, an INDICATED ERP, and the vintage of the data behind it.
+
+    CORRECTED 2026-08-21, same day: James, on seeing the first version (indicated ERP = k x
+    block_score, always positive): "That was not what I intended. My intent is that the safest
+    companies may have a negative idiosyncratic ERP and have an ERP which is below the market
+    ERP." The idiosyncratic figure is an INCREMENT on top of the market ERP, not a company's
+    total ERP -- indicated_idio_erp_i = k x block_score_i MINUS the market ERP, so a
+    below-average block score correctly produces a negative number. k x block_score alone is
+    still published, as `indicated_total_erp_pct`, since "what would this company's total ERP
+    look like if this one block were the whole story" is still useful context.
 
     The indicated-ERP figures are PRE-FLOOR by construction (a floor is a property of the
     combined company, not of one block in isolation) -- if a floor bound the final premium,
@@ -163,7 +170,8 @@ def build_decomposition(blocks, combined, k, snapshot, detail, grp):
             rank_label=("%d of %d (1 = safest)" % (rank, n) if rank and n else None),
             percentile_rank=pct_rank,
             score_1_100=round(score, 2),
-            indicated_idio_erp_pct=round(k * score, 4),
+            indicated_idio_erp_pct=round(k * score - market_erp, 4),
+            indicated_total_erp_pct=round(k * score, 4),
             data_as_of=v.get("as_of"), data_basis=v.get("basis"),
         ))
     n_final = len(snapshot.get("combined_score_all", [])) or snapshot.get("n_universe")
@@ -249,12 +257,18 @@ def score_ticker(ticker, snapshot, semidev=None, spread_30y_pp=None, put_iv_365d
         k = market_erp / snapshot["cap_weighted_avg_combined_score"]
         floor = snapshot["constants"]["score_floor"]
         s = max(combined, floor)
-        premium = k * s
+        # idio premium is an INCREMENT on top of market_erp, not a company's total ERP -- James,
+        # 2026-08-21: "the safest companies may have a negative idiosyncratic ERP and have an
+        # ERP which is below the market ERP." k*s alone is the IMPLIED TOTAL erp; subtracting
+        # market_erp centers a below-average score at a NEGATIVE premium, correctly.
+        implied_total = k * s
+        premium = implied_total - market_erp
         floor_note = ""
         if s > combined:
             floor_note = "score floor applied (%.2f -> %.2f)" % (combined, s)
         if sp is not None:
-            own_floor = sp + snapshot["constants"]["credit_floor_margin_pp"]
+            own_floor_total = sp + snapshot["constants"]["credit_floor_margin_pp"]
+            own_floor = own_floor_total - market_erp
             if premium < own_floor:
                 floor_note = (floor_note + "; " if floor_note else "") + \
                     "credit floor applied (%.3f -> %.3f)" % (premium, own_floor)
@@ -272,7 +286,7 @@ def score_ticker(ticker, snapshot, semidev=None, spread_30y_pp=None, put_iv_365d
         if "within_industry" in blocks:
             peers_n = len(snapshot.get("group_peer_avg12", {}).get(grp, []))
             detail_fast["within_industry"] = dict(group_n=peers_n)
-        decomposition = build_decomposition(blocks, combined, k, snapshot, detail_fast, grp)
+        decomposition = build_decomposition(blocks, combined, k, snapshot, detail_fast, grp, market_erp)
         return dict(
             ticker=ticker, in_coverage=True, refused=False, exact=True,
             risk_group=grp, n_blocks=n_blocks, blocks={k2: round(v, 2) for k2, v in blocks.items()},
@@ -282,7 +296,9 @@ def score_ticker(ticker, snapshot, semidev=None, spread_30y_pp=None, put_iv_365d
             market_erp_date=(market_erp_meta or {}).get("date"),
             market_erp_age_days=(market_erp_meta or {}).get("age_days"),
             calibration_k=k, snapshot_vintage=snapshot["vintage_date"],
-            suggested_idio_erp_pct=round(premium, 4), floor_applied=floor_note,
+            suggested_idio_erp_pct=round(premium, 4),
+            implied_total_erp_pct=round(market_erp + premium, 4),
+            floor_applied=floor_note,
             reliability=reliability,
             raw_inputs=dict(semidev=sd, spread_30y_pp=sp, put_iv_365d=iv),
             decomposition=decomposition,
@@ -372,12 +388,14 @@ def score_ticker(ticker, snapshot, semidev=None, spread_30y_pp=None, put_iv_365d
     k = market_erp / snapshot["cap_weighted_avg_combined_score"]
     floor = snapshot["constants"]["score_floor"]
     s = max(combined, floor)
-    premium = k * s
+    implied_total = k * s
+    premium = implied_total - market_erp
     floor_note = ""
     if s > combined:
         floor_note = "score floor applied (%.2f -> %.2f)" % (combined, s)
     if sp is not None:
-        own_floor = sp + snapshot["constants"]["credit_floor_margin_pp"]
+        own_floor_total = sp + snapshot["constants"]["credit_floor_margin_pp"]
+        own_floor = own_floor_total - market_erp
         if premium < own_floor:
             floor_note = (floor_note + "; " if floor_note else "") + \
                 "credit floor applied (%.3f -> %.3f)" % (premium, own_floor)
@@ -393,7 +411,7 @@ def score_ticker(ticker, snapshot, semidev=None, spread_30y_pp=None, put_iv_365d
     else:
         reliability = "full" if in_coverage else "credit spread supplied externally, fit quality unknown to this module"
 
-    decomposition = build_decomposition(blocks, combined, k, snapshot, detail, grp)
+    decomposition = build_decomposition(blocks, combined, k, snapshot, detail, grp, market_erp)
     return dict(
         ticker=ticker, in_coverage=in_coverage, refused=False, exact=False,
         risk_group=grp, n_blocks=n_blocks, blocks={k2: round(v, 2) for k2, v in blocks.items()},
@@ -405,6 +423,7 @@ def score_ticker(ticker, snapshot, semidev=None, spread_30y_pp=None, put_iv_365d
         calibration_k=k,
         snapshot_vintage=snapshot["vintage_date"],
         suggested_idio_erp_pct=round(premium, 4),
+        implied_total_erp_pct=round(market_erp + premium, 4),
         floor_applied=floor_note,
         reliability=reliability,
         raw_inputs=dict(semidev=sd, spread_30y_pp=sp, put_iv_365d=iv),

@@ -367,23 +367,48 @@ def main():
                           "the scale." % (100 * coverage, 100 * MIN_WEIGHT_COVERAGE))
 
     cw_avg_score = sum(r["combined_score"] * w for r, w in weighted) / total_w_scored
-    k = market_erp / cw_avg_score   # premium_i = k * combined_score_i
+    k = market_erp / cw_avg_score   # implied_total_erp_i = k * combined_score_i
 
+    # -- score -> premium, CORRECTED 2026-08-21 ------------------------------------------
+    #
+    # James, on seeing the first version of this (which published k*score directly as
+    # "suggested_idio_erp_pct", always positive, cap-weighted average pinned to the market ERP
+    # itself): "That was not what I intended. My intent is that the safest companies may have a
+    # negative idiosyncratic ERP and have an ERP which is below the market ERP." The
+    # idiosyncratic figure is an INCREMENT added to the market ERP to form a company's total ERP
+    # -- ERP_i = market_erp + idio_i -- exactly the identity company_curve.py's own Region 1
+    # already used, and exactly what "idiosyncratic" means: a company AT the cap-weighted-average
+    # score carries ZERO idiosyncratic premium, not the market ERP itself.
+    #
+    # k*score is kept as the IMPLIED TOTAL ERP (an average company's implied total ERP is,
+    # correctly, the market ERP -- that identity is unchanged). The published idiosyncratic
+    # figure is that total MINUS the market ERP, so it is centered on zero across the
+    # cap-weighted universe by construction, and a below-average score produces a NEGATIVE
+    # number, exactly as intended.
     for r in out_rows:
         s = max(r["combined_score"], SCORE_FLOOR)
-        premium = k * s
+        implied_total = k * s
+        idio = implied_total - market_erp
         floor_note = ""
         if s > r["combined_score"]:
             floor_note = "score floor applied (%.2f -> %.2f)" % (r["combined_score"], SCORE_FLOOR)
         if r["spread_30y_pp"] != "":
-            own_floor = float(r["spread_30y_pp"]) + CREDIT_FLOOR_MARGIN_PP
-            if premium < own_floor:
+            # Equity is junior to debt: the IMPLIED TOTAL ERP (not the increment alone) must
+            # exceed the company's own bond spread by a margin. Re-derived in the increment's
+            # own frame: idio >= (spread + margin) - market_erp.
+            own_floor_total = float(r["spread_30y_pp"]) + CREDIT_FLOOR_MARGIN_PP
+            own_floor_idio = own_floor_total - market_erp
+            if idio < own_floor_idio:
                 floor_note = (floor_note + "; " if floor_note else "") + \
-                    "credit floor applied (%.3f -> %.3f)" % (premium, own_floor)
-                premium = own_floor
-        r["suggested_idio_erp_pct"] = round(premium, 4)
+                    "credit floor applied (%.3f -> %.3f)" % (idio, own_floor_idio)
+                idio = own_floor_idio
+        r["suggested_idio_erp_pct"] = round(idio, 4)
+        r["implied_total_erp_pct"] = round(market_erp + idio, 4)
         r["floor_applied"] = floor_note
 
+    # cap-weighted average idiosyncratic premium should now be ~0, not ~market_erp -- THIS is
+    # the correct identity check for an increment construction (mirrors ERP_i = market + idio_i
+    # averaging, cap-weighted, back to exactly the market ERP).
     cw_check = sum(r["suggested_idio_erp_pct"] * w for r, w in weighted) / total_w_scored
 
     # -- write --------------------------------------------------------------------------
@@ -391,7 +416,8 @@ def main():
               "credit_n_fit", "put_iv_365d", "has_put_iv", "block_volatility", "block_credit",
               "block_industry", "block_within_industry", "within_group_n", "within_group_shrink",
               "within_group_ranked_on", "n_blocks", "weight_per_block", "combined_score",
-              "cap_weight", "suggested_idio_erp_pct", "floor_applied", "reliability"]
+              "cap_weight", "suggested_idio_erp_pct", "implied_total_erp_pct", "floor_applied",
+              "reliability"]
     with open(OUT_CSV, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=fields)
         w.writeheader()
@@ -401,7 +427,9 @@ def main():
         market_erp_pct=market_erp, market_erp_source=erp_meta.get("source"),
         market_erp_date=erp_meta.get("date"), market_erp_age_days=erp_meta.get("age_days"),
         calibration_k=k, cap_weighted_avg_score_before_floors=cw_avg_score,
-        cap_weighted_avg_premium_after_floors_pct=cw_check,
+        cap_weighted_avg_idio_premium_after_floors_pct=cw_check,
+        idio_premium_definition="increment added to market ERP: total ERP_i = market_erp + "
+                                 "idio_i. Cap-weighted average should be ~0, not ~market_erp.",
         weight_coverage_pct=100 * coverage,
         n_scored=len(out_rows), n_refused=len(refused), refused=sorted(refused),
         n_excluded_data_artifact=len(excluded), excluded=sorted(excluded),
@@ -418,10 +446,12 @@ def main():
     print("market ERP: %.4f%% (%s, %s, %d days old)"
           % (market_erp, erp_meta.get("source"), erp_meta.get("date"), erp_meta.get("age_days")))
     print("weight coverage of scored universe: %.2f%%" % (100 * coverage))
-    print("calibration constant k = %.5f  (premium = k x combined score)" % k)
-    print("cap-weighted avg combined score (pre-floor): %.3f" % cw_avg_score)
-    print("cap-weighted avg suggested premium (post-floor): %.4f%%  (target %.4f%%, drift %.4f pp)"
-          % (cw_check, market_erp, cw_check - market_erp))
+    print("calibration constant k = %.5f  (implied total ERP = k x combined score)" % k)
+    print("cap-weighted avg combined score (pre-floor): %.3f  (implied total ERP: %.4f%%, "
+          "should equal the market ERP)" % (cw_avg_score, k * cw_avg_score))
+    print("cap-weighted avg idiosyncratic premium (post-floor): %.4f%%  (target 0.0000%%, "
+          "drift %.4f pp)  -- idio_i = k*score_i - market_erp, so this is 0 by construction "
+          "before floors bind" % (cw_check, cw_check))
     n_floored = sum(1 for r in out_rows if r["floor_applied"])
     print("names with a floor applied: %d" % n_floored)
     print()
